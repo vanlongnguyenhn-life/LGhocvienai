@@ -365,6 +365,18 @@ a { color: inherit; }
 .home-title { font-size: 20px; font-weight: 700; color: var(--gold); margin: 12px 0 0; }
 .home-logout-btn { position: absolute; top: 8px; right: 16px; }
 
+/* ---- user menu: tên + ảnh ở thanh trên, click ra nút đăng xuất ---- */
+.user-menu { position: relative; display: flex; align-items: center; flex: 0 0 auto; }
+.user-menu-chip { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 3px 4px 3px 10px; border-radius: 999px; }
+.user-menu-chip:hover { background: rgba(120,120,128,0.10); }
+.user-menu-name { font-size: 14px; font-weight: 600; color: var(--text-dark); max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.user-menu-avatar { width: 34px; height: 34px; font-size: 15px; }
+.user-menu-backdrop { position: fixed; inset: 0; z-index: 60; }
+.user-menu-pop { position: absolute; top: calc(100% + 6px); right: 0; z-index: 61; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 6px; box-shadow: 0 8px 24px rgba(0,0,0,0.14); min-width: 160px; }
+.user-menu-logout { width: 100%; text-align: left; background: none; border: none; padding: 10px 12px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; color: var(--ios-red); cursor: pointer; font-family: inherit; }
+.user-menu-logout:hover { background: var(--green-bg); }
+.home-user-menu { position: absolute; top: 12px; right: 12px; z-index: 5; }
+
 .section-title {
   font-size: 15px;
   font-weight: 700;

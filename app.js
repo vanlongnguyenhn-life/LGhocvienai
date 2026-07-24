@@ -35,6 +35,7 @@ function loadState() {
       if (!parsed.lettersRead) parsed.lettersRead = {};
       if (parsed.openLetterKey === undefined) parsed.openLetterKey = null;
       parsed.showCourseContent = false;
+      parsed.userMenuOpen = false;
       delete parsed.lettersExpanded;
       return parsed;
     }
@@ -48,6 +49,7 @@ function loadState() {
     lettersRead: {},
     openLetterKey: null,
     showCourseContent: false,
+    userMenuOpen: false,
     expandedLesson: null,
     expandedQuestions: {}, // code -> true nếu đang mở (cho phép mở nhiều câu cùng lúc)
     answers: {}, // code -> { selected:[idx], text:"", status: "pending"|"correct"|"wrong"|"done" }
@@ -160,6 +162,35 @@ function renderUserAvatar(user, className) {
   }
   const initial = ((user && user.display_name) || "?").trim().charAt(0).toUpperCase() || "?";
   return el("div", { class: cls + " user-avatar-fallback" }, initial);
+}
+
+function renderUserMenu(className) {
+  const u = state.currentUser;
+  if (!u) return el("span", {});
+  const wrap = el("div", { class: "user-menu " + (className || "") });
+  const chip = el(
+    "div",
+    {
+      class: "user-menu-chip",
+      onclick: (e) => { e.stopPropagation(); state.userMenuOpen = !state.userMenuOpen; render(); },
+    },
+    [
+      el("span", { class: "user-menu-name" }, u.display_name || "học viên"),
+      renderUserAvatar(u, "user-menu-avatar"),
+    ]
+  );
+  wrap.appendChild(chip);
+  if (state.userMenuOpen) {
+    wrap.appendChild(
+      el("div", { class: "user-menu-backdrop", onclick: () => { state.userMenuOpen = false; render(); } })
+    );
+    wrap.appendChild(
+      el("div", { class: "user-menu-pop" }, [
+        el("button", { class: "user-menu-logout", onclick: handleLogout }, "⎋ Đăng xuất"),
+      ])
+    );
+  }
+  return wrap;
 }
 
 function showToast(msg) {
@@ -410,24 +441,11 @@ function renderHome() {
   const wrap = el("div", {});
   wrap.appendChild(
     el("div", { class: "home-header" }, [
-      el("button", { class: "icon-btn home-logout-btn", title: "Đăng xuất", onclick: handleLogout }, "⎋"),
+      renderUserMenu("home-user-menu"),
       renderBrandLogo("home-brand-logo"),
       el("h2", { class: "home-title" }, "Học Viện AI Life Group"),
     ])
   );
-
-  const u = state.currentUser;
-  if (u) {
-    wrap.appendChild(
-      el("div", { class: "user-greeting" }, [
-        renderUserAvatar(u, "user-greeting-avatar"),
-        el("div", { class: "user-greeting-text" }, [
-          el("div", { class: "user-greeting-hello" }, "Xin chào,"),
-          el("div", { class: "user-greeting-name" }, u.display_name || "học viên"),
-        ]),
-      ])
-    );
-  }
 
   wrap.appendChild(el("div", { class: "section-title" }, "Khoá học của bạn"));
 
@@ -480,7 +498,7 @@ function renderCourse() {
     el("div", { class: "topbar" }, [
       el("button", { class: "icon-btn", onclick: () => { state.view = "home"; render(); } }, "‹"),
       renderBrandLogo("topbar-brand-logo"),
-      el("button", { class: "icon-btn", title: "Đăng xuất", onclick: handleLogout }, "⎋"),
+      renderUserMenu("topbar-user-menu"),
     ])
   );
 
@@ -795,6 +813,12 @@ function isLessonDone(lesson) {
   return lesson.questions.every((q) => isQuestionDone(q.code));
 }
 
+function openQuestion(code) {
+  // Mỗi bài chỉ mở 1 câu 1 lúc: đóng hết các câu khác rồi mở câu này.
+  state.expandedQuestions = {};
+  if (code) state.expandedQuestions[code] = true;
+}
+
 function renderQuestionCard(lesson, q, locked) {
   const a = getAnswer(q.code);
   const expanded = !locked && !!state.expandedQuestions[q.code];
@@ -821,7 +845,7 @@ function renderQuestionCard(lesson, q, locked) {
           return;
         }
         if (expanded) delete state.expandedQuestions[q.code];
-        else state.expandedQuestions[q.code] = true;
+        else openQuestion(q.code);
         render();
       },
     },
@@ -901,7 +925,7 @@ function renderChoiceGrid(q, a) {
     }
     render();
     // giữ câu này đang mở sau khi re-render
-    state.expandedQuestions[q.code] = true;
+    openQuestion(q.code);
   };
 
   if (q.type === "single") {
@@ -976,7 +1000,7 @@ function renderOrder(q, a) {
               [a.orderState[pos - 1], a.orderState[pos]] = [a.orderState[pos], a.orderState[pos - 1]];
               saveState();
               render();
-              state.expandedQuestions[q.code] = true;
+              openQuestion(q.code);
             },
           },
           "↑"
@@ -991,7 +1015,7 @@ function renderOrder(q, a) {
               [a.orderState[pos], a.orderState[pos + 1]] = [a.orderState[pos + 1], a.orderState[pos]];
               saveState();
               render();
-              state.expandedQuestions[q.code] = true;
+              openQuestion(q.code);
             },
           },
           "↓"
@@ -1023,7 +1047,7 @@ function renderOrderTag(q, a) {
           a.tagState[itemIdx] = (currentTag + 1) % q.tagOptions.length;
           saveState();
           render();
-          state.expandedQuestions[q.code] = true;
+          openQuestion(q.code);
         },
       },
       q.tagOptions[currentTag]
@@ -1041,7 +1065,7 @@ function renderOrderTag(q, a) {
               [a.orderState[pos - 1], a.orderState[pos]] = [a.orderState[pos], a.orderState[pos - 1]];
               saveState();
               render();
-              state.expandedQuestions[q.code] = true;
+              openQuestion(q.code);
             },
           },
           "↑"
@@ -1056,7 +1080,7 @@ function renderOrderTag(q, a) {
               [a.orderState[pos], a.orderState[pos + 1]] = [a.orderState[pos + 1], a.orderState[pos]];
               saveState();
               render();
-              state.expandedQuestions[q.code] = true;
+              openQuestion(q.code);
             },
           },
           "↓"
@@ -1086,7 +1110,7 @@ function renderTagMark(q, a) {
             a.tagState[i] = (currentTag + 1) % q.iconOptions.length;
             saveState();
             render();
-            state.expandedQuestions[q.code] = true;
+            openQuestion(q.code);
           },
         },
         q.iconOptions[currentTag]
@@ -1154,7 +1178,7 @@ async function submitCriterionToServer(q, c, a, { file, value } = {}) {
   if (value != null) fd.append("value", value);
 
   a.proofMeta[c.key] = { valid: null, reason: "Đang kiểm tra ở server..." };
-  state.expandedQuestions[q.code] = true;
+  openQuestion(q.code);
   render();
 
   try {
@@ -1163,7 +1187,7 @@ async function submitCriterionToServer(q, c, a, { file, value } = {}) {
   } catch (err) {
     a.proofMeta[c.key] = { valid: false, reason: err.message };
   }
-  state.expandedQuestions[q.code] = true;
+  openQuestion(q.code);
   render();
 }
 
@@ -1403,7 +1427,7 @@ async function submitAnswer(lesson, q) {
     return;
   }
 
-  state.expandedQuestions[q.code] = true;
+  openQuestion(q.code);
   render();
 }
 
