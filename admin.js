@@ -35,6 +35,11 @@ const ADMIN_API = {
   activityTimeline() {
     return this._send("/api/admin/activity-timeline");
   },
+  setApproved(id, approved) {
+    const fd = new FormData();
+    fd.append("approved", approved ? "1" : "0");
+    return this._send(`/api/admin/students/${id}/approve`, { method: "POST", body: fd });
+  },
 };
 
 function el(tag, attrs, children) {
@@ -51,6 +56,15 @@ function el(tag, attrs, children) {
     node.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
   });
   return node;
+}
+
+function renderAdminAvatar(user, className) {
+  const cls = "user-avatar " + (className || "");
+  if (user && user.avatar_url) {
+    return el("img", { class: cls, src: user.avatar_url, alt: user.display_name || "", referrerpolicy: "no-referrer" });
+  }
+  const initial = ((user && user.display_name) || "?").trim().charAt(0).toUpperCase() || "?";
+  return el("div", { class: cls + " user-avatar-fallback" }, [initial]);
 }
 
 function renderAdminLogo(className) {
@@ -171,6 +185,19 @@ async function handleLogout() {
   state.students = [];
   state.selectedId = null;
   state.detail = null;
+  render();
+}
+
+async function handleApprove(id, approved) {
+  try {
+    await ADMIN_API.setApproved(id, approved);
+    await loadStudents();
+    if (state.detail && state.detail.user && state.detail.user.id === id) {
+      state.detail.user.approved = approved ? 1 : 0;
+    }
+  } catch (err) {
+    alert(err.message || "Không cập nhật được trạng thái duyệt.");
+  }
   render();
 }
 
@@ -441,8 +468,16 @@ function renderDashboard() {
     const currentQ = s.currentCode ? QUESTION_INDEX[s.currentCode] : null;
     const row = el("tr", {}, [
       el("td", {}, [
-        el("div", { class: "admin-student-name" }, [s.display_name]),
-        el("div", { class: "admin-student-username" }, ["@" + s.username]),
+        el("div", { class: "admin-student-cell" }, [
+          renderAdminAvatar(s),
+          el("div", {}, [
+            el("div", { class: "admin-student-name" }, [
+              s.display_name,
+              s.approved ? null : el("span", { class: "admin-pending-badge" }, ["Chờ duyệt"]),
+            ]),
+            el("div", { class: "admin-student-username" }, ["@" + s.username]),
+          ]),
+        ]),
       ]),
       el("td", {}, [fmtDate(s.created_at)]),
       el("td", {}, [el("span", { class: "admin-status-badge " + s.status }, [STATUS_LABEL[s.status]])]),
@@ -456,7 +491,12 @@ function renderDashboard() {
         fmtDate(s.last_activity),
         s.isInactive ? el("span", { class: "admin-inactive-flag" }, [" ⚠"]) : null,
       ]),
-      el("td", {}, [el("button", { class: "help-link", onclick: () => openStudent(s.id) }, ["Xem chi tiết →"])]),
+      el("td", {}, [
+        s.approved
+          ? el("button", { class: "admin-approve-btn unapprove", onclick: () => handleApprove(s.id, 0) }, ["Bỏ duyệt"])
+          : el("button", { class: "admin-approve-btn", onclick: () => handleApprove(s.id, 1) }, ["✓ Duyệt"]),
+        el("button", { class: "help-link", onclick: () => openStudent(s.id) }, ["Xem chi tiết →"]),
+      ]),
     ]);
     tbody.appendChild(row);
   });
@@ -507,8 +547,22 @@ function renderStudentDetail() {
     subsByCode[s.question_code][s.criterion_key] = s;
   });
 
-  box.appendChild(el("h2", {}, [user.display_name]));
-  box.appendChild(el("p", { class: "admin-student-username" }, ["@" + user.username + " · Tham gia " + fmtDate(user.created_at)]));
+  box.appendChild(
+    el("div", { class: "admin-student-cell admin-detail-head" }, [
+      renderAdminAvatar(user, "admin-detail-avatar"),
+      el("div", {}, [
+        el("h2", {}, [
+          user.display_name,
+          user.approved ? null : el("span", { class: "admin-pending-badge" }, ["Chờ duyệt"]),
+        ]),
+        el("p", { class: "admin-student-username" }, ["@" + user.username + " · Tham gia " + fmtDate(user.created_at)]),
+        user.tenant_key ? el("p", { class: "admin-tenant-key" }, ["Mã tổ chức (tenant_key): " + user.tenant_key]) : null,
+        user.approved
+          ? el("button", { class: "admin-approve-btn unapprove", onclick: () => handleApprove(user.id, 0) }, ["Bỏ duyệt"])
+          : el("button", { class: "admin-approve-btn", onclick: () => handleApprove(user.id, 1) }, ["✓ Duyệt học viên này"]),
+      ]),
+    ])
+  );
 
   (LESSONS || []).forEach((lesson) => {
     const doneInLesson = lesson.questions.filter((q) => statusByCode[q.code] && statusByCode[q.code].status === "done").length;

@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
     display_name TEXT NOT NULL,
     password_hash TEXT,
     lark_open_id TEXT UNIQUE,
+    avatar_url TEXT,
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
@@ -91,3 +92,12 @@ def init_db():
         cols = [r["name"] for r in conn.execute("PRAGMA table_info(question_status)")]
         if "answer_data" not in cols:
             conn.execute("ALTER TABLE question_status ADD COLUMN answer_data TEXT")
+        user_cols = [r["name"] for r in conn.execute("PRAGMA table_info(users)")]
+        if "avatar_url" not in user_cols:
+            conn.execute("ALTER TABLE users ADD COLUMN avatar_url TEXT")
+        if "approved" not in user_cols:
+            conn.execute("ALTER TABLE users ADD COLUMN approved INTEGER NOT NULL DEFAULT 0")
+            # Học viên đã tồn tại trước khi bật tính năng duyệt → tự động duyệt để không khóa oan.
+            conn.execute("UPDATE users SET approved = 1")
+        if "tenant_key" not in user_cols:
+            conn.execute("ALTER TABLE users ADD COLUMN tenant_key TEXT")

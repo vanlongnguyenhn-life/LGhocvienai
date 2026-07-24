@@ -34,6 +34,7 @@ function loadState() {
       if (!parsed.currentUser) parsed.currentUser = null;
       if (!parsed.lettersRead) parsed.lettersRead = {};
       if (parsed.openLetterKey === undefined) parsed.openLetterKey = null;
+      parsed.showCourseContent = false;
       delete parsed.lettersExpanded;
       return parsed;
     }
@@ -46,6 +47,7 @@ function loadState() {
     lettersCollapsed: false,
     lettersRead: {},
     openLetterKey: null,
+    showCourseContent: false,
     expandedLesson: null,
     expandedQuestions: {}, // code -> true nếu đang mở (cho phép mở nhiều câu cùng lúc)
     answers: {}, // code -> { selected:[idx], text:"", status: "pending"|"correct"|"wrong"|"done" }
@@ -145,10 +147,19 @@ function el(tag, attrs = {}, children = []) {
   return node;
 }
 
-function renderBrandLogo(className) {
+function renderBrandLogo(className, src) {
   const wrap = el("div", { class: "brand-logo " + (className || "") });
-  wrap.appendChild(el("img", { class: "brand-logo-img", src: "assets/logo.png", alt: "Life Group" }));
+  wrap.appendChild(el("img", { class: "brand-logo-img", src: src || "assets/logo.png", alt: "Life Group" }));
   return wrap;
+}
+
+function renderUserAvatar(user, className) {
+  const cls = "user-avatar " + (className || "");
+  if (user && user.avatar_url) {
+    return el("img", { class: cls, src: user.avatar_url, alt: user.display_name || "", referrerpolicy: "no-referrer" });
+  }
+  const initial = ((user && user.display_name) || "?").trim().charAt(0).toUpperCase() || "?";
+  return el("div", { class: cls + " user-avatar-fallback" }, initial);
 }
 
 function showToast(msg) {
@@ -220,6 +231,8 @@ function render() {
   root.innerHTML = "";
   if (!state.loggedIn || state.view === "login") {
     root.appendChild(renderLogin());
+  } else if (state.currentUser && !state.currentUser.approved) {
+    root.appendChild(renderPending());
   } else if (state.view === "home") {
     root.appendChild(renderShell(renderHome()));
   } else {
@@ -249,86 +262,27 @@ function renderLogin() {
   const view = el("div", { class: "login-view" });
   view.appendChild(renderBrandLogo("login-brand-logo"));
   view.appendChild(
-    el("h1", {}, ["Lớp học", el("em", {}, "AI SEE")])
+    el("h2", { class: "login-title" }, "Học Viện AI Life Group")
   );
   view.appendChild(
-    el("p", { class: "login-tagline" }, ["Học từ nguyên lý. ", el("em", {}, "Hiểu từ gốc rễ.")])
+    el("p", { class: "login-tagline" }, [
+      el("span", {}, "Học từ nguyên lý"),
+      el("span", { class: "login-tagline-dot" }, "•"),
+      el("em", {}, "Hiểu từ gốc rễ"),
+    ])
   );
 
   const card = el("div", { class: "login-card" });
-  card.appendChild(el("h2", {}, loginMode === "login" ? "Đăng nhập" : "Tạo tài khoản"));
-
-  const tabs = el("div", { class: "login-tabs" }, [
-    el(
-      "button",
-      {
-        class: loginMode === "login" ? "active" : "",
-        onclick: () => { loginMode = "login"; authError = ""; render(); },
-      },
-      "Đăng nhập"
-    ),
-    el(
-      "button",
-      {
-        class: loginMode === "register" ? "active" : "",
-        onclick: () => { loginMode = "register"; authError = ""; render(); },
-      },
-      "Đăng ký"
-    ),
-  ]);
-  card.appendChild(tabs);
-
-  const form = el("form", { class: "auth-form" });
-  const usernameInput = el("input", {
-    class: "reflect-input",
-    type: "text",
-    placeholder: "Tên đăng nhập (chữ/số, không dấu)",
-    autocomplete: "username",
-  });
-  form.appendChild(usernameInput);
-
-  let displayNameInput = null;
-  if (loginMode === "register") {
-    displayNameInput = el("input", { class: "reflect-input", type: "text", placeholder: "Tên hiển thị" });
-    form.appendChild(displayNameInput);
-  }
-
-  const passwordInput = el("input", {
-    class: "reflect-input",
-    type: "password",
-    placeholder: "Mật khẩu (tối thiểu 6 ký tự)",
-    autocomplete: loginMode === "login" ? "current-password" : "new-password",
-  });
-  form.appendChild(passwordInput);
+  card.appendChild(el("h2", {}, "Đăng nhập"));
+  card.appendChild(
+    el("p", { class: "login-sub" }, "Dùng tài khoản Lark của bạn để vào lớp học.")
+  );
 
   if (authError) {
-    form.appendChild(el("div", { class: "auth-error" }, authError));
+    card.appendChild(el("div", { class: "auth-error" }, authError));
   }
 
-  const submitBtn = el(
-    "button",
-    { class: "google-btn", type: "submit", disabled: authBusy ? "true" : null },
-    [
-      el("span", { class: "g-text" }, [
-        el(
-          "div",
-          { class: "g-name" },
-          authBusy ? "Đang xử lý..." : loginMode === "login" ? "Đăng nhập" : "Tạo tài khoản"
-        ),
-      ]),
-    ]
-  );
-  form.appendChild(submitBtn);
-
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    handleAuthSubmit(loginMode, usernameInput.value, displayNameInput ? displayNameInput.value : "", passwordInput.value);
-  });
-
-  card.appendChild(form);
-
   if (larkConfigured) {
-    card.appendChild(el("div", { class: "login-divider" }, "hoặc"));
     card.appendChild(
       el(
         "a",
@@ -336,11 +290,14 @@ function renderLogin() {
         [el("span", { class: "g-text" }, [el("div", { class: "g-name" }, "Đăng nhập bằng Lark")])]
       )
     );
+    card.appendChild(
+      el("p", { class: "login-hint" }, "Chúng tôi chỉ lấy họ tên và ảnh đại diện từ Lark để hiển thị trong lớp.")
+    );
+  } else {
+    card.appendChild(
+      el("p", { class: "auth-error" }, "Đăng nhập Lark chưa được cấu hình trên server. Vui lòng liên hệ giáo viên.")
+    );
   }
-
-  card.appendChild(
-    el("p", { class: "login-hint" }, "Tài khoản được lưu trên server (mật khẩu đã băm), không dùng đăng nhập Google thật.")
-  );
 
   view.appendChild(card);
   return view;
@@ -424,6 +381,30 @@ async function handleLogout() {
   showToast("Đã đăng xuất");
 }
 
+// ===================== PENDING (chờ duyệt) VIEW =====================
+function renderPending() {
+  const view = el("div", { class: "login-view" });
+  view.appendChild(renderBrandLogo("login-brand-logo"));
+  view.appendChild(el("h2", { class: "login-title" }, "Học Viện AI Life Group"));
+
+  const u = state.currentUser;
+  const card = el("div", { class: "login-card" });
+  card.appendChild(renderUserAvatar(u, "pending-avatar"));
+  card.appendChild(el("h3", { class: "pending-name" }, (u && u.display_name) || "Học viên"));
+  card.appendChild(
+    el("p", { class: "pending-msg" }, "Tài khoản của bạn đang chờ giáo viên duyệt. Vui lòng quay lại sau khi được duyệt nhé.")
+  );
+  card.appendChild(
+    el(
+      "button",
+      { class: "google-btn lark-btn", onclick: handleLogout },
+      [el("span", { class: "g-text" }, [el("div", { class: "g-name" }, "Đăng xuất")])]
+    )
+  );
+  view.appendChild(card);
+  return view;
+}
+
 // ===================== HOME VIEW =====================
 function renderHome() {
   const wrap = el("div", {});
@@ -435,13 +416,33 @@ function renderHome() {
     ])
   );
 
+  const u = state.currentUser;
+  if (u) {
+    wrap.appendChild(
+      el("div", { class: "user-greeting" }, [
+        renderUserAvatar(u, "user-greeting-avatar"),
+        el("div", { class: "user-greeting-text" }, [
+          el("div", { class: "user-greeting-hello" }, "Xin chào,"),
+          el("div", { class: "user-greeting-name" }, u.display_name || "học viên"),
+        ]),
+      ])
+    );
+  }
+
   wrap.appendChild(el("div", { class: "section-title" }, "Khoá học của bạn"));
 
   const card = el("div", { class: "course-card" });
   card.appendChild(
     el("div", { class: "title-row" }, [
       el("h3", {}, COURSE.name),
-      el("a", { class: "cta-link", href: "#" }, "Xem chi tiết →"),
+      el(
+        "button",
+        {
+          class: "cta-link cta-link-btn",
+          onclick: () => { state.showCourseContent = true; render(); },
+        },
+        "Nội dung khóa học"
+      ),
     ])
   );
   card.appendChild(el("p", { class: "desc" }, COURSE.tagline));
@@ -450,7 +451,26 @@ function renderHome() {
   );
   wrap.appendChild(card);
 
+  if (state.showCourseContent) {
+    wrap.appendChild(renderCourseContentSheet());
+  }
+
   return wrap;
+}
+
+function closeCourseContent() {
+  state.showCourseContent = false;
+  render();
+}
+
+function renderCourseContentSheet() {
+  const header = el("div", { class: "sheet-header" }, [
+    el("img", { class: "letter-avatar", src: "assets/logo.png", alt: "Life Group" }),
+    el("h4", {}, COURSE_CONTENT.title),
+  ]);
+  const body = el("div", { class: "sheet-body" });
+  COURSE_CONTENT.body.forEach((p) => body.appendChild(renderLetterBody(p)));
+  return renderSheet(header, body, closeCourseContent);
 }
 
 // ===================== COURSE / WEEK VIEW =====================

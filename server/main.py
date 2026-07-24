@@ -1,3 +1,4 @@
+import asyncio
 import json
 import mimetypes
 import os
@@ -16,6 +17,7 @@ from .database import get_db, init_db, DATA_DIR
 from . import auth
 from . import validators
 from . import lark_auth
+from . import lark_bot
 
 BASE_DIR = Path(__file__).parent.parent
 UPLOADS_DIR = DATA_DIR / "uploads"
@@ -28,6 +30,10 @@ with open(Path(__file__).parent / "reflect_manifest.json", encoding="utf-8") as 
     REFLECT_MANIFEST = json.load(f)
 
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
+# Nếu đặt, chỉ tổ chức Lark có tenant_key này mới được đăng nhập (để trống = cho mọi tổ chức của app).
+LARK_ALLOWED_TENANT_KEY = os.environ.get("LARK_ALLOWED_TENANT_KEY", "").strip()
+# Verification Token của Event Subscription trên Lark (để trống nếu chưa đặt).
+LARK_VERIFICATION_TOKEN = os.environ.get("LARK_VERIFICATION_TOKEN", "").strip()
 ANTHROPIC_MODEL = "claude-haiku-4-5-20251001"
 
 GRADER_SYSTEM_PROMPT = (
@@ -103,6 +109,13 @@ def current_user(request: Request):
     return user
 
 
+def require_approved_user(request: Request):
+    user = current_user(request)
+    if not user.get("approved"):
+        raise HTTPException(status_code=403, detail="Tài khoản đang chờ giáo viên duyệt.")
+    return user
+
+
 def current_admin(request: Request):
     token = request.cookies.get(ADMIN_SESSION_COOKIE)
     admin = auth.get_admin_by_session(token)
@@ -116,6 +129,8 @@ def current_admin(request: Request):
 
 @app.post("/api/register")
 def register(response: Response, username: str = Form(...), display_name: str = Form(...), password: str = Form(...)):
+    # Lớp học chỉ cho phép đăng nhập qua Lark — tắt đăng ký tài khoản mật khẩu.
+    raise HTTPException(status_code=403, detail="Vui lòng đăng nhập bằng Lark.")
     err = auth.validate_username(username)
     if err:
         raise HTTPException(status_code=400, detail=err)
@@ -202,17 +217,29 @@ async def lark_callback(request: Request, code: str = None, state: str = None, e
     except Exception:
         return RedirectResponse("/?lark_error=exchange_failed")
 
+    tenant_key = profile.get("tenant_key")
+    # Ghi log để giáo viên biết mã tổ chức (tenant_key) của mình mà điền vào LARK_ALLOWED_TENANT_KEY.
+    print(f"[Lark login] name={profile.get('name')!r} tenant_key={tenant_key!r}")
+
+    # Khóa tổ chức: nếu đã đặt LARK_ALLOWED_TENANT_KEY thì chỉ tổ chức đó mới được đăng nhập.
+    if LARK_ALLOWED_TENANT_KEY and tenant_key != LARK_ALLOWED_TENANT_KEY:
+        return RedirectResponse("/?lark_error=not_allowed_org")
+
     open_id = profile["open_id"]
     with get_db() as conn:
         row = conn.execute("SELECT id FROM users WHERE lark_open_id = ?", (open_id,)).fetchone()
         if row:
             user_id = row["id"]
-            conn.execute("UPDATE users SET display_name = ? WHERE id = ?", (profile["name"], user_id))
+            conn.execute(
+                "UPDATE users SET display_name = ?, avatar_url = ?, tenant_key = ? WHERE id = ?",
+                (profile["name"], profile.get("avatar_url"), tenant_key, user_id),
+            )
         else:
             username = f"lark_{open_id[-12:]}"
+            # Học viên mới: approved = 0 (chờ giáo viên duyệt trong trang admin).
             cur = conn.execute(
-                "INSERT INTO users (username, display_name, password_hash, lark_open_id) VALUES (?, ?, NULL, ?)",
-                (username, profile["name"], open_id),
+                "INSERT INTO users (username, display_name, password_hash, lark_open_id, avatar_url, tenant_key, approved) VALUES (?, ?, NULL, ?, ?, ?, 0)",
+                (username, profile["name"], open_id, profile.get("avatar_url"), tenant_key),
             )
             user_id = cur.lastrowid
 
@@ -221,6 +248,33 @@ async def lark_callback(request: Request, code: str = None, state: str = None, e
     resp.set_cookie(SESSION_COOKIE, token, httponly=True, samesite="lax", max_age=60 * 60 * 24 * 30)
     resp.delete_cookie(LARK_STATE_COOKIE)
     return resp
+
+
+# ===================== LARK BOT (trợ lý trong nhóm) =====================
+
+
+@app.post("/api/lark/events")
+async def lark_events(request: Request):
+    """Webhook nhận sự kiện từ Lark (xác thực URL + tin nhắn cho bot)."""
+    body = await request.json()
+
+    # Bước Lark kiểm tra URL khi khai báo Event Subscription.
+    if body.get("type") == "url_verification":
+        return {"challenge": body.get("challenge")}
+
+    header = body.get("header") or {}
+    # Kiểm tra Verification Token (nếu đã đặt) để chắc chắn sự kiện đến từ Lark.
+    token = header.get("token") or body.get("token")
+    if LARK_VERIFICATION_TOKEN and token != LARK_VERIFICATION_TOKEN:
+        return JSONResponse({"code": -1, "msg": "invalid token"}, status_code=200)
+
+    event_id = header.get("event_id")
+    event_type = header.get("event_type") or body.get("event", {}).get("type")
+    if event_type == "im.message.receive_v1" and not lark_bot.seen_event(event_id):
+        # Trả 200 ngay, xử lý (gọi AI) chạy nền để Lark không báo timeout.
+        asyncio.create_task(lark_bot.handle_message_event(body.get("event") or {}))
+
+    return {"code": 0}
 
 
 # ===================== SUBMISSIONS =====================
@@ -235,7 +289,7 @@ async def submit_criterion(
     value: str = Form(None),
     file: UploadFile = File(None),
 ):
-    user = current_user(request)
+    user = require_approved_user(request)
 
     if question_code not in ASSIGNMENT_MANIFEST:
         raise HTTPException(status_code=400, detail="Câu hỏi không hợp lệ.")
@@ -306,7 +360,7 @@ def grade_reflect(
     question_code: str = Form(...),
     answer: str = Form(...),
 ):
-    user = current_user(request)
+    user = require_approved_user(request)
 
     manifest = REFLECT_MANIFEST.get(question_code)
     if not manifest:
@@ -346,7 +400,7 @@ def submit_question(
     awarded_points: int = Form(0),
     answer_data: str = Form(None),
 ):
-    user = current_user(request)
+    user = require_approved_user(request)
 
     if question_code in ASSIGNMENT_MANIFEST and status == "done":
         if not _assignment_all_valid(user["id"], question_code):
@@ -385,7 +439,7 @@ def submit_question(
 
 @app.get("/api/progress")
 def progress(request: Request):
-    user = current_user(request)
+    user = require_approved_user(request)
     with get_db() as conn:
         statuses = conn.execute(
             "SELECT question_code, status, awarded_points, answer_data FROM question_status WHERE user_id = ?",
@@ -459,7 +513,7 @@ def admin_students(request: Request):
     with get_db() as conn:
         rows = conn.execute(
             """
-            SELECT u.id, u.username, u.display_name, u.created_at,
+            SELECT u.id, u.username, u.display_name, u.avatar_url, u.approved, u.tenant_key, u.created_at,
                    COUNT(CASE WHEN qs.status = 'done' THEN 1 END) AS done_count,
                    COALESCE(SUM(qs.awarded_points), 0) AS total_points,
                    MAX(qs.updated_at) AS last_activity,
@@ -471,6 +525,17 @@ def admin_students(request: Request):
             """
         ).fetchall()
     return [dict(r) for r in rows]
+
+
+@app.post("/api/admin/students/{user_id}/approve")
+def admin_approve_student(request: Request, user_id: int, approved: int = Form(1)):
+    current_admin(request)
+    with get_db() as conn:
+        row = conn.execute("SELECT id FROM users WHERE id = ?", (user_id,)).fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Không tìm thấy học viên.")
+        conn.execute("UPDATE users SET approved = ? WHERE id = ?", (1 if approved else 0, user_id))
+    return {"ok": True, "approved": 1 if approved else 0}
 
 
 @app.get("/api/admin/activity-timeline")
@@ -495,7 +560,7 @@ def admin_student_detail(request: Request, user_id: int):
     current_admin(request)
     with get_db() as conn:
         user_row = conn.execute(
-            "SELECT id, username, display_name, created_at FROM users WHERE id = ?", (user_id,)
+            "SELECT id, username, display_name, avatar_url, approved, tenant_key, created_at FROM users WHERE id = ?", (user_id,)
         ).fetchone()
         if not user_row:
             raise HTTPException(status_code=404, detail="Không tìm thấy học viên.")

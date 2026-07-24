@@ -64,6 +64,7 @@ async def exchange_code_for_user(code: str) -> dict:
         "name": d.get("name") or d.get("en_name") or "Lark User",
         "avatar_url": d.get("avatar_url"),
         "email": d.get("email"),
+        "tenant_key": d.get("tenant_key"),
     }
 
 

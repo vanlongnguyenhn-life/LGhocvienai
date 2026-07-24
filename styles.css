@@ -85,34 +85,29 @@ a { color: inherit; }
   overflow: hidden;
 }
 
-.login-view h1 {
-  font-family: var(--serif-font);
-  font-weight: 400;
-  font-size: 42px;
+.login-title {
+  font-size: 22px;
+  font-weight: 700;
   text-align: center;
-  margin: 40px 0 0;
-  color: var(--text-dark);
-}
-
-.login-view h1 em {
-  display: block;
-  font-style: italic;
-  font-size: 46px;
-  background: linear-gradient(90deg, var(--gold) 0%, var(--gold) 60%, var(--gold-light) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  margin-top: 4px;
+  margin: 14px 0 0;
+  color: var(--gold);
+  letter-spacing: 0.2px;
 }
 
 .login-tagline {
-  text-align: center;
-  font-size: 16px;
-  margin: 22px 0 36px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  margin: 16px 0 34px;
+  padding: 7px 16px;
   color: var(--text-grey);
+  background: var(--green-bg);
+  border-radius: 999px;
 }
 
-.login-tagline em { color: var(--gold); font-style: italic; }
+.login-tagline em { color: var(--gold); font-style: italic; font-weight: 600; }
+.login-tagline-dot { color: var(--gold-light); font-weight: 700; }
 
 .login-card {
   width: 100%;
@@ -279,8 +274,82 @@ a { color: inherit; }
 .brand-logo { display: flex; align-items: center; }
 .brand-logo-img { height: 22px; width: auto; display: block; }
 .topbar-brand-logo { flex: 1; }
-.login-brand-logo { justify-content: center; margin: 4px 0 8px; }
-.login-brand-logo .brand-logo-img { height: 42px; }
+.login-brand-logo { justify-content: center; margin: 8px 0 10px; }
+.login-brand-logo .brand-logo-img { height: 54px; max-width: 88%; width: auto; }
+
+/* ---- user avatar (Lark) ---- */
+.user-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--green-bg);
+  border: 1.5px solid var(--border);
+  display: block;
+}
+.user-avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  font-weight: 700;
+  font-size: 18px;
+}
+.login-sub { color: var(--text-grey); font-size: 14px; margin: 2px 0 16px; text-align: center; }
+
+.pending-avatar { width: 72px; height: 72px; font-size: 30px; margin: 4px auto 12px; }
+.pending-name { text-align: center; margin: 0 0 6px; font-size: 18px; color: var(--text-dark); }
+.pending-msg { text-align: center; color: var(--text-grey); font-size: 14px; line-height: 1.5; margin: 0 0 18px; }
+
+.user-greeting {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin: 0 16px 6px;
+}
+.user-greeting-avatar { width: 48px; height: 48px; }
+.user-greeting-hello { font-size: 13px; color: var(--text-grey); }
+.user-greeting-name { font-size: 17px; font-weight: 700; color: var(--text-dark); }
+
+.admin-student-cell { display: flex; align-items: center; gap: 10px; }
+.admin-student-cell .user-avatar { width: 36px; height: 36px; font-size: 15px; }
+.admin-detail-head { margin-bottom: 8px; }
+.admin-detail-head .user-avatar { width: 52px; height: 52px; font-size: 22px; }
+.admin-detail-head h2 { margin: 0; }
+.admin-detail-head p { margin: 2px 0 0; }
+
+.admin-pending-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: #fff4e5;
+  color: #b8630a;
+  font-size: 11px;
+  font-weight: 700;
+  vertical-align: middle;
+}
+.admin-approve-btn {
+  background: var(--gold);
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  margin-right: 8px;
+}
+.admin-approve-btn.unapprove { background: #fff; color: var(--text-grey); border: 1px solid var(--border); font-weight: 500; }
+.admin-approve-btn:hover { opacity: 0.9; }
+.admin-detail-head .admin-approve-btn { margin-top: 8px; }
+.admin-tenant-key { margin: 4px 0 0; font-size: 12px; color: var(--text-faint); word-break: break-all; }
 
 /* ===================== HOME (course list) ===================== */
 .home-header {
@@ -313,6 +382,8 @@ a { color: inherit; }
 .course-card .title-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
 .course-card h3 { margin: 0; font-size: 17px; }
 .course-card .cta-link { color: var(--brand-red); font-size: 13px; white-space: nowrap; text-decoration: none; }
+.course-card .cta-link-btn { background: none; border: none; padding: 0; cursor: pointer; font-weight: 600; font-family: inherit; }
+.course-card .cta-link-btn:hover { text-decoration: underline; }
 .course-card p.desc { color: var(--text-grey); font-size: 14px; margin: 6px 0 12px; }
 .course-card .price { font-weight: 700; font-size: 16px; }
 .course-card .price-target { color: var(--text-faint); font-size: 12px; margin-left: 6px; }
@@ -928,6 +999,5 @@ input.reflect-input { min-height: unset; }
 
 @media (max-width: 480px) {
   .opt-grid { grid-template-columns: 1fr 1fr; }
-  .login-view h1 { font-size: 34px; }
-  .login-view h1 em { font-size: 38px; }
+  .login-title { font-size: 20px; }
 }

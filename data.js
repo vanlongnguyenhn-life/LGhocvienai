@@ -4,8 +4,8 @@
 
 const COURSE = {
   id: 1,
-  name: "AI SEE — Biến AI thành nhân sự thật",
-  shortName: "AI SEE",
+  name: "ALG - Biến AI thành nhân sự thật",
+  shortName: "ALG",
   tagline: "Học từ nguyên lý. Hiểu từ gốc rễ.",
   stats: { students: 80, total: 366, tasks: 23, missions: 259, weeks: 6 },
 };
@@ -40,6 +40,15 @@ const LEGO_BLOCKS = [
   "🗺️ Xác định vị trí (định vị)",
   "🖼️ Trích xuất hình ảnh trong video",
 ];
+
+const COURSE_CONTENT = {
+  key: "course-content",
+  title: "ALG - Biến AI thành nhân sự THẬT",
+  body: [
+    "ALG - Biến AI thành nhân sự THẬT là Khoá học với AI. Khoá học không có nội dung, không có lịch trình, không có mục lục. Thứ duy nhất chúng ta có là Mục tiêu.",
+    "Tại sao thế? AI là ngành học thay đổi nhanh nhất thế giới. Ngày hôm nay chúng ta học giáo trình là A, ngày mai nó đã thành B. Thậm chí khi bạn đang học tài liệu này mọi thứ đã thay đổi trước đó. Vì thế, sẽ phải thay đổi giáo trình (rất nhanh) liên tục. Tuy nhiên, vì dạy mindset tư duy, nên việc này sẽ không ảnh hưởng quá nhiều đến các bạn.",
+  ],
+};
 
 const OPENING_LETTER = {
   key: "opening",
