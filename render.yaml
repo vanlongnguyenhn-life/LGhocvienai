@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: agentsee-course
+    name: ailg
     runtime: python
     plan: starter
     buildCommand: pip install -r requirements.txt
