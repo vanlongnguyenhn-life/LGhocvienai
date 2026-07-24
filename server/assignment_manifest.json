@@ -1,0 +1,402 @@
+{
+  "1.11": {
+    "criteria": [
+      {
+        "key": "image",
+        "optional": false,
+        "minLength": null
+      },
+      {
+        "key": "url",
+        "optional": false,
+        "minLength": null
+      },
+      {
+        "key": "agent_log",
+        "optional": false,
+        "minLength": 40
+      }
+    ],
+    "points": 30
+  },
+  "1.12": {
+    "criteria": [
+      {
+        "key": "image",
+        "optional": false,
+        "minLength": null
+      },
+      {
+        "key": "agent_log",
+        "optional": false,
+        "minLength": 30
+      }
+    ],
+    "points": 28
+  },
+  "1.13": {
+    "criteria": [
+      {
+        "key": "image",
+        "optional": false,
+        "minLength": null
+      },
+      {
+        "key": "agent_log",
+        "optional": false,
+        "minLength": 40
+      }
+    ],
+    "points": 30
+  },
+  "6.5": {
+    "criteria": [
+      {
+        "key": "image",
+        "optional": false,
+        "minLength": null
+      },
+      {
+        "key": "text",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 24
+  },
+  "6.6": {
+    "criteria": [
+      {
+        "key": "image",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 26
+  },
+  "6.8": {
+    "criteria": [
+      {
+        "key": "image",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 26
+  },
+  "6.10": {
+    "criteria": [
+      {
+        "key": "text",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 20
+  },
+  "7.4": {
+    "criteria": [
+      {
+        "key": "image",
+        "optional": false,
+        "minLength": null
+      },
+      {
+        "key": "text",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 20
+  },
+  "7.5": {
+    "criteria": [
+      {
+        "key": "image",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 16
+  },
+  "7.6": {
+    "criteria": [
+      {
+        "key": "image",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 16
+  },
+  "7.9": {
+    "criteria": [
+      {
+        "key": "text",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 20
+  },
+  "7.10": {
+    "criteria": [
+      {
+        "key": "image",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 16
+  },
+  "9.1": {
+    "criteria": [
+      {
+        "key": "text",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 10
+  },
+  "9.9": {
+    "criteria": [
+      {
+        "key": "image",
+        "optional": false,
+        "minLength": null
+      },
+      {
+        "key": "url",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 14
+  },
+  "9.10": {
+    "criteria": [
+      {
+        "key": "image",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 14
+  },
+  "9.11": {
+    "criteria": [
+      {
+        "key": "text",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 8
+  },
+  "9.12": {
+    "criteria": [
+      {
+        "key": "text",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 6
+  },
+  "9.16": {
+    "criteria": [
+      {
+        "key": "image",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 10
+  },
+  "9.17": {
+    "criteria": [
+      {
+        "key": "text",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 8
+  },
+  "9.19": {
+    "criteria": [
+      {
+        "key": "image",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 8
+  },
+  "9.20": {
+    "criteria": [
+      {
+        "key": "image",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 8
+  },
+  "9.21": {
+    "criteria": [
+      {
+        "key": "text",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 6
+  },
+  "9.22": {
+    "criteria": [
+      {
+        "key": "text",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 6
+  },
+  "10.16": {
+    "criteria": [
+      {
+        "key": "url",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 20
+  },
+  "10.26": {
+    "criteria": [
+      {
+        "key": "url",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 22
+  },
+  "11.9": {
+    "criteria": [
+      {
+        "key": "text",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 12
+  },
+  "11.11": {
+    "criteria": [
+      {
+        "key": "text",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 10
+  },
+  "11.15": {
+    "criteria": [
+      {
+        "key": "text",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 10
+  },
+  "11.17": {
+    "criteria": [
+      {
+        "key": "text",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 10
+  },
+  "11.18": {
+    "criteria": [
+      {
+        "key": "text",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 8
+  },
+  "11.26": {
+    "criteria": [
+      {
+        "key": "image",
+        "optional": false,
+        "minLength": null
+      },
+      {
+        "key": "text",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 20
+  },
+  "12.3": {
+    "criteria": [
+      {
+        "key": "text",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 8
+  },
+  "12.17": {
+    "criteria": [
+      {
+        "key": "text",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 24
+  },
+  "13.1": {
+    "criteria": [
+      {
+        "key": "image",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 20
+  },
+  "13.2": {
+    "criteria": [
+      {
+        "key": "image",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 20
+  },
+  "13.4": {
+    "criteria": [
+      {
+        "key": "text",
+        "optional": false,
+        "minLength": null
+      }
+    ],
+    "points": 25
+  }
+}

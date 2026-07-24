@@ -1,0 +1,8 @@
+server/.env
+server/agentsee.db
+server/uploads/
+server/__pycache__/
+__pycache__/
+*.pyc
+.DS_Store
+node_modules/
