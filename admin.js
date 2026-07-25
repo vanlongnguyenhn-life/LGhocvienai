@@ -96,6 +96,7 @@ let TOTAL_POINTS = 0;
       criteria: q.criteria || null,
       lessonCode: lesson.code,
       lessonTitle: lesson.title,
+      position: TOTAL_QUESTIONS + 1, // số thứ tự câu trong toàn khóa (1-based)
     };
     ALL_QUESTIONS_ORDERED.push(q.code);
     TOTAL_QUESTIONS += 1;
@@ -296,7 +297,11 @@ function exportCSV(rows) {
   const lines = [headers.join(",")];
   rows.forEach((s) => {
     const currentQ = s.currentCode ? QUESTION_INDEX[s.currentCode] : null;
-    const cur = s.status === "completed" ? "Đã hoàn thành" : currentQ ? currentQ.title : "";
+    const cur = s.status === "completed"
+      ? "Đã hoàn thành"
+      : currentQ
+      ? `Câu ${currentQ.position}/${TOTAL_QUESTIONS} - ${currentQ.title}`
+      : "";
     lines.push(
       [
         s.username, s.display_name, s.created_at, STATUS_LABEL[s.status], cur,
@@ -570,7 +575,16 @@ function renderDashboard() {
       ]),
       el("td", {}, [fmtDate(s.created_at)]),
       el("td", {}, [el("span", { class: "admin-status-badge " + s.status }, [STATUS_LABEL[s.status]])]),
-      el("td", {}, [s.status === "completed" ? "🎉" : currentQ ? currentQ.title : "—"]),
+      el("td", {}, [
+        s.status === "completed"
+          ? el("span", { class: "admin-current-q-done" }, ["🎉 Đã hoàn thành"])
+          : currentQ
+          ? el("div", { class: "admin-current-q" }, [
+              el("div", { class: "admin-current-q-pos" }, [`Câu ${currentQ.position}/${TOTAL_QUESTIONS}`]),
+              el("div", { class: "admin-current-q-title" }, [currentQ.title]),
+            ])
+          : "—",
+      ]),
       el("td", {}, [
         el("div", { class: "admin-progress-bar" }, [el("div", { class: "admin-progress-fill", style: `width:${pct}%` })]),
         el("div", { class: "admin-progress-text" }, [`${s.done_count}/${TOTAL_QUESTIONS} câu (${pct}%)`]),
