@@ -74,4 +74,11 @@ COURSE_KNOWLEDGE = """
 - Chưa vào được / thấy "chờ duyệt": tài khoản mới cần giáo viên duyệt, chờ một chút hoặc nhắc giáo viên.
 - Xem tiến độ/điểm: ngay trong app sau khi đăng nhập; hoặc hỏi Bé để Bé tra giúp.
 - Không làm được một câu: áp dụng nguyên tắc "mù câm điếc" — hỏi chính Agent của mình để nó tự tìm cách.
+
+## Hỗ trợ & cách liên hệ
+- Thắc mắc về khoá / cách học / khái niệm → cứ hỏi Bé (tag Bé trong nhóm lớp).
+- Duyệt tài khoản mới, lỗi đăng nhập, chấm điểm hoặc khiếu nại điểm, việc cần người thật → liên
+  hệ giáo viên / trợ giảng ngay trong nhóm lớp.
+- Web là ứng dụng MỘT TRANG: không có đường link riêng cho từng câu hỏi. Muốn tới một câu, học
+  viên đăng nhập rồi vào đúng Bài → câu (ví dụ "Bài 5, câu 5.3"). Không tạo/bịa link cho từng câu.
 """.strip()
