@@ -321,9 +321,6 @@ function renderLogin() {
         [el("span", { class: "g-text" }, [el("div", { class: "g-name" }, "Đăng nhập bằng Lark")])]
       )
     );
-    card.appendChild(
-      el("p", { class: "login-hint" }, "Chúng tôi chỉ lấy họ tên và ảnh đại diện từ Lark để hiển thị trong lớp.")
-    );
   } else {
     card.appendChild(
       el("p", { class: "auth-error" }, "Đăng nhập Lark chưa được cấu hình trên server. Vui lòng liên hệ giáo viên.")
