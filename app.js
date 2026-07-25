@@ -1338,7 +1338,7 @@ async function submitAnswer(lesson, q) {
     const correct = q.anyValid || sameSet(a.selected, q.correct);
     a.status = correct ? "correct" : "wrong";
     a.awardedPoints = correct ? q.points : 0;
-    showToast(correct ? `Chính xác! +${q.points} điểm` : "Chưa đúng, em xem lại nhé");
+    showToast(correct ? `Chính xác! +${q.points} điểm` : "Chưa đúng, Bạn xem lại nhé");
     persistQuestionStatus(q, a);
   } else if (q.type === "match") {
     if (a.matchSelected.length < q.leftItems.length || a.matchSelected.some((v) => v == null || v < 0)) {
@@ -1348,7 +1348,7 @@ async function submitAnswer(lesson, q) {
     const correct = q.leftItems.every((_, i) => a.matchSelected[i] === q.correctMap[i]);
     a.status = correct ? "correct" : "wrong";
     a.awardedPoints = correct ? q.points : 0;
-    showToast(correct ? `Chính xác! +${q.points} điểm` : "Chưa đúng, em xem lại nhé");
+    showToast(correct ? `Chính xác! +${q.points} điểm` : "Chưa đúng, Bạn xem lại nhé");
     persistQuestionStatus(q, a);
   } else if (q.type === "assignment") {
     const missing = q.criteria.filter((c) => !c.optional && !criterionFulfilled(c, a));
@@ -1383,7 +1383,7 @@ async function submitAnswer(lesson, q) {
     const correct = !!a.orderState && a.orderState.every((v, i) => v === i);
     a.status = correct ? "correct" : "wrong";
     a.awardedPoints = correct ? q.points : 0;
-    showToast(correct ? `Chính xác! +${q.points} điểm` : "Chưa đúng thứ tự, em xem lại nhé");
+    showToast(correct ? `Chính xác! +${q.points} điểm` : "Chưa đúng thứ tự, Bạn xem lại nhé");
     persistQuestionStatus(q, a);
   } else if (q.type === "order-tag") {
     const orderOk = !!a.orderState && a.orderState.every((v, i) => v === i);
@@ -1391,13 +1391,13 @@ async function submitAnswer(lesson, q) {
     const correct = orderOk && tagOk;
     a.status = correct ? "correct" : "wrong";
     a.awardedPoints = correct ? q.points : 0;
-    showToast(correct ? `Chính xác! +${q.points} điểm` : "Chưa đúng thứ tự hoặc nhãn, em xem lại nhé");
+    showToast(correct ? `Chính xác! +${q.points} điểm` : "Chưa đúng thứ tự hoặc nhãn, Bạn xem lại nhé");
     persistQuestionStatus(q, a);
   } else if (q.type === "tag-mark") {
     const correct = !!a.tagState && q.items.every((item, i) => a.tagState[i] === item.icon);
     a.status = correct ? "correct" : "wrong";
     a.awardedPoints = correct ? q.points : 0;
-    showToast(correct ? `Chính xác! +${q.points} điểm` : "Chưa đúng, em xem lại nhé");
+    showToast(correct ? `Chính xác! +${q.points} điểm` : "Chưa đúng, Bạn xem lại nhé");
     persistQuestionStatus(q, a);
   } else if (q.type === "reflect") {
     const minLength = q.minLength || 20;
@@ -1419,7 +1419,7 @@ async function submitAnswer(lesson, q) {
     }
     a.status = result.valid ? "done" : "wrong";
     a.awardedPoints = result.valid ? q.points : 0;
-    showToast(result.valid ? `Đã chấm đạt! +${q.points} điểm` : result.reason || "Câu trả lời chưa đạt, em xem lại nhé");
+    showToast(result.valid ? `Đã chấm đạt! +${q.points} điểm` : result.reason || "Câu trả lời chưa đạt, Bạn xem lại nhé");
     persistQuestionStatus(q, a);
   } else if (q.type === "gate") {
     // Câu chặn có chủ đích — trang gốc chưa công bố nội dung thật, không thể vượt qua

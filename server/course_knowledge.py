@@ -53,21 +53,34 @@ COURSE_KNOWLEDGE = """
   curated content tự động...
 (Bản đồ có thể được cập nhật/mở thêm theo thời gian.)
 
-## Tinh thần 3 lá thư quan trọng (dùng để giải thích tư duy, KHÔNG phải đáp án)
-- Lá thư 1 — Nguyên tắc "mù câm điếc": Coi Coding Agent như một NHÂN SỰ biết suy nghĩ,
-  biết dùng công cụ và LUÔN TÌM CÁCH — không phải cái máy làm một việc. Hãy ép Agent tự
-  tìm cách hoàn thành mục tiêu: "Bạn tự tìm cách làm tiếp đi, tôi không rành công nghệ,
-  bạn phải tự làm ra kết quả". Agent báo lỗi → bảo nó tự sửa; không sửa được → tìm cách
-  khác; hết cách → đổi hướng tiếp cận. Đừng hỏi giáo viên những lỗi mà Agent của mình
-  thừa sức tự fix.
-- Lá thư 2 — Tin tưởng nhưng kiểm chứng: Sau khi quen việc, nâng cấp cách làm — tin Agent
-  đủ thông minh để tự tìm cách, NHƯNG luôn theo sát và XÁC MINH lại: đọc kỹ suy luận/hành
-  động của Agent, thảo luận chốt phương án trước khi cho nó làm diện rộng, yêu cầu nó diễn
-  giải lại ở các bước quan trọng. Nếu không tự giải thích được logic Agent đưa ra → đó là
-  dấu hiệu vượt ngưỡng uỷ quyền an toàn, hãy dừng lại.
-- Lá thư 3 — Đập đi làm lại: Chính hệ thống lớp học cũng nhiều lần viết lại từ đầu. Thiết
-  kế kiến trúc đúng ngay từ đầu quan trọng hơn nhiều so với sửa chữa liên tục. Làm thật,
-  kiểm chứng thật, đừng ngại đập đi làm lại nếu hướng ban đầu chưa vững.
+## Lộ trình TƯ DUY qua 3 lá thư (RẤT QUAN TRỌNG — đừng nhầm lẫn)
+Khoá dạy một LỘ TRÌNH tư duy THAY ĐỔI theo từng giai đoạn học. ĐỪNG quy mọi thứ về
+"mù câm điếc" — đó CHỈ là nguyên tắc của GIAI ĐOẠN ĐẦU (lá thư 1), sau đó ĐƯỢC NÂNG CẤP,
+thậm chí thay bằng cách làm chín chắn hơn.
+
+- Lá thư 1 — "Mù câm điếc" (CHỈ dành cho GIAI ĐOẠN LÀM QUEN, những bài đầu tiên): Khi mới
+  bắt đầu và hay "đụng tường", hãy coi Coding Agent như một nhân sự biết suy nghĩ và LUÔN
+  TÌM CÁCH; ép nó tự xoay ("bạn tự tìm cách làm đi, tôi không rành công nghệ"). Agent báo
+  lỗi → bảo nó tự sửa → tìm cách khác → đổi hướng. Mục đích: tập thói quen để Agent tự làm,
+  bớt phụ thuộc. "Ban đầu chưa quen, từ từ sẽ quen." → Đây KHÔNG phải chân lý của cả khoá.
+
+- Lá thư 2 — "Tin tưởng nhưng kiểm chứng" (SAU KHI đã quen việc — NÂNG CẤP, thay cho cách
+  nhắm mắt ở lá thư 1): Không còn nhắm mắt để Agent tự làm nữa. Tin Agent đủ thông minh để
+  tự tìm cách, NHƯNG luôn theo sát và XÁC MINH: (1) đọc kỹ suy luận/hành động của Agent,
+  sẵn sàng dừng nếu bất thường; (2) thảo luận chốt phương án trước khi cho Agent làm diện
+  rộng; (3) yêu cầu Agent diễn giải lại ở bước quan trọng. Nếu không tự giải thích được
+  logic Agent đưa ra → đã vượt ngưỡng uỷ quyền an toàn, hãy dừng.
+
+- Lá thư 3 — "Đập đi làm lại / thiết kế đúng từ đầu": Ngay cả hệ thống lớp học cũng nhiều
+  lần viết lại từ đầu. Một Agent làm sai thiết kế từ đầu vẫn có thể trả kết quả *trông như*
+  đúng → dễ bị đánh lừa nếu không kiểm chứng. Thiết kế kiến trúc đúng ngay từ đầu quan trọng
+  hơn sửa chữa liên tục. Làm thật, kiểm chứng thật, đừng ngại đập đi làm lại nếu hướng ban
+  đầu chưa vững.
+
+CÁCH DÙNG khi trả lời: chọn tinh thần ĐÚNG với vị trí của học viên. Người mới / đang ở bài
+đầu → tinh thần lá thư 1. Người đã quen việc → nhấn "tin tưởng nhưng kiểm chứng" (lá thư 2),
+không nên khuyên họ nhắm mắt "mù câm điếc" nữa. TUYỆT ĐỐI không mặc định khuyên "mù câm điếc"
+cho mọi người trong mọi tình huống.
 
 ## Câu hỏi thường gặp
 - Đăng nhập: vào https://ailg.onrender.com, bấm "Đăng nhập bằng Lark".

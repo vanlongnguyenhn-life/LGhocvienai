@@ -236,9 +236,10 @@ async def lark_callback(request: Request, code: str = None, state: str = None, e
             )
         else:
             username = f"lark_{open_id[-12:]}"
-            # Học viên mới: approved = 0 (chờ giáo viên duyệt trong trang admin).
+            # Tạm ẩn duyệt: đăng nhập bằng Lark của tổ chức là đủ -> tự động duyệt (approved = 1).
+            # Muốn bật lại cơ chế duyệt: đổi approved về 0.
             cur = conn.execute(
-                "INSERT INTO users (username, display_name, password_hash, lark_open_id, avatar_url, tenant_key, approved) VALUES (?, ?, NULL, ?, ?, ?, 0)",
+                "INSERT INTO users (username, display_name, password_hash, lark_open_id, avatar_url, tenant_key, approved) VALUES (?, ?, NULL, ?, ?, ?, 1)",
                 (username, profile["name"], open_id, profile.get("avatar_url"), tenant_key),
             )
             user_id = cur.lastrowid
