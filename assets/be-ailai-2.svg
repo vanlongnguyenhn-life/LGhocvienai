@@ -1,0 +1,24 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><title>Avatar mascot Bé Ailai</title>
+<rect x="0" y="0" width="512" height="512" fill="#e6f6ec"/>
+<circle cx="256" cy="262" r="188" fill="#d3efdd"/>
+<ellipse cx="256" cy="456" rx="128" ry="20" fill="#c1e7cf"/>
+<path d="M256 78 C286 112 300 140 300 166 C300 196 280 214 256 214 C232 214 212 196 212 166 C212 140 226 112 256 78 Z" fill="#e8342a"/>
+<path d="M256 112 C276 138 286 158 286 176 C286 198 272 210 256 210 C240 210 226 198 226 176 C226 158 236 138 256 112 Z" fill="#ff8163"/>
+<ellipse cx="150" cy="330" rx="30" ry="42" fill="#249a56" transform="rotate(-24 150 330)"/>
+<ellipse cx="362" cy="330" rx="30" ry="42" fill="#249a56" transform="rotate(24 362 330)"/>
+<circle cx="256" cy="320" r="150" fill="#2ba25e"/>
+<ellipse cx="256" cy="352" rx="104" ry="112" fill="#37b06b"/>
+<circle cx="210" cy="300" r="34" fill="#ffffff"/>
+<circle cx="302" cy="300" r="34" fill="#ffffff"/>
+<circle cx="216" cy="306" r="16" fill="#10331f"/>
+<circle cx="308" cy="306" r="16" fill="#10331f"/>
+<circle cx="210" cy="299" r="6" fill="#ffffff"/>
+<circle cx="302" cy="299" r="6" fill="#ffffff"/>
+<ellipse cx="178" cy="348" rx="20" ry="13" fill="#ff9d8a"/>
+<ellipse cx="334" cy="348" rx="20" ry="13" fill="#ff9d8a"/>
+<path d="M226 350 Q256 388 286 350 Q272 372 256 372 Q240 372 226 350 Z" fill="#10331f"/>
+<circle cx="140" cy="180" r="10" fill="#ffd54a"/>
+<circle cx="384" cy="200" r="8" fill="#ffd54a"/>
+<circle cx="150" cy="430" r="7" fill="#ffffff" opacity="0.8"/>
+<circle cx="372" cy="418" r="9" fill="#ffffff" opacity="0.8"/>
+</svg>

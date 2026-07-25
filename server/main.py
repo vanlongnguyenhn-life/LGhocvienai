@@ -515,10 +515,10 @@ def admin_students(request: Request):
         rows = conn.execute(
             """
             SELECT u.id, u.username, u.display_name, u.avatar_url, u.approved, u.tenant_key, u.created_at,
-                   COUNT(CASE WHEN qs.status = 'done' THEN 1 END) AS done_count,
+                   COUNT(CASE WHEN qs.status IN ('done', 'correct') THEN 1 END) AS done_count,
                    COALESCE(SUM(qs.awarded_points), 0) AS total_points,
                    MAX(qs.updated_at) AS last_activity,
-                   GROUP_CONCAT(CASE WHEN qs.status = 'done' THEN qs.question_code END) AS done_codes
+                   GROUP_CONCAT(CASE WHEN qs.status IN ('done', 'correct') THEN qs.question_code END) AS done_codes
             FROM users u
             LEFT JOIN question_status qs ON qs.user_id = u.id
             GROUP BY u.id
@@ -568,7 +568,7 @@ def admin_activity_timeline(request: Request):
             """
             SELECT date(updated_at) AS day, COUNT(*) AS count
             FROM question_status
-            WHERE status = 'done'
+            WHERE status IN ('done', 'correct')
             GROUP BY day
             ORDER BY day DESC
             LIMIT 30

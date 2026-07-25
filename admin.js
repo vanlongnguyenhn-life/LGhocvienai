@@ -653,8 +653,10 @@ function renderStudentDetail() {
     ])
   );
 
+  const isQuestionDone = (st) => st && (st.status === "done" || st.status === "correct");
+
   (LESSONS || []).forEach((lesson) => {
-    const doneInLesson = lesson.questions.filter((q) => statusByCode[q.code] && statusByCode[q.code].status === "done").length;
+    const doneInLesson = lesson.questions.filter((q) => isQuestionDone(statusByCode[q.code])).length;
     const lessonCard = el("div", { class: "admin-lesson-card" });
     lessonCard.appendChild(
       el("div", { class: "admin-lesson-title" }, [`${lesson.title} — ${doneInLesson}/${lesson.questions.length} câu`])
@@ -663,7 +665,7 @@ function renderStudentDetail() {
     const list = el("ul", { class: "admin-question-list" });
     lesson.questions.forEach((q) => {
       const st = statusByCode[q.code];
-      const done = st && st.status === "done";
+      const done = isQuestionDone(st);
       const qItem = el("li", { class: "admin-question-item" }, [
         el("span", { class: done ? "admin-q-icon done" : "admin-q-icon" }, [done ? "✔" : "○"]),
         el("span", { class: "admin-q-title" }, [q.title]),
