@@ -40,6 +40,15 @@ const ADMIN_API = {
     fd.append("approved", approved ? "1" : "0");
     return this._send(`/api/admin/students/${id}/approve`, { method: "POST", body: fd });
   },
+  larkChats() {
+    return this._send("/api/admin/lark/chats");
+  },
+  larkBroadcast(chatId, text) {
+    const fd = new FormData();
+    fd.append("chat_id", chatId);
+    fd.append("text", text);
+    return this._send("/api/admin/lark/broadcast", { method: "POST", body: fd });
+  },
 };
 
 function el(tag, attrs, children) {
@@ -128,6 +137,11 @@ const state = {
   sortKey: "points",
   sortDir: "desc",
   timeline: [],
+  larkChats: [],
+  larkChatId: "",
+  larkText: "",
+  larkSending: false,
+  larkMsg: "",
 };
 
 function fmtDate(s) {
@@ -148,6 +162,7 @@ async function boot() {
     state.admin = await ADMIN_API.me();
     await loadStudents();
     await loadTimeline();
+    await loadLarkChats();
   } catch (e) {
     state.admin = null;
   }
@@ -161,6 +176,32 @@ async function loadStudents() {
 
 async function loadTimeline() {
   state.timeline = await ADMIN_API.activityTimeline();
+}
+
+async function loadLarkChats() {
+  try {
+    state.larkChats = await ADMIN_API.larkChats();
+    if (!state.larkChatId && state.larkChats.length) {
+      state.larkChatId = state.larkChats[0].chat_id;
+    }
+  } catch (e) {
+    state.larkChats = [];
+  }
+}
+
+async function handleBroadcast() {
+  const text = (state.larkText || "").trim();
+  if (!state.larkChatId) { state.larkMsg = "Chưa có nhóm — hãy @Bé Ailai một câu trong nhóm rồi bấm Làm mới."; render(); return; }
+  if (!text) { state.larkMsg = "Nội dung đang trống."; render(); return; }
+  state.larkSending = true; state.larkMsg = ""; render();
+  try {
+    await ADMIN_API.larkBroadcast(state.larkChatId, text);
+    state.larkText = "";
+    state.larkMsg = "✓ Đã gửi vào nhóm.";
+  } catch (err) {
+    state.larkMsg = "Gửi thất bại: " + (err.message || "lỗi không rõ");
+  }
+  state.larkSending = false; render();
 }
 
 async function handleLogin(e) {
@@ -363,6 +404,53 @@ function sortableTh(label, key) {
   return el("th", { class: "admin-th-sort", onclick: () => toggleSort(key) }, [label + arrow]);
 }
 
+function renderBroadcastPanel() {
+  const box = el("div", { class: "admin-broadcast" });
+  box.appendChild(el("div", { class: "admin-broadcast-title" }, ["Gửi thông báo qua Bé Ailai"]));
+
+  if (!state.larkChats.length) {
+    box.appendChild(
+      el("div", { class: "admin-broadcast-hint" }, [
+        "Chưa ghi nhận nhóm nào. Hãy vào nhóm Lark, @Bé Ailai một câu bất kỳ, rồi bấm ",
+        el("a", { class: "help-link", onclick: async () => { await loadLarkChats(); render(); } }, ["Làm mới"]),
+        " nhé.",
+      ])
+    );
+    return box;
+  }
+
+  if (state.larkChats.length > 1) {
+    const sel = el("select", { class: "reflect-input", onchange: (e) => { state.larkChatId = e.target.value; } });
+    state.larkChats.forEach((c) => {
+      const opt = el("option", { value: c.chat_id }, [c.chat_id]);
+      if (c.chat_id === state.larkChatId) opt.setAttribute("selected", "selected");
+      sel.appendChild(opt);
+    });
+    box.appendChild(sel);
+  }
+
+  const ta = el("textarea", {
+    class: "reflect-input admin-broadcast-text",
+    rows: "6",
+    placeholder: "Nhập nội dung Bé Ailai sẽ gửi vào nhóm...",
+  });
+  ta.value = state.larkText || "";
+  ta.addEventListener("input", (e) => { state.larkText = e.target.value; });
+  box.appendChild(ta);
+
+  box.appendChild(
+    el("div", { class: "admin-broadcast-row" }, [
+      el(
+        "button",
+        { class: "admin-broadcast-send", disabled: state.larkSending ? "true" : null, onclick: handleBroadcast },
+        [state.larkSending ? "Đang gửi..." : "Gửi vào nhóm"]
+      ),
+      state.larkMsg ? el("span", { class: "admin-broadcast-msg" }, [state.larkMsg]) : null,
+    ])
+  );
+  return box;
+}
+
 function renderDashboard() {
   const wrap = el("div", { class: "admin-shell" });
 
@@ -371,6 +459,7 @@ function renderDashboard() {
     el("button", { class: "help-link", onclick: handleLogout }, ["Đăng xuất"]),
   ]);
   wrap.appendChild(topbar);
+  wrap.appendChild(renderBroadcastPanel());
 
   const enriched = state.students.map((s) => {
     const learning = studentLearningState(s);

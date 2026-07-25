@@ -77,12 +77,38 @@ async def reply_text(message_id: str, text: str):
 async def send_text(chat_id: str, text: str):
     token = await get_tenant_access_token()
     async with httpx.AsyncClient(timeout=15) as client:
-        await client.post(
+        resp = await client.post(
             f"{LARK_DOMAIN}/open-apis/im/v1/messages",
             params={"receive_id_type": "chat_id"},
             headers={"Authorization": f"Bearer {token}"},
             json={"receive_id": chat_id, "msg_type": "text", "content": json.dumps({"text": text})},
         )
+        return resp.json()
+
+
+# ===================== GHI NHỚ NHÓM (để admin gửi thông báo) =====================
+
+def remember_chat(chat_id: str | None, chat_type: str | None):
+    """Ghi nhớ id nhóm mỗi khi có người nhắn Bé, để admin có thể gửi thông báo vào nhóm."""
+    if not chat_id:
+        return
+    try:
+        with get_db() as conn:
+            conn.execute(
+                "INSERT INTO lark_chats (chat_id, chat_type, last_seen) VALUES (?, ?, datetime('now')) "
+                "ON CONFLICT(chat_id) DO UPDATE SET chat_type=excluded.chat_type, last_seen=datetime('now')",
+                (chat_id, chat_type),
+            )
+    except Exception as e:
+        print(f"[remember_chat error] {e!r}")
+
+
+def list_chats():
+    with get_db() as conn:
+        rows = conn.execute(
+            "SELECT chat_id, chat_type, last_seen FROM lark_chats ORDER BY last_seen DESC"
+        ).fetchall()
+    return [dict(r) for r in rows]
 
 
 # ===================== TRA TIẾN ĐỘ =====================
@@ -244,7 +270,12 @@ async def handle_message_event(event: dict):
         return
     message_id = msg.get("message_id")
     chat_id = msg.get("chat_id")
+    chat_type = msg.get("chat_type")
     open_id = (sender.get("sender_id") or {}).get("open_id")
+
+    # Ghi nhớ nhóm để admin có thể gửi thông báo qua Bé sau này.
+    if chat_type == "group":
+        remember_chat(chat_id, chat_type)
 
     try:
         content = json.loads(msg.get("content") or "{}")

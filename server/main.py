@@ -539,6 +539,27 @@ def admin_approve_student(request: Request, user_id: int, approved: int = Form(1
     return {"ok": True, "approved": 1 if approved else 0}
 
 
+@app.get("/api/admin/lark/chats")
+def admin_lark_chats(request: Request):
+    current_admin(request)
+    return lark_bot.list_chats()
+
+
+@app.post("/api/admin/lark/broadcast")
+async def admin_lark_broadcast(request: Request, chat_id: str = Form(...), text: str = Form(...)):
+    current_admin(request)
+    text = (text or "").strip()
+    if not text:
+        raise HTTPException(status_code=400, detail="Nội dung trống.")
+    if not chat_id:
+        raise HTTPException(status_code=400, detail="Chưa chọn nhóm.")
+    result = await lark_bot.send_text(chat_id, text)
+    if not isinstance(result, dict) or result.get("code") != 0:
+        msg = result.get("msg", "gửi thất bại") if isinstance(result, dict) else "gửi thất bại"
+        raise HTTPException(status_code=400, detail=f"Lark báo lỗi: {msg}")
+    return {"ok": True}
+
+
 @app.get("/api/admin/activity-timeline")
 def admin_activity_timeline(request: Request):
     current_admin(request)

@@ -71,6 +71,12 @@ CREATE TABLE IF NOT EXISTS admin_sessions (
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     FOREIGN KEY (admin_id) REFERENCES admins(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS lark_chats (
+    chat_id TEXT PRIMARY KEY,
+    chat_type TEXT,
+    last_seen TEXT NOT NULL DEFAULT (datetime('now'))
+);
 """
 
 
