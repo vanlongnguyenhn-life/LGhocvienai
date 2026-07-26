@@ -125,7 +125,7 @@ def get_progress_summary(open_id: str | None):
             return None
         prog = conn.execute(
             "SELECT COUNT(*) AS done, COALESCE(SUM(awarded_points), 0) AS points "
-            "FROM question_status WHERE user_id = ? AND status = 'done'",
+            "FROM question_status WHERE user_id = ? AND status IN ('done', 'correct')",
             (row["id"],),
         ).fetchone()
     return {

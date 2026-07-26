@@ -49,6 +49,21 @@ const ADMIN_API = {
     fd.append("text", text);
     return this._send("/api/admin/lark/broadcast", { method: "POST", body: fd });
   },
+  digestGet() {
+    return this._send("/api/admin/digest");
+  },
+  digestSave(patch) {
+    return this._send("/api/admin/digest", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(patch),
+    });
+  },
+  digestSendNow(chatId) {
+    const fd = new FormData();
+    if (chatId) fd.append("chat_id", chatId);
+    return this._send("/api/admin/digest/send-now", { method: "POST", body: fd });
+  },
 };
 
 function el(tag, attrs, children) {
@@ -143,6 +158,10 @@ const state = {
   larkText: "",
   larkSending: false,
   larkMsg: "",
+  digest: null,
+  digestSaving: false,
+  digestSending: false,
+  digestMsg: "",
 };
 
 function fmtDate(s) {
@@ -164,6 +183,7 @@ async function boot() {
     await loadStudents();
     await loadTimeline();
     await loadLarkChats();
+    await loadDigest();
   } catch (e) {
     state.admin = null;
   }
@@ -188,6 +208,64 @@ async function loadLarkChats() {
   } catch (e) {
     state.larkChats = [];
   }
+}
+
+async function loadDigest() {
+  try {
+    state.digest = await ADMIN_API.digestGet();
+    // Đồng bộ tổng số câu thật từ dữ liệu khoá (frontend biết chính xác).
+    if (state.digest && TOTAL_QUESTIONS && state.digest.total_questions !== TOTAL_QUESTIONS) {
+      state.digest.total_questions = TOTAL_QUESTIONS;
+    }
+    if (state.digest && !state.digest.chat_id && state.larkChatId) {
+      state.digest.chat_id = state.larkChatId;
+    }
+  } catch (e) {
+    state.digest = null;
+  }
+}
+
+function digestPatchFromState() {
+  const d = state.digest || {};
+  return {
+    enabled: !!d.enabled,
+    send_time: d.send_time || "20:00",
+    chat_id: d.chat_id || "",
+    intro_message: d.intro_message || "",
+    show_overview: !!d.show_overview,
+    show_leaderboard: !!d.show_leaderboard,
+    show_inactive: !!d.show_inactive,
+    top_n: Number(d.top_n) || 5,
+    inactive_days: Number(d.inactive_days) || 3,
+    total_questions: Number(d.total_questions) || TOTAL_QUESTIONS || 210,
+  };
+}
+
+async function handleDigestSave() {
+  state.digestSaving = true; state.digestMsg = ""; render();
+  try {
+    state.digest = await ADMIN_API.digestSave(digestPatchFromState());
+    if (state.digest && TOTAL_QUESTIONS) state.digest.total_questions = TOTAL_QUESTIONS;
+    state.digestMsg = "✓ Đã lưu cài đặt.";
+  } catch (err) {
+    state.digestMsg = "Lưu thất bại: " + (err.message || "lỗi không rõ");
+  }
+  state.digestSaving = false; render();
+}
+
+async function handleDigestSendNow() {
+  const d = state.digest || {};
+  if (!d.chat_id) { state.digestMsg = "Chưa chọn nhóm — hãy @Bé Ailai một câu trong nhóm rồi bấm Làm mới."; render(); return; }
+  // Lưu cài đặt hiện tại trước để gửi thử đúng nội dung đang chỉnh.
+  state.digestSending = true; state.digestMsg = ""; render();
+  try {
+    await ADMIN_API.digestSave(digestPatchFromState());
+    await ADMIN_API.digestSendNow(d.chat_id);
+    state.digestMsg = "✓ Đã gửi thử bản tổng hợp vào nhóm.";
+  } catch (err) {
+    state.digestMsg = "Gửi thất bại: " + (err.message || "lỗi không rõ");
+  }
+  state.digestSending = false; render();
 }
 
 async function handleBroadcast() {
@@ -456,6 +534,108 @@ function renderBroadcastPanel() {
   return box;
 }
 
+function renderDigestPanel() {
+  const box = el("div", { class: "admin-broadcast admin-digest" });
+  box.appendChild(el("div", { class: "admin-broadcast-title" }, ["Tổng hợp học tập hằng ngày (Bé Ailai tự gửi)"]));
+
+  const d = state.digest;
+  if (!d) {
+    box.appendChild(el("div", { class: "admin-broadcast-hint" }, ["Đang tải cài đặt..."]));
+    return box;
+  }
+
+  // Bật/tắt + giờ gửi
+  const enableWrap = el("label", { class: "admin-digest-toggle" }, []);
+  const enableCb = el("input", { type: "checkbox" });
+  enableCb.checked = !!d.enabled;
+  enableCb.addEventListener("change", (e) => { d.enabled = e.target.checked; render(); });
+  enableWrap.appendChild(enableCb);
+  enableWrap.appendChild(document.createTextNode(" Tự động gửi mỗi ngày"));
+
+  const timeInput = el("input", { type: "time", class: "reflect-input admin-digest-time" });
+  timeInput.value = d.send_time || "20:00";
+  timeInput.addEventListener("change", (e) => { d.send_time = e.target.value || "20:00"; });
+
+  box.appendChild(el("div", { class: "admin-digest-row" }, [
+    enableWrap,
+    el("span", { class: "admin-digest-label" }, ["lúc"]),
+    timeInput,
+    el("span", { class: "admin-digest-label" }, ["giờ (giờ Việt Nam)"]),
+  ]));
+
+  // Chọn nhóm
+  if (!state.larkChats.length) {
+    box.appendChild(el("div", { class: "admin-broadcast-hint" }, [
+      "Chưa ghi nhận nhóm nào. Hãy vào nhóm Lark, @Bé Ailai một câu, rồi bấm ",
+      el("a", { class: "help-link", onclick: async () => { await loadLarkChats(); if (state.digest && !state.digest.chat_id && state.larkChatId) state.digest.chat_id = state.larkChatId; render(); } }, ["Làm mới"]),
+      " nhé.",
+    ]));
+  } else if (state.larkChats.length === 1) {
+    d.chat_id = d.chat_id || state.larkChats[0].chat_id;
+    box.appendChild(el("div", { class: "admin-digest-label" }, ["Nhóm nhận: " + d.chat_id]));
+  } else {
+    const sel = el("select", { class: "reflect-input", onchange: (e) => { d.chat_id = e.target.value; } });
+    state.larkChats.forEach((c) => {
+      const opt = el("option", { value: c.chat_id }, [c.chat_id]);
+      if (c.chat_id === d.chat_id) opt.setAttribute("selected", "selected");
+      sel.appendChild(opt);
+    });
+    box.appendChild(el("div", { class: "admin-digest-row" }, [el("span", { class: "admin-digest-label" }, ["Nhóm nhận:"]), sel]));
+  }
+
+  // Các phần hiển thị
+  function sectionCb(key, label) {
+    const w = el("label", { class: "admin-digest-toggle" }, []);
+    const cb = el("input", { type: "checkbox" });
+    cb.checked = !!d[key];
+    cb.addEventListener("change", (e) => { d[key] = e.target.checked; });
+    w.appendChild(cb);
+    w.appendChild(document.createTextNode(" " + label));
+    return w;
+  }
+  box.appendChild(el("div", { class: "admin-digest-row admin-digest-sections" }, [
+    sectionCb("show_overview", "Tổng quan lớp"),
+    sectionCb("show_leaderboard", "Bảng xếp hạng"),
+    sectionCb("show_inactive", "Chưa hoạt động"),
+  ]));
+
+  // Tham số
+  const topN = el("input", { type: "number", min: "1", max: "20", class: "reflect-input admin-digest-num" });
+  topN.value = d.top_n || 5;
+  topN.addEventListener("change", (e) => { d.top_n = Number(e.target.value) || 5; });
+  const inDays = el("input", { type: "number", min: "1", max: "30", class: "reflect-input admin-digest-num" });
+  inDays.value = d.inactive_days || 3;
+  inDays.addEventListener("change", (e) => { d.inactive_days = Number(e.target.value) || 3; });
+  box.appendChild(el("div", { class: "admin-digest-row" }, [
+    el("span", { class: "admin-digest-label" }, ["Top"]), topN,
+    el("span", { class: "admin-digest-label" }, ["học viên · Nhắc bạn nghỉ từ"]), inDays,
+    el("span", { class: "admin-digest-label" }, ["ngày"]),
+  ]));
+
+  // Lời nhắn theo đợt
+  box.appendChild(el("div", { class: "admin-digest-label" }, ["Lời nhắn đầu bản tin (chỉnh theo từng đợt):"]));
+  const ta = el("textarea", { class: "reflect-input admin-broadcast-text", rows: "3", placeholder: "Lời nhắn mở đầu bản tổng hợp..." });
+  ta.value = d.intro_message || "";
+  ta.addEventListener("input", (e) => { d.intro_message = e.target.value; });
+  box.appendChild(ta);
+
+  // Nút
+  box.appendChild(el("div", { class: "admin-broadcast-row" }, [
+    el("button", { class: "admin-broadcast-send", disabled: state.digestSaving ? "true" : null, onclick: handleDigestSave },
+      [state.digestSaving ? "Đang lưu..." : "Lưu cài đặt"]),
+    el("button", { class: "help-link", disabled: state.digestSending ? "true" : null, onclick: handleDigestSendNow },
+      [state.digestSending ? "Đang gửi..." : "Gửi thử ngay"]),
+    state.digestMsg ? el("span", { class: "admin-broadcast-msg" }, [state.digestMsg]) : null,
+  ]));
+
+  const info = d.enabled
+    ? `Đang bật — Bé Ailai sẽ tự gửi mỗi ngày lúc ${d.send_time || "20:00"} (giờ VN).` + (d.last_sent_date ? ` Lần gửi tự động gần nhất: ${d.last_sent_date}.` : "")
+    : "Đang tắt — bật công tắc phía trên rồi Lưu để Bé tự gửi hằng ngày.";
+  box.appendChild(el("div", { class: "admin-broadcast-hint" }, [info]));
+
+  return box;
+}
+
 function renderDashboard() {
   const wrap = el("div", { class: "admin-shell" });
 
@@ -465,6 +645,7 @@ function renderDashboard() {
   ]);
   wrap.appendChild(topbar);
   wrap.appendChild(renderBroadcastPanel());
+  wrap.appendChild(renderDigestPanel());
 
   const enriched = state.students.map((s) => {
     const learning = studentLearningState(s);

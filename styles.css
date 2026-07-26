@@ -360,6 +360,14 @@ a { color: inherit; }
 .admin-broadcast-send:disabled { opacity: 0.6; cursor: default; }
 .admin-broadcast-msg { font-size: 13.5px; color: var(--text-grey); }
 
+.admin-digest-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+.admin-digest-sections { gap: 18px; }
+.admin-digest-toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer; }
+.admin-digest-toggle input { width: 16px; height: 16px; cursor: pointer; }
+.admin-digest-label { font-size: 14px; color: var(--text-grey); }
+.admin-digest input.admin-digest-time { width: 130px; min-height: 0; margin-bottom: 0; }
+.admin-digest input.admin-digest-num { width: 72px; min-height: 0; margin-bottom: 0; }
+
 /* ===================== HOME (course list) ===================== */
 .home-header {
   position: relative;

@@ -18,6 +18,7 @@ from . import auth
 from . import validators
 from . import lark_auth
 from . import lark_bot
+from . import digest
 
 BASE_DIR = Path(__file__).parent.parent
 UPLOADS_DIR = DATA_DIR / "uploads"
@@ -84,6 +85,12 @@ app = FastAPI(title="AGS Course Backend")
 def on_startup():
     init_db()
     bootstrap_admin()
+
+
+@app.on_event("startup")
+async def start_digest_scheduler():
+    # Vòng lặp nền gửi bản tổng hợp hằng ngày (chạy trên server, độc lập máy giáo viên).
+    asyncio.create_task(digest.scheduler_loop())
 
 
 def bootstrap_admin():
@@ -554,6 +561,47 @@ async def admin_lark_broadcast(request: Request, chat_id: str = Form(...), text:
     if not chat_id:
         raise HTTPException(status_code=400, detail="Chưa chọn nhóm.")
     result = await lark_bot.send_text(chat_id, text)
+    if not isinstance(result, dict) or result.get("code") != 0:
+        msg = result.get("msg", "gửi thất bại") if isinstance(result, dict) else "gửi thất bại"
+        raise HTTPException(status_code=400, detail=f"Lark báo lỗi: {msg}")
+    return {"ok": True}
+
+
+DIGEST_ALLOWED_KEYS = {
+    "enabled", "send_time", "chat_id", "intro_message",
+    "show_overview", "show_leaderboard", "show_inactive",
+    "top_n", "inactive_days", "total_questions",
+}
+
+
+@app.get("/api/admin/digest")
+def admin_digest_get(request: Request):
+    current_admin(request)
+    return digest.get_config()
+
+
+@app.post("/api/admin/digest")
+async def admin_digest_save(request: Request):
+    current_admin(request)
+    body = await request.json()
+    patch = {k: v for k, v in (body or {}).items() if k in DIGEST_ALLOWED_KEYS}
+    return digest.save_config(patch)
+
+
+@app.get("/api/admin/digest/preview")
+def admin_digest_preview(request: Request):
+    current_admin(request)
+    return {"text": digest.build_digest_text(digest.get_config())}
+
+
+@app.post("/api/admin/digest/send-now")
+async def admin_digest_send_now(request: Request, chat_id: str = Form(None)):
+    current_admin(request)
+    cfg = digest.get_config()
+    target = (chat_id or cfg.get("chat_id") or "").strip()
+    if not target:
+        raise HTTPException(status_code=400, detail="Chưa chọn nhóm nhận.")
+    result = await lark_bot.send_text(target, digest.build_digest_text(cfg))
     if not isinstance(result, dict) or result.get("code") != 0:
         msg = result.get("msg", "gửi thất bại") if isinstance(result, dict) else "gửi thất bại"
         raise HTTPException(status_code=400, detail=f"Lark báo lỗi: {msg}")
