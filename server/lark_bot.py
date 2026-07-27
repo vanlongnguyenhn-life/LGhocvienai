@@ -315,16 +315,16 @@ async def _run_teacher_command(cmd) -> str:
     kind, content = cmd
     group = get_group_chat_id()
     if not group:
-        return ("Dạ em chưa xác định được nhóm lớp. Nhờ thầy/cô nhắn Bé một câu trong nhóm "
+        return ("Dạ em chưa xác định được nhóm lớp. Nhờ anh/chị nhắn Bé một câu trong nhóm "
                 "trước để em ghi nhớ nhóm, rồi ra lệnh lại giúp em ạ.")
     if kind == "announce":
         if not content:
-            return ("Dạ thầy/cô nhập nội dung sau dấu ':' nhé. "
+            return ("Dạ anh/chị nhập nội dung sau dấu ':' nhé. "
                     "Ví dụ: 'gửi thông báo: Tối nay lớp học lúc 20h.'")
         res = await send_text(group, content)
         if isinstance(res, dict) and res.get("code") == 0:
             return "Dạ em đã gửi thông báo vào nhóm lớp rồi ạ."
-        return f"Dạ em gửi chưa được ạ (lỗi Lark: {res}). Thầy/cô thử lại giúp em nhé."
+        return f"Dạ em gửi chưa được ạ (lỗi Lark: {res}). Anh/chị thử lại giúp em nhé."
     if kind == "digest":
         from . import digest
         cfg = digest.get_config()
@@ -491,6 +491,10 @@ async def parse_task_instruction(instruction: str, stats_ctx: str):
         '"schedule_date": "today|tomorrow|YYYY-MM-DD" | null}\n'
         "Trong đó: 'created' = tag những người ĐÃ tạo tài khoản; 'not_created' = tag những người CHƯA "
         "tạo tài khoản; 'all' = tất cả; 'none' = không tag ai.\n"
+        "GIỌNG VĂN của 'message' (bắt buộc): viết dưới danh nghĩa BÉ AILAI — người HỖ TRỢ lớp học, "
+        "KHÔNG phải giáo viên. Bé tự xưng là 'Bé', gọi người học là 'cả nhà' hoặc 'các bạn' (hoặc "
+        "'anh/chị'). TUYỆT ĐỐI KHÔNG dùng từ 'Thầy/cô', KHÔNG tự xưng là giáo viên, KHÔNG viết thay lời "
+        "giáo viên, KHÔNG gọi người học là 'các em'. Ví dụ mở đầu: 'Chào cả nhà, Bé Ailai xin nhắc...'.\n"
         f"Bối cảnh: {stats_ctx}"
     )
     try:
@@ -515,7 +519,7 @@ async def parse_task_instruction(instruction: str, stats_ctx: str):
 async def _prepare_task(open_id: str, text: str) -> str:
     group = get_group_chat_id()
     if not group:
-        return ("Dạ em chưa xác định được nhóm lớp. Nhờ thầy/cô nhắn Bé một câu trong nhóm trước "
+        return ("Dạ em chưa xác định được nhóm lớp. Nhờ anh/chị nhắn Bé một câu trong nhóm trước "
                 "để em ghi nhớ nhóm, rồi giao việc lại giúp em ạ.")
     members = await get_group_members(group)
     created_ids = get_created_open_ids()
@@ -525,7 +529,7 @@ async def _prepare_task(open_id: str, text: str) -> str:
                  f"{len(not_created)} người chưa tạo tài khoản.")
     parsed = await parse_task_instruction(text, stats_ctx)
     if not parsed or not (parsed.get("message") or "").strip():
-        return ("Dạ em chưa hiểu rõ việc cần làm. Thầy/cô nói lại gọn hơn giúp em nhé, ví dụ: "
+        return ("Dạ em chưa hiểu rõ việc cần làm. Anh/chị nói lại gọn hơn giúp em nhé, ví dụ: "
                 "'giao việc: nhắc các bạn chưa tạo tài khoản, tag họ, gửi lúc 9h sáng mai'.")
     message = parsed["message"].strip()
     tag = parsed.get("tag") or "none"
@@ -555,11 +559,11 @@ async def _prepare_task(open_id: str, text: str) -> str:
     else:
         who = "không tag ai"
     return (
-        "Dạ em chuẩn bị gửi vào nhóm lớp như sau, thầy/cô xem giúp em:\n\n"
+        "Dạ em chuẩn bị gửi vào nhóm lớp như sau, anh/chị xem giúp em:\n\n"
         f"— Nội dung —\n{message}\n\n"
         f"— Tag — {who}\n"
         f"— Thời điểm — {when_human}\n\n"
-        "Thầy/cô gõ 'duyệt' để em gửi, hoặc 'huỷ' để bỏ ạ."
+        "Anh/chị gõ 'duyệt' để em gửi, hoặc 'huỷ' để bỏ ạ."
     )
 
 
@@ -569,7 +573,7 @@ async def _execute_pending_task(open_id: str, pending: dict) -> str:
     send_at = pending.get("send_at_utc")
     if not chat_id or not group_text:
         clear_pending_task(open_id)
-        return "Dạ việc đang chờ bị thiếu dữ liệu, thầy/cô giao lại giúp em nhé."
+        return "Dạ việc đang chờ bị thiếu dữ liệu, anh/chị giao lại giúp em nhé."
     if send_at:
         add_scheduled_message(chat_id, group_text, send_at, open_id)
         clear_pending_task(open_id)
@@ -578,7 +582,7 @@ async def _execute_pending_task(open_id: str, pending: dict) -> str:
     clear_pending_task(open_id)
     if isinstance(res, dict) and res.get("code") == 0:
         return "Dạ em đã gửi vào nhóm lớp rồi ạ."
-    return f"Dạ em gửi chưa được ạ (lỗi Lark: {res}). Thầy/cô thử lại giúp em nhé."
+    return f"Dạ em gửi chưa được ạ (lỗi Lark: {res}). Anh/chị thử lại giúp em nhé."
 
 
 # ===================== ĐỊNH TUYẾN Ý ĐỊNH (tiếp) =====================
