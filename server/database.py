@@ -99,6 +99,16 @@ CREATE TABLE IF NOT EXISTS scheduled_messages (
     sent INTEGER NOT NULL DEFAULT 0,
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
+
+CREATE TABLE IF NOT EXISTS bot_activity (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ts TEXT NOT NULL DEFAULT (datetime('now')),
+    chat_type TEXT,
+    sender_open_id TEXT,
+    text TEXT,
+    reply TEXT,
+    error TEXT
+);
 """
 
 

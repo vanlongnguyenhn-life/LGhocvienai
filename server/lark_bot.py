@@ -115,6 +115,21 @@ def list_chats():
     return [dict(r) for r in rows]
 
 
+def log_activity(chat_type, open_id, text, reply=None, error=None):
+    """Ghi nhật ký mỗi lần Bé xử lý tin nhắn, để chẩn đoán khi Bé không trả lời."""
+    try:
+        with get_db() as conn:
+            conn.execute(
+                "INSERT INTO bot_activity (chat_type, sender_open_id, text, reply, error) VALUES (?, ?, ?, ?, ?)",
+                (chat_type, open_id, (text or "")[:500], (reply or "")[:1000] or None, error),
+            )
+            conn.execute(
+                "DELETE FROM bot_activity WHERE id NOT IN (SELECT id FROM bot_activity ORDER BY id DESC LIMIT 200)"
+            )
+    except Exception as e:
+        print(f"[log_activity error] {e!r}")
+
+
 # ===================== TRA TIẾN ĐỘ =====================
 
 def get_progress_summary(open_id: str | None):
@@ -683,5 +698,7 @@ async def handle_message_event(event: dict):
             await reply_text(message_id, reply)
         elif chat_id:
             await send_text(chat_id, reply)
+        log_activity(chat_type, open_id, text, reply=reply)
     except Exception as e:
         print(f"[Bot handle error] {e!r}")
+        log_activity(chat_type, open_id, text, error=repr(e))

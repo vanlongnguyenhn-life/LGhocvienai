@@ -584,6 +584,17 @@ async def admin_diag_ai(request: Request):
     return out
 
 
+@app.get("/api/admin/diag/botlog")
+def admin_diag_botlog(request: Request):
+    """Nhật ký hoạt động gần nhất của Bé: tin nhận được, câu trả lời, hoặc lỗi."""
+    current_admin(request)
+    with get_db() as conn:
+        rows = conn.execute(
+            "SELECT ts, chat_type, sender_open_id, text, reply, error FROM bot_activity ORDER BY id DESC LIMIT 30"
+        ).fetchall()
+    return [dict(r) for r in rows]
+
+
 @app.get("/api/admin/diag/grading")
 def admin_diag_grading(request: Request):
     """Thống kê chấm bài tự luận: bao nhiêu câu đã AI chấm, bao nhiêu câu mới chỉ đạt theo độ dài."""
