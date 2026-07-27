@@ -664,6 +664,27 @@ async def build_reply(text: str, open_id: str | None) -> str:
 
 # ===================== XỬ LÝ SỰ KIỆN =====================
 
+def _extract_message_text(message_type: str | None, content: dict) -> str:
+    """Lấy phần chữ từ nội dung tin nhắn Lark. Hỗ trợ 'text' và 'post' (chữ + ảnh/link/tag)."""
+    if message_type == "text":
+        return content.get("text") or ""
+    if message_type == "post":
+        parts = []
+        if content.get("title"):
+            parts.append(content["title"])
+        for para in content.get("content") or []:
+            if not isinstance(para, list):
+                continue
+            line = "".join(
+                (el.get("text") or "") for el in para
+                if isinstance(el, dict) and el.get("tag") in ("text", "a")
+            )
+            if line:
+                parts.append(line)
+        return "\n".join(parts)
+    return ""
+
+
 async def handle_message_event(event: dict):
     """Xử lý sự kiện im.message.receive_v1 (chạy nền, đã trả 200 cho Lark)."""
     sender = event.get("sender") or {}
@@ -673,8 +694,7 @@ async def handle_message_event(event: dict):
         return
 
     msg = event.get("message") or {}
-    if msg.get("message_type") != "text":
-        return
+    message_type = msg.get("message_type")
     message_id = msg.get("message_id")
     chat_id = msg.get("chat_id")
     chat_type = msg.get("chat_type")
@@ -688,8 +708,23 @@ async def handle_message_event(event: dict):
         content = json.loads(msg.get("content") or "{}")
     except Exception:
         content = {}
-    text = re.sub(r"@_\w+", "", content.get("text") or "").strip()
+
+    # Lấy phần chữ, hỗ trợ cả tin dạng 'text' lẫn 'post' (chữ kèm ảnh/thẻ nội dung).
+    text = re.sub(r"@_\w+", "", _extract_message_text(message_type, content)).strip()
+
+    # Tin chỉ có ảnh/file/sticker... không có chữ → trả lời nhắc nhẹ thay vì im lặng.
     if not text:
+        nudge = ("Dạ Bé chưa đọc được hình ảnh hay nội dung đính kèm ạ. Anh/chị gõ câu hỏi bằng "
+                 "chữ giúp Bé nhé, ví dụ 'Bé giải thích giúp mình câu 1.4'.")
+        try:
+            if message_id:
+                await reply_text(message_id, nudge)
+            elif chat_id:
+                await send_text(chat_id, nudge)
+            log_activity(chat_type, open_id, f"[{message_type} không có chữ]", reply=nudge)
+        except Exception as e:
+            print(f"[Bot nudge error] {e!r}")
+            log_activity(chat_type, open_id, f"[{message_type}]", error=repr(e))
         return
 
     try:
