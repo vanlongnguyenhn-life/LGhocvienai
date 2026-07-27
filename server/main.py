@@ -584,6 +584,24 @@ async def admin_diag_ai(request: Request):
     return out
 
 
+@app.get("/api/admin/diag/grading")
+def admin_diag_grading(request: Request):
+    """Thống kê chấm bài tự luận: bao nhiêu câu đã AI chấm, bao nhiêu câu mới chỉ đạt theo độ dài."""
+    current_admin(request)
+    with get_db() as conn:
+        total = conn.execute("SELECT COUNT(*) c FROM reflect_grades").fetchone()["c"]
+        length_only = conn.execute(
+            "SELECT COUNT(*) c FROM reflect_grades WHERE reason LIKE '%Không chấm được bằng AI%'"
+        ).fetchone()["c"]
+        valid = conn.execute("SELECT COUNT(*) c FROM reflect_grades WHERE is_valid = 1").fetchone()["c"]
+    return {
+        "reflect_total": total,
+        "ai_graded": total - length_only,
+        "length_only_accepted": length_only,
+        "valid_count": valid,
+    }
+
+
 @app.get("/api/admin/lark/chats")
 def admin_lark_chats(request: Request):
     current_admin(request)

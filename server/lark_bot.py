@@ -20,8 +20,9 @@ LARK_APP_ID = os.environ.get("LARK_APP_ID", "")
 LARK_APP_SECRET = os.environ.get("LARK_APP_SECRET", "")
 
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
-# Mặc định dùng model mạnh nhất; đổi sang claude-haiku-4-5 hoặc claude-sonnet-5 để tiết kiệm chi phí khi lớp đông.
-BOT_MODEL = os.environ.get("LARK_BOT_MODEL", "claude-opus-4-8")
+# Mặc định dùng Haiku cho tiết kiệm chi phí khi lớp đông; đặt LARK_BOT_MODEL trên server
+# để đổi sang claude-sonnet-5 hoặc claude-opus-4-8 nếu cần câu trả lời mạnh hơn.
+BOT_MODEL = os.environ.get("LARK_BOT_MODEL", "claude-haiku-4-5-20251001")
 BOT_NAME = os.environ.get("LARK_BOT_NAME", "Trợ lý Life Group")
 SITE_URL = os.environ.get("SITE_URL", "https://ailg.onrender.com")
 
@@ -154,6 +155,26 @@ def get_group_chat_id() -> str | None:
         return r["chat_id"] if r else None
 
 
+def get_class_stats() -> dict:
+    """Số liệu tổng quan của lớp để Bé trả lời (sĩ số, đã bắt đầu, hoạt động hôm nay)."""
+    from datetime import datetime, timezone, timedelta
+    vn = timezone(timedelta(hours=7))
+    start_vn = datetime.now(vn).replace(hour=0, minute=0, second=0, microsecond=0)
+    today_utc = start_vn.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+    with get_db() as conn:
+        total = conn.execute("SELECT COUNT(*) c FROM users WHERE approved = 1").fetchone()["c"]
+        started = conn.execute(
+            "SELECT COUNT(DISTINCT qs.user_id) c FROM question_status qs "
+            "JOIN users u ON u.id = qs.user_id WHERE u.approved = 1"
+        ).fetchone()["c"]
+        active_today = conn.execute(
+            "SELECT COUNT(DISTINCT qs.user_id) c FROM question_status qs "
+            "JOIN users u ON u.id = qs.user_id WHERE u.approved = 1 AND qs.updated_at >= ?",
+            (today_utc,),
+        ).fetchone()["c"]
+    return {"total": total, "started": started, "active_today": active_today}
+
+
 # ===================== TRẢ LỜI BẰNG AI (giọng Bé Mầm) =====================
 
 SYSTEM_PROMPT = (
@@ -251,6 +272,13 @@ PROGRESS_KEYWORDS = [
     "check giúp", "kiểm tra giúp", "xem giúp", "báo cáo tiến độ", "làm được bao nhiêu",
 ]
 
+# Câu hỏi về số liệu chung của lớp (sĩ số, bao nhiêu người học...).
+CLASS_STATS_KEYWORDS = [
+    "bao nhiêu bạn", "bao nhiêu người", "bao nhiêu ng", "bao nhiêu học viên", "bao nhiêu hv",
+    "bao nhiêu tài khoản", "sĩ số", "si so", "số học viên", "số lượng học viên",
+    "mấy người học", "mấy bạn học", "bao nhiêu bạn đang học", "đang học rồi", "tạo tài khoản",
+]
+
 
 # ===================== LỆNH ĐIỀU KHIỂN (chỉ giáo viên) =====================
 
@@ -316,6 +344,17 @@ async def build_reply(text: str, open_id: str | None) -> str:
             return ("Dạ chức năng ra lệnh cho Bé (gửi thông báo hay bản tổng hợp vào nhóm lớp) "
                     "chỉ dành cho giáo viên phụ trách ạ. Nếu anh/chị cần hỗ trợ, cứ hỏi em nhé.")
         return await _run_teacher_command(cmd)
+
+    # Hỏi về số liệu chung của lớp (không phải hỏi điểm cá nhân).
+    if any(k in low for k in CLASS_STATS_KEYWORDS) and not any(k in low for k in ["của em", "của mình", "của tôi"]):
+        st = get_class_stats()
+        return (
+            f"Dạ số liệu lớp mình hiện tại:\n"
+            f"- Sĩ số: {st['total']} học viên\n"
+            f"- Đã bắt đầu làm bài: {st['started']} bạn\n"
+            f"- Vào học hôm nay: {st['active_today']} bạn\n"
+            "Cả nhà cùng giữ nhịp học đều nhé!"
+        )
 
     if any(k in low for k in PROGRESS_KEYWORDS):
         if prog is None:
