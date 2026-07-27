@@ -40,6 +40,11 @@ const ADMIN_API = {
     fd.append("approved", approved ? "1" : "0");
     return this._send(`/api/admin/students/${id}/approve`, { method: "POST", body: fd });
   },
+  setTeacher(id, isTeacher) {
+    const fd = new FormData();
+    fd.append("is_teacher", isTeacher ? "1" : "0");
+    return this._send(`/api/admin/students/${id}/teacher`, { method: "POST", body: fd });
+  },
   larkChats() {
     return this._send("/api/admin/lark/chats");
   },
@@ -317,6 +322,18 @@ async function handleApprove(id, approved) {
     }
   } catch (err) {
     alert(err.message || "Không cập nhật được trạng thái duyệt.");
+  }
+  render();
+}
+
+async function handleTeacher(id, isTeacher) {
+  try {
+    await ADMIN_API.setTeacher(id, isTeacher);
+    if (state.detail && state.detail.user && state.detail.user.id === id) {
+      state.detail.user.is_teacher = isTeacher ? 1 : 0;
+    }
+  } catch (err) {
+    alert(err.message || "Không cập nhật được quyền giáo viên.");
   }
   render();
 }
@@ -838,12 +855,18 @@ function renderStudentDetail() {
         el("h2", {}, [
           user.display_name,
           user.approved ? null : el("span", { class: "admin-pending-badge" }, ["Chờ duyệt"]),
+          user.is_teacher ? el("span", { class: "admin-teacher-badge" }, ["Giáo viên"]) : null,
         ]),
         el("p", { class: "admin-student-username" }, ["@" + user.username + " · Tham gia " + fmtDate(user.created_at)]),
         user.tenant_key ? el("p", { class: "admin-tenant-key" }, ["Mã tổ chức (tenant_key): " + user.tenant_key]) : null,
-        user.approved
-          ? el("button", { class: "admin-approve-btn unapprove", onclick: () => handleApprove(user.id, 0) }, ["Bỏ duyệt"])
-          : el("button", { class: "admin-approve-btn", onclick: () => handleApprove(user.id, 1) }, ["✓ Duyệt học viên này"]),
+        el("div", { class: "admin-detail-actions" }, [
+          user.approved
+            ? el("button", { class: "admin-approve-btn unapprove", onclick: () => handleApprove(user.id, 0) }, ["Bỏ duyệt"])
+            : el("button", { class: "admin-approve-btn", onclick: () => handleApprove(user.id, 1) }, ["✓ Duyệt học viên này"]),
+          user.is_teacher
+            ? el("button", { class: "admin-teacher-btn unteacher", onclick: () => handleTeacher(user.id, 0) }, ["Bỏ quyền giáo viên"])
+            : el("button", { class: "admin-teacher-btn", onclick: () => handleTeacher(user.id, 1) }, ["★ Đặt làm giáo viên"]),
+        ]),
       ]),
     ])
   );

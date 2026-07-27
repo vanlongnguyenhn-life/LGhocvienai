@@ -113,3 +113,5 @@ def init_db():
             conn.execute("UPDATE users SET approved = 1")
         if "tenant_key" not in user_cols:
             conn.execute("ALTER TABLE users ADD COLUMN tenant_key TEXT")
+        if "is_teacher" not in user_cols:
+            conn.execute("ALTER TABLE users ADD COLUMN is_teacher INTEGER NOT NULL DEFAULT 0")

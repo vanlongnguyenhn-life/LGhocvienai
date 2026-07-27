@@ -546,6 +546,44 @@ def admin_approve_student(request: Request, user_id: int, approved: int = Form(1
     return {"ok": True, "approved": 1 if approved else 0}
 
 
+@app.post("/api/admin/students/{user_id}/teacher")
+def admin_set_teacher(request: Request, user_id: int, is_teacher: int = Form(1)):
+    current_admin(request)
+    with get_db() as conn:
+        row = conn.execute("SELECT id FROM users WHERE id = ?", (user_id,)).fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Không tìm thấy học viên.")
+        conn.execute("UPDATE users SET is_teacher = ? WHERE id = ?", (1 if is_teacher else 0, user_id))
+    return {"ok": True, "is_teacher": 1 if is_teacher else 0}
+
+
+@app.get("/api/admin/diag/ai")
+async def admin_diag_ai(request: Request):
+    """Chẩn đoán kết nối AI của bot: gọi thử Claude, trả về trạng thái/lỗi (không lộ API key)."""
+    current_admin(request)
+    key = lark_bot.ANTHROPIC_API_KEY
+    out = {"key_present": bool(key), "model": lark_bot.BOT_MODEL}
+    if not key:
+        out["ok"] = False
+        out["error"] = "ANTHROPIC_API_KEY chưa được đặt trên server."
+        return out
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            resp = await client.post(
+                "https://api.anthropic.com/v1/messages",
+                headers={"x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json"},
+                json={"model": lark_bot.BOT_MODEL, "max_tokens": 16, "messages": [{"role": "user", "content": "ping"}]},
+            )
+        out["status"] = resp.status_code
+        out["ok"] = resp.status_code == 200
+        if resp.status_code != 200:
+            out["error"] = resp.text[:400]
+    except Exception as e:
+        out["ok"] = False
+        out["error"] = repr(e)[:400]
+    return out
+
+
 @app.get("/api/admin/lark/chats")
 def admin_lark_chats(request: Request):
     current_admin(request)
@@ -630,7 +668,7 @@ def admin_student_detail(request: Request, user_id: int):
     current_admin(request)
     with get_db() as conn:
         user_row = conn.execute(
-            "SELECT id, username, display_name, avatar_url, approved, tenant_key, created_at FROM users WHERE id = ?", (user_id,)
+            "SELECT id, username, display_name, avatar_url, approved, is_teacher, tenant_key, created_at FROM users WHERE id = ?", (user_id,)
         ).fetchone()
         if not user_row:
             raise HTTPException(status_code=404, detail="Không tìm thấy học viên.")

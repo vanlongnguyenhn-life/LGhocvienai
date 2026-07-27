@@ -351,6 +351,18 @@ a { color: inherit; }
 .admin-detail-head .admin-approve-btn { margin-top: 8px; }
 .admin-tenant-key { margin: 4px 0 0; font-size: 12px; color: var(--text-faint); word-break: break-all; }
 
+.admin-detail-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.admin-teacher-badge {
+  display: inline-block; margin-left: 8px; padding: 1px 8px; border-radius: 999px;
+  background: #e7f0ff; color: #1155cc; font-size: 11px; font-weight: 700; vertical-align: middle;
+}
+.admin-teacher-btn {
+  background: #1155cc; color: #fff; border: none; padding: 6px 12px; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;
+}
+.admin-teacher-btn.unteacher { background: #fff; color: var(--text-grey); border: 1px solid var(--border); font-weight: 500; }
+.admin-teacher-btn:hover { opacity: 0.9; }
+
 .admin-broadcast { margin: 12px 16px 0; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; }
 .admin-broadcast-title { font-size: 15px; font-weight: 700; color: var(--gold); margin-bottom: 8px; }
 .admin-broadcast-hint { font-size: 13.5px; color: var(--text-grey); line-height: 1.5; }

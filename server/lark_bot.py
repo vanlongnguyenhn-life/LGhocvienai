@@ -119,7 +119,7 @@ def get_progress_summary(open_id: str | None):
         return None
     with get_db() as conn:
         row = conn.execute(
-            "SELECT id, display_name, approved FROM users WHERE lark_open_id = ?", (open_id,)
+            "SELECT id, display_name, approved, is_teacher FROM users WHERE lark_open_id = ?", (open_id,)
         ).fetchone()
         if not row:
             return None
@@ -131,9 +131,27 @@ def get_progress_summary(open_id: str | None):
     return {
         "name": row["display_name"],
         "approved": row["approved"],
+        "is_teacher": row["is_teacher"],
         "done": prog["done"],
         "points": prog["points"],
     }
+
+
+def get_group_chat_id() -> str | None:
+    """Nhóm lớp để gửi thông báo: ưu tiên nhóm cấu hình trong bản tổng hợp, else nhóm gần nhất."""
+    with get_db() as conn:
+        row = conn.execute("SELECT value FROM app_settings WHERE key = 'daily_digest'").fetchone()
+        if row:
+            try:
+                cid = json.loads(row["value"]).get("chat_id")
+                if cid:
+                    return cid
+            except Exception:
+                pass
+        r = conn.execute(
+            "SELECT chat_id FROM lark_chats WHERE chat_type = 'group' ORDER BY last_seen DESC LIMIT 1"
+        ).fetchone()
+        return r["chat_id"] if r else None
 
 
 # ===================== TRẢ LỜI BẰNG AI (giọng Bé Mầm) =====================
@@ -186,7 +204,7 @@ async def ai_answer(question: str, prog: dict | None = None) -> str:
     if not ANTHROPIC_API_KEY:
         return (
             "Dạ hiện em chưa được kết nối 'bộ não AI' nên chưa trả lời câu này được ạ. "
-            "Anh/chị nhờ giáo viên bật ANTHROPIC_API_KEY giúp em nhé 🌱"
+            "Anh/chị nhờ giáo viên bật ANTHROPIC_API_KEY giúp em nhé."
         )
     ctx = ""
     if prog:
@@ -213,12 +231,16 @@ async def ai_answer(question: str, prog: dict | None = None) -> str:
                 },
             )
             data = resp.json()
+        if resp.status_code != 200:
+            print(f"[Bot AI error] status={resp.status_code} model={BOT_MODEL} body={resp.text[:500]}")
         for block in data.get("content", []):
             if block.get("type") == "text" and block.get("text"):
                 return block["text"].strip()
+        # Không có nội dung trả về (thường do lỗi API): log để chẩn đoán.
+        print(f"[Bot AI empty] status={resp.status_code} model={BOT_MODEL} data={str(data)[:500]}")
     except Exception as e:
-        print(f"[Bot AI error] {e!r}")
-    return "Dạ câu này em chưa trả lời được, anh/chị thử hỏi lại rõ hơn giúp em nhé 🌱"
+        print(f"[Bot AI exception] {e!r}")
+    return "Dạ câu này em chưa trả lời được, anh/chị thử hỏi lại rõ hơn giúp em nhé."
 
 
 # ===================== ĐỊNH TUYẾN Ý ĐỊNH =====================
@@ -230,26 +252,87 @@ PROGRESS_KEYWORDS = [
 ]
 
 
+# ===================== LỆNH ĐIỀU KHIỂN (chỉ giáo viên) =====================
+
+# Tiền tố để giáo viên yêu cầu Bé gửi thông báo vào nhóm.
+ANNOUNCE_PREFIXES = [
+    "gửi thông báo", "gui thong bao", "thông báo nhóm", "thong bao nhom",
+    "gửi nhóm", "gui nhom", "bé gửi thông báo", "be gui thong bao",
+]
+# Câu để giáo viên yêu cầu Bé gửi ngay bản tổng hợp.
+DIGEST_TRIGGERS = [
+    "gửi tổng hợp", "gui tong hop", "gửi bản tổng hợp", "gui ban tong hop",
+    "gửi báo cáo", "gui bao cao", "gửi báo cáo ngày", "gửi tổng kết",
+]
+
+
+def _match_command(text: str):
+    """Nhận diện lệnh điều khiển. Trả ('announce', nội_dung) | ('digest', None) | None."""
+    t = (text or "").strip()
+    low = t.lower()
+    for trig in DIGEST_TRIGGERS:
+        if low == trig or low.startswith(trig):
+            return ("digest", None)
+    for p in ANNOUNCE_PREFIXES:
+        if low.startswith(p):
+            content = t.split(":", 1)[1].strip() if ":" in t else t[len(p):].strip()
+            return ("announce", content)
+    return None
+
+
+async def _run_teacher_command(cmd) -> str:
+    kind, content = cmd
+    group = get_group_chat_id()
+    if not group:
+        return ("Dạ em chưa xác định được nhóm lớp. Nhờ thầy/cô nhắn Bé một câu trong nhóm "
+                "trước để em ghi nhớ nhóm, rồi ra lệnh lại giúp em ạ.")
+    if kind == "announce":
+        if not content:
+            return ("Dạ thầy/cô nhập nội dung sau dấu ':' nhé. "
+                    "Ví dụ: 'gửi thông báo: Tối nay lớp học lúc 20h.'")
+        res = await send_text(group, content)
+        if isinstance(res, dict) and res.get("code") == 0:
+            return "Dạ em đã gửi thông báo vào nhóm lớp rồi ạ."
+        return f"Dạ em gửi chưa được ạ (lỗi Lark: {res}). Thầy/cô thử lại giúp em nhé."
+    if kind == "digest":
+        from . import digest
+        cfg = digest.get_config()
+        res = await send_text(group, digest.build_digest_text(cfg))
+        if isinstance(res, dict) and res.get("code") == 0:
+            return "Dạ em đã gửi bản tổng hợp học tập vào nhóm lớp rồi ạ."
+        return f"Dạ em gửi chưa được ạ (lỗi Lark: {res})."
+    return "Dạ em chưa hiểu lệnh này ạ."
+
+
 async def build_reply(text: str, open_id: str | None) -> str:
     low = text.lower()
     prog = get_progress_summary(open_id)
+    is_teacher = bool(prog and prog.get("is_teacher"))
+
+    # Lệnh điều khiển Bé (gửi thông báo / bản tổng hợp vào nhóm) — CHỈ giáo viên phụ trách.
+    cmd = _match_command(text)
+    if cmd:
+        if not is_teacher:
+            return ("Dạ chức năng ra lệnh cho Bé (gửi thông báo hay bản tổng hợp vào nhóm lớp) "
+                    "chỉ dành cho giáo viên phụ trách ạ. Nếu anh/chị cần hỗ trợ, cứ hỏi em nhé.")
+        return await _run_teacher_command(cmd)
 
     if any(k in low for k in PROGRESS_KEYWORDS):
         if prog is None:
             return (
                 "Dạ anh/chị chưa đăng nhập vào Học Viện qua Lark nên em chưa tra được tiến độ ạ. "
-                f"Anh/chị vào {SITE_URL} đăng nhập bằng Lark rồi quay lại nhờ em nhé 🌱"
+                f"Anh/chị vào {SITE_URL} đăng nhập bằng Lark rồi quay lại nhờ em nhé."
             )
         if not prog["approved"]:
             return (
                 f"Dạ tài khoản của anh/chị {prog['name']} đang chờ giáo viên duyệt ạ. "
-                "Được duyệt xong em sẽ theo dõi tiến độ giúp anh/chị ngay nhé 🌱"
+                "Được duyệt xong em sẽ theo dõi tiến độ giúp anh/chị ngay nhé."
             )
         return (
             f"Dạ em xin báo cáo tiến độ của anh/chị {prog['name']}:\n"
-            f"🌱 Đã hoàn thành: {prog['done']} câu\n"
-            f"⭐ Tổng điểm: {prog['points']} điểm\n"
-            "Mỗi ngày một chút là tiến bộ rất nhanh, cố lên anh/chị nhé! 💪"
+            f"- Đã hoàn thành: {prog['done']} câu\n"
+            f"- Tổng điểm: {prog['points']} điểm\n"
+            "Mỗi ngày một chút là tiến bộ rất nhanh, cố lên anh/chị nhé!"
         )
 
     return await ai_answer(text, prog)
