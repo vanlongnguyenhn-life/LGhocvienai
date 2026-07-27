@@ -9,11 +9,14 @@ import json
 import os
 import re
 import time
+from datetime import datetime, timezone, timedelta
 
 import httpx
 
 from .database import get_db
 from .course_knowledge import COURSE_KNOWLEDGE
+
+VN_TZ = timezone(timedelta(hours=7))
 
 LARK_DOMAIN = os.environ.get("LARK_DOMAIN", "https://open.larksuite.com")
 LARK_APP_ID = os.environ.get("LARK_APP_ID", "")
@@ -332,18 +335,281 @@ async def _run_teacher_command(cmd) -> str:
     return "Dạ em chưa hiểu lệnh này ạ."
 
 
+# ===================== GIAO VIỆC LINH HOẠT (chỉ giáo viên, có duyệt) =====================
+
+TASK_PREFIXES = ["giao việc", "giao viec", "nhờ bé", "nho be", "bé làm giúp", "be lam giup", "nhờ em", "việc cho bé"]
+APPROVAL_WORDS = {"duyệt", "duyet", "ok", "okê", "oke", "gửi", "gui", "gửi đi", "gui di", "gửi luôn",
+                  "đồng ý", "dong y", "xác nhận", "xac nhan", "chốt", "chot", "duyệt gửi", "ok gửi"}
+CANCEL_WORDS = {"huỷ", "hủy", "huy", "bỏ", "bo", "thôi", "thoi", "không gửi", "khong gui", "khỏi", "khoi"}
+
+
+def _is_task_command(low: str) -> bool:
+    l = low.strip()
+    return any(l.startswith(p) for p in TASK_PREFIXES)
+
+
+def _is_approval(low: str) -> bool:
+    return low.strip() in APPROVAL_WORDS
+
+
+def _is_cancel(low: str) -> bool:
+    return low.strip() in CANCEL_WORDS
+
+
+async def get_group_members(chat_id: str) -> list[dict]:
+    """Lấy danh sách thành viên nhóm (cần quyền đọc thành viên nhóm của app)."""
+    token = await get_tenant_access_token()
+    members, page_token = [], None
+    async with httpx.AsyncClient(timeout=15) as client:
+        for _ in range(20):  # tối đa 20 trang
+            params = {"member_id_type": "open_id", "page_size": 100}
+            if page_token:
+                params["page_token"] = page_token
+            resp = await client.get(
+                f"{LARK_DOMAIN}/open-apis/im/v1/chats/{chat_id}/members",
+                headers={"Authorization": f"Bearer {token}"}, params=params,
+            )
+            data = resp.json()
+            if data.get("code") != 0:
+                print(f"[get_group_members error] {data}")
+                break
+            d = data.get("data", {}) or {}
+            for it in d.get("items", []) or []:
+                oid = it.get("member_id")
+                if oid:
+                    members.append({"open_id": oid, "name": it.get("name") or ""})
+            page_token = d.get("page_token")
+            if not d.get("has_more"):
+                break
+    return members
+
+
+def get_created_open_ids() -> set:
+    with get_db() as conn:
+        rows = conn.execute(
+            "SELECT lark_open_id FROM users WHERE lark_open_id IS NOT NULL AND approved = 1"
+        ).fetchall()
+    return {r["lark_open_id"] for r in rows if r["lark_open_id"]}
+
+
+def set_pending_task(open_id: str, payload: dict):
+    with get_db() as conn:
+        conn.execute(
+            "INSERT INTO bot_pending_tasks (open_id, payload, created_at) VALUES (?, ?, datetime('now')) "
+            "ON CONFLICT(open_id) DO UPDATE SET payload=excluded.payload, created_at=datetime('now')",
+            (open_id, json.dumps(payload, ensure_ascii=False)),
+        )
+
+
+def get_pending_task(open_id: str | None):
+    if not open_id:
+        return None
+    with get_db() as conn:
+        row = conn.execute(
+            "SELECT payload, created_at FROM bot_pending_tasks WHERE open_id = ?", (open_id,)
+        ).fetchone()
+    if not row:
+        return None
+    try:
+        created = datetime.strptime(row["created_at"][:19], "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
+        if (datetime.now(timezone.utc) - created).total_seconds() > 3600:  # hết hạn sau 60 phút
+            clear_pending_task(open_id)
+            return None
+    except Exception:
+        pass
+    try:
+        return json.loads(row["payload"])
+    except Exception:
+        return None
+
+
+def clear_pending_task(open_id: str):
+    with get_db() as conn:
+        conn.execute("DELETE FROM bot_pending_tasks WHERE open_id = ?", (open_id,))
+
+
+def add_scheduled_message(chat_id: str, text: str, send_at_utc: str, created_by: str | None):
+    with get_db() as conn:
+        conn.execute(
+            "INSERT INTO scheduled_messages (chat_id, text, send_at_utc, created_by) VALUES (?, ?, ?, ?)",
+            (chat_id, text, send_at_utc, created_by),
+        )
+
+
+async def send_due_scheduled():
+    """Gửi các tin đã tới hạn (gọi từ vòng lặp nền của digest)."""
+    now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+    with get_db() as conn:
+        rows = conn.execute(
+            "SELECT id, chat_id, text FROM scheduled_messages WHERE sent = 0 AND send_at_utc <= ?", (now_utc,)
+        ).fetchall()
+        due = [dict(r) for r in rows]
+    for r in due:
+        try:
+            await send_text(r["chat_id"], r["text"])
+        except Exception as e:
+            print(f"[scheduled send error] {e!r}")
+        with get_db() as conn:
+            conn.execute("UPDATE scheduled_messages SET sent = 1 WHERE id = ?", (r["id"],))
+        print(f"[scheduled] sent message {r['id']}")
+
+
+def _compute_send_at(schedule_time, schedule_date):
+    """Trả (send_at_utc_str, target_datetime_vn) hoặc None nếu gửi ngay."""
+    if not schedule_time:
+        return None
+    try:
+        hh, mm = [int(x) for x in str(schedule_time).split(":")[:2]]
+    except Exception:
+        return None
+    now = datetime.now(VN_TZ)
+    day = now.date()
+    if schedule_date == "tomorrow":
+        day = day + timedelta(days=1)
+    elif schedule_date and schedule_date not in ("today", "null"):
+        try:
+            day = datetime.strptime(schedule_date, "%Y-%m-%d").date()
+        except Exception:
+            pass
+    target = datetime(day.year, day.month, day.day, hh, mm, tzinfo=VN_TZ)
+    if target <= now and schedule_date in (None, "today", "null"):
+        target = target + timedelta(days=1)  # giờ đã qua trong hôm nay → đẩy sang mai
+    return target.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"), target
+
+
+async def parse_task_instruction(instruction: str, stats_ctx: str):
+    """Dùng AI chuyển yêu cầu của giáo viên thành cấu trúc {message, tag, schedule_time, schedule_date}."""
+    if not ANTHROPIC_API_KEY:
+        return None
+    system = (
+        "Bạn giúp trợ lý lớp học chuyển yêu cầu của GIÁO VIÊN thành JSON. CHỈ trả JSON hợp lệ, "
+        "không kèm chữ nào khác, không markdown. Cấu trúc:\n"
+        '{"message": "<nội dung Bé Ailai sẽ đăng vào nhóm lớp: tiếng Việt, thân thiện, tự soạn hoàn '
+        'chỉnh theo yêu cầu; nếu cần số liệu thì dùng phần Bối cảnh>", '
+        '"tag": "created|not_created|all|none", '
+        '"schedule_time": "HH:MM" | null, '
+        '"schedule_date": "today|tomorrow|YYYY-MM-DD" | null}\n'
+        "Trong đó: 'created' = tag những người ĐÃ tạo tài khoản; 'not_created' = tag những người CHƯA "
+        "tạo tài khoản; 'all' = tất cả; 'none' = không tag ai.\n"
+        f"Bối cảnh: {stats_ctx}"
+    )
+    try:
+        async with httpx.AsyncClient(timeout=40) as client:
+            resp = await client.post(
+                "https://api.anthropic.com/v1/messages",
+                headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
+                json={"model": BOT_MODEL, "max_tokens": 700, "system": system,
+                      "messages": [{"role": "user", "content": instruction}]},
+            )
+            data = resp.json()
+        txt = "".join(b.get("text", "") for b in data.get("content", []) if b.get("type") == "text").strip()
+        m = re.search(r"\{.*\}", txt, re.S)
+        if m:
+            txt = m.group(0)
+        return json.loads(txt)
+    except Exception as e:
+        print(f"[parse_task error] {e!r}")
+        return None
+
+
+async def _prepare_task(open_id: str, text: str) -> str:
+    group = get_group_chat_id()
+    if not group:
+        return ("Dạ em chưa xác định được nhóm lớp. Nhờ thầy/cô nhắn Bé một câu trong nhóm trước "
+                "để em ghi nhớ nhóm, rồi giao việc lại giúp em ạ.")
+    members = await get_group_members(group)
+    created_ids = get_created_open_ids()
+    created = [m for m in members if m["open_id"] in created_ids]
+    not_created = [m for m in members if m["open_id"] and m["open_id"] not in created_ids]
+    stats_ctx = (f"Nhóm có {len(members)} thành viên; {len(created)} người đã tạo tài khoản học; "
+                 f"{len(not_created)} người chưa tạo tài khoản.")
+    parsed = await parse_task_instruction(text, stats_ctx)
+    if not parsed or not (parsed.get("message") or "").strip():
+        return ("Dạ em chưa hiểu rõ việc cần làm. Thầy/cô nói lại gọn hơn giúp em nhé, ví dụ: "
+                "'giao việc: nhắc các bạn chưa tạo tài khoản, tag họ, gửi lúc 9h sáng mai'.")
+    message = parsed["message"].strip()
+    tag = parsed.get("tag") or "none"
+    if tag == "created":
+        taglist = created
+    elif tag == "not_created":
+        taglist = not_created
+    elif tag == "all":
+        taglist = [m for m in members if m["open_id"]]
+    else:
+        taglist = []
+    mentions = "".join(f'<at user_id="{m["open_id"]}"></at> ' for m in taglist)
+    group_text = (mentions + "\n" + message).strip() if mentions else message
+
+    sched = _compute_send_at(parsed.get("schedule_time"), parsed.get("schedule_date"))
+    send_at_utc, when_human = None, "ngay bây giờ"
+    if sched:
+        send_at_utc, target = sched
+        when_human = "lúc " + target.strftime("%H:%M ngày %d/%m/%Y") + " (giờ VN)"
+
+    set_pending_task(open_id, {"chat_id": group, "group_text": group_text, "send_at_utc": send_at_utc})
+
+    if taglist:
+        names = [m["name"] or "(không tên)" for m in taglist]
+        shown = ", ".join(names[:15]) + (f" …(+{len(names) - 15} người)" if len(names) > 15 else "")
+        who = f"tag {len(names)} người: {shown}"
+    else:
+        who = "không tag ai"
+    return (
+        "Dạ em chuẩn bị gửi vào nhóm lớp như sau, thầy/cô xem giúp em:\n\n"
+        f"— Nội dung —\n{message}\n\n"
+        f"— Tag — {who}\n"
+        f"— Thời điểm — {when_human}\n\n"
+        "Thầy/cô gõ 'duyệt' để em gửi, hoặc 'huỷ' để bỏ ạ."
+    )
+
+
+async def _execute_pending_task(open_id: str, pending: dict) -> str:
+    chat_id = pending.get("chat_id")
+    group_text = pending.get("group_text")
+    send_at = pending.get("send_at_utc")
+    if not chat_id or not group_text:
+        clear_pending_task(open_id)
+        return "Dạ việc đang chờ bị thiếu dữ liệu, thầy/cô giao lại giúp em nhé."
+    if send_at:
+        add_scheduled_message(chat_id, group_text, send_at, open_id)
+        clear_pending_task(open_id)
+        return "Dạ em đã hẹn lịch, sẽ tự gửi vào nhóm lớp đúng giờ ạ."
+    res = await send_text(chat_id, group_text)
+    clear_pending_task(open_id)
+    if isinstance(res, dict) and res.get("code") == 0:
+        return "Dạ em đã gửi vào nhóm lớp rồi ạ."
+    return f"Dạ em gửi chưa được ạ (lỗi Lark: {res}). Thầy/cô thử lại giúp em nhé."
+
+
+# ===================== ĐỊNH TUYẾN Ý ĐỊNH (tiếp) =====================
+
 async def build_reply(text: str, open_id: str | None) -> str:
     low = text.lower()
     prog = get_progress_summary(open_id)
     is_teacher = bool(prog and prog.get("is_teacher"))
 
-    # Lệnh điều khiển Bé (gửi thông báo / bản tổng hợp vào nhóm) — CHỈ giáo viên phụ trách.
-    cmd = _match_command(text)
-    if cmd:
-        if not is_teacher:
-            return ("Dạ chức năng ra lệnh cho Bé (gửi thông báo hay bản tổng hợp vào nhóm lớp) "
-                    "chỉ dành cho giáo viên phụ trách ạ. Nếu anh/chị cần hỗ trợ, cứ hỏi em nhé.")
-        return await _run_teacher_command(cmd)
+    if is_teacher:
+        # Nếu đang có việc chờ duyệt: xử lý duyệt / huỷ / giao việc mới.
+        pending = get_pending_task(open_id)
+        if pending:
+            if _is_approval(low):
+                return await _execute_pending_task(open_id, pending)
+            if _is_cancel(low):
+                clear_pending_task(open_id)
+                return "Dạ em đã huỷ việc đang chờ ạ."
+            if _is_task_command(low):
+                return await _prepare_task(open_id, text)
+            # còn lại: rơi xuống trả lời bình thường, giữ nguyên việc chờ.
+        if _is_task_command(low):
+            return await _prepare_task(open_id, text)
+        cmd = _match_command(text)
+        if cmd:
+            return await _run_teacher_command(cmd)
+    else:
+        # Người không phải giáo viên mà cố ra lệnh/giao việc.
+        if _is_task_command(low) or _match_command(text):
+            return ("Dạ chức năng ra lệnh/giao việc cho Bé (gửi thông báo, tag người trong nhóm...) "
+                    "chỉ dành cho giáo viên phụ trách ạ. Anh/chị cần hỗ trợ gì cứ hỏi em nhé.")
 
     # Hỏi về số liệu chung của lớp (không phải hỏi điểm cá nhân).
     if any(k in low for k in CLASS_STATS_KEYWORDS) and not any(k in low for k in ["của em", "của mình", "của tôi"]):

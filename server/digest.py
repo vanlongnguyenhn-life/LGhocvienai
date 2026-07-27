@@ -236,4 +236,8 @@ async def scheduler_loop():
             await _tick()
         except Exception as e:
             print(f"[digest scheduler error] {e!r}")
+        try:
+            await lark_bot.send_due_scheduled()  # gửi các tin giáo viên đã hẹn giờ
+        except Exception as e:
+            print(f"[scheduled tick error] {e!r}")
         await asyncio.sleep(60)
