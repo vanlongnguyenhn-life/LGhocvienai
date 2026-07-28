@@ -968,6 +968,7 @@ function renderQuestionCard(lesson, q, locked) {
     const body = el("div", { class: "q-card-body" });
     if (q.video) body.appendChild(renderQuestionVideo(q.video));
     body.appendChild(el("p", { class: "q-prompt" }, q.prompt));
+    if (q.chatLog) body.appendChild(renderChatLog(q.chatLog));
     if (q.copyPrompt) body.appendChild(renderCopyPromptBox(resolveAgentPlaceholders(q.copyPrompt)));
     if (q.copyPromptTrailing) body.appendChild(el("p", { class: "q-prompt" }, q.copyPromptTrailing));
     if (q.copyPrompt && q.copyPrompt.includes("{{") && !agentTokenInfo) {
@@ -1041,6 +1042,18 @@ function renderQuestionCard(lesson, q, locked) {
   }
 
   return card;
+}
+
+function renderChatLog(chatLog) {
+  const wrap = el("div", { class: "chat-log" });
+  chatLog.forEach((turn) => {
+    const isAgent = turn.who === "agent";
+    const bubbleWrap = el("div", { class: "chat-turn " + (isAgent ? "agent" : "user") });
+    bubbleWrap.appendChild(el("div", { class: "chat-speaker" }, isAgent ? "Bé Ailai" : "Tôi"));
+    bubbleWrap.appendChild(el("div", { class: "chat-bubble" }, turn.text));
+    wrap.appendChild(bubbleWrap);
+  });
+  return wrap;
 }
 
 function renderChoiceGrid(q, a) {

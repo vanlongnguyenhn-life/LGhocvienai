@@ -743,6 +743,24 @@ a { color: inherit; }
 .q-card-body { padding: 0 16px 18px; }
 .q-prompt { font-size: 15px; margin: 4px 0 14px; line-height: 1.5; }
 
+.chat-log { display: flex; flex-direction: column; gap: 2px; margin: 4px 0 16px; }
+.chat-turn { display: flex; flex-direction: column; max-width: 82%; margin: 4px 0; }
+.chat-turn.user { align-items: flex-start; align-self: flex-start; }
+.chat-turn.agent { align-items: flex-end; align-self: flex-end; }
+.chat-speaker { font-size: 11px; color: #888; margin-bottom: 3px; padding: 0 4px; }
+.chat-turn.agent .chat-speaker { text-align: right; }
+.chat-bubble {
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 8px 12px;
+  border-radius: 18px;
+  display: inline-block;
+  word-break: break-word;
+  white-space: pre-line;
+}
+.chat-turn.user .chat-bubble { background: #e5e5ea; color: #000; }
+.chat-turn.agent .chat-bubble { background: var(--ios-blue); color: #fff; }
+
 .q-video { margin: 2px 0 16px; border-radius: var(--radius-md); overflow: hidden; background: #000; }
 .q-video .q-video-el { width: 100%; height: auto; display: block; }
 .q-video iframe { width: 100%; aspect-ratio: 16 / 9; display: block; border: 0; }
