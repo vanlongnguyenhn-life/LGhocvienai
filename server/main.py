@@ -41,6 +41,16 @@ with open(Path(__file__).parent / "assignment_manifest.json", encoding="utf-8") 
 with open(Path(__file__).parent / "reflect_manifest.json", encoding="utf-8") as f:
     REFLECT_MANIFEST = json.load(f)
 
+# Câu dạng "media_submit": học viên KHÔNG tự upload qua form — chính Coding Agent của họ phải
+# gọi /api/media/upload + /api/attempt-answers bằng curl thật, dựng từ app đang chạy thật.
+MEDIA_SUBMIT_RUBRICS = {
+    "6.5": "Ảnh chụp màn hình một bàn cờ caro (tic-tac-toe) 3×3 đang chạy trên trình duyệt, "
+    "có ít nhất vài nước đã đánh (một số ô đã có X hoặc O).",
+}
+MEDIA_SUBMIT_MANIFEST = {
+    "6.5": {"points": 24},
+}
+
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 # Nếu đặt, chỉ tổ chức Lark có tenant_key này mới được đăng nhập (để trống = cho mọi tổ chức của app).
 LARK_ALLOWED_TENANT_KEY = os.environ.get("LARK_ALLOWED_TENANT_KEY", "").strip()
@@ -136,6 +146,28 @@ def require_approved_user(request: Request):
     if not user.get("approved"):
         raise HTTPException(status_code=403, detail="Tài khoản đang chờ giáo viên duyệt.")
     return user
+
+
+def require_agent_user(request: Request):
+    """Xác thực bằng header (X-User-Id + X-Auth-Token) thay vì cookie — để Coding Agent của
+    học viên gọi thẳng bằng curl, không cần trình duyệt."""
+    user_id_header = request.headers.get("X-User-Id")
+    token = request.headers.get("X-Auth-Token")
+    if not user_id_header or not token:
+        raise HTTPException(status_code=401, detail="Thiếu X-User-Id hoặc X-Auth-Token.")
+    try:
+        user_id = int(user_id_header)
+    except ValueError:
+        raise HTTPException(status_code=401, detail="X-User-Id không hợp lệ.")
+    with get_db() as conn:
+        row = conn.execute(
+            "SELECT id, approved, api_token FROM users WHERE id = ?", (user_id,)
+        ).fetchone()
+    if not row or not row["api_token"] or row["api_token"] != token:
+        raise HTTPException(status_code=401, detail="X-User-Id hoặc X-Auth-Token sai.")
+    if not row["approved"]:
+        raise HTTPException(status_code=403, detail="Tài khoản đang chờ giáo viên duyệt.")
+    return {"id": row["id"]}
 
 
 def current_admin(request: Request):
@@ -435,6 +467,161 @@ def _assignment_all_valid(user_id: int, question_code: str) -> bool:
     return all(k in valid_keys for k in required)
 
 
+# ===================== MEDIA SUBMIT (Agent tự nộp bài qua curl) =====================
+
+
+def _media_confirm_code(media_item_id: int) -> str:
+    return f"OK-{media_item_id}"
+
+
+def _media_filename_prefix(user_id: int, question_code: str) -> str:
+    return f"{user_id}_baitap_q{question_code}."
+
+
+@app.get("/api/me/agent-token")
+def get_agent_token(request: Request):
+    user = require_approved_user(request)
+    with get_db() as conn:
+        row = conn.execute("SELECT api_token FROM users WHERE id = ?", (user["id"],)).fetchone()
+        token = row["api_token"] if row else None
+        if not token:
+            token = secrets.token_urlsafe(32)
+            conn.execute("UPDATE users SET api_token = ? WHERE id = ?", (token, user["id"]))
+    return {"uid": user["id"], "token": token}
+
+
+@app.post("/api/media/upload")
+async def media_upload(
+    request: Request,
+    question_code: str = Form(...),
+    file: UploadFile = File(...),
+    filename: str = Form(None),
+    overwrite: str = Form(None),
+):
+    user = require_agent_user(request)
+
+    if question_code not in MEDIA_SUBMIT_RUBRICS:
+        raise HTTPException(status_code=400, detail="Câu hỏi không hợp lệ cho luồng media_submit.")
+
+    data = await file.read()
+    is_valid, reason = validators.validate_image(data)
+
+    ai_graded = 0
+    if is_valid and ai_grader.is_configured():
+        media_type = _image_media_type(data)
+        result = await asyncio.to_thread(
+            ai_grader.grade_image, "", MEDIA_SUBMIT_RUBRICS[question_code], data, media_type
+        )
+        if result is not None:
+            is_valid, reason = bool(result[0]), result[1]
+            ai_graded = 1
+
+    ext = mimetypes.guess_extension(file.content_type or "") or ".png"
+    stored_name = f"{_media_filename_prefix(user['id'], question_code)}{ext.lstrip('.')}"
+    if is_valid:
+        dest_dir = UPLOADS_DIR / str(user["id"])
+        dest_dir.mkdir(exist_ok=True)
+        (dest_dir / stored_name).write_bytes(data)
+
+    with get_db() as conn:
+        cur = conn.execute(
+            """
+            INSERT INTO media_submissions (user_id, question_code, filename, is_valid, reason, ai_graded)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (user["id"], question_code, stored_name, int(is_valid), reason, ai_graded),
+        )
+        media_item_id = cur.lastrowid
+
+    return {"id": media_item_id, "valid": is_valid, "reason": reason}
+
+
+@app.post("/api/attempt-answers")
+async def attempt_answers(request: Request):
+    user = require_agent_user(request)
+    try:
+        body = await request.json()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Body phải là JSON hợp lệ.")
+
+    question_code = str(body.get("question_code") or "")
+    media_item_id = body.get("media_item_id")
+    local_url = str(body.get("local_url") or "")
+
+    if question_code not in MEDIA_SUBMIT_RUBRICS:
+        raise HTTPException(status_code=400, detail="Câu hỏi không hợp lệ cho luồng media_submit.")
+
+    with get_db() as conn:
+        row = conn.execute(
+            "SELECT * FROM media_submissions WHERE id = ?", (media_item_id,)
+        ).fetchone()
+
+    url_valid, url_reason = validators.validate_url(local_url)
+    expected_prefix = _media_filename_prefix(user["id"], question_code)
+
+    criteria = [
+        {
+            "key": "media_item_id",
+            "label": "media_item_id là số dương hợp lệ",
+            "ok": isinstance(media_item_id, int) and media_item_id > 0 and row is not None,
+        },
+        {
+            "key": "owner",
+            "label": "media_item_id thuộc đúng học viên và đúng câu hỏi",
+            "ok": bool(row) and row["user_id"] == user["id"] and row["question_code"] == question_code,
+        },
+        {
+            "key": "filename",
+            "label": "Tên file đúng quy ước cho câu này",
+            "ok": bool(row) and row["filename"].startswith(expected_prefix) and bool(row["is_valid"]),
+        },
+        {
+            "key": "local_url",
+            "label": "local_url đúng định dạng http(s)",
+            "ok": url_valid,
+        },
+    ]
+    is_correct = all(c["ok"] for c in criteria)
+
+    result = {"is_correct": is_correct, "criteria": criteria}
+
+    if is_correct:
+        confirm_code = _media_confirm_code(media_item_id)
+        with get_db() as conn:
+            conn.execute(
+                "UPDATE media_submissions SET local_url = ?, attempt_ok = 1, confirm_code = ? WHERE id = ?",
+                (local_url, confirm_code, media_item_id),
+            )
+        result["confirm_code"] = confirm_code
+
+    return result
+
+
+@app.post("/api/verify-media-submit")
+def verify_media_submit(
+    request: Request,
+    question_code: str = Form(...),
+    confirm_code: str = Form(...),
+):
+    user = require_approved_user(request)
+
+    with get_db() as conn:
+        row = conn.execute(
+            """
+            SELECT confirm_code FROM media_submissions
+            WHERE user_id = ? AND question_code = ? AND attempt_ok = 1
+            ORDER BY id DESC LIMIT 1
+            """,
+            (user["id"], question_code),
+        ).fetchone()
+
+    if not row:
+        return {"valid": False, "reason": "Chưa có lần nộp nào qua Agent thành công cho câu này."}
+    if confirm_code.strip() != row["confirm_code"]:
+        return {"valid": False, "reason": "Mã xác nhận không khớp — kiểm tra lại kết quả Agent trả về."}
+    return {"valid": True, "reason": "Đã xác nhận Agent nộp bài thành công."}
+
+
 @app.post("/api/grade-reflect")
 def grade_reflect(
     request: Request,
@@ -505,6 +692,24 @@ def submit_question(
         if submitted_text.strip() != row["answer_text"].strip():
             raise HTTPException(status_code=400, detail="Nội dung đã thay đổi kể từ lúc chấm, hãy chấm lại trước khi nộp.")
         awarded_points = REFLECT_MANIFEST[question_code]["points"]
+
+    if question_code in MEDIA_SUBMIT_MANIFEST and status == "done":
+        try:
+            submitted_code = json.loads(answer_data or "{}").get("text", "").strip()
+        except (json.JSONDecodeError, AttributeError):
+            submitted_code = ""
+        with get_db() as conn:
+            row = conn.execute(
+                """
+                SELECT confirm_code FROM media_submissions
+                WHERE user_id = ? AND question_code = ? AND attempt_ok = 1
+                ORDER BY id DESC LIMIT 1
+                """,
+                (user["id"], question_code),
+            ).fetchone()
+        if not row or submitted_code != row["confirm_code"]:
+            raise HTTPException(status_code=400, detail="Mã xác nhận chưa đúng — nộp lại qua Agent trước.")
+        awarded_points = MEDIA_SUBMIT_MANIFEST[question_code]["points"]
 
     with get_db() as conn:
         conn.execute(

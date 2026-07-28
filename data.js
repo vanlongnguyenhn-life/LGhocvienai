@@ -826,14 +826,10 @@ const LESSONS = [
       {
         code: "6.5",
         title: "Câu 6.5 — Chơi cờ caro 3x3",
-        type: "assignment",
-        prompt: "Ra lệnh cho Coding Agent:",
-        copyPrompt: "chơi cờ caro 3x3",
-        instructions: "Chụp ảnh màn hình ván cờ caro 3x3 đang chạy, và mô tả ngắn cách bạn ra lệnh cho Agent.",
-        criteria: [
-          { key: "image", label: "Ảnh minh chứng", desc: "Chọn ảnh chụp màn hình web game caro 3x3 đang chạy được." },
-          { key: "text", label: "Mô tả cách ra lệnh", desc: "Bạn đã yêu cầu Agent như thế nào?", placeholder: "Mô tả ngắn prompt bạn đã dùng..." },
-        ],
+        type: "agent_media",
+        prompt: "Copy đoạn prompt dưới đây và paste vào ô chat của Agent để yêu cầu nó làm bài tập giúp bạn — Agent sẽ tự dựng app, tự chụp ảnh và tự nộp bài qua API, bạn không cần thao tác gì thêm ngoài dán mã xác nhận Agent trả về vào ô bên dưới.",
+        copyPrompt:
+          "Bạn là Coding Agent giúp học viên khoá AI Agent.\n\nNhiệm vụ: Tạo web chơi cờ caro 3×3 (tic-tac-toe) offline cho 2 người chơi cùng máy.\n\nYêu cầu:\n- Bàn 3×3. 2 người thay phiên click, người đi trước là ❌ (X), người đi sau là ⭕ (O).\n- Thắng khi có 3 ký hiệu liên tiếp (hàng, cột, hoặc đường chéo).\n- Hiển thị lượt đang chơi. Khi có thắng → hiện thông báo; hoà → hiện \"Hoà\".\n- Có nút \"Chơi lại\" để reset bàn.\n- Stack: HTML + CSS + JavaScript thuần, KHÔNG cần framework. Lưu thành 1 file index.html.\n\nCác bước làm:\n1. Viết index.html đầy đủ trong 1 file (CSS inline hoặc trong <style>; JS trong <script>).\n2. Chạy local server trong thư mục chứa file: python3 -m http.server 8080.\n3. Mở http://localhost:8080 trên trình duyệt THẬT (không phải headless) để tự mắt kiểm chứng, chơi vài nước (ít nhất 3–5 nước đã click trên bàn) để bàn trông có nội dung.\n4. Chụp screenshot toàn trang, lưu thành file PNG.\n\nBước 1 — Upload ảnh lên kho media:\ncurl -X POST '{{media_upload_url}}' \\\n  -H 'X-User-Id: {{uid}}' \\\n  -H 'X-Auth-Token: {{token}}' \\\n  -F 'file=@screenshot.png' \\\n  -F 'question_code=6.5'\nTrong JSON trả về, lấy số nguyên trường \"id\" làm media_item_id ở bước 2.\n\nBước 2 — Nộp bài làm:\ncurl -X POST '{{attempt_answers_url}}' \\\n  -H 'X-User-Id: {{uid}}' \\\n  -H 'X-Auth-Token: {{token}}' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\"question_code\": \"6.5\", \"media_item_id\": 0, \"local_url\": \"http://localhost:8080\"}'\nThay 0 trong media_item_id bằng số thật từ bước 1 (không có dấu ngoặc).\n\nĐiều kiện chấm tự động (đủ 4 tiêu chí mới đạt; JSON trả về liệt kê từng tiêu chí đạt/không đạt):\n(1) media_item_id là số dương trùng id do bước upload trả về.\n(2) Id đó trỏ tới file thuộc kho media của đúng học viên, đúng câu hỏi này.\n(3) Tên file lưu trong hệ thống đúng quy ước (server tự thêm tiền tố theo user khi lưu).\n(4) local_url là URL http:// hoặc https:// tới trang đang chạy bài.\n\nNếu is_correct=true, JSON trả về sẽ có trường confirm_code (dạng OK-<số>) — báo lại cho học viên để họ dán mã đó vào ô trên trang web (câu 6.5) rồi bấm Nộp bài.",
         points: 24,
       },
       {
@@ -2762,7 +2758,7 @@ const LESSONS = [
           "Phần 2 · Tab Agent trong module Quản lý thực đơn\n\nBiến Chatbot thành Trợ lý AI có chủ đề và Soul riêng\n\n  Sau khi web app Quản lý thực đơn ở câu 13.1 đã chạy, ta thêm một tab Agent vào menu của chính module này (cạnh Thực đơn, Món ăn, Thống kê...). Trong tab Agent, Admin có thể:\n\n- Chọn nhóm chat Zalo để chatbot lắng nghe lệnh; chỉ định 1 hoặc nhiều người cụ thể trong nhóm được phép ra lệnh — tin nhắn của họ trở thành \"bộ truyền lệnh\" cho chatbot thực hiện các vòng lặp đạt mục tiêu.\n\n- Cấu hình chủ đề chatbot sẽ trả lời (mặc định: \"Trao đổi về thực đơn, nấu ăn và dinh dưỡng\") — nội dung lạc chủ đề sẽ bị bỏ qua.\n\n- Cấu hình Soul cho chatbot (khi đóng vai Agent) — định hình thói quen, sở thích, giọng điệu trả lời theo ý Admin.\n\n  Chatbot khi này dùng LLM được cấu hình sẵn trong Settings hệ thống. Dán prompt sau cho Coding Agent của bạn:",
         copyPrompt:
           "Thêm tab Agent vào hệ thống menu hiện có của module Quản lý thực đơn (bên cạnh các mục Thực đơn, Món ăn, Thống kê...).\n\nTrong mục Agent sẽ cho phép Admin chọn 1 nhóm chat Zalo để chatbot nhận lệnh, có thể cấu hình cho chatbot nhận lệnh từ 1 hay nhiều người cụ thể trong nhóm này. Tin nhắn từ những người đó sẽ đóng vai trò là bộ truyền lệnh cho chatbot để thực hiện các vòng lặp cần thiết hoàn thành mục tiêu do các nick chat kia ra lệnh hoặc đặt câu hỏi.\n\nCó một ô textarea cho phép Admin cấu hình chủ đề nào thì chatbot sẽ trả lời, các nội dung khác sẽ bỏ qua (mặc định điền sẵn nội dung \"Trao đổi về thực đơn, nấu ăn và dinh dưỡng\").\n\nCũng có thêm ô cho phép cấu hình Soul của chatbot (khi này đóng vai Agent) để nó trả lời theo thói quen, sở thích của Admin mong muốn.\n\nChatbot khi này sử dụng LLM được cấu hình sẵn trong Settings hệ thống.",
-        copyPromptTrailing: "Bạn đã làm được chưa?",
+        copyPromptTrailing: "Bạn đã làm được chưa?",
         options: ["Đã làm được", "Chưa làm được"],
         correct: [0],
         points: 20,
