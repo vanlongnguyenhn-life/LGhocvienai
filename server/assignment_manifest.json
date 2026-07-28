@@ -164,21 +164,8 @@
     ],
     "points": 16
   },
-  "9.1": {
-    "prompt": "Coding Agent có thể \"giao tiếp\" với phần mềm theo nhiều cách: điều khiển GUI như người thật (tốn token, tốn thời gian), qua CLI (dòng lệnh, nhanh và chính xác), qua MCP (chuẩn hiện đại nhưng còn ít phần mềm hỗ trợ)... Hãy mở cửa sổ dòng lệnh, gõ opencode -h (hoặc lệnh tương đương) để xem danh sách lệnh CLI mà OpenCode hỗ trợ.\nCopy toàn bộ danh sách lệnh (commands) mà OpenCode hỗ trợ, dán vào ô bên dưới.",
-    "criteria": [
-      {
-        "key": "text",
-        "optional": false,
-        "minLength": null,
-        "label": "Danh sách lệnh",
-        "desc": "Dán danh sách các lệnh CLI mà OpenCode hỗ trợ."
-      }
-    ],
-    "points": 10
-  },
   "9.9": {
-    "prompt": "Nhờ Coding Agent viết một trang web hiển thị danh sách các cuộc chat (session) trong Gemini CLI và OpenCode.\nChụp ảnh trang web đang chạy, và cho biết trang đang chạy ở địa chỉ local nào.",
+    "prompt": "Nhờ Coding Agent viết một trang web đơn giản chạy ở localhost, có 2 nút bấm: Gemini CLI và OpenCode. Khi bấm mỗi nút, trang gọi lệnh CLI tương ứng (gemini --list-sessions / opencode session list) ở backend, lấy danh sách session và hiển thị lên trang.\nMở trang trên trình duyệt thật, bấm cả 2 nút để thấy danh sách session của cả 2 Coding Agent, rồi chụp ảnh toàn trang.",
     "criteria": [
       {
         "key": "image",
@@ -186,133 +173,9 @@
         "minLength": null,
         "label": "Ảnh minh chứng",
         "desc": "Chọn ảnh chụp màn hình trang web hiển thị danh sách session."
-      },
-      {
-        "key": "url",
-        "optional": false,
-        "minLength": null,
-        "label": "Địa chỉ local",
-        "desc": "Trang web đang chạy ở địa chỉ nào? (ví dụ http://localhost:8080)"
       }
     ],
     "points": 14
-  },
-  "9.10": {
-    "prompt": "FFMPEG là công cụ dòng lệnh xử lý video/audio rất mạnh. Nhờ Coding Agent cài công cụ này vào máy, rồi dùng nó convert một tấm ảnh bất kỳ (ví dụ ảnh đại diện của bạn) thành một bức tranh ASCII art.\nChụp ảnh kết quả ASCII art hiển thị trên terminal hoặc trình duyệt.",
-    "criteria": [
-      {
-        "key": "image",
-        "optional": false,
-        "minLength": null,
-        "label": "Ảnh minh chứng",
-        "desc": "Chọn ảnh chụp màn hình kết quả ASCII art."
-      }
-    ],
-    "points": 14
-  },
-  "9.11": {
-    "prompt": "(Bản gốc: hệ thống chọn ngẫu nhiên một bạn học và hỏi bạn tìm giờ bạn ấy hoàn thành Bài 7, qua API riêng của lớp học — câu này cần dữ liệu thật của lớp nên được đơn giản hoá lại.) Hãy tự kiểm tra: bạn hoàn thành Bài 7 của chính mình vào lúc nào?\nĐiền thời điểm bạn hoàn thành Bài 7, theo định dạng HH:MM:SS DD/MM/YYYY.",
-    "criteria": [
-      {
-        "key": "text",
-        "optional": false,
-        "minLength": null,
-        "label": "Thời điểm hoàn thành",
-        "desc": "Định dạng HH:MM:SS DD/MM/YYYY"
-      }
-    ],
-    "points": 8
-  },
-  "9.12": {
-    "prompt": "(Bản gốc: dùng GWS CLI gọi API đổi avatar của bạn học ngẫu nhiên ở câu trước sang ảnh ASCII vừa tạo — cần token/API thật của lớp học nên được đơn giản hoá lại.) Hãy mô tả lại lệnh/API mà bạn sẽ dùng để đổi avatar cho người khác qua API, gồm những phần bắt buộc nào (endpoint, header xác thực, dữ liệu gửi lên)?\nMô tả ngắn gọn cấu trúc lệnh gọi API đổi avatar.",
-    "criteria": [
-      {
-        "key": "text",
-        "optional": false,
-        "minLength": null,
-        "label": "Mô tả lệnh gọi API",
-        "desc": "Endpoint, header xác thực, dữ liệu cần gửi."
-      }
-    ],
-    "points": 6
-  },
-  "9.16": {
-    "prompt": "Nhờ Coding Agent cài Google Workspace CLI (github.com/googleworkspace/cli) và cấu hình với tài khoản Google của bạn.\nChụp ảnh terminal cho thấy GWS CLI đã cài đặt và cấu hình thành công.",
-    "criteria": [
-      {
-        "key": "image",
-        "optional": false,
-        "minLength": null,
-        "label": "Ảnh minh chứng",
-        "desc": "Chọn ảnh chụp màn hình GWS CLI đã cấu hình xong."
-      }
-    ],
-    "points": 10
-  },
-  "9.17": {
-    "prompt": "(Bản gốc: viết chương trình gọi một API thật của lớp học lấy hàng loạt dữ liệu \"cát\", lọc ra các dòng \"vàng\" đúng định dạng AGS-{COL}{ROW}-{mã}, rồi ghi vào đúng ô Google Sheet trong 10 giây — cần backend thật nên được đơn giản hoá lại.) Hãy mô tả cách bạn sẽ thiết kế một chương trình tự động: gọi API lấy dữ liệu, lọc ra các dòng khớp một mẫu (pattern) cho trước, rồi ghi kết quả vào đúng vị trí trong Google Sheet — tất cả trong thời gian giới hạn.\nMô tả ngắn gọn các bước chương trình của bạn sẽ thực hiện.",
-    "criteria": [
-      {
-        "key": "text",
-        "optional": false,
-        "minLength": null,
-        "label": "Mô tả các bước",
-        "desc": "Các bước gọi API, lọc dữ liệu, ghi vào Sheet."
-      }
-    ],
-    "points": 8
-  },
-  "9.19": {
-    "prompt": "(Bản gốc: gọi API thật của lớp học lấy dữ liệu + format spec, rồi dùng GWS CLI dựng một trang quảng bá khoá học đúng bố cục — cần backend thật nên được đơn giản hoá lại.) Hãy dùng GWS CLI (hoặc nhờ Agent) tạo một Google Sheet trình bày đẹp: tiêu đề, các mục, màu sắc/định dạng rõ ràng — chủ đề tuỳ bạn chọn.\nChụp ảnh Sheet đã được định dạng.",
-    "criteria": [
-      {
-        "key": "image",
-        "optional": false,
-        "minLength": null,
-        "label": "Ảnh minh chứng",
-        "desc": "Chọn ảnh chụp màn hình Sheet đã định dạng đẹp."
-      }
-    ],
-    "points": 8
-  },
-  "9.20": {
-    "prompt": "(Bản gốc: dùng GWS CLI Slides API build tự động bộ slide báo cáo tiến độ Bài 6 của 9 bạn học ngẫu nhiên trong lớp — cần dữ liệu thật của lớp nên được đơn giản hoá lại.) Hãy dùng GWS CLI Slides API để tự động tạo một bộ slide báo cáo tiến độ học tập của chính bạn qua các bài đã học.\nChụp ảnh bộ slide đã tạo.",
-    "criteria": [
-      {
-        "key": "image",
-        "optional": false,
-        "minLength": null,
-        "label": "Ảnh minh chứng",
-        "desc": "Chọn ảnh chụp màn hình bộ slide đã tạo."
-      }
-    ],
-    "points": 8
-  },
-  "9.21": {
-    "prompt": "(Bản gốc: gửi link slide cho 9 bạn học thật để họ chấm điểm chéo theo 3 tiêu chí Info/Avatar/Đẹp — cần tương tác nhiều người dùng thật nên được đơn giản hoá lại.) Hãy tự chấm điểm bộ slide của chính bạn theo 3 tiêu chí: Info (đủ thông tin), Ava (hình ảnh minh hoạ), Đẹp (thẩm mỹ) — mỗi tiêu chí thang điểm 1-10, và giải thích ngắn vì sao.\nĐiền điểm tự chấm và giải thích ngắn.",
-    "criteria": [
-      {
-        "key": "text",
-        "optional": false,
-        "minLength": null,
-        "label": "Tự chấm điểm",
-        "desc": "Điểm 3 tiêu chí (Info/Ava/Đẹp) và lý do."
-      }
-    ],
-    "points": 6
-  },
-  "9.22": {
-    "prompt": "Cài thêm một connector mới giúp Coding Agent tạo video tự động bằng Remotion (remotion.dev), kết hợp GWS Drive để upload và chia sẻ công khai.\nChụp ảnh/mô tả video đã tạo và đường dẫn chia sẻ.",
-    "criteria": [
-      {
-        "key": "text",
-        "optional": false,
-        "minLength": null,
-        "label": "Mô tả kết quả",
-        "desc": "Video đã tạo về nội dung gì, chia sẻ ở đâu?"
-      }
-    ],
-    "points": 6
   },
   "10.16": {
     "prompt": "Ví dụ: cần làm một ứng dụng tự động lấy tin bài từ một trang báo chỉ định, tóm tắt ý chính, viết lại thành bài recap ngắn, rồi chuyển thành video (dùng Remotion + tông màu Trăng Đen), sau đó upload lên Google Drive (dùng GWS CLI), chia sẻ công khai.\nNhờ Agent thực hiện toàn bộ quy trình trên, rồi dán link Google Drive của video thành phẩm vào đây.",

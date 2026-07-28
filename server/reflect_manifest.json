@@ -83,5 +83,25 @@
     "prompt": "Hãy nhờ Agent của bạn dùng token vừa tạo để đọc số điện thoại của bạn. Gọi:\nGET https://ailg.onrender.com/api/pi-lab/managed/phone/read/<TOKEN_CỦA_BẠN>",
     "minLength": 20,
     "points": 10
+  },
+  "9.1": {
+    "prompt": "Vậy là, bạn đều biết rằng có nhiều cách để Coding Agent có thể \"giao tiếp\" với các phần mềm: điều khiển giao diện GUI như \"người thật\" (làm được nhưng tốn token, tốn thời gian), điều khiển qua CLI (dòng lệnh, rất nhanh và chính xác), điều khiển qua MCP (giao thức chuẩn, hiện đại của các Agent nhưng còn ít phần mềm hỗ trợ)… và một số phương thức khác.\n\nBây giờ, hãy thử mở cửa sổ dòng lệnh và gõ opencode -h (hoặc lệnh khác tuỳ thời điểm, có thể cần tìm hiểu lệnh chính xác trên website chính thức của OpenCode) để hiện danh sách các lệnh CLI mà Coding Agent opencode hỗ trợ.",
+    "minLength": 100,
+    "points": 10
+  },
+  "9.3": {
+    "prompt": "OpenCode web vừa mở ở câu trước chạy trên máy bạn. Nó chạy ở cổng (port) bao nhiêu?",
+    "minLength": 1,
+    "points": 8
+  },
+  "9.10": {
+    "prompt": "FFMPEG là một công cụ dòng lệnh (CLI) xử lý video/audio vô cùng mạnh mẽ. Hãy nhờ Coding Agent của bạn cài công cụ này vào máy, rồi dùng nó convert ảnh đại diện của bạn (hoặc ảnh bất kỳ) thành một bức tranh ASCII art (resize nhỏ, chuyển grayscale, rồi map độ sáng từng pixel sang ký tự theo bảng \" .:-=+*#%@\").",
+    "minLength": 200,
+    "points": 14
+  },
+  "9.21": {
+    "prompt": "Bộ slide bạn vừa tạo (khi tính năng Google Slide được mở khoá) sẽ được gửi cho \"bạn Mít\" chấm điểm chéo theo 3 tiêu chí: Info (đủ thông tin), Ava (hình ảnh minh hoạ), Đẹp (thẩm mỹ).\n\nTrong lúc chờ, hãy tự chấm điểm bộ slide dự kiến của bạn theo 3 tiêu chí trên (thang điểm 1-10) và giải thích ngắn vì sao.",
+    "minLength": 20,
+    "points": 6
   }
 }
