@@ -10,6 +10,15 @@ from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).parent / ".env")
 
+# Console Windows mặc định cp1252 khiến print tiếng Việt (tên học viên...) gây UnicodeEncodeError
+# và có thể làm hỏng request. Ép stdout/stderr sang UTF-8 an toàn (Linux/Render vốn UTF-8 → vô hại).
+import sys as _sys
+for _stream in (_sys.stdout, _sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 from fastapi import FastAPI, Request, Response, UploadFile, Form, File, HTTPException
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles

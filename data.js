@@ -2168,7 +2168,7 @@ const LESSONS = [
     id: 11,
     code: "11",
     title: "Bài 11 - Đại phẫu một Agent",
-    points: 83,
+    points: 280,
     intro:
       "\"Mổ xẻ\" một Agent đơn giản do tôi tự viết (Mầm Fake) để hiểu rõ bên trong nó có gì: từ chatbot kịch bản có sẵn (V1), tới chatbot dùng LLM (V2-V3), tới Agent biết gọi tool thật (V4) — và cách một prompt đơn giản có thể sinh ra được cả một Agent.\n\nGhi chú: một số câu ở bài gốc dùng chatbot demo tương tác trực tiếp (Mầm Fake V1-V4) và diễn đàn bình luận thật của lớp — những phần này đã được đơn giản hoá thành câu hỏi/bài tự luận tương đương.",
     questions: [
@@ -2210,11 +2210,16 @@ const LESSONS = [
       {
         code: "11.4",
         title: "Câu 11.4",
-        type: "code",
+        type: "single",
         prompt:
-          "Chatbot là một chương trình máy tính được thiết kế để trò chuyện với con người. Đầu vào và đầu ra của nó đều cùng một dạng thức. Đó là dạng thức gì (ngôn ngữ, dưới các hình thức text/audio/video/âm thanh...)?",
-        secretNote: "🔒 Trả lời một từ duy nhất, không dấu.",
-        answer: "NGON NGU",
+          "AI Agent là một Chatbot được nâng cấp qua từng cấp độ: biết dùng Công cụ, biết định hình Danh tính, biết Lưu trữ trải nghiệm và biết Tự tư duy để đạt mục tiêu.\n\nVậy thì trước hết, nó phải là một chatbot! Chatbot là một chương trình máy tính được thiết kế để trò chuyện với con người. Đầu vào và đầu ra của nó là dạng thức gì?",
+        options: [
+          "Ngôn ngữ, dưới các dạng thức khác nhau như text, audio, video, âm thanh...",
+          "Những con số / dữ liệu nhị phân",
+          "Mã nguồn lập trình",
+          "Chỉ hình ảnh tĩnh",
+        ],
+        correct: [0],
         points: 6,
       },
       {
@@ -2237,11 +2242,9 @@ const LESSONS = [
       {
         code: "11.6",
         title: "Câu 11.6",
-        type: "single",
+        type: "gate",
         prompt:
-          "(Bản gốc: nhắn /help kèm mã cá nhân cho bot \"Bé Mầm\" trong nhóm Zalo thật của lớp để nhận hướng dẫn — cần nhóm chat thật nên được đơn giản hoá lại.) Bot \"Bé Mầm\" trả lời tin nhắn /help bằng một câu trả lời soạn sẵn, cố định. Theo bạn, đây là loại chatbot nào trong 2 loại vừa học ở câu 11.5?",
-        options: ["Chatbot được cài đặt sẵn các kịch bản mẫu để trả lời", "Chatbot sử dụng mô hình ngôn ngữ lớn để tự suy nghĩ và trả lời"],
-        correct: [0],
+          "Câu này cần nhắn /help kèm mã cá nhân cho bot \"Bé Mầm\" thật trong nhóm Zalo của lớp và chờ phản hồi trong thời hạn — cần tích hợp Zalo Official Account thật, hạ tầng đang được xây dựng, sẽ mở khoá sớm.",
         points: 8,
       },
       {
