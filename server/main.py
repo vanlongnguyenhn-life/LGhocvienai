@@ -597,19 +597,33 @@ def admin_diag_botlog(request: Request):
 
 @app.get("/api/admin/diag/grading")
 def admin_diag_grading(request: Request):
-    """Thống kê chấm bài tự luận: bao nhiêu câu đã AI chấm, bao nhiêu câu mới chỉ đạt theo độ dài."""
+    """Thống kê chấm các câu KHÔNG phải trắc nghiệm: tự luận (AI chấm) và bài tập minh chứng (kiểm tra bằng luật)."""
     current_admin(request)
     with get_db() as conn:
-        total = conn.execute("SELECT COUNT(*) c FROM reflect_grades").fetchone()["c"]
-        length_only = conn.execute(
+        r_total = conn.execute("SELECT COUNT(*) c FROM reflect_grades").fetchone()["c"]
+        r_length_only = conn.execute(
             "SELECT COUNT(*) c FROM reflect_grades WHERE reason LIKE '%Không chấm được bằng AI%'"
         ).fetchone()["c"]
-        valid = conn.execute("SELECT COUNT(*) c FROM reflect_grades WHERE is_valid = 1").fetchone()["c"]
+        r_valid = conn.execute("SELECT COUNT(*) c FROM reflect_grades WHERE is_valid = 1").fetchone()["c"]
+        s_total = conn.execute("SELECT COUNT(*) c FROM submissions").fetchone()["c"]
+        s_valid = conn.execute("SELECT COUNT(*) c FROM submissions WHERE is_valid = 1").fetchone()["c"]
+        s_by_type = conn.execute(
+            "SELECT value_type, COUNT(*) c, COALESCE(SUM(is_valid),0) v FROM submissions GROUP BY value_type"
+        ).fetchall()
     return {
-        "reflect_total": total,
-        "ai_graded": total - length_only,
-        "length_only_accepted": length_only,
-        "valid_count": valid,
+        "cau_tu_luan_reflect": {
+            "cach_cham": "AI (Claude) chấm nội dung",
+            "tong_luot_nop": r_total,
+            "da_AI_cham": r_total - r_length_only,
+            "chi_dat_theo_do_dai_chua_AI_cham": r_length_only,
+            "so_luot_dat": r_valid,
+        },
+        "cau_bai_tap_minh_chung": {
+            "cach_cham": "KHÔNG dùng AI — kiểm tra bằng luật (ảnh thật/URL hợp lệ/đủ độ dài chữ)",
+            "tong_tieu_chi_nop": s_total,
+            "so_tieu_chi_hop_le": s_valid,
+            "theo_loai": {r["value_type"]: {"nop": r["c"], "hop_le": r["v"]} for r in s_by_type},
+        },
     }
 
 
