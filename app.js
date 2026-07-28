@@ -36,7 +36,10 @@ function resolveAgentPlaceholders(text) {
     .replace(/\{\{uid\}\}/g, agentTokenInfo.uid)
     .replace(/\{\{token\}\}/g, agentTokenInfo.token)
     .replace(/\{\{media_upload_url\}\}/g, `${location.origin}/api/media/upload`)
-    .replace(/\{\{attempt_answers_url\}\}/g, `${location.origin}/api/attempt-answers`);
+    .replace(/\{\{attempt_answers_url\}\}/g, `${location.origin}/api/attempt-answers`)
+    .replace(/\{\{electron_verify_url\}\}/g, `${location.origin}/api/electron/verify`)
+    .replace(/\{\{electron_cmd_queue_url\}\}/g, `${location.origin}/api/electron/cmd-queue`)
+    .replace(/\{\{electron_cmd_ack_url\}\}/g, `${location.origin}/api/electron/cmd-ack`);
 }
 
 function loadState() {
@@ -859,7 +862,7 @@ function renderQuestionVideo(src) {
 
 // ===== TẠM KHOÁ theo mã câu: khoá mọi câu TỪ mã này trở đi (theo thứ tự khoá học). =====
 // Đặt "" hoặc null để MỞ HẾT trở lại.
-const LOCKED_FROM_CODE = "6.8";
+const LOCKED_FROM_CODE = "";
 const ALL_CODES_ORDERED = [];
 (typeof LESSONS !== "undefined" ? LESSONS : []).forEach((l) => l.questions.forEach((q) => ALL_CODES_ORDERED.push(q.code)));
 const LOCKED_CODES = (() => {
@@ -933,7 +936,7 @@ function renderQuestionCard(lesson, q, locked) {
       body.appendChild(renderAssignment(q, a));
     } else if (q.type === "code") {
       body.appendChild(renderCodeInput(q, a));
-    } else if (q.type === "agent_media") {
+    } else if (q.type === "agent_media" || q.type === "agent_electron") {
       body.appendChild(renderAgentMediaStatus(q, a));
     } else if (q.type === "token_scope_check") {
       body.appendChild(renderTokenScopeCheck(q, a));
@@ -1207,11 +1210,17 @@ function normalizeCode(s) {
   return (s || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
 }
 
+const AGENT_TASK_STATUS_ENDPOINT = {
+  agent_media: "/api/media-status",
+  agent_electron: "/api/electron-status",
+};
+
 async function fetchMediaStatus(q, a) {
   a.mediaStatus = "loading";
   render();
   try {
-    a.mediaStatus = await API.request(`/api/media-status?question_code=${encodeURIComponent(q.code)}`);
+    const endpoint = AGENT_TASK_STATUS_ENDPOINT[q.type] || "/api/media-status";
+    a.mediaStatus = await API.request(`${endpoint}?question_code=${encodeURIComponent(q.code)}`);
   } catch (err) {
     a.mediaStatus = { error: err.message };
   }
@@ -1596,7 +1605,7 @@ async function submitAnswer(lesson, q) {
     a.awardedPoints = correct ? q.points : 0;
     showToast(correct ? `Chính xác! +${q.points} điểm` : "Mã chưa đúng, em đọc lại mật thư nhé");
     persistQuestionStatus(q, a);
-  } else if (q.type === "agent_media") {
+  } else if (q.type === "agent_media" || q.type === "agent_electron") {
     if (!a.mediaStatus || a.mediaStatus === "loading" || !a.mediaStatus.is_correct) {
       showToast("Chưa thấy Agent nộp bài đạt đủ tiêu chí — bấm Kiểm tra lại sau khi Agent đã chạy xong.");
       return;

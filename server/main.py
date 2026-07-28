@@ -1,4 +1,5 @@
 import asyncio
+import base64
 import json
 import mimetypes
 import os
@@ -52,6 +53,22 @@ MEDIA_SUBMIT_RUBRICS = {
 MEDIA_SUBMIT_MANIFEST = {
     "6.5": {"points": 24},
     "6.6": {"points": 26},
+}
+
+# Câu dạng "electron_submit": Agent phải viết một app Electron THẬT (frameless, tray icon,
+# polling loop nhận lệnh mỗi 5s từ server), rồi tự nộp qua /api/electron/verify kèm ảnh chụp
+# cửa sổ + mã nguồn main.js/package.json để server kiểm tra, và server gửi lại 1 lệnh test qua
+# hàng đợi để xác nhận listener thật sự đang chạy (không chỉ chụp ảnh giả).
+REQUIRED_MAIN_JS_MARKERS = [
+    "CMD_QUEUE_URL",
+    "CMD_ACK_URL",
+    "VERIFY_URL",
+    "pollCommands",
+    "frame: false",
+    "new Tray(",
+]
+ELECTRON_SUBMIT_MANIFEST = {
+    "6.8": {"points": 26},
 }
 
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
@@ -654,6 +671,197 @@ def media_status(request: Request, question_code: str):
     }
 
 
+# ===================== ELECTRON SUBMIT (Agent viết app Electron thật) =====================
+
+
+def _electron_latest(user_id: int, question_code: str):
+    with get_db() as conn:
+        sub = conn.execute(
+            "SELECT * FROM electron_submissions WHERE user_id = ? AND question_code = ? ORDER BY id DESC LIMIT 1",
+            (user_id, question_code),
+        ).fetchone()
+        cmd = conn.execute(
+            "SELECT * FROM electron_commands WHERE user_id = ? AND question_code = ? ORDER BY id DESC LIMIT 1",
+            (user_id, question_code),
+        ).fetchone()
+    return sub, cmd
+
+
+def _electron_criteria(sub, cmd):
+    return [
+        {
+            "key": "main_js",
+            "title": "main.js đúng snippet bắt buộc",
+            "desc": "main.js phải giữ nguyên các phần bắt buộc: URL hàng đợi lệnh, URL ACK, URL verify, "
+            "vòng lặp pollCommands, cửa sổ frameless, Tray icon.",
+            "detail": "Đã tìm thấy đủ các đoạn bắt buộc."
+            if sub and sub["main_js_ok"]
+            else "Thiếu 1 hoặc nhiều đoạn bắt buộc trong main.js — kiểm tra lại đã dán nguyên snippet chưa.",
+            "ok": bool(sub) and bool(sub["main_js_ok"]),
+        },
+        {
+            "key": "package_json",
+            "title": "package.json có khai báo Electron",
+            "desc": "package.json phải khai báo electron trong dependencies hoặc devDependencies.",
+            "detail": "Đã tìm thấy electron trong package.json."
+            if sub and sub["package_json_ok"]
+            else "Chưa thấy electron được khai báo trong package.json.",
+            "ok": bool(sub) and bool(sub["package_json_ok"]),
+        },
+        {
+            "key": "screenshot",
+            "title": "Ảnh chụp cửa sổ app đang chạy",
+            "desc": "Ảnh chụp cửa sổ app Electron thật (frameless, bàn caro 15×15).",
+            "detail": "" if sub and sub["screenshot_ok"] else "Chưa có ảnh hợp lệ.",
+            "image_url": f"/api/uploads/{sub['user_id']}/{sub['screenshot_filename']}"
+            if sub and sub["screenshot_ok"] and sub["screenshot_filename"]
+            else None,
+            "ok": bool(sub) and bool(sub["screenshot_ok"]),
+        },
+        {
+            "key": "listener",
+            "title": "Listener đã nhận và phản hồi lệnh từ server",
+            "desc": "App phải đang chạy nền, tự poll lệnh mỗi 5 giây và ACK đúng lệnh kiểm tra server gửi.",
+            "detail": (
+                "Đã gửi lệnh kiểm tra, app đã phản hồi thành công."
+                if cmd and cmd["status"] == "acked_ok"
+                else "App đã phản hồi lệnh kiểm tra nhưng bị lỗi — thử lại."
+                if cmd and cmd["status"] == "acked_fail"
+                else "Đã gửi lệnh kiểm tra, đang chờ app phản hồi — giữ app chạy nền, đợi vài giây rồi Kiểm tra lại."
+                if cmd
+                else "Chưa có lệnh kiểm tra nào được gửi — bấm Nộp bài trong app Electron trước."
+            ),
+            "ok": bool(cmd) and cmd["status"] == "acked_ok",
+        },
+    ]
+
+
+@app.post("/api/electron/verify")
+async def electron_verify(request: Request):
+    user = require_agent_user(request)
+    try:
+        body = await request.json()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Body phải là JSON hợp lệ.")
+
+    question_code = "6.8"
+    main_js = str(body.get("main_js") or "")
+    package_json_raw = str(body.get("package_json") or "")
+    screenshot_b64 = str(body.get("screenshot_base64") or "")
+    index_html_size = body.get("index_html_size")
+    versions_ok = bool(body.get("electron_version")) and bool(body.get("node_version")) and bool(body.get("chrome_version"))
+
+    main_js_ok = all(marker in main_js for marker in REQUIRED_MAIN_JS_MARKERS)
+
+    package_json_ok = False
+    try:
+        pkg = json.loads(package_json_raw)
+        deps = {**pkg.get("dependencies", {}), **pkg.get("devDependencies", {})}
+        package_json_ok = "electron" in deps
+    except Exception:
+        package_json_ok = False
+
+    screenshot_ok = False
+    screenshot_filename = None
+    if screenshot_b64:
+        try:
+            img_data = base64.b64decode(screenshot_b64)
+        except Exception:
+            img_data = b""
+        is_valid, _reason = validators.validate_image(img_data)
+        index_html_ok = isinstance(index_html_size, int) and index_html_size > 0
+        if is_valid and index_html_ok:
+            screenshot_ok = True
+            screenshot_filename = f"{user['id']}_baitap_q{question_code}.png"
+            dest_dir = UPLOADS_DIR / str(user["id"])
+            dest_dir.mkdir(exist_ok=True)
+            (dest_dir / screenshot_filename).write_bytes(img_data)
+
+    with get_db() as conn:
+        conn.execute(
+            """
+            INSERT INTO electron_submissions
+                (user_id, question_code, main_js_ok, package_json_ok, screenshot_ok, versions_ok, screenshot_filename, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))
+            """,
+            (
+                user["id"],
+                question_code,
+                int(main_js_ok),
+                int(package_json_ok),
+                int(screenshot_ok),
+                int(versions_ok),
+                screenshot_filename,
+            ),
+        )
+        # Gửi 1 lệnh kiểm tra listener mới mỗi lần verify — chứng minh vòng lặp poll/ack thật đang chạy.
+        test_message = f"PING-{secrets.token_hex(4)}"
+        conn.execute(
+            "INSERT INTO electron_commands (user_id, question_code, action, params) VALUES (?, ?, 'show_tray_msg', ?)",
+            (user["id"], question_code, json.dumps({"title": "Kiểm tra tự động", "content": test_message})),
+        )
+
+    return {
+        "ok": True,
+        "message": "Đã nhận verify — server vừa gửi 1 lệnh kiểm tra tới listener. "
+        "Giữ app chạy nền, quay lại trang câu hỏi sau vài giây và bấm Kiểm tra lại.",
+    }
+
+
+@app.get("/api/electron/cmd-queue")
+def electron_cmd_queue(request: Request):
+    user = require_agent_user(request)
+    with get_db() as conn:
+        rows = conn.execute(
+            "SELECT id, action, params FROM electron_commands WHERE user_id = ? AND status = 'pending' ORDER BY id",
+            (user["id"],),
+        ).fetchall()
+    commands = [{"id": r["id"], "action": r["action"], "params": json.loads(r["params"])} for r in rows]
+    return {"commands": commands}
+
+
+@app.post("/api/electron/cmd-ack")
+async def electron_cmd_ack(request: Request):
+    user = require_agent_user(request)
+    try:
+        body = await request.json()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Body phải là JSON hợp lệ.")
+    results = body.get("results") or []
+    with get_db() as conn:
+        for r in results:
+            cmd_id = r.get("id")
+            ok = bool(r.get("ok"))
+            error = str(r.get("error") or "")
+            conn.execute(
+                """
+                UPDATE electron_commands SET status = ?, ack_error = ?, updated_at = datetime('now')
+                WHERE id = ? AND user_id = ?
+                """,
+                ("acked_ok" if ok else "acked_fail", error, cmd_id, user["id"]),
+            )
+    return {"ok": True}
+
+
+@app.get("/api/electron-status")
+def electron_status(request: Request, question_code: str):
+    """Trang trạng thái sống cho câu agent_electron — cùng ý tưởng với /api/media-status."""
+    user = require_approved_user(request)
+
+    if question_code not in ELECTRON_SUBMIT_MANIFEST:
+        raise HTTPException(status_code=400, detail="Câu hỏi không hợp lệ cho luồng electron_submit.")
+
+    sub, cmd = _electron_latest(user["id"], question_code)
+    criteria = _electron_criteria(sub, cmd)
+    is_correct = all(c["ok"] for c in criteria)
+    return {
+        "has_attempt": sub is not None,
+        "is_correct": is_correct,
+        "criteria": criteria,
+        "checked_at": sub["updated_at"] if sub else None,
+    }
+
+
 @app.post("/api/grade-reflect")
 def grade_reflect(
     request: Request,
@@ -738,6 +946,13 @@ def submit_question(
         if not row:
             raise HTTPException(status_code=400, detail="Agent chưa nộp bài thành công cho câu này — kiểm tra lại.")
         awarded_points = MEDIA_SUBMIT_MANIFEST[question_code]["points"]
+
+    if question_code in ELECTRON_SUBMIT_MANIFEST and status == "done":
+        sub, cmd = _electron_latest(user["id"], question_code)
+        criteria = _electron_criteria(sub, cmd)
+        if not all(c["ok"] for c in criteria):
+            raise HTTPException(status_code=400, detail="Chưa đủ tiêu chí hợp lệ cho câu này — kiểm tra lại trạng thái Electron app.")
+        awarded_points = ELECTRON_SUBMIT_MANIFEST[question_code]["points"]
 
     with get_db() as conn:
         conn.execute(

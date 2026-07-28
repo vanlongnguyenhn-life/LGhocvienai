@@ -66,19 +66,6 @@
     ],
     "points": 30
   },
-  "6.8": {
-    "prompt": "Đóng gói web cờ caro 15x15 thành app Electron chạy độc lập, có tray icon và listener nhận lệnh từ server.\nChụp ảnh màn hình app Electron đang chạy như một phần mềm desktop thật sự.",
-    "criteria": [
-      {
-        "key": "image",
-        "optional": false,
-        "minLength": null,
-        "label": "Ảnh minh chứng",
-        "desc": "Chọn ảnh chụp màn hình app Electron caro đang chạy độc lập, có icon khay hệ thống."
-      }
-    ],
-    "points": 26
-  },
   "6.10": {
     "prompt": "Tuyệt! Bây giờ bạn hỏi tiếp Agent nhé — vẫn trong cùng cuộc chat đó. Tôi muốn bạn hỏi Agent câu này:\nPaste toàn bộ câu trả lời của Agent vào ô bên dưới cho tôi xem nhé.",
     "criteria": [

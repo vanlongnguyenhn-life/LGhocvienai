@@ -147,6 +147,33 @@ CREATE TABLE IF NOT EXISTS media_submissions (
     updated_at TEXT NOT NULL DEFAULT (datetime('now')),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS electron_submissions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    question_code TEXT NOT NULL,
+    main_js_ok INTEGER NOT NULL DEFAULT 0,
+    package_json_ok INTEGER NOT NULL DEFAULT 0,
+    screenshot_ok INTEGER NOT NULL DEFAULT 0,
+    versions_ok INTEGER NOT NULL DEFAULT 0,
+    screenshot_filename TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS electron_commands (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    question_code TEXT NOT NULL,
+    action TEXT NOT NULL,
+    params TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending',
+    ack_error TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 """
 
 
