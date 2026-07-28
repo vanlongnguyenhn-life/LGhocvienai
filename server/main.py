@@ -705,7 +705,7 @@ def _get_or_create_secret_code(conn, user_id: int) -> str:
     row = conn.execute("SELECT secret_code FROM users WHERE id = ?", (user_id,)).fetchone()
     code = row["secret_code"] if row else None
     if not code:
-        code = f"AGS-{secrets.token_hex(4).upper()}"
+        code = f"ALG-{secrets.token_hex(4).upper()}"
         conn.execute("UPDATE users SET secret_code = ? WHERE id = ?", (code, user_id))
     return code
 
@@ -830,7 +830,7 @@ async def electron_verify(request: Request):
                 (
                     user["id"],
                     question_code,
-                    json.dumps({"rel_path": "Documents/ags-secret.txt", "content": secret_code}),
+                    json.dumps({"rel_path": "Documents/alg-secret.txt", "content": secret_code}),
                 ),
             )
             wallpaper_url = f"{str(request.base_url).rstrip('/')}/assets/logo-life.png"
@@ -912,7 +912,7 @@ SECRET_HINTS = {
     "6.11": [
         "Gợi ý 1: Agent của bạn (câu 6.7) đã tự ghi một file mới vào máy bạn — thử tìm trong các thư mục cá nhân hay dùng.",
         "Gợi ý 2: File đó nằm trong thư mục Documents.",
-        "Gợi ý 3: Tên file bắt đầu bằng ags-.",
+        "Gợi ý 3: Tên file bắt đầu bằng alg-.",
     ],
 }
 
