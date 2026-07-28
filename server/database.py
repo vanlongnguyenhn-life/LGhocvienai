@@ -144,6 +144,7 @@ CREATE TABLE IF NOT EXISTS media_submissions (
     attempt_ok INTEGER NOT NULL DEFAULT 0,
     confirm_code TEXT,
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 """
@@ -180,6 +181,9 @@ def init_db():
             conn.execute("ALTER TABLE users ADD COLUMN is_teacher INTEGER NOT NULL DEFAULT 0")
         if "api_token" not in user_cols:
             conn.execute("ALTER TABLE users ADD COLUMN api_token TEXT")
+        ms_cols = [r["name"] for r in conn.execute("PRAGMA table_info(media_submissions)")]
+        if ms_cols and "updated_at" not in ms_cols:
+            conn.execute("ALTER TABLE media_submissions ADD COLUMN updated_at TEXT NOT NULL DEFAULT (datetime('now'))")
         sub_cols = [r["name"] for r in conn.execute("PRAGMA table_info(submissions)")]
         if "ai_graded" not in sub_cols:
             conn.execute("ALTER TABLE submissions ADD COLUMN ai_graded INTEGER NOT NULL DEFAULT 0")

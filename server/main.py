@@ -478,6 +478,48 @@ def _media_filename_prefix(user_id: int, question_code: str) -> str:
     return f"{user_id}_baitap_q{question_code}."
 
 
+def _media_criteria(row, user_id: int, question_code: str):
+    """4 tiêu chí y hệt cách web tham khảo hiển thị (title/desc/detail/ok)."""
+    expected_prefix = _media_filename_prefix(user_id, question_code)
+    media_item_id = row["id"] if row else None
+    local_url = (row["local_url"] if row else "") or ""
+    url_valid, _ = validators.validate_url(local_url)
+
+    return [
+        {
+            "key": "media_item_id",
+            "title": "Ảnh minh chứng đã chọn",
+            "desc": "Bài làm phải có media_item_id là số nguyên dương (id file do API upload trả về).",
+            "detail": f"media_item_id = {media_item_id}" if row else "Chưa có lần upload nào.",
+            "image_url": f"/api/uploads/{row['user_id']}/{row['filename']}" if row and row["is_valid"] else None,
+            "ok": bool(row),
+        },
+        {
+            "key": "owner",
+            "title": "Ảnh thuộc kho của học viên",
+            "desc": "Id file phải trỏ tới bản ghi media của đúng học viên, đúng câu hỏi.",
+            "detail": f"Đã khớp bản ghi kho media (id {media_item_id})."
+            if row and row["user_id"] == user_id and row["question_code"] == question_code
+            else "Không khớp học viên/câu hỏi.",
+            "ok": bool(row) and row["user_id"] == user_id and row["question_code"] == question_code,
+        },
+        {
+            "key": "filename",
+            "title": "Tên file trên kho",
+            "desc": f"Tên file phải bắt đầu bằng «{expected_prefix}» (upload dùng filename=baitap_q{question_code}...; hệ thống thêm tiền tố user_id).",
+            "detail": f"Tên file: {row['filename']}" if row else "Chưa có file nào.",
+            "ok": bool(row) and row["filename"].startswith(expected_prefix) and bool(row["is_valid"]),
+        },
+        {
+            "key": "local_url",
+            "title": "Trang web local đang chạy bài",
+            "desc": "Payload phải có local_url bắt đầu bằng http:// hoặc https://.",
+            "detail": f"Địa chỉ học viên khai báo: {local_url}" if local_url else "Chưa khai báo local_url.",
+            "ok": url_valid,
+        },
+    ]
+
+
 @app.get("/api/me/agent-token")
 def get_agent_token(request: Request):
     user = require_approved_user(request)
@@ -555,32 +597,16 @@ async def attempt_answers(request: Request):
         row = conn.execute(
             "SELECT * FROM media_submissions WHERE id = ?", (media_item_id,)
         ).fetchone()
+        # Luôn ghi lại local_url đã khai báo (kể cả khi chưa đạt) để trang trạng thái hiển thị
+        # đúng lần thử gần nhất, không chỉ khi đạt.
+        if row:
+            conn.execute(
+                "UPDATE media_submissions SET local_url = ?, updated_at = datetime('now') WHERE id = ?",
+                (local_url, media_item_id),
+            )
+            row = conn.execute("SELECT * FROM media_submissions WHERE id = ?", (media_item_id,)).fetchone()
 
-    url_valid, url_reason = validators.validate_url(local_url)
-    expected_prefix = _media_filename_prefix(user["id"], question_code)
-
-    criteria = [
-        {
-            "key": "media_item_id",
-            "label": "media_item_id là số dương hợp lệ",
-            "ok": isinstance(media_item_id, int) and media_item_id > 0 and row is not None,
-        },
-        {
-            "key": "owner",
-            "label": "media_item_id thuộc đúng học viên và đúng câu hỏi",
-            "ok": bool(row) and row["user_id"] == user["id"] and row["question_code"] == question_code,
-        },
-        {
-            "key": "filename",
-            "label": "Tên file đúng quy ước cho câu này",
-            "ok": bool(row) and row["filename"].startswith(expected_prefix) and bool(row["is_valid"]),
-        },
-        {
-            "key": "local_url",
-            "label": "local_url đúng định dạng http(s)",
-            "ok": url_valid,
-        },
-    ]
+    criteria = _media_criteria(row, user["id"], question_code)
     is_correct = all(c["ok"] for c in criteria)
 
     result = {"is_correct": is_correct, "criteria": criteria}
@@ -589,37 +615,40 @@ async def attempt_answers(request: Request):
         confirm_code = _media_confirm_code(media_item_id)
         with get_db() as conn:
             conn.execute(
-                "UPDATE media_submissions SET local_url = ?, attempt_ok = 1, confirm_code = ? WHERE id = ?",
-                (local_url, confirm_code, media_item_id),
+                "UPDATE media_submissions SET attempt_ok = 1, confirm_code = ?, updated_at = datetime('now') WHERE id = ?",
+                (confirm_code, media_item_id),
             )
         result["confirm_code"] = confirm_code
 
     return result
 
 
-@app.post("/api/verify-media-submit")
-def verify_media_submit(
-    request: Request,
-    question_code: str = Form(...),
-    confirm_code: str = Form(...),
-):
+@app.get("/api/media-status")
+def media_status(request: Request, question_code: str):
+    """Trang trạng thái sống cho câu agent_media — hiển thị lại đúng 4 tiêu chí + ảnh đã nộp,
+    y hệt cách web tham khảo hiển thị sau khi Agent đã gọi API. Không cần học viên nhập gì thêm."""
     user = require_approved_user(request)
+
+    if question_code not in MEDIA_SUBMIT_RUBRICS:
+        raise HTTPException(status_code=400, detail="Câu hỏi không hợp lệ cho luồng media_submit.")
 
     with get_db() as conn:
         row = conn.execute(
             """
-            SELECT confirm_code FROM media_submissions
-            WHERE user_id = ? AND question_code = ? AND attempt_ok = 1
+            SELECT * FROM media_submissions WHERE user_id = ? AND question_code = ?
             ORDER BY id DESC LIMIT 1
             """,
             (user["id"], question_code),
         ).fetchone()
 
-    if not row:
-        return {"valid": False, "reason": "Chưa có lần nộp nào qua Agent thành công cho câu này."}
-    if confirm_code.strip() != row["confirm_code"]:
-        return {"valid": False, "reason": "Mã xác nhận không khớp — kiểm tra lại kết quả Agent trả về."}
-    return {"valid": True, "reason": "Đã xác nhận Agent nộp bài thành công."}
+    criteria = _media_criteria(row, user["id"], question_code)
+    is_correct = all(c["ok"] for c in criteria)
+    return {
+        "has_attempt": row is not None,
+        "is_correct": is_correct,
+        "criteria": criteria,
+        "checked_at": row["updated_at"] if row else None,
+    }
 
 
 @app.post("/api/grade-reflect")
@@ -694,21 +723,17 @@ def submit_question(
         awarded_points = REFLECT_MANIFEST[question_code]["points"]
 
     if question_code in MEDIA_SUBMIT_MANIFEST and status == "done":
-        try:
-            submitted_code = json.loads(answer_data or "{}").get("text", "").strip()
-        except (json.JSONDecodeError, AttributeError):
-            submitted_code = ""
         with get_db() as conn:
             row = conn.execute(
                 """
-                SELECT confirm_code FROM media_submissions
+                SELECT id FROM media_submissions
                 WHERE user_id = ? AND question_code = ? AND attempt_ok = 1
                 ORDER BY id DESC LIMIT 1
                 """,
                 (user["id"], question_code),
             ).fetchone()
-        if not row or submitted_code != row["confirm_code"]:
-            raise HTTPException(status_code=400, detail="Mã xác nhận chưa đúng — nộp lại qua Agent trước.")
+        if not row:
+            raise HTTPException(status_code=400, detail="Agent chưa nộp bài thành công cho câu này — kiểm tra lại.")
         awarded_points = MEDIA_SUBMIT_MANIFEST[question_code]["points"]
 
     with get_db() as conn:

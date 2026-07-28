@@ -25,7 +25,6 @@ const API = {
   gradeReflect: (fd) => API.request("/api/grade-reflect", { method: "POST", body: fd }),
   verifyTokenScope: (fd) => API.request("/api/pi-lab/token/verify-scope", { method: "POST", body: fd }),
   agentToken: () => API.request("/api/me/agent-token"),
-  verifyMediaSubmit: (fd) => API.request("/api/verify-media-submit", { method: "POST", body: fd }),
 };
 
 let agentTokenInfo = null;
@@ -935,7 +934,7 @@ function renderQuestionCard(lesson, q, locked) {
     } else if (q.type === "code") {
       body.appendChild(renderCodeInput(q, a));
     } else if (q.type === "agent_media") {
-      body.appendChild(renderAgentMediaConfirm(q, a));
+      body.appendChild(renderAgentMediaStatus(q, a));
     } else if (q.type === "token_scope_check") {
       body.appendChild(renderTokenScopeCheck(q, a));
     } else if (q.type === "order") {
@@ -1208,19 +1207,70 @@ function normalizeCode(s) {
   return (s || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
 }
 
-function renderAgentMediaConfirm(q, a) {
-  const wrap = el("div", {});
-  const input = el("input", {
-    class: "reflect-input",
-    type: "text",
-    placeholder: "Dán confirm_code Agent trả về sau khi nộp bài (vd: OK-482)...",
-  });
-  input.value = a.text || "";
-  input.addEventListener("input", (e) => {
-    a.text = e.target.value;
-    saveState();
-  });
-  wrap.appendChild(input);
+async function fetchMediaStatus(q, a) {
+  a.mediaStatus = "loading";
+  render();
+  try {
+    a.mediaStatus = await API.request(`/api/media-status?question_code=${encodeURIComponent(q.code)}`);
+  } catch (err) {
+    a.mediaStatus = { error: err.message };
+  }
+  render();
+  openQuestion(q.code);
+}
+
+function renderAgentMediaStatus(q, a) {
+  const wrap = el("div", { class: "media-status" });
+
+  if (a.mediaStatus === undefined) {
+    fetchMediaStatus(q, a);
+    a.mediaStatus = "loading";
+  }
+
+  if (a.mediaStatus === "loading") {
+    wrap.appendChild(el("div", { class: "secret-note" }, "Đang tải trạng thái nộp bài của Agent..."));
+    return wrap;
+  }
+  if (a.mediaStatus && a.mediaStatus.error) {
+    wrap.appendChild(el("div", { class: "secret-note" }, "Lỗi tải trạng thái: " + a.mediaStatus.error));
+  } else if (!a.mediaStatus.has_attempt) {
+    wrap.appendChild(
+      el(
+        "div",
+        { class: "secret-note" },
+        "Agent chưa nộp bài lần nào cho câu này. Dán prompt phía trên cho Agent thực hiện, sau đó bấm Kiểm tra lại."
+      )
+    );
+  } else {
+    wrap.appendChild(el("div", { class: "label" }, "Tiêu chí chấm"));
+    a.mediaStatus.criteria.forEach((c) => {
+      const box = el("div", { class: "assignment-box" });
+      box.appendChild(el("div", { class: "label" }, c.title));
+      if (c.desc) box.appendChild(el("div", { class: "req-text" }, c.desc));
+      if (c.image_url) {
+        box.appendChild(el("div", { class: "req-text" }, "Ảnh học viên nộp:"));
+        box.appendChild(el("img", { class: "image-preview", src: c.image_url }));
+      } else if (c.detail) {
+        box.appendChild(el("div", { class: "req-text" }, c.detail));
+      }
+      box.appendChild(
+        el("div", { class: "criteria-list" }, [
+          el("li", { class: c.ok ? "pass" : "fail" }, [
+            el("span", { class: "c-icon" }, c.ok ? "✓" : "✗"),
+            el("span", {}, c.ok ? "Kết quả: Đạt" : "Kết quả: Chưa đạt"),
+          ]),
+        ])
+      );
+      wrap.appendChild(box);
+    });
+    if (a.mediaStatus.checked_at) {
+      wrap.appendChild(el("div", { class: "file-chosen" }, `Kiểm tra lần cuối lúc: ${a.mediaStatus.checked_at}`));
+    }
+  }
+
+  wrap.appendChild(
+    el("button", { class: "help-link", onclick: () => fetchMediaStatus(q, a) }, "🔄 Kiểm tra lại")
+  );
   return wrap;
 }
 
@@ -1462,7 +1512,6 @@ function buildAnswerData(q, a) {
       return { tagState: a.tagState };
     case "code":
     case "reflect":
-    case "agent_media":
       return { text: a.text };
     case "token_scope_check":
       return { text: a.text, tokenScopes: a.tokenScopes };
@@ -1548,37 +1597,17 @@ async function submitAnswer(lesson, q) {
     showToast(correct ? `Chính xác! +${q.points} điểm` : "Mã chưa đúng, em đọc lại mật thư nhé");
     persistQuestionStatus(q, a);
   } else if (q.type === "agent_media") {
-    if (!a.text || a.text.trim().length === 0) {
-      showToast("Bạn hãy dán confirm_code Agent trả về trước khi nộp bài");
+    if (!a.mediaStatus || a.mediaStatus === "loading" || !a.mediaStatus.is_correct) {
+      showToast("Chưa thấy Agent nộp bài đạt đủ tiêu chí — bấm Kiểm tra lại sau khi Agent đã chạy xong.");
       return;
     }
-    showToast("Đang kiểm tra với server...");
+    // Server tự re-verify độc lập (không tin client) ở /api/submit-question trước khi cộng điểm.
     const fd = new FormData();
     fd.append("question_code", q.code);
-    fd.append("confirm_code", a.text.trim());
-    let result;
+    fd.append("status", "done");
+    fd.append("awarded_points", String(q.points));
     try {
-      result = await API.verifyMediaSubmit(fd);
-    } catch (err) {
-      showToast(err.message);
-      return;
-    }
-    if (!result.valid) {
-      a.status = "wrong";
-      a.awardedPoints = 0;
-      showToast(result.reason || "Mã chưa đúng, Bạn xem lại nhé");
-      persistQuestionStatus(q, a);
-      return;
-    }
-    // status "done" (không phải "correct") để server tự re-verify độc lập ở /api/submit-question
-    // trước khi cộng điểm — không tin tưởng riêng client, tránh giả mạo bằng cách gọi thẳng API.
-    const fd2 = new FormData();
-    fd2.append("question_code", q.code);
-    fd2.append("status", "done");
-    fd2.append("awarded_points", String(q.points));
-    fd2.append("answer_data", JSON.stringify({ text: a.text.trim() }));
-    try {
-      await API.submitQuestion(fd2);
+      await API.submitQuestion(fd);
       a.status = "done";
       a.awardedPoints = q.points;
       showToast(`Chính xác! +${q.points} điểm`);
