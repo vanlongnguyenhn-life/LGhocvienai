@@ -467,17 +467,23 @@ async def _ai_grade_criterion(value_type, question_code, criterion_key, value, i
 
 
 async def _grade_criterion_full(value_type, question_code, criterion_key, value, image_data, base_valid, base_reason):
-    """Quyết định chấm cuối cho 1 tiêu chí. Trả (is_valid, reason, ai_graded)."""
-    if not ai_grader.is_configured():
-        return base_valid, base_reason, 0
+    """Quyết định chấm cuối cho 1 tiêu chí. Trả (is_valid, reason, ai_graded).
+
+    Nguyên tắc: ngoài trắc nghiệm có đáp án cố định, MỌI minh chứng nội dung đều phải được
+    AI xác nhận mới được tính đạt — nếu AI chưa cấu hình hoặc gọi lỗi, KHÔNG được âm thầm
+    cho qua theo kiểm tra định dạng (dễ bị lợi dụng nộp nội dung lạc đề miễn đủ độ dài).
+    Ngoại lệ duy nhất: URL trỏ tới địa chỉ cục bộ (server không bao giờ mở được để đọc nội
+    dung dù thử lại bao nhiêu lần) — trường hợp này chấp nhận theo định dạng là hợp lý.
+    """
     if value_type == "url" and not ai_grader.can_grade_url(value):
         note = "địa chỉ cục bộ — chỉ kiểm định dạng, không AI chấm nội dung"
         return base_valid, (f"{base_reason} ({note})" if base_reason else note), 1
+    if not ai_grader.is_configured():
+        return False, "Server chưa cấu hình AI chấm nội dung — chưa xác nhận được, báo giáo viên giúp bạn nhé.", 0
     result = await _ai_grade_criterion(value_type, question_code, criterion_key, value, image_data)
     if result is not None:
         return bool(result[0]), result[1], 1
-    note = "Chưa chấm được bằng AI lúc này — tạm chấp nhận, sẽ chấm lại sau."
-    return base_valid, (f"{base_reason} ({note})" if base_reason else note), 0
+    return False, "AI chấm nội dung đang gặp sự cố — chưa xác nhận được, hãy thử Nộp lại sau ít phút.", 0
 
 
 def _assignment_all_valid(user_id: int, question_code: str) -> bool:
@@ -1013,15 +1019,19 @@ def grade_reflect(
     is_valid, reason = validators.validate_text(answer, min_length=manifest["minLength"])
     ai_graded = 0
     if is_valid:
-        if ANTHROPIC_API_KEY:
+        # Ngoài trắc nghiệm có đáp án cố định, câu tự luận PHẢI được AI xác nhận nội dung mới
+        # tính đạt — không được âm thầm cho qua chỉ vì đủ độ dài khi AI chưa cấu hình/lỗi.
+        if not ANTHROPIC_API_KEY:
+            is_valid = False
+            reason = "Server chưa cấu hình AI chấm nội dung — chưa xác nhận được, báo giáo viên giúp bạn nhé."
+        else:
             result = grade_with_llm(manifest["prompt"], answer)
             if result is not None:
                 is_valid, reason = result
                 ai_graded = 1
             else:
-                reason = "Không chấm được bằng AI lúc này (lỗi kết nối) — đã tạm chấp nhận theo độ dài nội dung, thử nộp lại sau nếu muốn chấm chính xác hơn."
-        else:
-            reason = "Nội dung hợp lệ (server chưa cấu hình ANTHROPIC_API_KEY nên mới chỉ kiểm tra độ dài, chưa chấm đúng/sai nội dung)."
+                is_valid = False
+                reason = "AI chấm nội dung đang gặp sự cố — chưa xác nhận được, hãy thử Nộp lại sau ít phút."
 
     with get_db() as conn:
         conn.execute(
@@ -1454,7 +1464,7 @@ def admin_diag_grading(request: Request):
             "chua_AI_cham": s_not_ai,
             "theo_loai": {r["value_type"]: {"nop": r["c"], "hop_le": r["v"]} for r in s_by_type},
         },
-        "ghi_chu": "Còn 'chua_AI_cham' > 0 nghĩa là có bài nộp lúc AI trục trặc, mới tạm chấp nhận. Bấm 'Chấm lại bằng AI' trong admin để chấm hết.",
+        "ghi_chu": "Còn 'chua_AI_cham' > 0 nghĩa là có bài nộp lúc AI trục trặc — các bài đó đang bị đánh KHÔNG đạt (không tự cho qua), học viên cần nộp lại. Bấm 'Chấm lại bằng AI' trong admin để chấm bù các bài này.",
     }
 
 

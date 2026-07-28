@@ -2,7 +2,8 @@
 
 Nguyên tắc an toàn:
 - Chỉ chấm bằng AI SAU khi đã qua kiểm tra định dạng cơ bản (ảnh thật / URL hợp lệ / đủ độ dài).
-- Nếu gọi AI thất bại → trả None để nơi gọi tự quyết (thường là tạm chấp nhận theo luật + đánh dấu chấm lại).
+- Nếu gọi AI thất bại → trả None; nơi gọi phải đánh KHÔNG đạt (không tự cho qua) và đánh dấu
+  chưa chấm để admin chấm bù sau — không có nội dung nào được thông qua mà chưa qua AI thật.
 - Mở link: chặn địa chỉ nội bộ/loopback (chống SSRF), giới hạn thời gian và dung lượng.
 """
 
