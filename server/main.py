@@ -3,6 +3,7 @@ import base64
 import json
 import mimetypes
 import os
+import re
 import secrets
 from datetime import datetime, timezone
 from pathlib import Path
@@ -124,7 +125,15 @@ def grade_with_llm(question_prompt: str, answer: str):
                 timeout=20.0,
             )
             resp.raise_for_status()
-            text = resp.json()["content"][0]["text"]
+            data = resp.json()
+            # Gộp mọi khối "text" (Claude có thể trả kèm khối "thinking" đứng trước) rồi tự bóc
+            # đúng đoạn {...} đầu tiên — phòng trường hợp model thêm chữ thừa/markdown quanh JSON.
+            text = "".join(b.get("text", "") for b in data.get("content", []) if b.get("type") == "text").strip()
+            m = re.search(r"\{.*\}", text, re.S)
+            if m:
+                text = m.group(0)
+            if not text:
+                raise ValueError(f"AI trả về rỗng, không có khối text nào (content={data.get('content')!r})")
             parsed = json.loads(text)
             return bool(parsed.get("valid")), str(parsed.get("reason", ""))[:200]
         except httpx.HTTPStatusError as e:
