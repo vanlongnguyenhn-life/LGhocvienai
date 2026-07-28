@@ -912,15 +912,20 @@ def admin_student_detail(request: Request, user_id: int):
         ).fetchall()
         subs = conn.execute(
             """
-            SELECT question_code, criterion_key, value_type, value_text, file_path, is_valid, reason, created_at
+            SELECT question_code, criterion_key, value_type, value_text, file_path, is_valid, reason, ai_graded, created_at
             FROM submissions WHERE user_id = ?
             """,
+            (user_id,),
+        ).fetchall()
+        reflects = conn.execute(
+            "SELECT question_code, is_valid, reason, ai_graded FROM reflect_grades WHERE user_id = ?",
             (user_id,),
         ).fetchall()
     return {
         "user": dict(user_row),
         "statuses": [dict(r) for r in statuses],
         "submissions": [dict(r) for r in subs],
+        "reflects": [dict(r) for r in reflects],
     }
 
 

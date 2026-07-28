@@ -912,6 +912,10 @@ function renderStudentDetail() {
     subsByCode[s.question_code] = subsByCode[s.question_code] || {};
     subsByCode[s.question_code][s.criterion_key] = s;
   });
+  const reflectByCode = {};
+  (state.detail.reflects || []).forEach((r) => (reflectByCode[r.question_code] = r));
+  const aiBadge = (aiGraded) =>
+    el("span", { class: "admin-ai-badge " + (aiGraded ? "on" : "off") }, [aiGraded ? "AI đã chấm" : "chưa AI chấm"]);
 
   box.appendChild(
     el("div", { class: "admin-student-cell admin-detail-head" }, [
@@ -949,9 +953,11 @@ function renderStudentDetail() {
     lesson.questions.forEach((q) => {
       const st = statusByCode[q.code];
       const done = isQuestionDone(st);
+      const refl = reflectByCode[q.code];
       const qItem = el("li", { class: "admin-question-item" }, [
         el("span", { class: done ? "admin-q-icon done" : "admin-q-icon" }, [done ? "✔" : "○"]),
         el("span", { class: "admin-q-title" }, [q.title]),
+        q.type === "reflect" && refl ? aiBadge(refl.ai_graded) : null,
         el("span", { class: "admin-q-points" }, [done ? `+${st.awarded_points}đ` : `${q.points}đ`]),
       ]);
       list.appendChild(qItem);
@@ -964,6 +970,7 @@ function renderStudentDetail() {
           const row = el("li", { class: "admin-criterion-row " + cls }, [
             el("span", { class: "admin-criterion-label" }, [c.label + ":"]),
             renderCriterionValue(user.id, sub),
+            sub ? aiBadge(sub.ai_graded) : null,
           ]);
           if (sub && !sub.is_valid && sub.reason) {
             row.appendChild(el("span", { class: "admin-criterion-reason" }, [" (" + sub.reason + ")"]));
