@@ -69,6 +69,11 @@
     "minLength": 20,
     "points": 20
   },
+  "6.9": {
+    "prompt": "Tuyệt! Bây giờ bạn hỏi tiếp Agent nhé — vẫn trong cùng cuộc chat đó. Tôi muốn bạn hỏi Agent câu này:\nPhần mềm mày vừa giúp tao tạo — có nguy hiểm không? Có virus không? Có thể can thiệp vào máy tính của tao theo cách nào không?",
+    "minLength": 20,
+    "points": 20
+  },
   "7.8": {
     "prompt": "Hãy hỏi AI Chat (không phải AI Agent) của bạn: kỹ thuật Prompt Injection cụ thể là gì.",
     "minLength": 100,

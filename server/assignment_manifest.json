@@ -66,19 +66,6 @@
     ],
     "points": 30
   },
-  "6.9": {
-    "prompt": "Tuyệt! Bây giờ bạn hỏi tiếp Agent nhé — vẫn trong cùng cuộc chat đó. Tôi muốn bạn hỏi Agent câu này:\nPaste toàn bộ câu trả lời của Agent vào ô bên dưới cho tôi xem nhé.",
-    "criteria": [
-      {
-        "key": "text",
-        "optional": false,
-        "minLength": null,
-        "label": "Câu trả lời của Agent",
-        "desc": "Dán nguyên văn câu trả lời của Agent về mức độ an toàn của phần mềm."
-      }
-    ],
-    "points": 20
-  },
   "7.5": {
     "prompt": "Trước khi bắt tay vào việc, hãy thảo luận với Agent về thiết kế hệ thống theme trước khi để nó code. Sau đó yêu cầu Agent nâng cấp giao diện game caro (từ Bài 6) hỗ trợ ít nhất 5 theme màu khác nhau để người chơi tự chọn (ví dụ: Midnight - tối, Forest - rừng xanh, Sand - sa mạc, Sakura - hoa anh đào, Ocean - đại dương).\nChụp ảnh màn hình cho thấy ít nhất 4 theme khác nhau đang chạy (mỗi theme một ảnh).",
     "criteria": [

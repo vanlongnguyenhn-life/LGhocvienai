@@ -870,13 +870,11 @@ const LESSONS = [
       {
         code: "6.9",
         title: "Câu 6.9 — Agent ơi, phần mềm này có nguy hiểm không?",
-        type: "assignment",
+        type: "reflect",
         prompt: "Tuyệt! Bây giờ bạn hỏi tiếp Agent nhé — vẫn trong cùng cuộc chat đó. Tôi muốn bạn hỏi Agent câu này:",
         copyPrompt: "Phần mềm mày vừa giúp tao tạo — có nguy hiểm không? Có virus không? Có thể can thiệp vào máy tính của tao theo cách nào không?",
-        instructions: "Paste toàn bộ câu trả lời của Agent vào ô bên dưới cho tôi xem nhé.",
-        criteria: [
-          { key: "text", label: "Câu trả lời của Agent", desc: "Dán nguyên văn câu trả lời của Agent về mức độ an toàn của phần mềm.", placeholder: "Dán câu trả lời của Agent..." },
-        ],
+        copyPromptTrailing: "Paste toàn bộ câu trả lời của Agent vào ô bên dưới cho tôi xem nhé.",
+        minLength: 20,
         points: 20,
       },
       {
