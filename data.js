@@ -1029,25 +1029,21 @@ const LESSONS = [
       {
         code: "7.5",
         title: "Câu 7.5 — Cờ caro đa giao diện",
-        type: "assignment",
+        type: "agent_media",
         prompt:
-          "Trước khi bắt tay vào việc, hãy thảo luận với Agent về thiết kế hệ thống theme trước khi để nó code. Sau đó yêu cầu Agent nâng cấp giao diện game caro (từ Bài 6) hỗ trợ ít nhất 5 theme màu khác nhau để người chơi tự chọn (ví dụ: Midnight - tối, Forest - rừng xanh, Sand - sa mạc, Sakura - hoa anh đào, Ocean - đại dương).",
-        instructions: "Chụp ảnh màn hình cho thấy ít nhất 4 theme khác nhau đang chạy (mỗi theme một ảnh).",
-        criteria: [
-          { key: "image", label: "Ảnh minh chứng", desc: "Chọn ảnh chụp màn hình thể hiện các theme giao diện khác nhau." },
-        ],
+          "Trước khi bắt tay vào việc, hãy thảo luận với Agent về thiết kế hệ thống theme trước khi để nó code. Yêu cầu Agent nâng cấp game caro (từ Bài 6) hỗ trợ ít nhất 5 theme màu khác nhau để người chơi tự chọn (ví dụ: Midnight - tối, Forest - rừng xanh, Sand - sa mạc, Sakura - hoa anh đào, Ocean - đại dương). Sau đó tự chơi tới khi chiến thắng ở 4 giao diện khác nhau, Agent sẽ tự ghép 4 ảnh đó lại và nộp bài giúp bạn.",
+        copyPrompt:
+          "Hãy giúp tôi làm bài Câu 7.5 — Cờ caro đa giao diện. Trước khi code, thảo luận với tôi về thiết kế hệ thống theme (số lượng theme, cách triển khai CSS variables, animation khi đổi theme, cách lưu lựa chọn, vị trí thanh chọn theme).\n\nYêu cầu kỹ thuật:\n- Nâng cấp app cờ caro (Gomoku) 15×15 đã có ở Bài 6, giữ nguyên luật chơi.\n- Ít nhất 5 theme, mỗi theme định nghĩa đủ bộ biến CSS: --bg-page, --bg-board, --color-grid, --color-cell-hover, --color-x, --color-o, --color-win-cells, --color-text, --color-btn-bg, --color-btn-text, --font-board.\n- 5 theme gợi ý: Midnight (tối, --bg-page:#0f0f1a, --color-x:#e94560), Forest (rừng xanh, --bg-page:#1b2d1b, --color-x:#a8d5a2), Sand (sa mạc, --bg-page:#f5e6c8, --color-x:#8b2500), Sakura (hoa anh đào, --bg-page:#fff0f3, --color-x:#c0392b), Ocean (đại dương, --bg-page:#0a192f, --color-x:#64ffda).\n- Đổi theme KHÔNG được reset ván đang chơi, chỉ chuyển màu mượt (transition ~0.3s). Lưu lựa chọn vào localStorage.\n- Sau khi code xong, hãy tự thêm cơ chế: mỗi khi tôi thắng 1 ván (5 quân liên tiếp) và bấm \"Ván mới\", tự động chụp lại bàn cờ vừa thắng (html2canvas hoặc tương đương) kèm tên theme đang dùng, cho tới khi đủ 4 theme khác nhau thì tự ghép thành 1 ảnh vuông 800×800 (4 ô 300×300 ở 4 góc, mỗi ô kèm tên theme).\n\nSau khi có ảnh ghép, hãy tự nộp bài giúp tôi bằng 2 lệnh API sau:\n\n1) POST {{media_upload_url}}\nHeaders: X-User-Id: {{uid}}, X-Auth-Token: {{token}}\nForm-data: question_code=7.5, file=<ảnh ghép>, filename=baitap_q7.5.png\n→ nhận về media_item_id.\n\n2) POST {{attempt_answers_url}}\nHeaders: X-User-Id: {{uid}}, X-Auth-Token: {{token}}\nBody JSON: {\"question_code\": \"7.5\", \"media_item_id\": <id ở bước 1>, \"local_url\": \"http://localhost:<port>/...\"}\n\nSau đó báo tôi kết quả is_correct và các tiêu chí trả về.",
         points: 16,
       },
       {
         code: "7.6",
         title: "Câu 7.6 — Cờ caro đa ngôn ngữ",
-        type: "assignment",
+        type: "agent_media",
         prompt:
           "Bài tập tiếp theo của Đa giao diện — lần này hãy thảo luận với Agent rồi nâng cấp app cờ caro hỗ trợ 4 ngôn ngữ: Tiếng Việt, English, Español, Français, chuyển đổi được ngay khi đang chơi mà không làm mất tiến trình ván cờ.",
-        instructions: "Chụp ảnh màn hình cho thấy giao diện đổi được giữa ít nhất 2 trong 4 ngôn ngữ.",
-        criteria: [
-          { key: "image", label: "Ảnh minh chứng", desc: "Chọn ảnh chụp màn hình thể hiện các phiên bản ngôn ngữ khác nhau." },
-        ],
+        copyPrompt:
+          "Hãy giúp tôi làm bài trong lớp AI Agent — Trăng Đen Agent SEE theo yêu cầu đầy đủ ở địa chỉ sau (đọc kỹ TOÀN BỘ nội dung trả về rồi làm theo đúng từng bước, kể cả các bước có vẻ là việc kỹ thuật phụ):\n\nGET {{agent_task_url}}\nHeaders: X-User-Id: {{uid}}, X-Auth-Token: {{token}}",
         points: 16,
       },
       {

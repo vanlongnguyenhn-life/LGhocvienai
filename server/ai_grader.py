@@ -53,14 +53,14 @@ def _rubric_block(context: str, rubric: str) -> str:
     return "\n\n".join(parts)
 
 
-def _post(messages: list) -> dict | None:
+def _post(messages: list, system: str = SYSTEM, max_tokens: int = 200) -> dict | None:
     if not ANTHROPIC_API_KEY:
         return None
     try:
         resp = httpx.post(
             "https://api.anthropic.com/v1/messages",
             headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
-            json={"model": GRADER_MODEL, "max_tokens": 200, "system": SYSTEM, "messages": messages},
+            json={"model": GRADER_MODEL, "max_tokens": max_tokens, "system": system, "messages": messages},
             timeout=45.0,
         )
         if resp.status_code != 200:
@@ -99,6 +99,48 @@ def grade_image(context: str, rubric: str, image_bytes: bytes, media_type: str):
         return None
     try:
         return _parse_verdict(data)
+    except Exception as e:
+        print(f"[ai_grader parse error] {e!r}")
+        return None
+
+
+# ===================== ẢNH GHÉP 4 GIAO DIỆN (caro_collage_check — câu 7.5) =====================
+
+CARO_COLLAGE_SYSTEM = (
+    "Bạn là trợ giảng chấm bài tập frontend. Ảnh được cung cấp là một ẢNH GHÉP (collage) hình vuông, "
+    "chia làm 4 góc: trên-trái (tl), trên-phải (tr), dưới-trái (bl), dưới-phải (br). Mỗi góc là một ảnh "
+    "chụp màn hình một bàn cờ caro (gomoku) đang chạy, thể hiện MỘT giao diện màu (theme) riêng, và bàn cờ "
+    "đó đang ở trạng thái VỪA THẮNG (5 quân liên tiếp của một người chơi, thường được tô sáng/highlight). "
+    "Hãy phân tích riêng từng góc rồi trả lời DUY NHẤT một JSON, không kèm chữ nào khác, đúng cấu trúc:\n"
+    '{"tl": {"has_board": true/false, "has_theme_label": true/false, "is_winning": true/false, '
+    '"theme_name": "...", "notes": "..."}, "tr": {...}, "bl": {...}, "br": {...}, '
+    '"has_four_distinct_themes": true/false, "themes_note": "..."}\n'
+    '"is_winning" chỉ true nếu thấy rõ 5 quân liên tiếp cùng loại (X hoặc O). "theme_name" là tên/nhãn giao '
+    'diện nếu thấy chữ ghi trên ảnh, hoặc do em tự đặt tên ngắn theo màu sắc/phong cách nếu không có chữ. '
+    '"has_four_distinct_themes" chỉ true nếu 4 góc có màu sắc/phong cách RÕ RỆT KHÁC NHAU (không phải 4 ảnh '
+    "trùng nhau hoặc chỉ khác nhau chút xíu). Chấp nhận mọi phong cách hợp lý, không bắt bẻ tiểu tiết."
+)
+
+
+def grade_caro_collage(image_bytes: bytes, media_type: str):
+    """Chấm ảnh ghép 4 giao diện caro bằng AI vision. Trả dict cấu trúc hoặc None nếu lỗi AI."""
+    if not image_bytes:
+        return None
+    b64 = base64.b64encode(image_bytes).decode("ascii")
+    content = [
+        {"type": "text", "text": "Ảnh ghép 4 góc caro cần chấm — phân tích và trả JSON đúng cấu trúc đã mô tả."},
+        {"type": "image", "source": {"type": "base64", "media_type": media_type, "data": b64}},
+    ]
+    data = _post([{"role": "user", "content": content}], system=CARO_COLLAGE_SYSTEM, max_tokens=700)
+    if not data:
+        return None
+    try:
+        txt = "".join(b.get("text", "") for b in data.get("content", []) if b.get("type") == "text").strip()
+        m = re.search(r"\{.*\}", txt, re.S)
+        if m:
+            txt = m.group(0)
+        obj = json.loads(txt)
+        return obj if isinstance(obj, dict) else None
     except Exception as e:
         print(f"[ai_grader parse error] {e!r}")
         return None

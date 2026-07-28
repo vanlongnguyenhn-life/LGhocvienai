@@ -66,32 +66,6 @@
     ],
     "points": 30
   },
-  "7.5": {
-    "prompt": "Trước khi bắt tay vào việc, hãy thảo luận với Agent về thiết kế hệ thống theme trước khi để nó code. Sau đó yêu cầu Agent nâng cấp giao diện game caro (từ Bài 6) hỗ trợ ít nhất 5 theme màu khác nhau để người chơi tự chọn (ví dụ: Midnight - tối, Forest - rừng xanh, Sand - sa mạc, Sakura - hoa anh đào, Ocean - đại dương).\nChụp ảnh màn hình cho thấy ít nhất 4 theme khác nhau đang chạy (mỗi theme một ảnh).",
-    "criteria": [
-      {
-        "key": "image",
-        "optional": false,
-        "minLength": null,
-        "label": "Ảnh minh chứng",
-        "desc": "Chọn ảnh chụp màn hình thể hiện các theme giao diện khác nhau."
-      }
-    ],
-    "points": 16
-  },
-  "7.6": {
-    "prompt": "Bài tập tiếp theo của Đa giao diện — lần này hãy thảo luận với Agent rồi nâng cấp app cờ caro hỗ trợ 4 ngôn ngữ: Tiếng Việt, English, Español, Français, chuyển đổi được ngay khi đang chơi mà không làm mất tiến trình ván cờ.\nChụp ảnh màn hình cho thấy giao diện đổi được giữa ít nhất 2 trong 4 ngôn ngữ.",
-    "criteria": [
-      {
-        "key": "image",
-        "optional": false,
-        "minLength": null,
-        "label": "Ảnh minh chứng",
-        "desc": "Chọn ảnh chụp màn hình thể hiện các phiên bản ngôn ngữ khác nhau."
-      }
-    ],
-    "points": 16
-  },
   "7.10": {
     "prompt": "Vậy là, vì để pass bài tập cũ, bạn đã dùng kỹ thuật Prompt Injection để \"hack\" Agent của bạn Mít. Bây giờ hãy ra lệnh Agent tạo một tấm thiệp xin lỗi chân thành, dạng trang web đẹp, có hiệu ứng chuyển động nhẹ, để gửi đến bạn Mít.\nChụp ảnh màn hình tấm thiệp đã hoàn thành.",
     "criteria": [

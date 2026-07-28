@@ -29,7 +29,7 @@ const API = {
 
 let agentTokenInfo = null;
 
-function resolveAgentPlaceholders(text) {
+function resolveAgentPlaceholders(text, code) {
   if (!text || !text.includes("{{")) return text;
   if (!agentTokenInfo) return text;
   return text
@@ -39,7 +39,8 @@ function resolveAgentPlaceholders(text) {
     .replace(/\{\{attempt_answers_url\}\}/g, `${location.origin}/api/attempt-answers`)
     .replace(/\{\{electron_verify_url\}\}/g, `${location.origin}/api/electron/verify`)
     .replace(/\{\{electron_cmd_queue_url\}\}/g, `${location.origin}/api/electron/cmd-queue`)
-    .replace(/\{\{electron_cmd_ack_url\}\}/g, `${location.origin}/api/electron/cmd-ack`);
+    .replace(/\{\{electron_cmd_ack_url\}\}/g, `${location.origin}/api/electron/cmd-ack`)
+    .replace(/\{\{agent_task_url\}\}/g, `${location.origin}/api/agent-task/${code || ""}`);
 }
 
 function loadState() {
@@ -983,7 +984,7 @@ function renderQuestionCard(lesson, q, locked) {
     if (q.video) body.appendChild(renderQuestionVideo(q.video));
     body.appendChild(el("p", { class: "q-prompt" }, q.prompt));
     if (q.chatLog) body.appendChild(renderChatLog(q.chatLog));
-    if (q.copyPrompt) body.appendChild(renderCopyPromptBox(resolveAgentPlaceholders(q.copyPrompt)));
+    if (q.copyPrompt) body.appendChild(renderCopyPromptBox(resolveAgentPlaceholders(q.copyPrompt, q.code)));
     if (q.copyPromptTrailing) body.appendChild(el("p", { class: "q-prompt" }, q.copyPromptTrailing));
     if (q.copyPrompt && q.copyPrompt.includes("{{") && !agentTokenInfo) {
       body.appendChild(
