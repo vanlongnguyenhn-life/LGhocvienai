@@ -87,7 +87,7 @@ ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 LARK_ALLOWED_TENANT_KEY = os.environ.get("LARK_ALLOWED_TENANT_KEY", "").strip()
 # Verification Token của Event Subscription trên Lark (để trống nếu chưa đặt).
 LARK_VERIFICATION_TOKEN = os.environ.get("LARK_VERIFICATION_TOKEN", "").strip()
-ANTHROPIC_MODEL = os.environ.get("GRADER_MODEL", "claude-sonnet-5")
+ANTHROPIC_MODEL = os.environ.get("GRADER_MODEL", "claude-opus-4-8")
 
 GRADER_SYSTEM_PROMPT = (
     "Bạn là trợ giảng chấm bài tự luận ngắn cho khoá học về Coding Agent. Câu hỏi yêu cầu học viên "

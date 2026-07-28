@@ -23,10 +23,10 @@ LARK_APP_ID = os.environ.get("LARK_APP_ID", "")
 LARK_APP_SECRET = os.environ.get("LARK_APP_SECRET", "")
 
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
-# Dùng Sonnet 5 để trả lời chính xác/thông minh hơn; đặt LARK_BOT_MODEL trên server nếu muốn
-# đổi sang claude-opus-4-8 (mạnh hơn nữa, đắt hơn) hoặc quay lại claude-haiku-4-5-20251001
-# (rẻ hơn) khi cần tiết kiệm chi phí cho lớp đông.
-BOT_MODEL = os.environ.get("LARK_BOT_MODEL", "claude-sonnet-5")
+# Dùng Opus 4.8 (bản mạnh nhất) để trả lời chính xác/thông minh nhất; đặt LARK_BOT_MODEL trên
+# server nếu muốn quay lại claude-sonnet-5 hoặc claude-haiku-4-5-20251001 (rẻ hơn) khi cần tiết
+# kiệm chi phí cho lớp đông.
+BOT_MODEL = os.environ.get("LARK_BOT_MODEL", "claude-opus-4-8")
 BOT_NAME = os.environ.get("LARK_BOT_NAME", "Trợ lý Life Group")
 SITE_URL = os.environ.get("SITE_URL", "https://ailg.onrender.com")
 
