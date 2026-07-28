@@ -1079,6 +1079,17 @@ input.reflect-input { min-height: unset; }
 .admin-flagged-group-title { font-weight: 700; font-size: 13px; margin: 10px 0 4px; }
 .admin-flagged-row { font-size: 13px; padding: 6px 0; border-bottom: 1px solid var(--border); }
 .admin-flagged-row.urgent { background: #fdf1e6; margin: 0 -8px; padding: 6px 8px; border-radius: 6px; }
+.admin-remediate-preview {
+  white-space: pre-wrap;
+  font-family: inherit;
+  font-size: 12.5px;
+  background: #f7f7f8;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 6px 0;
+  color: var(--text-dark);
+}
 .admin-link { color: var(--gold); word-break: break-all; }
 .text-faint { color: var(--text-faint); }
 

@@ -85,6 +85,11 @@ const ADMIN_API = {
   flagged() {
     return this._send("/api/admin/flagged");
   },
+  notifyStudent(userId, text) {
+    const fd = new FormData();
+    fd.append("text", text);
+    return this._send(`/api/admin/students/${userId}/notify`, { method: "POST", body: fd });
+  },
 };
 
 function el(tag, attrs, children) {
@@ -429,7 +434,78 @@ function renderFlaggedPanel() {
     criteria.forEach((c) => box.appendChild(renderRow(c, c.criterion_key)));
   }
 
+  // Gom theo học viên (chỉ những ai vẫn đang hiện đã qua bài dù AI nói rớt — nhóm cần xử lý
+  // gấp) để chuẩn bị sẵn nội dung tin nhắn + phạm vi khoá tiến độ cho từng người.
+  const byStudent = {};
+  [...reflects, ...criteria].forEach((row) => {
+    if (!isStillPassing(row)) return;
+    if (!byStudent[row.user_id]) byStudent[row.user_id] = { user_id: row.user_id, display_name: row.display_name || row.username, items: [] };
+    byStudent[row.user_id].items.push(row);
+  });
+  const students = Object.values(byStudent);
+  if (students.length) {
+    box.appendChild(el("div", { class: "admin-flagged-group-title" }, ["Xem trước tin nhắn theo từng học viên (chưa gửi gì cả):"]));
+    students.forEach((s) => box.appendChild(renderRemediatePreview(s)));
+  }
+
   return box;
+}
+
+function buildRemediateMessage(displayName, items) {
+  const lines = items.map((it) => {
+    const info = QUESTION_INDEX[it.question_code];
+    const title = info ? info.title : it.question_code;
+    return `- ${it.question_code} — "${title}" (lý do: ${it.reason || "chưa rõ"})`;
+  });
+  return (
+    `Chào ${displayName}! Em là Bé Ailai 🌱.\n\n` +
+    `Hệ thống chấm bài bằng AI vừa gặp một sự cố kỹ thuật: khi AI chấm bị lỗi kết nối, hệ thống đã tạm thời cho một số câu tự luận/minh chứng qua chỉ dựa theo hình thức, chưa kiểm tra đúng nội dung.\n\n` +
+    `Em đã khắc phục xong — từ bây giờ mọi câu đều được AI chấm ngay lúc nộp bài, không còn xảy ra tình trạng này nữa.\n\n` +
+    `Sau khi chấm lại, các câu sau của anh/chị chưa đạt yêu cầu:\n` +
+    lines.join("\n") +
+    `\n\nAnh/chị vào lại bài học làm lại các câu này nhé — cần hoàn thành xong mới tiếp tục được các bài sau. Cảm ơn anh/chị!`
+  );
+}
+
+function renderRemediatePreview(student) {
+  const message = buildRemediateMessage(student.display_name, student.items);
+  const codes = student.items.map((it) => it.question_code);
+  const earliestIdx = Math.min(...codes.map((c) => {
+    const i = ALL_QUESTIONS_ORDERED.indexOf(c);
+    return i < 0 ? Infinity : i;
+  }));
+  const earliestCode = isFinite(earliestIdx) ? ALL_QUESTIONS_ORDERED[earliestIdx] : null;
+  const resetCodes = earliestCode ? ALL_QUESTIONS_ORDERED.slice(earliestIdx) : [];
+
+  const box = el("div", { class: "admin-flagged-row" });
+  box.appendChild(el("div", {}, [
+    el("button", { class: "help-link", onclick: () => openStudent(student.user_id) }, [student.display_name]),
+    el("span", {}, [` — sẽ khoá tiến độ từ câu ${earliestCode || "?"} trở đi (${resetCodes.length} câu).`]),
+  ]));
+  box.appendChild(el("pre", { class: "admin-remediate-preview" }, [message]));
+  box.appendChild(
+    el(
+      "button",
+      { class: "admin-broadcast-send", onclick: () => handleRemediateStudent(student.user_id, message, resetCodes, earliestCode) },
+      ["Duyệt: gửi tin nhắn này + khoá tiến độ"]
+    )
+  );
+  return box;
+}
+
+async function handleRemediateStudent(userId, message, resetCodes, earliestCode) {
+  if (!confirm(`Xác nhận GỬI tin nhắn Lark riêng cho học viên này VÀ xoá tiến độ ${resetCodes.length} câu (từ câu ${earliestCode} trở đi)?\nKhông thể hoàn tác.`)) {
+    return;
+  }
+  try {
+    await ADMIN_API.notifyStudent(userId, message);
+    const r = await ADMIN_API.resetFromCode(userId, resetCodes);
+    await loadFlagged();
+    await loadStudents();
+    alert(`Đã gửi tin nhắn và xoá tiến độ: ${r.deleted_status} trạng thái, ${r.deleted_reflect} bài tự luận, ${r.deleted_submissions} minh chứng.`);
+  } catch (err) {
+    alert("Thất bại: " + (err.message || "lỗi không rõ"));
+  }
 }
 
 async function handleBroadcast() {

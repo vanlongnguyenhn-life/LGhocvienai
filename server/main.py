@@ -1547,6 +1547,24 @@ async def admin_digest_send_now(request: Request, chat_id: str = Form(None)):
     return {"ok": True}
 
 
+@app.post("/api/admin/students/{user_id}/notify")
+async def admin_notify_student(request: Request, user_id: int, text: str = Form(...)):
+    """Gửi tin nhắn Lark riêng (DM) tới đúng học viên này — dùng khi cần báo yêu cầu làm lại
+    một/vài câu bị AI đánh rớt. Cần học viên đã đăng nhập Lark (có lark_open_id)."""
+    current_admin(request)
+    with get_db() as conn:
+        row = conn.execute("SELECT lark_open_id, display_name FROM users WHERE id = ?", (user_id,)).fetchone()
+    if not row:
+        raise HTTPException(status_code=404, detail="Không tìm thấy học viên.")
+    if not row["lark_open_id"]:
+        raise HTTPException(status_code=400, detail="Học viên này chưa đăng nhập bằng Lark nên không có địa chỉ để nhắn riêng.")
+    result = await lark_bot.send_direct_message(row["lark_open_id"], text)
+    if not isinstance(result, dict) or result.get("code") != 0:
+        msg = result.get("msg", "gửi thất bại") if isinstance(result, dict) else "gửi thất bại"
+        raise HTTPException(status_code=400, detail=f"Lark báo lỗi: {msg}")
+    return {"ok": True}
+
+
 @app.post("/api/admin/regrade")
 async def admin_regrade(request: Request, limit: int = Form(15)):
     """Chấm lại bằng AI các câu tự luận/minh chứng đang 'tạm chấp nhận' (chưa AI chấm). Xử lý theo lô."""

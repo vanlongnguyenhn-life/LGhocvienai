@@ -90,6 +90,20 @@ async def send_text(chat_id: str, text: str):
         return resp.json()
 
 
+async def send_direct_message(open_id: str, text: str):
+    """Gửi tin nhắn riêng (P2P) thẳng tới một học viên theo lark_open_id — dùng cho các thông
+    báo cá nhân (vd: yêu cầu làm lại câu bị AI đánh rớt), không cần biết chat_id nhóm."""
+    token = await get_tenant_access_token()
+    async with httpx.AsyncClient(timeout=15) as client:
+        resp = await client.post(
+            f"{LARK_DOMAIN}/open-apis/im/v1/messages",
+            params={"receive_id_type": "open_id"},
+            headers={"Authorization": f"Bearer {token}"},
+            json={"receive_id": open_id, "msg_type": "text", "content": json.dumps({"text": text})},
+        )
+        return resp.json()
+
+
 # ===================== GHI NHỚ NHÓM (để admin gửi thông báo) =====================
 
 def remember_chat(chat_id: str | None, chat_type: str | None):
