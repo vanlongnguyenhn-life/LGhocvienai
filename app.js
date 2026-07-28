@@ -429,6 +429,18 @@ async function handleAuthSubmit(mode, usernameRaw, displayNameRaw, password) {
 async function hydrateProgress() {
   try {
     const data = await API.progress();
+    // Server là nguồn sự thật duy nhất: nếu state cục bộ (localStorage) đang nhớ một câu là
+    // "done"/"correct" nhưng server KHÔNG còn ghi nhận nữa (vd: giáo viên đã xoá tiến độ để
+    // bắt làm lại), phải reset về "pending" ngay — nếu không học viên sẽ mãi thấy "đã hoàn
+    // thành" theo cache cũ trong trình duyệt của họ, dù server đã yêu cầu làm lại.
+    const serverDoneCodes = new Set(Object.keys(data.answers));
+    Object.keys(state.answers).forEach((code) => {
+      const a = state.answers[code];
+      if ((a.status === "done" || a.status === "correct") && !serverDoneCodes.has(code)) {
+        a.status = "pending";
+        a.awardedPoints = 0;
+      }
+    });
     Object.entries(data.answers).forEach(([code, info]) => {
       const a = getAnswer(code);
       a.status = info.status;

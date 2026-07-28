@@ -18,7 +18,7 @@ from urllib.parse import urlparse
 import httpx
 
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
-GRADER_MODEL = os.environ.get("GRADER_MODEL", "claude-haiku-4-5-20251001")
+GRADER_MODEL = os.environ.get("GRADER_MODEL", "claude-sonnet-5")
 
 SYSTEM = (
     "Bạn là trợ giảng chấm MINH CHỨNG bài tập thực hành cho khoá học về Coding Agent. "

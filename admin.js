@@ -469,32 +469,28 @@ function buildRemediateMessage(displayName, items) {
 
 function renderRemediatePreview(student) {
   const message = buildRemediateMessage(student.display_name, student.items);
-  const codes = student.items.map((it) => it.question_code);
-  const earliestIdx = Math.min(...codes.map((c) => {
-    const i = ALL_QUESTIONS_ORDERED.indexOf(c);
-    return i < 0 ? Infinity : i;
-  }));
-  const earliestCode = isFinite(earliestIdx) ? ALL_QUESTIONS_ORDERED[earliestIdx] : null;
-  const resetCodes = earliestCode ? ALL_QUESTIONS_ORDERED.slice(earliestIdx) : [];
+  // CHỈ xoá đúng các câu bị AI đánh rớt — KHÔNG đụng vào câu nào khác, kể cả những câu đứng
+  // SAU câu bị rớt mà học viên đã làm đúng thật (giữ nguyên toàn bộ điểm/tiến độ hợp lệ đó).
+  const resetCodes = student.items.map((it) => it.question_code);
 
   const box = el("div", { class: "admin-flagged-row" });
   box.appendChild(el("div", {}, [
     el("button", { class: "help-link", onclick: () => openStudent(student.user_id) }, [student.display_name]),
-    el("span", {}, [` — sẽ khoá tiến độ từ câu ${earliestCode || "?"} trở đi (${resetCodes.length} câu).`]),
+    el("span", {}, [` — sẽ xoá đúng ${resetCodes.length} câu: ${resetCodes.join(", ")} (giữ nguyên mọi câu khác).`]),
   ]));
   box.appendChild(el("pre", { class: "admin-remediate-preview" }, [message]));
   box.appendChild(
     el(
       "button",
-      { class: "admin-broadcast-send", onclick: () => handleRemediateStudent(student.user_id, message, resetCodes, earliestCode) },
-      ["Duyệt: gửi tin nhắn này + khoá tiến độ"]
+      { class: "admin-broadcast-send", onclick: () => handleRemediateStudent(student.user_id, message, resetCodes) },
+      ["Duyệt: gửi tin nhắn này + xoá đúng các câu rớt"]
     )
   );
   return box;
 }
 
-async function handleRemediateStudent(userId, message, resetCodes, earliestCode) {
-  if (!confirm(`Xác nhận GỬI tin nhắn Lark riêng cho học viên này VÀ xoá tiến độ ${resetCodes.length} câu (từ câu ${earliestCode} trở đi)?\nKhông thể hoàn tác.`)) {
+async function handleRemediateStudent(userId, message, resetCodes) {
+  if (!confirm(`Xác nhận GỬI tin nhắn Lark riêng cho học viên này VÀ xoá đúng ${resetCodes.length} câu (${resetCodes.join(", ")}) — các câu khác giữ nguyên?\nKhông thể hoàn tác.`)) {
     return;
   }
   try {
