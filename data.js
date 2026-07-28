@@ -906,8 +906,6 @@ const LESSONS = [
     code: "7",
     title: "Bài 7 - Phần mềm và sự tin cậy",
     points: 234,
-    intro:
-      "Từ bài này, nguyên tắc \"mù câm điếc\" nhường chỗ cho nguyên tắc \"tin tưởng nhưng kiểm chứng\". Bạn sẽ học cách thảo luận sâu với Agent, nhận diện prompt injection, và hiểu ngưỡng nên uỷ quyền toàn bộ hay nên cùng thảo luận.",
     questions: [
       {
         code: "7.1",

@@ -65,7 +65,7 @@ a { color: inherit; }
   align-items: center;
   justify-content: center;
   cursor: ew-resize;
-  z-index: 60;
+  z-index: 120;
   touch-action: none;
 }
 .shell-resize-handle svg { pointer-events: none; }

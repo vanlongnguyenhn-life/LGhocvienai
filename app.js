@@ -288,14 +288,44 @@ function render() {
 
   const root = document.getElementById("app");
   root.innerHTML = "";
-  if (!state.loggedIn || state.view === "login") {
-    root.appendChild(renderLogin());
-  } else if (state.currentUser && !state.currentUser.approved) {
-    root.appendChild(renderPending());
-  } else if (state.view === "home") {
-    root.appendChild(renderShell(renderHome()));
-  } else {
-    root.appendChild(renderShell(renderCourse()));
+  try {
+    if (!state.loggedIn || state.view === "login") {
+      root.appendChild(renderLogin());
+    } else if (state.currentUser && !state.currentUser.approved) {
+      root.appendChild(renderPending());
+    } else if (state.view === "home") {
+      root.appendChild(renderShell(renderHome()));
+    } else {
+      root.appendChild(renderShell(renderCourse()));
+    }
+  } catch (err) {
+    // Lưới an toàn cuối cùng: nếu bất kỳ nhánh render nào ở trên throw lỗi (ví dụ do dữ
+    // liệu localStorage cũ/hỏng không đúng shape), root đã bị innerHTML="" ở trên và sẽ
+    // trắng màn hình vĩnh viễn nếu không bắt lỗi ở đây. Hiện màn hình lỗi kèm nút xoá dữ
+    // liệu cục bộ để học viên tự khôi phục được, thay vì phải nhờ hỗ trợ kỹ thuật.
+    console.error("render() lỗi:", err);
+    root.innerHTML = "";
+    root.appendChild(
+      el("div", { class: "login-view" }, [
+        el("h2", { class: "login-title" }, "Đã có lỗi hiển thị"),
+        el(
+          "p",
+          { class: "login-tagline" },
+          "Dữ liệu lưu trên trình duyệt của bạn có thể đã bị lỗi. Bấm nút bên dưới để khôi phục (bạn sẽ cần đăng nhập lại, tiến độ bài học đã lưu trên máy chủ vẫn giữ nguyên)."
+        ),
+        el(
+          "button",
+          {
+            class: "submit-btn",
+            onclick: () => {
+              localStorage.removeItem(STORAGE_KEY);
+              location.reload();
+            },
+          },
+          "🔄 Xoá dữ liệu cục bộ và tải lại"
+        ),
+      ])
+    );
   }
   saveState();
   window.scrollTo(0, scrollY);
@@ -809,13 +839,20 @@ function renderLessonSheet(lesson) {
 }
 
 function getAnswer(code) {
-  if (!state.answers[code]) {
-    state.answers[code] = { selected: [], text: "", status: "pending", awardedPoints: 0, proof: {}, proofMeta: {}, matchSelected: [] };
-  }
-  if (!state.answers[code].proof) state.answers[code].proof = {};
-  if (!state.answers[code].proofMeta) state.answers[code].proofMeta = {};
-  if (!state.answers[code].matchSelected) state.answers[code].matchSelected = [];
-  return state.answers[code];
+  if (!state.answers[code]) state.answers[code] = {};
+  const a = state.answers[code];
+  // Vá đầy đủ mọi field còn thiếu (không chỉ tạo mới): dữ liệu cũ trong localStorage có
+  // thể chỉ có 1 phần field (ví dụ từ phiên bản trước, hoặc bị ghi dở dang) — nếu thiếu
+  // "selected"/"matchSelected" thì các hàm renderChoiceGrid/renderMatchGrid gọi .includes()
+  // trên undefined sẽ crash giữa lúc render(), làm trắng trắng toàn bộ trang vĩnh viễn.
+  if (!Array.isArray(a.selected)) a.selected = [];
+  if (typeof a.text !== "string") a.text = "";
+  if (typeof a.status !== "string") a.status = "pending";
+  if (typeof a.awardedPoints !== "number") a.awardedPoints = 0;
+  if (!a.proof) a.proof = {};
+  if (!a.proofMeta) a.proofMeta = {};
+  if (!Array.isArray(a.matchSelected)) a.matchSelected = [];
+  return a;
 }
 
 function shuffledIndices(n) {
@@ -873,7 +910,7 @@ function renderQuestionVideo(src) {
 
 // ===== TẠM KHOÁ theo mã câu: khoá mọi câu TỪ mã này trở đi (theo thứ tự khoá học). =====
 // Đặt "" hoặc null để MỞ HẾT trở lại.
-const LOCKED_FROM_CODE = "";
+const LOCKED_FROM_CODE = "7.1";
 const ALL_CODES_ORDERED = [];
 (typeof LESSONS !== "undefined" ? LESSONS : []).forEach((l) => l.questions.forEach((q) => ALL_CODES_ORDERED.push(q.code)));
 const LOCKED_CODES = (() => {
@@ -1232,7 +1269,6 @@ function renderCodeInput(q, a) {
 
 async function fetchSecretHintStatus(q, a) {
   a.hintStatus = "loading";
-  render();
   try {
     a.hintStatus = await API.request(`/api/secret-hint-status?question_code=${encodeURIComponent(q.code)}`);
   } catch (err) {
@@ -1247,7 +1283,13 @@ function renderAgentSecretCode(q, a) {
 
   if (a.hintPanelOpen) {
     if (a.hintStatus === undefined || a.hintStatus === "loading") {
-      if (a.hintStatus === undefined) fetchSecretHintStatus(q, a);
+      // Không gọi fetchSecretHintStatus()/render() ngay ở đây: đang ở giữa một lượt
+      // render() khác (render() đang dựng cây DOM), gọi render() lồng vào lúc này sẽ phá
+      // cây DOM đang dựng dở (gây trắng màn hình). Hoãn sang tick sau bằng setTimeout(0).
+      if (a.hintStatus === undefined) {
+        a.hintStatus = "loading";
+        setTimeout(() => fetchSecretHintStatus(q, a), 0);
+      }
       wrap.appendChild(el("div", { class: "secret-note" }, "Đang tải trạng thái gợi ý..."));
       wrap.appendChild(
         el("button", { class: "help-link", onclick: () => fetchSecretHintStatus(q, a) }, "🔄 Thử tải lại")
@@ -1329,7 +1371,6 @@ const AGENT_TASK_STATUS_ENDPOINT = {
 
 async function fetchMediaStatus(q, a) {
   a.mediaStatus = "loading";
-  render();
   try {
     const endpoint = AGENT_TASK_STATUS_ENDPOINT[q.type] || "/api/media-status";
     a.mediaStatus = await API.request(`${endpoint}?question_code=${encodeURIComponent(q.code)}`);
@@ -1344,8 +1385,10 @@ function renderAgentMediaStatus(q, a) {
   const wrap = el("div", { class: "media-status" });
 
   if (a.mediaStatus === undefined) {
-    fetchMediaStatus(q, a);
+    // Hoãn sang tick sau (setTimeout 0): renderAgentMediaStatus() đang chạy giữa lượt
+    // render() hiện tại, gọi render() lồng ngay tại đây sẽ phá cây DOM đang dựng dở.
     a.mediaStatus = "loading";
+    setTimeout(() => fetchMediaStatus(q, a), 0);
   }
 
   if (a.mediaStatus === "loading") {
@@ -1713,7 +1756,12 @@ async function submitAnswer(lesson, q) {
     }
   } else if (q.type === "agent_secret_code") {
     if (!a.text || a.text.trim().length === 0) {
-      showToast("Bạn hãy nhập mã bí mật (tìm trong file Documents/ags-...) trước khi nộp bài");
+      // Để trống mà nộp thì hiển thị như sai bình thường (không lộ gợi ý qua toast), nhưng
+      // KHÔNG gọi /api/verify-secret-code nên không bị tính là 1 lần thử để mở gợi ý.
+      a.status = "wrong";
+      a.awardedPoints = 0;
+      showToast("Chưa đúng, Bạn xem lại nhé");
+      persistQuestionStatus(q, a);
       return;
     }
     const fd = new FormData();
