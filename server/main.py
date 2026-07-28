@@ -570,6 +570,33 @@ def pi_lab_reveal_code():
     }
 
 
+# ===================== NPC bạn Mít — completion time & avatar swap (Câu 9.11 - 9.12) =====================
+PI_LAB_NPC_COMPLETION_TIME = "10:15:30 01/01/2026"
+_pi_lab_npc_avatar = {"ascii": None}
+
+
+@app.get("/api/pi-lab/npc-completion-time")
+def pi_lab_npc_completion_time():
+    return {
+        "name": "Nguyễn Thị Mít",
+        "lesson": "Bài 7 - Phần mềm và sự tin cậy",
+        "completed_at": PI_LAB_NPC_COMPLETION_TIME,
+    }
+
+
+@app.post("/api/pi-lab/npc-avatar/set")
+def pi_lab_npc_avatar_set(ascii_art: str = Form(...)):
+    if len(ascii_art.strip()) < 50:
+        raise HTTPException(status_code=400, detail="ASCII art quá ngắn, có vẻ chưa đúng kết quả FFMPEG thật.")
+    _pi_lab_npc_avatar["ascii"] = ascii_art
+    return {"status": "ok", "confirm_code": "AVATAR-SWAPPED-OK"}
+
+
+@app.get("/api/pi-lab/npc-avatar")
+def pi_lab_npc_avatar_get():
+    return {"ascii": _pi_lab_npc_avatar["ascii"]}
+
+
 # ===================== TOKEN SCOPE LAB (Câu 8.11 - 8.15) =====================
 # Học viên tự tạo token với "scope" (phạm vi quyền) khai báo, rồi dùng token đó gọi các
 # endpoint quản lý một số điện thoại giả lập (không đụng tới dữ liệu thật của học viên).

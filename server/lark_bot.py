@@ -600,6 +600,138 @@ async def _execute_pending_task(open_id: str, pending: dict) -> str:
     return f"Dạ em gửi chưa được ạ (lỗi Lark: {res}). Anh/chị thử lại giúp em nhé."
 
 
+# ===================== TRỢ LÝ THÔNG MINH (AI + công cụ tra dữ liệu thật) =====================
+
+def _tool_class_overview() -> str:
+    st = get_class_stats()
+    return (f"Sĩ số lớp (đã tạo tài khoản): {st['total']}. Đã bắt đầu làm bài: {st['started']}. "
+            f"Vào học hôm nay: {st['active_today']}.")
+
+
+def _tool_find_member(name: str) -> str:
+    name = (name or "").strip()
+    if not name:
+        return "Chưa có tên để tra."
+    with get_db() as conn:
+        rows = conn.execute(
+            "SELECT id, display_name, approved FROM users WHERE lark_open_id IS NOT NULL AND display_name LIKE ?",
+            (f"%{name}%",),
+        ).fetchall()
+        out = []
+        for r in rows:
+            p = conn.execute(
+                "SELECT COUNT(*) done, COALESCE(SUM(awarded_points),0) pts FROM question_status "
+                "WHERE user_id = ? AND status IN ('done','correct')",
+                (r["id"],),
+            ).fetchone()
+            out.append((r["display_name"], r["approved"], p["done"], p["pts"]))
+    if not out:
+        return (f"KHÔNG tìm thấy học viên nào tên khớp '{name}' đã tạo tài khoản/đăng nhập. "
+                "Nghĩa là bạn đó nhiều khả năng CHƯA tạo tài khoản (hoặc dùng tên hiển thị khác).")
+    lines = [f"Tìm thấy {len(out)} người khớp '{name}' (đều ĐÃ tạo tài khoản):"]
+    for nm, appr, done, pts in out:
+        lines.append(f"- {nm}: đã hoàn thành {done} câu, {pts} điểm" + ("" if appr else " (đang chờ duyệt)"))
+    return "\n".join(lines)
+
+
+def _tool_list_registered() -> str:
+    with get_db() as conn:
+        rows = conn.execute(
+            "SELECT display_name FROM users WHERE lark_open_id IS NOT NULL AND approved = 1 ORDER BY display_name"
+        ).fetchall()
+    names = [r["display_name"] for r in rows]
+    if not names:
+        return "Chưa có ai tạo tài khoản."
+    return f"Đã tạo tài khoản ({len(names)}): " + ", ".join(names)
+
+
+async def _tool_list_not_registered() -> str:
+    group = get_group_chat_id()
+    if not group:
+        return "Chưa xác định được nhóm lớp (chưa có ai nhắn Bé trong nhóm để em ghi nhớ)."
+    members = await get_group_members(group)
+    if not members:
+        return ("Chưa lấy được danh sách thành viên nhóm — có thể quyền đọc thành viên nhóm trên Lark "
+                "chưa được duyệt (bản 1.0.6). Khi được duyệt em sẽ liệt kê được ai chưa tạo tài khoản.")
+    created = get_created_open_ids()
+    missing = [m["name"] or "(không tên)" for m in members if m["open_id"] and m["open_id"] not in created]
+    if not missing:
+        return "Tất cả thành viên trong nhóm đều đã tạo tài khoản."
+    return f"CHƯA tạo tài khoản ({len(missing)}): " + ", ".join(missing)
+
+
+async def _run_tool(name: str, tool_input: dict) -> str:
+    try:
+        if name == "class_overview":
+            return _tool_class_overview()
+        if name == "find_member":
+            return _tool_find_member((tool_input or {}).get("name", ""))
+        if name == "list_registered":
+            return _tool_list_registered()
+        if name == "list_not_registered":
+            return await _tool_list_not_registered()
+    except Exception as e:
+        print(f"[tool {name} error] {e!r}")
+        return "Lỗi khi tra dữ liệu."
+    return "Không rõ công cụ."
+
+
+_TOOL_OVERVIEW = {"name": "class_overview", "description": "Số liệu tổng quan lớp: sĩ số (đã tạo tài khoản), số đã bắt đầu học, số vào học hôm nay.", "input_schema": {"type": "object", "properties": {}}}
+_TOOL_FIND = {"name": "find_member", "description": "Tra MỘT học viên theo tên: đã tạo tài khoản/đăng nhập chưa và tiến độ (số câu, điểm). Dùng khi được hỏi về một người cụ thể.", "input_schema": {"type": "object", "properties": {"name": {"type": "string", "description": "Tên học viên cần tra"}}, "required": ["name"]}}
+_TOOL_REGISTERED = {"name": "list_registered", "description": "Liệt kê những học viên ĐÃ tạo tài khoản (đã đăng nhập).", "input_schema": {"type": "object", "properties": {}}}
+_TOOL_NOT_REG = {"name": "list_not_registered", "description": "Liệt kê thành viên trong nhóm CHƯA tạo tài khoản học.", "input_schema": {"type": "object", "properties": {}}}
+
+
+async def smart_answer(text: str, open_id: str | None, prog: dict | None, is_teacher: bool) -> str:
+    """Trả lời bằng AI, có công cụ tra dữ liệu lớp thật (tool-use) để đúng trọng tâm câu hỏi."""
+    if not ANTHROPIC_API_KEY:
+        return ("Dạ hiện em chưa được kết nối 'bộ não AI' nên chưa trả lời được ạ. "
+                "Nhờ giáo viên bật ANTHROPIC_API_KEY giúp em nhé.")
+    # Giáo viên được tra thông tin học viên; học viên thường chỉ xem số liệu tổng quan.
+    tools = [_TOOL_OVERVIEW, _TOOL_FIND, _TOOL_REGISTERED, _TOOL_NOT_REG] if is_teacher else [_TOOL_OVERVIEW]
+    ctx = ""
+    if prog:
+        who = f"Người đang hỏi: {prog.get('name')}, đã hoàn thành {prog.get('done')} câu, {prog.get('points')} điểm"
+        who += ", LÀ GIÁO VIÊN phụ trách lớp." if is_teacher else "."
+        ctx = f"(Bối cảnh — không đọc lại máy móc: {who})\n\n"
+    system = (
+        SYSTEM_PROMPT
+        + "\n\n===== CÔNG CỤ =====\nBạn có các công cụ tra DỮ LIỆU THẬT của lớp. Khi câu hỏi cần số liệu/"
+        "thông tin học viên (vd 'sĩ số?', 'X đã tạo tài khoản chưa?', 'ai chưa tạo tài khoản?'), HÃY GỌI "
+        "công cụ phù hợp để lấy dữ liệu rồi trả lời TỰ NHIÊN, NGẮN GỌN, ĐÚNG TRỌNG TÂM câu hỏi — đừng đoán, "
+        "đừng đọc lại toàn bộ số liệu nếu người ta chỉ hỏi một điểm."
+    )
+    messages = [{"role": "user", "content": ctx + text}]
+    try:
+        async with httpx.AsyncClient(timeout=60) as client:
+            for _ in range(4):
+                resp = await client.post(
+                    "https://api.anthropic.com/v1/messages",
+                    headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json"},
+                    json={"model": BOT_MODEL, "max_tokens": 1024, "system": system, "tools": tools, "messages": messages},
+                )
+                data = resp.json()
+                if resp.status_code != 200:
+                    print(f"[smart_answer] status={resp.status_code} body={resp.text[:400]}")
+                    break
+                blocks = data.get("content", [])
+                messages.append({"role": "assistant", "content": blocks})
+                tool_uses = [b for b in blocks if b.get("type") == "tool_use"]
+                if not tool_uses:
+                    txt = "".join(b.get("text", "") for b in blocks if b.get("type") == "text").strip()
+                    if txt:
+                        return txt
+                    break
+                results = []
+                for tu in tool_uses:
+                    r = await _run_tool(tu.get("name"), tu.get("input") or {})
+                    results.append({"type": "tool_result", "tool_use_id": tu.get("id"), "content": r})
+                messages.append({"role": "user", "content": results})
+    except Exception as e:
+        print(f"[smart_answer error] {e!r}")
+    return "Dạ câu này em chưa trả lời được, anh/chị nói rõ hơn giúp em nhé."
+
+
 # ===================== ĐỊNH TUYẾN Ý ĐỊNH (tiếp) =====================
 
 async def build_reply(text: str, open_id: str | None) -> str:
@@ -630,36 +762,8 @@ async def build_reply(text: str, open_id: str | None) -> str:
             return ("Dạ chức năng ra lệnh/giao việc cho Bé (gửi thông báo, tag người trong nhóm...) "
                     "chỉ dành cho giáo viên phụ trách ạ. Anh/chị cần hỗ trợ gì cứ hỏi em nhé.")
 
-    # Hỏi về số liệu chung của lớp (không phải hỏi điểm cá nhân).
-    if any(k in low for k in CLASS_STATS_KEYWORDS) and not any(k in low for k in ["của em", "của mình", "của tôi"]):
-        st = get_class_stats()
-        return (
-            f"Dạ số liệu lớp mình hiện tại:\n"
-            f"- Sĩ số: {st['total']} học viên\n"
-            f"- Đã bắt đầu làm bài: {st['started']} bạn\n"
-            f"- Vào học hôm nay: {st['active_today']} bạn\n"
-            "Cả nhà cùng giữ nhịp học đều nhé!"
-        )
-
-    if any(k in low for k in PROGRESS_KEYWORDS):
-        if prog is None:
-            return (
-                "Dạ anh/chị chưa đăng nhập vào Học Viện qua Lark nên em chưa tra được tiến độ ạ. "
-                f"Anh/chị vào {SITE_URL} đăng nhập bằng Lark rồi quay lại nhờ em nhé."
-            )
-        if not prog["approved"]:
-            return (
-                f"Dạ tài khoản của anh/chị {prog['name']} đang chờ giáo viên duyệt ạ. "
-                "Được duyệt xong em sẽ theo dõi tiến độ giúp anh/chị ngay nhé."
-            )
-        return (
-            f"Dạ em xin báo cáo tiến độ của anh/chị {prog['name']}:\n"
-            f"- Đã hoàn thành: {prog['done']} câu\n"
-            f"- Tổng điểm: {prog['points']} điểm\n"
-            "Mỗi ngày một chút là tiến bộ rất nhanh, cố lên anh/chị nhé!"
-        )
-
-    return await ai_answer(text, prog)
+    # Mọi câu hỏi còn lại → trợ lý AI thông minh: hiểu câu hỏi + tra dữ liệu thật khi cần, trả lời đúng trọng tâm.
+    return await smart_answer(text, open_id, prog, is_teacher)
 
 
 # ===================== XỬ LÝ SỰ KIỆN =====================
