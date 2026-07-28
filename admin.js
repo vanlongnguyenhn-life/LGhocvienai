@@ -82,6 +82,9 @@ const ADMIN_API = {
     fd.append("limit", String(limit || 15));
     return this._send("/api/admin/regrade", { method: "POST", body: fd });
   },
+  flagged() {
+    return this._send("/api/admin/flagged");
+  },
 };
 
 function el(tag, attrs, children) {
@@ -194,6 +197,8 @@ const state = {
   gradingStats: null,
   regrading: false,
   regradeMsg: "",
+  flagged: null,
+  flaggedLoading: false,
 };
 
 function fmtDate(s) {
@@ -217,6 +222,7 @@ async function boot() {
     await loadLarkChats();
     await loadDigest();
     await loadGradingStats();
+    await loadFlagged();
   } catch (e) {
     state.admin = null;
   }
@@ -309,6 +315,16 @@ async function loadGradingStats() {
   }
 }
 
+async function loadFlagged() {
+  state.flaggedLoading = true; render();
+  try {
+    state.flagged = await ADMIN_API.flagged();
+  } catch (e) {
+    state.flagged = null;
+  }
+  state.flaggedLoading = false; render();
+}
+
 async function handleRegrade() {
   state.regrading = true; state.regradeMsg = "Đang chấm bằng AI..."; render();
   try {
@@ -322,6 +338,7 @@ async function handleRegrade() {
       if (r.remaining <= 0 || r.regraded === 0) break;
     }
     state.gradingStats = await ADMIN_API.gradingStats();
+    await loadFlagged();
     let msg = "✓ Xong. Đã chấm lại " + totalDone + " câu bằng AI.";
     if (lastResult && lastResult.remaining > 0) {
       const bits = [];
@@ -362,6 +379,56 @@ function renderGradingPanel() {
       [state.regrading ? "Đang chấm..." : "Chấm lại bằng AI"]),
     state.regradeMsg ? el("span", { class: "admin-broadcast-msg" }, [state.regradeMsg]) : null,
   ]));
+  return box;
+}
+
+function renderFlaggedPanel() {
+  const box = el("div", { class: "admin-broadcast admin-grading" });
+  box.appendChild(el("div", { class: "admin-broadcast-title" }, ["Câu bị AI đánh KHÔNG đạt (cần xem xét)"]));
+
+  if (state.flaggedLoading || !state.flagged) {
+    box.appendChild(el("div", { class: "admin-broadcast-hint" }, ["Đang tải..."]));
+    return box;
+  }
+
+  const reflects = state.flagged.reflects || [];
+  const criteria = state.flagged.criteria || [];
+  const isStillPassing = (row) => row.current_status === "done" || row.current_status === "correct";
+  const urgent = reflects.filter(isStillPassing).length + criteria.filter(isStillPassing).length;
+  const total = reflects.length + criteria.length;
+
+  if (total === 0) {
+    box.appendChild(el("div", { style: "color:#1d7a34" }, ["✓ Không có câu nào đang bị AI đánh rớt."]));
+    return box;
+  }
+
+  box.appendChild(el("div", { class: "admin-broadcast-hint" }, [
+    el("div", { style: urgent ? "color:#b8630a;font-weight:600" : "" }, [
+      `${total} câu bị AI đánh không đạt` + (urgent ? ` — trong đó ${urgent} câu học viên VẪN đang hiện đã qua bài (cần xem xét trước).` : "."),
+    ]),
+  ]));
+
+  const renderRow = (row, extraLabel) => {
+    const stillPass = isStillPassing(row);
+    return el("div", { class: "admin-flagged-row" + (stillPass ? " urgent" : "") }, [
+      el("button", { class: "help-link", onclick: () => openStudent(row.user_id) }, [row.display_name || row.username]),
+      el("span", {}, [" — câu " + row.question_code + (extraLabel ? " (" + extraLabel + ")" : "") + " — "]),
+      el("span", { style: stillPass ? "color:#b8630a;font-weight:600" : "color:#666" }, [
+        stillPass ? "vẫn đang hiện ĐÃ QUA BÀI" : "đã đúng là chưa qua",
+      ]),
+      row.reason ? el("div", { class: "admin-criterion-reason" }, ["Lý do AI: " + row.reason]) : null,
+    ]);
+  };
+
+  if (reflects.length) {
+    box.appendChild(el("div", { class: "admin-flagged-group-title" }, ["Tự luận:"]));
+    reflects.forEach((r) => box.appendChild(renderRow(r)));
+  }
+  if (criteria.length) {
+    box.appendChild(el("div", { class: "admin-flagged-group-title" }, ["Minh chứng ảnh/link/chữ:"]));
+    criteria.forEach((c) => box.appendChild(renderRow(c, c.criterion_key)));
+  }
+
   return box;
 }
 
@@ -778,6 +845,7 @@ function renderDashboard() {
   wrap.appendChild(renderBroadcastPanel());
   wrap.appendChild(renderDigestPanel());
   wrap.appendChild(renderGradingPanel());
+  wrap.appendChild(renderFlaggedPanel());
 
   const enriched = state.students.map((s) => {
     const learning = studentLearningState(s);
@@ -935,6 +1003,11 @@ function criterionStateClass(sub) {
   return sub.is_valid ? "pass" : "fail";
 }
 
+function reflectStateClass(refl) {
+  if (!refl || !refl.ai_graded) return "wait";
+  return refl.is_valid ? "pass" : "fail";
+}
+
 function renderCriterionValue(userId, sub) {
   if (!sub) return el("span", { class: "text-faint" }, ["Chưa nộp"]);
   if (sub.value_type === "image" && sub.file_path) {
@@ -1019,6 +1092,18 @@ function renderStudentDetail() {
         el("span", { class: "admin-q-points" }, [done ? `+${st.awarded_points}đ` : `${q.points}đ`]),
       ]);
       list.appendChild(qItem);
+
+      if (q.type === "reflect" && refl) {
+        const cls = reflectStateClass(refl);
+        const verdictLabel = !refl.ai_graded ? "Chờ AI chấm" : refl.is_valid ? "AI: Đạt" : "AI: Không đạt";
+        const row = el("li", { class: "admin-criterion-row " + cls }, [
+          el("span", { class: "admin-criterion-label" }, [verdictLabel]),
+        ]);
+        if (refl.ai_graded && !refl.is_valid && refl.reason) {
+          row.appendChild(el("span", { class: "admin-criterion-reason" }, [" (" + refl.reason + ")"]));
+        }
+        list.appendChild(row);
+      }
 
       if (q.type === "assignment" && q.criteria) {
         const critList = el("ul", { class: "admin-criteria-list" });

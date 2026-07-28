@@ -1614,6 +1614,41 @@ async def admin_regrade(request: Request, limit: int = Form(15)):
     }
 
 
+@app.get("/api/admin/flagged")
+def admin_flagged(request: Request):
+    """Liệt kê các câu (tự luận + minh chứng) đã được AI chấm KHÔNG đạt — kèm trạng thái
+    question_status hiện tại của học viên, để admin thấy ngay ai đang bị lệch (AI nói rớt
+    nhưng bài vẫn hiện đã qua) và tự quyết định có xoá tiến độ hay không."""
+    current_admin(request)
+    with get_db() as conn:
+        reflects = conn.execute(
+            """
+            SELECT rg.user_id, u.display_name, u.username, rg.question_code, rg.reason,
+                   rg.answer_text, qs.status AS current_status
+            FROM reflect_grades rg
+            JOIN users u ON u.id = rg.user_id
+            LEFT JOIN question_status qs ON qs.user_id = rg.user_id AND qs.question_code = rg.question_code
+            WHERE rg.ai_graded = 1 AND rg.is_valid = 0
+            ORDER BY (qs.status IN ('done', 'correct')) DESC, rg.user_id, rg.question_code
+            """
+        ).fetchall()
+        criteria = conn.execute(
+            """
+            SELECT s.user_id, u.display_name, u.username, s.question_code, s.criterion_key, s.reason,
+                   s.value_text, qs.status AS current_status
+            FROM submissions s
+            JOIN users u ON u.id = s.user_id
+            LEFT JOIN question_status qs ON qs.user_id = s.user_id AND qs.question_code = s.question_code
+            WHERE s.ai_graded = 1 AND s.is_valid = 0
+            ORDER BY (qs.status IN ('done', 'correct')) DESC, s.user_id, s.question_code
+            """
+        ).fetchall()
+    return {
+        "reflects": [dict(r) for r in reflects],
+        "criteria": [dict(r) for r in criteria],
+    }
+
+
 @app.get("/api/admin/rubric")
 def admin_rubric_list(request: Request):
     current_admin(request)
