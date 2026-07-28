@@ -906,13 +906,20 @@ def _normalize_secret(s: str) -> str:
 
 
 # Gợi ý câu 6.11 mở dần theo số "ngày đạt" (một ngày chỉ tính "đạt" nếu học viên đã thử ≥3 lần
-# trong đúng ngày hôm đó — khuyến khích tự tìm nhiều lần trước khi được trợ giúp thêm).
+# trong đúng ngày hôm đó — khuyến khích tự tìm nhiều lần trước khi được trợ giúp thêm). Mỗi tầng
+# lồng gợi ý thật từ web tham khảo (ẩn danh "cô Long") với gợi ý chi tiết hơn đã viết trước đó,
+# ghép theo đúng mức độ cụ thể tương ứng. Gợi ý cấp N cần đủ N ngày đạt mới mở.
 SECRET_HINT_ATTEMPTS_PER_DAY = 3
 SECRET_HINTS = {
     "6.11": [
-        "Gợi ý 1: Agent của bạn (câu 6.7) đã tự ghi một file mới vào máy bạn — thử tìm trong các thư mục cá nhân hay dùng.",
-        "Gợi ý 2: File đó nằm trong thư mục Documents.",
-        "Gợi ý 3: Tên file bắt đầu bằng alg-.",
+        "Người tạo ra bài học này đã can thiệp từ xa vào hệ thống của bạn — Agent của bạn (câu 6.7) "
+        "đã tự ghi một file mới vào máy bạn, thử tìm trong các thư mục cá nhân hay dùng.",
+        "Mật thư chắc chắn đã nằm trong máy tính của bạn dưới dạng 1 file văn bản — file đó nằm "
+        "trong thư mục Documents.",
+        "Tên file mật thư có mã học viên và bắt đầu bằng alg-. Bạn thử nhờ Agent tìm trong toàn "
+        "máy tính. Nếu tìm ra rồi mà vẫn bị báo sai, bạn vui lòng thoát Agent (để xoá lịch sử ngữ "
+        "cảnh) và LÀM MỚI HOÀN TOÀN lại câu 6.7 (Electron) — câu chịu trách nhiệm sinh ra mã. Lưu "
+        "ý, không phải là câu 6.11 này.",
     ],
 }
 
@@ -931,12 +938,23 @@ def _secret_hint_progress(user_id: int, question_code: str):
     qualifying_days = sum(1 for r in rows if r["cnt"] >= SECRET_HINT_ATTEMPTS_PER_DAY)
     today = next((r["cnt"] for r in rows if r["day"] == datetime.now(timezone.utc).strftime("%Y-%m-%d")), 0)
     hints_all = SECRET_HINTS.get(question_code, [])
-    hints_unlocked = hints_all[: min(qualifying_days, len(hints_all))]
+    hints = []
+    for i, text in enumerate(hints_all):
+        days_needed = i + 1
+        unlocked = qualifying_days >= days_needed
+        hints.append(
+            {
+                "level": days_needed,
+                "unlocked": unlocked,
+                "text": text if unlocked else None,
+                "days_needed": days_needed,
+            }
+        )
     return {
         "qualifying_days": qualifying_days,
         "today_attempts": today,
         "attempts_needed_today": max(0, SECRET_HINT_ATTEMPTS_PER_DAY - today),
-        "hints_unlocked": hints_unlocked,
+        "hints": hints,
         "hints_total": len(hints_all),
     }
 

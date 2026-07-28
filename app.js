@@ -1253,13 +1253,37 @@ function renderAgentSecretCode(q, a) {
             ` Số ngày đạt: ${hs.qualifying_days}/${hs.hints_total}.`
         )
       );
-      for (let i = 0; i < hs.hints_total; i++) {
-        if (i < hs.hints_unlocked.length) {
-          wrap.appendChild(el("div", { class: "secret-note" }, `🔓 ${hs.hints_unlocked[i]}`));
-        } else {
-          wrap.appendChild(el("div", { class: "secret-note" }, `🔒 Gợi ý ${i + 1}: chưa mở khoá.`));
+      if (!a.hintCardsOpen) a.hintCardsOpen = {};
+      hs.hints.forEach((hint) => {
+        const isOpen = !!a.hintCardsOpen[hint.level];
+        const box = el("div", { class: "assignment-box" });
+        const header = el(
+          "div",
+          {
+            class: "label",
+            style: "cursor:pointer;display:flex;justify-content:space-between;",
+            onclick: () => {
+              a.hintCardsOpen[hint.level] = !a.hintCardsOpen[hint.level];
+              render();
+              openQuestion(q.code);
+            },
+          },
+          [`Gợi ý cấp ${hint.level}`, el("span", {}, hint.unlocked ? "✓" : "🔒")]
+        );
+        box.appendChild(header);
+        if (isOpen) {
+          box.appendChild(
+            el(
+              "div",
+              { class: "req-text" },
+              hint.unlocked
+                ? hint.text
+                : `Cần đủ ${hint.days_needed} ngày đạt (mỗi ngày ≥3 lượt thử). Hiện tại: ${hs.qualifying_days}/${hint.days_needed} ngày.`
+            )
+          );
         }
-      }
+        wrap.appendChild(box);
+      });
       wrap.appendChild(
         el("button", { class: "help-link", onclick: () => fetchSecretHintStatus(q, a) }, "🔄 Kiểm tra lại gợi ý")
       );
