@@ -135,13 +135,24 @@ let TOTAL_POINTS = 0;
 function studentLearningState(s) {
   const doneCodes = new Set((s.done_codes || "").split(",").filter(Boolean));
   if (doneCodes.size === 0) {
-    return { status: "not_started", currentCode: ALL_QUESTIONS_ORDERED[0] || null };
+    return { status: "not_started", currentCode: ALL_QUESTIONS_ORDERED[0] || null, gaps: 0 };
   }
   if (doneCodes.size >= TOTAL_QUESTIONS) {
-    return { status: "completed", currentCode: null };
+    return { status: "completed", currentCode: null, gaps: 0 };
   }
-  const currentCode = ALL_QUESTIONS_ORDERED.find((code) => !doneCodes.has(code));
-  return { status: "in_progress", currentCode: currentCode || null };
+  // Câu XA NHẤT đã làm = frontier thực (vì có thể có "lỗ hổng" do lưu rớt trước đây).
+  let furthestIdx = -1;
+  ALL_QUESTIONS_ORDERED.forEach((code, i) => {
+    if (doneCodes.has(code)) furthestIdx = i;
+  });
+  // Câu đang làm = câu chưa xong đầu tiên SAU câu xa nhất.
+  let currentIdx = furthestIdx + 1;
+  while (currentIdx < ALL_QUESTIONS_ORDERED.length && doneCodes.has(ALL_QUESTIONS_ORDERED[currentIdx])) currentIdx++;
+  const currentCode = ALL_QUESTIONS_ORDERED[currentIdx] || null;
+  // Lỗ hổng = số câu ĐỨNG TRƯỚC frontier mà chưa được ghi nhận.
+  let gaps = 0;
+  for (let i = 0; i <= furthestIdx; i++) if (!doneCodes.has(ALL_QUESTIONS_ORDERED[i])) gaps++;
+  return { status: "in_progress", currentCode, gaps };
 }
 
 const STATUS_LABEL = {
@@ -845,6 +856,9 @@ function renderDashboard() {
           ? el("div", { class: "admin-current-q" }, [
               el("div", { class: "admin-current-q-pos" }, [`Câu ${currentQ.position}/${TOTAL_QUESTIONS}`]),
               el("div", { class: "admin-current-q-title" }, [currentQ.title]),
+              s.gaps > 0
+                ? el("div", { class: "admin-current-q-gap" }, [`⚠ còn ${s.gaps} câu trước chưa ghi nhận`])
+                : null,
             ])
           : "—",
       ]),
