@@ -109,6 +109,14 @@ CREATE TABLE IF NOT EXISTS bot_activity (
     reply TEXT,
     error TEXT
 );
+
+CREATE TABLE IF NOT EXISTS grading_rubrics (
+    question_code TEXT NOT NULL,
+    criterion_key TEXT NOT NULL,
+    rubric TEXT NOT NULL,
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    PRIMARY KEY (question_code, criterion_key)
+);
 """
 
 
@@ -141,3 +149,11 @@ def init_db():
             conn.execute("ALTER TABLE users ADD COLUMN tenant_key TEXT")
         if "is_teacher" not in user_cols:
             conn.execute("ALTER TABLE users ADD COLUMN is_teacher INTEGER NOT NULL DEFAULT 0")
+        sub_cols = [r["name"] for r in conn.execute("PRAGMA table_info(submissions)")]
+        if "ai_graded" not in sub_cols:
+            conn.execute("ALTER TABLE submissions ADD COLUMN ai_graded INTEGER NOT NULL DEFAULT 0")
+        rg_cols = [r["name"] for r in conn.execute("PRAGMA table_info(reflect_grades)")]
+        if "ai_graded" not in rg_cols:
+            conn.execute("ALTER TABLE reflect_grades ADD COLUMN ai_graded INTEGER NOT NULL DEFAULT 0")
+            # Câu tự luận đã được AI chấm trước đây (không có dấu 'lỗi kết nối') → coi như đã AI chấm.
+            conn.execute("UPDATE reflect_grades SET ai_graded = 1 WHERE reason NOT LIKE '%Không chấm được bằng AI%'")

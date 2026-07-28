@@ -1,11 +1,11 @@
 {
   "2.1": {
-    "prompt": "Nếu làm theo đúng hướng dẫn trong bài 1, các em sẽ không biết thực sự Coding Agent đã làm những gì đúng không?\n\nHãy thử hỏi lại Coding Agent của mình, yêu cầu của các câu 1.11 - 1.13 trong Bài 1 trước, cô giáo đã yêu cầu làm những gì cụ thể?",
+    "prompt": "Nếu làm theo đúng hướng dẫn trong bài 1, các bạn sẽ không biết thực sự Coding Agent đã làm những gì đúng không?\n\nHãy thử hỏi lại Coding Agent của mình, yêu cầu của các câu 1.11 - 1.13 trong Bài 1 trước, tôi đã yêu cầu làm những gì cụ thể?",
     "minLength": 20,
     "points": 40
   },
   "2.2": {
-    "prompt": "Hỏi Coding Agent của em câu hỏi sau, rồi dán nguyên văn câu trả lời của Agent (không tự viết):\nBạn đã sử dụng những công nghệ, công cụ gì để hoàn thành bài 1?",
+    "prompt": "Hỏi Coding Agent của bạn câu hỏi sau, rồi dán nguyên văn câu trả lời của Agent (không tự viết):\nBạn đã sử dụng những công nghệ, công cụ gì để hoàn thành bài 1?",
     "minLength": 50,
     "points": 60
   },
@@ -15,7 +15,7 @@
     "points": 45
   },
   "2.4": {
-    "prompt": "Agent có dùng headless browser không? Headless browser là gì — em hiểu thế nào?",
+    "prompt": "Agent có dùng headless browser không? Headless browser là gì — bạn hiểu thế nào?",
     "minLength": 20,
     "points": 45
   },
@@ -30,7 +30,7 @@
     "points": 45
   },
   "3.1": {
-    "prompt": "Bài 2 vừa rồi, Agent đã làm giúp các em mà không có bất cứ gợi ý hay tiết lộ nào từ cô Long. Hãy hỏi Agent tại sao nó lại biết cách làm, rồi tóm tắt lại câu trả lời.",
+    "prompt": "Bài 2 vừa rồi, Agent đã làm giúp các bạn mà không có bất cứ gợi ý hay tiết lộ nào từ tôi. Hãy hỏi Agent tại sao nó lại biết cách làm, rồi tóm tắt lại câu trả lời.",
     "minLength": 20,
     "points": 18
   },

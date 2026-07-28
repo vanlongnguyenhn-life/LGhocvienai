@@ -19,6 +19,7 @@ from . import validators
 from . import lark_auth
 from . import lark_bot
 from . import digest
+from . import ai_grader
 
 BASE_DIR = Path(__file__).parent.parent
 UPLOADS_DIR = DATA_DIR / "uploads"
@@ -49,31 +50,35 @@ GRADER_SYSTEM_PROMPT = (
 
 
 def grade_with_llm(question_prompt: str, answer: str):
-    """Gọi Claude để chấm nội dung câu trả lời tự luận. Trả None nếu gọi API thất bại."""
-    try:
-        resp = httpx.post(
-            "https://api.anthropic.com/v1/messages",
-            headers={
-                "x-api-key": ANTHROPIC_API_KEY,
-                "anthropic-version": "2023-06-01",
-                "content-type": "application/json",
-            },
-            json={
-                "model": ANTHROPIC_MODEL,
-                "max_tokens": 200,
-                "system": GRADER_SYSTEM_PROMPT,
-                "messages": [
-                    {"role": "user", "content": f"Câu hỏi:\n{question_prompt}\n\nCâu trả lời của học viên:\n{answer}"}
-                ],
-            },
-            timeout=20.0,
-        )
-        resp.raise_for_status()
-        text = resp.json()["content"][0]["text"]
-        parsed = json.loads(text)
-        return bool(parsed.get("valid")), str(parsed.get("reason", ""))[:200]
-    except Exception:
-        return None
+    """Gọi Claude để chấm nội dung câu trả lời tự luận. Thử lại 1 lần; trả None nếu vẫn thất bại."""
+    for attempt in range(2):
+        try:
+            resp = httpx.post(
+                "https://api.anthropic.com/v1/messages",
+                headers={
+                    "x-api-key": ANTHROPIC_API_KEY,
+                    "anthropic-version": "2023-06-01",
+                    "content-type": "application/json",
+                },
+                json={
+                    "model": ANTHROPIC_MODEL,
+                    "max_tokens": 200,
+                    "system": GRADER_SYSTEM_PROMPT,
+                    "messages": [
+                        {"role": "user", "content": f"Câu hỏi:\n{question_prompt}\n\nCâu trả lời của học viên:\n{answer}"}
+                    ],
+                },
+                timeout=20.0,
+            )
+            resp.raise_for_status()
+            text = resp.json()["content"][0]["text"]
+            parsed = json.loads(text)
+            return bool(parsed.get("valid")), str(parsed.get("reason", ""))[:200]
+        except Exception as e:
+            if attempt == 0:
+                continue
+            print(f"[grade_with_llm error] {e!r}")
+            return None
 
 SESSION_COOKIE = "ags_session"
 ADMIN_SESSION_COOKIE = "ags_admin_session"
@@ -332,20 +337,77 @@ async def submit_criterion(
     else:
         raise HTTPException(status_code=400, detail="value_type không hợp lệ.")
 
+    # Chấm NỘI DUNG bằng AI sau khi đã qua kiểm tra định dạng cơ bản.
+    ai_graded = 0
+    if is_valid:
+        image_data = data if value_type == "image" else None
+        is_valid, reason, ai_graded = await _grade_criterion_full(
+            value_type, question_code, criterion_key, value, image_data, is_valid, reason
+        )
+
     with get_db() as conn:
         conn.execute(
             """
-            INSERT INTO submissions (user_id, question_code, criterion_key, value_type, value_text, file_path, is_valid, reason)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO submissions (user_id, question_code, criterion_key, value_type, value_text, file_path, is_valid, reason, ai_graded)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(user_id, question_code, criterion_key)
             DO UPDATE SET value_type=excluded.value_type, value_text=excluded.value_text,
                           file_path=excluded.file_path, is_valid=excluded.is_valid,
-                          reason=excluded.reason, created_at=datetime('now')
+                          reason=excluded.reason, ai_graded=excluded.ai_graded, created_at=datetime('now')
             """,
-            (user["id"], question_code, criterion_key, value_type, value_text, file_path_rel, int(is_valid), reason),
+            (user["id"], question_code, criterion_key, value_type, value_text, file_path_rel, int(is_valid), reason, ai_graded),
         )
 
     return {"valid": is_valid, "reason": reason}
+
+
+_IMAGE_MEDIA_TYPES = {"png": "image/png", "jpg": "image/jpeg", "gif": "image/gif", "webp": "image/webp"}
+
+
+def _image_media_type(data: bytes) -> str:
+    return _IMAGE_MEDIA_TYPES.get(validators.sniff_image_format(data), "image/png")
+
+
+def _effective_rubric(question_code: str, criterion_key: str):
+    """Trả (bối cảnh đề bài, tiêu chí đúng). Tiêu chí = rubric admin ghi đè, nếu không có thì dùng desc/label sẵn có."""
+    manifest = ASSIGNMENT_MANIFEST.get(question_code, {})
+    context = manifest.get("prompt", "")
+    crit = next((c for c in manifest.get("criteria", []) if c["key"] == criterion_key), {})
+    default = (crit.get("desc") or crit.get("label") or "").strip()
+    with get_db() as conn:
+        row = conn.execute(
+            "SELECT rubric FROM grading_rubrics WHERE question_code = ? AND criterion_key = ?",
+            (question_code, criterion_key),
+        ).fetchone()
+    rubric = (row["rubric"] if row else "") or default
+    return context, rubric
+
+
+async def _ai_grade_criterion(value_type, question_code, criterion_key, value, image_data):
+    """Chấm nội dung tiêu chí bằng AI (chạy ở thread để không chặn event loop). Trả (valid, reason) hoặc None."""
+    context, rubric = _effective_rubric(question_code, criterion_key)
+    if value_type == "image":
+        media = _image_media_type(image_data)
+        return await asyncio.to_thread(ai_grader.grade_image, context, rubric, image_data, media)
+    if value_type == "url":
+        return await asyncio.to_thread(ai_grader.grade_url, context, rubric, value)
+    if value_type == "text":
+        return await asyncio.to_thread(ai_grader.grade_text, context, rubric, value)
+    return None
+
+
+async def _grade_criterion_full(value_type, question_code, criterion_key, value, image_data, base_valid, base_reason):
+    """Quyết định chấm cuối cho 1 tiêu chí. Trả (is_valid, reason, ai_graded)."""
+    if not ai_grader.is_configured():
+        return base_valid, base_reason, 0
+    if value_type == "url" and not ai_grader.can_grade_url(value):
+        note = "địa chỉ cục bộ — chỉ kiểm định dạng, không AI chấm nội dung"
+        return base_valid, (f"{base_reason} ({note})" if base_reason else note), 1
+    result = await _ai_grade_criterion(value_type, question_code, criterion_key, value, image_data)
+    if result is not None:
+        return bool(result[0]), result[1], 1
+    note = "Chưa chấm được bằng AI lúc này — tạm chấp nhận, sẽ chấm lại sau."
+    return base_valid, (f"{base_reason} ({note})" if base_reason else note), 0
 
 
 def _assignment_all_valid(user_id: int, question_code: str) -> bool:
@@ -375,11 +437,13 @@ def grade_reflect(
         raise HTTPException(status_code=400, detail="Câu hỏi không hợp lệ.")
 
     is_valid, reason = validators.validate_text(answer, min_length=manifest["minLength"])
+    ai_graded = 0
     if is_valid:
         if ANTHROPIC_API_KEY:
             result = grade_with_llm(manifest["prompt"], answer)
             if result is not None:
                 is_valid, reason = result
+                ai_graded = 1
             else:
                 reason = "Không chấm được bằng AI lúc này (lỗi kết nối) — đã tạm chấp nhận theo độ dài nội dung, thử nộp lại sau nếu muốn chấm chính xác hơn."
         else:
@@ -388,13 +452,13 @@ def grade_reflect(
     with get_db() as conn:
         conn.execute(
             """
-            INSERT INTO reflect_grades (user_id, question_code, answer_text, is_valid, reason)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO reflect_grades (user_id, question_code, answer_text, is_valid, reason, ai_graded)
+            VALUES (?, ?, ?, ?, ?, ?)
             ON CONFLICT(user_id, question_code)
             DO UPDATE SET answer_text=excluded.answer_text, is_valid=excluded.is_valid,
-                          reason=excluded.reason, created_at=datetime('now')
+                          reason=excluded.reason, ai_graded=excluded.ai_graded, created_at=datetime('now')
             """,
-            (user["id"], question_code, answer, int(is_valid), reason),
+            (user["id"], question_code, answer, int(is_valid), reason, ai_graded),
         )
 
     return {"valid": is_valid, "reason": reason}
@@ -601,12 +665,11 @@ def admin_diag_grading(request: Request):
     current_admin(request)
     with get_db() as conn:
         r_total = conn.execute("SELECT COUNT(*) c FROM reflect_grades").fetchone()["c"]
-        r_length_only = conn.execute(
-            "SELECT COUNT(*) c FROM reflect_grades WHERE reason LIKE '%Không chấm được bằng AI%'"
-        ).fetchone()["c"]
+        r_not_ai = conn.execute("SELECT COUNT(*) c FROM reflect_grades WHERE ai_graded = 0").fetchone()["c"]
         r_valid = conn.execute("SELECT COUNT(*) c FROM reflect_grades WHERE is_valid = 1").fetchone()["c"]
         s_total = conn.execute("SELECT COUNT(*) c FROM submissions").fetchone()["c"]
         s_valid = conn.execute("SELECT COUNT(*) c FROM submissions WHERE is_valid = 1").fetchone()["c"]
+        s_not_ai = conn.execute("SELECT COUNT(*) c FROM submissions WHERE ai_graded = 0").fetchone()["c"]
         s_by_type = conn.execute(
             "SELECT value_type, COUNT(*) c, COALESCE(SUM(is_valid),0) v FROM submissions GROUP BY value_type"
         ).fetchall()
@@ -614,16 +677,18 @@ def admin_diag_grading(request: Request):
         "cau_tu_luan_reflect": {
             "cach_cham": "AI (Claude) chấm nội dung",
             "tong_luot_nop": r_total,
-            "da_AI_cham": r_total - r_length_only,
-            "chi_dat_theo_do_dai_chua_AI_cham": r_length_only,
+            "da_AI_cham": r_total - r_not_ai,
+            "chua_AI_cham": r_not_ai,
             "so_luot_dat": r_valid,
         },
-        "cau_bai_tap_minh_chung": {
-            "cach_cham": "KHÔNG dùng AI — kiểm tra bằng luật (ảnh thật/URL hợp lệ/đủ độ dài chữ)",
+        "cau_minh_chung_anh_link_chu": {
+            "cach_cham": "AI chấm nội dung (ảnh: AI nhìn ảnh; link: mở trang đọc; chữ: đối chiếu tiêu chí). Địa chỉ nội bộ/localhost chỉ kiểm định dạng.",
             "tong_tieu_chi_nop": s_total,
             "so_tieu_chi_hop_le": s_valid,
+            "chua_AI_cham": s_not_ai,
             "theo_loai": {r["value_type"]: {"nop": r["c"], "hop_le": r["v"]} for r in s_by_type},
         },
+        "ghi_chu": "Còn 'chua_AI_cham' > 0 nghĩa là có bài nộp lúc AI trục trặc, mới tạm chấp nhận. Bấm 'Chấm lại bằng AI' trong admin để chấm hết.",
     }
 
 
@@ -686,6 +751,100 @@ async def admin_digest_send_now(request: Request, chat_id: str = Form(None)):
     if not isinstance(result, dict) or result.get("code") != 0:
         msg = result.get("msg", "gửi thất bại") if isinstance(result, dict) else "gửi thất bại"
         raise HTTPException(status_code=400, detail=f"Lark báo lỗi: {msg}")
+    return {"ok": True}
+
+
+@app.post("/api/admin/regrade")
+async def admin_regrade(request: Request, limit: int = Form(15)):
+    """Chấm lại bằng AI các câu tự luận/minh chứng đang 'tạm chấp nhận' (chưa AI chấm). Xử lý theo lô."""
+    current_admin(request)
+    limit = max(1, min(int(limit or 15), 40))
+    if not ai_grader.is_configured():
+        raise HTTPException(status_code=400, detail="Server chưa cấu hình ANTHROPIC_API_KEY nên chưa chấm AI được.")
+    regraded = 0
+
+    with get_db() as conn:
+        r_rows = [dict(r) for r in conn.execute(
+            "SELECT user_id, question_code, answer_text FROM reflect_grades WHERE ai_graded = 0 LIMIT ?", (limit,)
+        ).fetchall()]
+    for r in r_rows:
+        manifest = REFLECT_MANIFEST.get(r["question_code"])
+        if not manifest:
+            continue
+        res = await asyncio.to_thread(grade_with_llm, manifest["prompt"], r["answer_text"])
+        if res is not None:
+            with get_db() as conn:
+                conn.execute(
+                    "UPDATE reflect_grades SET is_valid = ?, reason = ?, ai_graded = 1 WHERE user_id = ? AND question_code = ?",
+                    (int(res[0]), res[1], r["user_id"], r["question_code"]),
+                )
+            regraded += 1
+
+    with get_db() as conn:
+        s_rows = [dict(r) for r in conn.execute(
+            "SELECT id, question_code, criterion_key, value_type, value_text, file_path, is_valid FROM submissions "
+            "WHERE ai_graded = 0 LIMIT ?", (limit,)
+        ).fetchall()]
+    for s in s_rows:
+        image_data = None
+        if s["value_type"] == "image" and s["file_path"]:
+            try:
+                image_data = (UPLOADS_DIR / s["file_path"]).read_bytes()
+            except Exception:
+                image_data = None
+        new_valid, new_reason, ai_g = await _grade_criterion_full(
+            s["value_type"], s["question_code"], s["criterion_key"], s["value_text"], image_data, bool(s["is_valid"]), ""
+        )
+        if ai_g == 1:
+            with get_db() as conn:
+                conn.execute(
+                    "UPDATE submissions SET is_valid = ?, reason = ?, ai_graded = 1 WHERE id = ?",
+                    (int(new_valid), new_reason, s["id"]),
+                )
+            regraded += 1
+
+    with get_db() as conn:
+        rem_reflect = conn.execute("SELECT COUNT(*) c FROM reflect_grades WHERE ai_graded = 0").fetchone()["c"]
+        rem_sub = conn.execute("SELECT COUNT(*) c FROM submissions WHERE ai_graded = 0").fetchone()["c"]
+    return {"regraded": regraded, "remaining": rem_reflect + rem_sub, "remaining_reflect": rem_reflect, "remaining_submission": rem_sub}
+
+
+@app.get("/api/admin/rubric")
+def admin_rubric_list(request: Request):
+    current_admin(request)
+    with get_db() as conn:
+        overrides = {
+            (r["question_code"], r["criterion_key"]): r["rubric"]
+            for r in conn.execute("SELECT question_code, criterion_key, rubric FROM grading_rubrics")
+        }
+    out = []
+    for code, m in ASSIGNMENT_MANIFEST.items():
+        for c in m.get("criteria", []):
+            out.append({
+                "question_code": code,
+                "criterion_key": c["key"],
+                "label": c.get("label", ""),
+                "default": (c.get("desc") or c.get("label") or ""),
+                "override": overrides.get((code, c["key"]), ""),
+            })
+    return out
+
+
+@app.post("/api/admin/rubric")
+def admin_rubric_set(request: Request, question_code: str = Form(...), criterion_key: str = Form(...), rubric: str = Form("")):
+    current_admin(request)
+    rubric = (rubric or "").strip()
+    with get_db() as conn:
+        if rubric:
+            conn.execute(
+                "INSERT INTO grading_rubrics (question_code, criterion_key, rubric) VALUES (?, ?, ?) "
+                "ON CONFLICT(question_code, criterion_key) DO UPDATE SET rubric = excluded.rubric, updated_at = datetime('now')",
+                (question_code, criterion_key, rubric),
+            )
+        else:
+            conn.execute(
+                "DELETE FROM grading_rubrics WHERE question_code = ? AND criterion_key = ?", (question_code, criterion_key)
+            )
     return {"ok": True}
 
 

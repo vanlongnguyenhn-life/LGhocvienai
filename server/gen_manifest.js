@@ -22,7 +22,16 @@ for (const lesson of LESSONS) {
   for (const q of lesson.questions) {
     if (q.type === "assignment") {
       manifest[q.code] = {
-        criteria: q.criteria.map((c) => ({ key: c.key, optional: !!c.optional, minLength: c.minLength || null })),
+        // prompt + instructions = bối cảnh đề bài để AI chấm đúng ngữ cảnh câu hỏi.
+        prompt: [q.prompt, q.instructions].filter(Boolean).join("\n"),
+        criteria: q.criteria.map((c) => ({
+          key: c.key,
+          optional: !!c.optional,
+          minLength: c.minLength || null,
+          // label + desc = "đề bài chuẩn" (rubric mặc định) để AI đối chiếu khi chấm tiêu chí này.
+          label: c.label || "",
+          desc: c.desc || "",
+        })),
         points: q.points,
       };
     } else if (q.type === "reflect") {

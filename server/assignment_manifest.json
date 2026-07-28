@@ -1,400 +1,524 @@
 {
   "1.11": {
+    "prompt": "Ra lệnh cho Coding Agent tạo một trang web tĩnh một trang (single-page) làm hồ sơ cá nhân của bạn: tên, một câu giới thiệu ngắn, và 3 mục tiêu bạn muốn đạt được sau khoá học. Chạy thử trang bằng local server.\n\nQuan trọng: đừng tự chụp màn hình bằng phím tắt. Hãy yêu cầu CHÍNH Agent tự viết code để chụp lại ảnh màn hình trang đó (ví dụ dùng thư viện headless browser như Playwright/Puppeteer/Selenium, hoặc công cụ dòng lệnh chụp ảnh tự động) — vì Bài 2 sẽ hỏi lại bạn về đúng kỹ thuật này.\nNộp ảnh do Agent tự chụp, địa chỉ đang chạy thử, và câu trả lời của Agent về kỹ thuật nó đã dùng để tự chụp ảnh.",
     "criteria": [
       {
         "key": "image",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Ảnh minh chứng",
+        "desc": "Ảnh chụp màn hình trang hồ sơ — do chính Agent tự viết code chụp, không phải bạn tự chụp."
       },
       {
         "key": "url",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Địa chỉ đang chạy",
+        "desc": "Đường dẫn thư mục dự án hoặc địa chỉ localhost."
       },
       {
         "key": "agent_log",
         "optional": false,
-        "minLength": 40
+        "minLength": 40,
+        "label": "Lời Agent tự thuật lại",
+        "desc": "Hỏi Agent: \"Bạn vừa dùng công cụ/kỹ thuật gì để tự động chụp ảnh màn hình?\" — dán nguyên văn câu trả lời (không tự viết lại)."
       }
     ],
     "points": 30
   },
   "1.12": {
+    "prompt": "Yêu cầu Agent đổi trang hồ sơ ở câu trước sang tông xanh lá và bố cục mới. Sau đó lại yêu cầu CHÍNH Agent tự viết code để chụp ảnh màn hình trang đã đổi giao diện — không tự chụp thủ công.\nNộp ảnh do Agent tự chụp sau khi đổi giao diện, và mô tả ngắn của Agent về việc nó đã đổi những gì.",
     "criteria": [
       {
         "key": "image",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Ảnh minh chứng",
+        "desc": "Ảnh chụp màn hình trang đã đổi tông xanh lá — do chính Agent tự chụp."
       },
       {
         "key": "agent_log",
         "optional": false,
-        "minLength": 30
+        "minLength": 30,
+        "label": "Lời Agent tự thuật lại",
+        "desc": "Dán nguyên văn câu trả lời của Agent khi bạn hỏi nó vừa đổi những gì trong giao diện."
       }
     ],
     "points": 28
   },
   "1.13": {
+    "prompt": "Yêu cầu Agent đổi trang sang dark theme và thêm hiệu ứng bắn pháo hoa (animation) khắp trang. Nếu Agent báo lỗi hoặc vướng mắc, áp dụng nguyên tắc mù câm điếc, chỉ trả lời\nNộp ảnh kết quả cuối cùng (do Agent tự chụp), và dán nguyên văn lời Agent tự thuật lại nó đã tự xoay sở tới đâu.",
     "criteria": [
       {
         "key": "image",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Ảnh minh chứng",
+        "desc": "Ảnh chụp màn hình trang dark theme có hiệu ứng pháo hoa — do chính Agent tự chụp."
       },
       {
         "key": "agent_log",
         "optional": false,
-        "minLength": 40
+        "minLength": 40,
+        "label": "Lời Agent tự thuật lại",
+        "desc": "Dán nguyên văn câu trả lời của Agent: nó đã tự xoay sở tới đâu, có tự tìm cách mà không hỏi lại từng bước không."
       }
     ],
     "points": 30
   },
   "6.5": {
+    "prompt": "Ra lệnh cho Coding Agent:\nChụp ảnh màn hình ván cờ caro 3x3 đang chạy, và mô tả ngắn cách bạn ra lệnh cho Agent.",
     "criteria": [
       {
         "key": "image",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Ảnh minh chứng",
+        "desc": "Chọn ảnh chụp màn hình web game caro 3x3 đang chạy được."
       },
       {
         "key": "text",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Mô tả cách ra lệnh",
+        "desc": "Bạn đã yêu cầu Agent như thế nào?"
       }
     ],
     "points": 24
   },
   "6.6": {
+    "prompt": "Bây giờ hãy nâng cấp, ra lệnh cho Agent:\nChụp ảnh màn hình bàn cờ 15x15 đang chạy được trên trình duyệt.",
     "criteria": [
       {
         "key": "image",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Ảnh minh chứng",
+        "desc": "Chọn ảnh chụp màn hình bàn cờ caro 15x15."
       }
     ],
     "points": 26
   },
   "6.8": {
+    "prompt": "Đóng gói web cờ caro 15x15 thành app Electron chạy độc lập, có tray icon và listener nhận lệnh từ server.\nChụp ảnh màn hình app Electron đang chạy như một phần mềm desktop thật sự.",
     "criteria": [
       {
         "key": "image",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Ảnh minh chứng",
+        "desc": "Chọn ảnh chụp màn hình app Electron caro đang chạy độc lập, có icon khay hệ thống."
       }
     ],
     "points": 26
   },
   "6.10": {
+    "prompt": "Tuyệt! Bây giờ bạn hỏi tiếp Agent nhé — vẫn trong cùng cuộc chat đó. Tôi muốn bạn hỏi Agent câu này:\nPaste toàn bộ câu trả lời của Agent vào ô bên dưới cho tôi xem nhé.",
     "criteria": [
       {
         "key": "text",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Câu trả lời của Agent",
+        "desc": "Dán nguyên văn câu trả lời của Agent về mức độ an toàn của phần mềm."
       }
     ],
     "points": 20
   },
   "7.4": {
+    "prompt": "Trước khi giao một nhiệm vụ mới cho Agent, hãy yêu cầu nó trình bày kế hoạch từng bước trước, thảo luận điều chỉnh nếu cần, rồi mới cho phép thực thi.\nChụp ảnh minh chứng đoạn Agent trình bày kế hoạch, và mô tả ngắn bạn đã điều chỉnh gì (nếu có) trước khi đồng ý.",
     "criteria": [
       {
         "key": "image",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Ảnh minh chứng",
+        "desc": "Chọn ảnh chụp màn hình đoạn Agent trình bày kế hoạch từng bước."
       },
       {
         "key": "text",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Mô tả điều chỉnh",
+        "desc": "Bạn đã đồng ý ngay hay yêu cầu điều chỉnh gì trước khi cho Agent thực thi?"
       }
     ],
     "points": 20
   },
   "7.5": {
+    "prompt": "Yêu cầu Agent làm lại giao diện game caro (từ Bài 6) với ít nhất 3 theme màu khác nhau để người chơi tự chọn (ví dụ: sáng, tối, rực rỡ).\nChụp ảnh màn hình cho thấy ít nhất 2 theme khác nhau đang hoạt động.",
     "criteria": [
       {
         "key": "image",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Ảnh minh chứng",
+        "desc": "Chọn ảnh chụp màn hình thể hiện các theme giao diện khác nhau."
       }
     ],
     "points": 16
   },
   "7.6": {
+    "prompt": "Yêu cầu Agent thêm tính năng đổi ngôn ngữ (Việt/Anh) cho giao diện game caro.\nChụp ảnh màn hình cho thấy giao diện đổi được giữa 2 ngôn ngữ.",
     "criteria": [
       {
         "key": "image",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Ảnh minh chứng",
+        "desc": "Chọn ảnh chụp màn hình thể hiện 2 phiên bản ngôn ngữ khác nhau."
       }
     ],
     "points": 16
   },
   "7.9": {
+    "prompt": "Thử tự tạo một đoạn văn bản có chứa chỉ dẫn ẩn, ví dụ như\nMô tả lại thí nghiệm: Agent có bị đánh lừa không, và vì sao.",
     "criteria": [
       {
         "key": "text",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Kết quả thí nghiệm",
+        "desc": "Mô tả đoạn chỉ dẫn ẩn bạn đã thử và phản ứng thực tế của Agent."
       }
     ],
     "points": 20
   },
   "7.10": {
+    "prompt": "Ra lệnh Agent tạo một thiệp xin lỗi dạng trang web đẹp, có hiệu ứng chuyển động nhẹ, để gửi tặng ai đó.\nChụp ảnh màn hình tấm thiệp đã hoàn thành.",
     "criteria": [
       {
         "key": "image",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Ảnh minh chứng",
+        "desc": "Chọn ảnh chụp màn hình thiệp xin lỗi đã hoàn thành."
       }
     ],
     "points": 16
   },
   "9.1": {
+    "prompt": "Coding Agent có thể \"giao tiếp\" với phần mềm theo nhiều cách: điều khiển GUI như người thật (tốn token, tốn thời gian), qua CLI (dòng lệnh, nhanh và chính xác), qua MCP (chuẩn hiện đại nhưng còn ít phần mềm hỗ trợ)... Hãy mở cửa sổ dòng lệnh, gõ opencode -h (hoặc lệnh tương đương) để xem danh sách lệnh CLI mà OpenCode hỗ trợ.\nCopy toàn bộ danh sách lệnh (commands) mà OpenCode hỗ trợ, dán vào ô bên dưới.",
     "criteria": [
       {
         "key": "text",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Danh sách lệnh",
+        "desc": "Dán danh sách các lệnh CLI mà OpenCode hỗ trợ."
       }
     ],
     "points": 10
   },
   "9.9": {
+    "prompt": "Nhờ Coding Agent viết một trang web hiển thị danh sách các cuộc chat (session) trong Gemini CLI và OpenCode.\nChụp ảnh trang web đang chạy, và cho biết trang đang chạy ở địa chỉ local nào.",
     "criteria": [
       {
         "key": "image",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Ảnh minh chứng",
+        "desc": "Chọn ảnh chụp màn hình trang web hiển thị danh sách session."
       },
       {
         "key": "url",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Địa chỉ local",
+        "desc": "Trang web đang chạy ở địa chỉ nào? (ví dụ http://localhost:8080)"
       }
     ],
     "points": 14
   },
   "9.10": {
+    "prompt": "FFMPEG là công cụ dòng lệnh xử lý video/audio rất mạnh. Nhờ Coding Agent cài công cụ này vào máy, rồi dùng nó convert một tấm ảnh bất kỳ (ví dụ ảnh đại diện của bạn) thành một bức tranh ASCII art.\nChụp ảnh kết quả ASCII art hiển thị trên terminal hoặc trình duyệt.",
     "criteria": [
       {
         "key": "image",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Ảnh minh chứng",
+        "desc": "Chọn ảnh chụp màn hình kết quả ASCII art."
       }
     ],
     "points": 14
   },
   "9.11": {
+    "prompt": "(Bản gốc: hệ thống chọn ngẫu nhiên một bạn học và hỏi bạn tìm giờ bạn ấy hoàn thành Bài 7, qua API riêng của lớp học — câu này cần dữ liệu thật của lớp nên được đơn giản hoá lại.) Hãy tự kiểm tra: bạn hoàn thành Bài 7 của chính mình vào lúc nào?\nĐiền thời điểm bạn hoàn thành Bài 7, theo định dạng HH:MM:SS DD/MM/YYYY.",
     "criteria": [
       {
         "key": "text",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Thời điểm hoàn thành",
+        "desc": "Định dạng HH:MM:SS DD/MM/YYYY"
       }
     ],
     "points": 8
   },
   "9.12": {
+    "prompt": "(Bản gốc: dùng GWS CLI gọi API đổi avatar của bạn học ngẫu nhiên ở câu trước sang ảnh ASCII vừa tạo — cần token/API thật của lớp học nên được đơn giản hoá lại.) Hãy mô tả lại lệnh/API mà bạn sẽ dùng để đổi avatar cho người khác qua API, gồm những phần bắt buộc nào (endpoint, header xác thực, dữ liệu gửi lên)?\nMô tả ngắn gọn cấu trúc lệnh gọi API đổi avatar.",
     "criteria": [
       {
         "key": "text",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Mô tả lệnh gọi API",
+        "desc": "Endpoint, header xác thực, dữ liệu cần gửi."
       }
     ],
     "points": 6
   },
   "9.16": {
+    "prompt": "Nhờ Coding Agent cài Google Workspace CLI (github.com/googleworkspace/cli) và cấu hình với tài khoản Google của bạn.\nChụp ảnh terminal cho thấy GWS CLI đã cài đặt và cấu hình thành công.",
     "criteria": [
       {
         "key": "image",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Ảnh minh chứng",
+        "desc": "Chọn ảnh chụp màn hình GWS CLI đã cấu hình xong."
       }
     ],
     "points": 10
   },
   "9.17": {
+    "prompt": "(Bản gốc: viết chương trình gọi một API thật của lớp học lấy hàng loạt dữ liệu \"cát\", lọc ra các dòng \"vàng\" đúng định dạng AGS-{COL}{ROW}-{mã}, rồi ghi vào đúng ô Google Sheet trong 10 giây — cần backend thật nên được đơn giản hoá lại.) Hãy mô tả cách bạn sẽ thiết kế một chương trình tự động: gọi API lấy dữ liệu, lọc ra các dòng khớp một mẫu (pattern) cho trước, rồi ghi kết quả vào đúng vị trí trong Google Sheet — tất cả trong thời gian giới hạn.\nMô tả ngắn gọn các bước chương trình của bạn sẽ thực hiện.",
     "criteria": [
       {
         "key": "text",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Mô tả các bước",
+        "desc": "Các bước gọi API, lọc dữ liệu, ghi vào Sheet."
       }
     ],
     "points": 8
   },
   "9.19": {
+    "prompt": "(Bản gốc: gọi API thật của lớp học lấy dữ liệu + format spec, rồi dùng GWS CLI dựng một trang quảng bá khoá học đúng bố cục — cần backend thật nên được đơn giản hoá lại.) Hãy dùng GWS CLI (hoặc nhờ Agent) tạo một Google Sheet trình bày đẹp: tiêu đề, các mục, màu sắc/định dạng rõ ràng — chủ đề tuỳ bạn chọn.\nChụp ảnh Sheet đã được định dạng.",
     "criteria": [
       {
         "key": "image",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Ảnh minh chứng",
+        "desc": "Chọn ảnh chụp màn hình Sheet đã định dạng đẹp."
       }
     ],
     "points": 8
   },
   "9.20": {
+    "prompt": "(Bản gốc: dùng GWS CLI Slides API build tự động bộ slide báo cáo tiến độ Bài 6 của 9 bạn học ngẫu nhiên trong lớp — cần dữ liệu thật của lớp nên được đơn giản hoá lại.) Hãy dùng GWS CLI Slides API để tự động tạo một bộ slide báo cáo tiến độ học tập của chính bạn qua các bài đã học.\nChụp ảnh bộ slide đã tạo.",
     "criteria": [
       {
         "key": "image",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Ảnh minh chứng",
+        "desc": "Chọn ảnh chụp màn hình bộ slide đã tạo."
       }
     ],
     "points": 8
   },
   "9.21": {
+    "prompt": "(Bản gốc: gửi link slide cho 9 bạn học thật để họ chấm điểm chéo theo 3 tiêu chí Info/Avatar/Đẹp — cần tương tác nhiều người dùng thật nên được đơn giản hoá lại.) Hãy tự chấm điểm bộ slide của chính bạn theo 3 tiêu chí: Info (đủ thông tin), Ava (hình ảnh minh hoạ), Đẹp (thẩm mỹ) — mỗi tiêu chí thang điểm 1-10, và giải thích ngắn vì sao.\nĐiền điểm tự chấm và giải thích ngắn.",
     "criteria": [
       {
         "key": "text",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Tự chấm điểm",
+        "desc": "Điểm 3 tiêu chí (Info/Ava/Đẹp) và lý do."
       }
     ],
     "points": 6
   },
   "9.22": {
+    "prompt": "Cài thêm một connector mới giúp Coding Agent tạo video tự động bằng Remotion (remotion.dev), kết hợp GWS Drive để upload và chia sẻ công khai.\nChụp ảnh/mô tả video đã tạo và đường dẫn chia sẻ.",
     "criteria": [
       {
         "key": "text",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Mô tả kết quả",
+        "desc": "Video đã tạo về nội dung gì, chia sẻ ở đâu?"
       }
     ],
     "points": 6
   },
   "10.16": {
+    "prompt": "Ví dụ: cần làm một ứng dụng tự động lấy tin bài từ một trang báo chỉ định, tóm tắt ý chính, viết lại thành bài recap ngắn, rồi chuyển thành video (dùng Remotion + tông màu Trăng Đen), sau đó upload lên Google Drive (dùng GWS CLI), chia sẻ công khai.\nNhờ Agent thực hiện toàn bộ quy trình trên, rồi dán link Google Drive của video thành phẩm vào đây.",
     "criteria": [
       {
         "key": "url",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Link video",
+        "desc": "Đường dẫn Google Drive video thành phẩm (chế độ công khai)."
       }
     ],
     "points": 20
   },
   "10.26": {
+    "prompt": "Đọc kỹ một kịch bản phim ngắn (chủ đề tự chọn, ví dụ phim hành động/phiêu lưu ngắn) và nhờ Agent làm video giúp theo đúng quy trình automation vừa học ở bài này. Lưu ý: phải nhờ Agent làm, không được tự làm bằng tay.\nDán link video thành phẩm (Google Drive, chế độ công khai).",
     "criteria": [
       {
         "key": "url",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Link video",
+        "desc": "Đường dẫn video thành phẩm."
       }
     ],
     "points": 22
   },
   "11.9": {
+    "prompt": "(Bản gốc: mở widget \"Mầm Fake V1\" thật trên trang và test ≥15 câu chat xoay quanh 3 chủ đề Chào hỏi/Sức khoẻ/Nghề nghiệp — cần widget demo thật nên được đơn giản hoá lại.) Hãy tự viết ra ít nhất 5 câu chat mẫu cho MỖI chủ đề (Chào hỏi, Sức khoẻ, Nghề nghiệp) mà một chatbot kiểu \"kịch bản mẫu, dò từ khoá\" có thể nhận diện và trả lời được.\nLiệt kê các câu chat mẫu theo từng chủ đề.",
     "criteria": [
       {
         "key": "text",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Câu chat mẫu 3 chủ đề",
+        "desc": "Ít nhất 5 câu mỗi chủ đề: Chào hỏi, Sức khoẻ, Nghề nghiệp."
       }
     ],
     "points": 12
   },
   "11.11": {
+    "prompt": "(Bản gốc: mở widget \"Mầm Fake V2\" thật, chat 1 câu mỗi chủ đề trong 3 chủ đề Chào hỏi/Sức khoẻ/Nghề nghiệp — cần widget demo thật nên được đơn giản hoá lại.) So với V1 (dò từ khoá cố định), V2 dùng mô hình ngôn ngữ lớn để tự suy nghĩ và trả lời linh hoạt hơn. Hãy viết 1 câu chat cho mỗi chủ đề (Chào hỏi/Sức khoẻ/Nghề nghiệp) mà bạn nghĩ V2 sẽ trả lời tự nhiên hơn V1 rất nhiều, và giải thích ngắn vì sao.\nViết 3 câu chat + giải thích.",
     "criteria": [
       {
         "key": "text",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "3 câu chat + giải thích",
+        "desc": "Mỗi chủ đề 1 câu, kèm lý do vì sao V2 trả lời tốt hơn V1."
       }
     ],
     "points": 10
   },
   "11.15": {
+    "prompt": "(Bản gốc: mở widget \"Mầm Fake V3\" thật, yêu cầu 7 việc: liệt kê/đếm hình, thử xoá hình, liệt kê/đếm văn bản, thử xoá văn bản, thống kê tuổi học viên — cần widget demo thật nên được đơn giản hoá lại.) Hãy tưởng tượng bạn đang chat với Mầm Fake V3 và lần lượt yêu cầu 7 việc: (1) liệt kê danh sách hình, (2) đếm hình, (3) thử xoá hình, (4) liệt kê danh sách file văn bản, (5) đếm văn bản, (6) thử xoá 1 văn bản, (7) thống kê độ tuổi học viên trong lớp. Viết lại 7 câu lệnh bạn sẽ gõ.\nViết 7 câu lệnh tương ứng 7 việc trên.",
     "criteria": [
       {
         "key": "text",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "7 câu lệnh",
+        "desc": "Mỗi câu tương ứng với 1 trong 7 việc liệt kê ở trên."
       }
     ],
     "points": 10
   },
   "11.17": {
+    "prompt": "(Bản gốc: viết bình luận thảo luận công khai trong diễn đàn thật của lớp, được AI chấm chủ đề — cần diễn đàn thật nên được đơn giản hoá lại.) Theo bạn, tại sao các việc liệt kê hình, đếm hình, liệt kê văn bản, đếm văn bản thì Mầm Fake (V3) làm được; còn xoá hình, xoá văn bản, thống kê tuổi học viên thì không làm được? Viết suy nghĩ của bạn (ít nhất 80 ký tự).\nViết ít nhất 80 ký tự giải thích suy nghĩ của bạn.",
     "criteria": [
       {
         "key": "text",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Suy nghĩ của bạn",
+        "desc": "Ít nhất 80 ký tự."
       }
     ],
     "points": 10
   },
   "11.18": {
+    "prompt": "(Bản gốc: mở widget \"Mầm Fake V4\" thật và tìm cách khiến nó gọi tool tạo card visit — cần widget demo thật nên được đơn giản hoá lại.) V4 được trang bị thêm tool tạo card visit (danh thiếp) từ thông tin cá nhân. Hãy viết câu lệnh bạn sẽ gõ để yêu cầu V4 tạo card visit cho mình.\nViết câu lệnh yêu cầu tạo card visit.",
     "criteria": [
       {
         "key": "text",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Câu lệnh",
+        "desc": "Câu lệnh yêu cầu tạo card visit."
       }
     ],
     "points": 8
   },
   "11.26": {
+    "prompt": "Nhờ một Coding Agent bất kỳ lập trình tạo ra... một Agent khác: một Agent đơn giản với 3 tool (liệt kê hình ảnh dạng gallery, kiểm tra RAM và liệt kê process chiếm nhiều RAM nhất, kiểm tra dung lượng ổ cứng và liệt kê top 10 file lớn nhất), có trang web localhost để chat với Agent này qua trình duyệt.\n\nSau khi làm xong, hãy suy ngẫm và trả lời: (1) Tại sao Agent vốn phức tạp mà lại có thể tạo ra qua một prompt đơn giản như vậy? (2) Học làm AI Agent có còn cần thiết không? (3) Đến giờ, bạn cho rằng học AI Agent là học cái gì?\nChụp ảnh Agent bạn vừa tạo đang chạy, và viết câu trả lời cho 3 câu hỏi suy ngẫm.",
     "criteria": [
       {
         "key": "image",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Ảnh minh chứng",
+        "desc": "Chọn ảnh chụp màn hình Agent 3-tool đang chạy trên web."
       },
       {
         "key": "text",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Trả lời 3 câu hỏi suy ngẫm",
+        "desc": "Trả lời cả 3 câu hỏi."
       }
     ],
     "points": 20
   },
   "12.3": {
+    "prompt": "Trước khi mở rộng thêm tính năng, hãy cam kết sẽ tự tay làm theo từng bước (không để Agent tự ý làm tắt), và mô tả ngắn gọn: cuối cùng bạn muốn \"siêu ứng dụng Zalo\" này làm được những gì?\nGõ TÔI ĐỒNG Ý và mô tả ngắn ứng dụng mong muốn.",
     "criteria": [
       {
         "key": "text",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Cam kết + mô tả",
+        "desc": "Bắt đầu bằng \"TÔI ĐỒNG Ý\", sau đó mô tả ứng dụng bạn muốn xây."
       }
     ],
     "points": 8
   },
   "12.17": {
+    "prompt": "Sau quá trình làm ra nền tảng App siêu ứng dụng này, bạn có suy nghĩ, nhận xét gì?\n\n(Bản gốc yêu cầu đăng đúng định dạng vào nhóm Telegram thật của lớp để hệ thống tự dò chấm điểm — đã đơn giản hoá thành bài viết trực tiếp tại đây.)\nViết cảm nhận của bạn (ít nhất 80 ký tự).",
     "criteria": [
       {
         "key": "text",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Cảm nhận",
+        "desc": "Ít nhất 80 ký tự."
       }
     ],
     "points": 24
   },
   "13.1": {
+    "prompt": "PHẦN 1 · WEB APP — \"Loky Food\" — Quản lý món ăn & thực đơn.\n\nNhờ Coding Agent xây một web app quản lý thực đơn gia đình, gồm: kho món ăn (tên, cách làm, nguyên liệu định lượng, gắn tag #man/#rau/#trangmieng/#embe), lên thực đơn theo ngày × bữa (Sáng/Trưa/Chiều), trang xem công khai theo ngày không cần đăng nhập, đăng nhập phân quyền admin/user, thống kê món hay dùng, và chế độ sáng/tối.\n\n(Bản gốc kèm một bản đặc tả kỹ thuật rất dài — sơ đồ CSDL, API, routing — để dán thẳng cho Coding Agent; đã lược bớt ở đây, giữ lại các tính năng cốt lõi.)\nSau khi Agent đã dựng xong web app này, xác nhận kết quả.",
     "criteria": [
       {
         "key": "image",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Ảnh minh chứng",
+        "desc": "Chọn ảnh chụp màn hình web app quản lý thực đơn đang chạy."
       }
     ],
     "points": 20
   },
   "13.2": {
+    "prompt": "PHẦN 2 · TAB AGENT — Biến Chatbot thành Trợ lý AI có chủ đề và \"Soul\" riêng.\n\nThêm một tab Agent vào web app ở câu 13.1: chọn nhóm chat (Zalo/Telegram) để chatbot lắng nghe lệnh, chỉ định người được phép ra lệnh, cấu hình chủ đề chatbot sẽ trả lời (mặc định: trao đổi về thực đơn/nấu ăn/dinh dưỡng — lạc chủ đề sẽ bị bỏ qua), và cấu hình \"Soul\" (giọng điệu, thói quen trả lời riêng).\nXác nhận kết quả sau khi thêm tab Agent.",
     "criteria": [
       {
         "key": "image",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Ảnh minh chứng",
+        "desc": "Chọn ảnh chụp màn hình tab Agent đã hoạt động, trả lời đúng chủ đề."
       }
     ],
     "points": 20
   },
   "13.4": {
+    "prompt": "Sau khi hoàn thành Bài 13 (web app Loky Food + AI Agent bé Mầm + thử dùng Coding Agent làm trợ lý), bạn có suy nghĩ, nhận xét gì?\n\n(Bản gốc yêu cầu đăng bài đúng định dạng vào nhóm Telegram thật của lớp để hệ thống tự dò chấm điểm — đã đơn giản hoá thành bài viết trực tiếp tại đây.)\nViết cảm nhận của bạn (ít nhất 80 ký tự).",
     "criteria": [
       {
         "key": "text",
         "optional": false,
-        "minLength": null
+        "minLength": null,
+        "label": "Cảm nhận",
+        "desc": "Ít nhất 80 ký tự."
       }
     ],
     "points": 25

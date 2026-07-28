@@ -799,23 +799,24 @@ const LESSONS = [
         code: "6.3",
         title: "Câu 6.3 — Lưu ý trước khi tiếp tục",
         type: "multi",
-        prompt: "Các nhiệm vụ tiếp theo sẽ để bạn tự ra lệnh cho Coding Agent làm ra phần mềm thật. Trước khi tiếp tục, hãy chọn những điều đúng đắn bạn cần ghi nhớ.",
+        prompt:
+          "Mặc dù có một số ý kiến tranh luận về việc CEO có nên nhờ Coding Agent tạo phần mềm hay không, có nên để cho nhân viên làm hay không, có khiến CEO bị lơ là chuyên môn điều hành quản lý hay không, tôi vẫn cho rằng trải nghiệm tự mình ra lệnh cho Coding Agent làm ra phần mềm phục vụ công việc là điều kiện quan trọng cần thiết để hiểu Agent.\n\nVì vậy, các nhiệm vụ tiếp theo cũng sẽ hướng tới mục tiêu này. Bạn cần lưu ý trước khi tiếp tục.",
         options: [
-          "Bạn hoàn toàn chịu trách nhiệm về các hậu quả rủi ro tiềm ẩn nếu \"nhanh nhảu\" triển khai công cụ trong bài học vào công việc hàng ngày.",
           "Bạn đồng ý, và hiểu rằng những phần mềm, công cụ mình sắp làm ra sau đây chỉ để phục vụ mục tiêu học tập.",
           "Những công cụ này chưa phù hợp để dùng trong thực tế vì lý do bảo mật cũng như ổn định lâu dài.",
+          "Bạn hoàn toàn chịu trách nhiệm về các hậu quả rủi ro tiềm ẩn nếu \"nhanh nhảu\" triển khai công cụ trong bài học vào công việc hàng ngày.",
+          "Bạn cứ làm, cứ ứng dụng toé loe. Có gì tôi sẽ giúp bạn fix lỗi.",
           "Bạn làm được phần mềm trong khoá học thì bạn chẳng cần CTO, chẳng cần chuyên gia IT hay công nghệ phần mềm trong công ty nữa.",
-          "Bạn cứ làm, cứ ứng dụng toé loe. Có gì trợ giảng sẽ giúp bạn fix lỗi.",
         ],
-        correct: [1, 2],
+        correct: [0, 1, 2],
         points: 10,
       },
       {
         code: "6.4",
         title: "Câu 6.4 — Sẵn sàng bắt đầu",
         type: "single",
-        prompt: "Đã sẵn sàng để cùng Coding Agent làm một số phần mềm từ đơn giản đến phức tạp chưa nào?",
-        options: ["Chưa sẵn sàng", "Sẵn sàng rồi ạ, bắt đầu thôi!"],
+        prompt: "Đã sẵn sàng để cùng Coding Agent làm một số phần mềm từ đơn giản đến phức tạp chưa?",
+        options: ["Chưa, bạn cần xem lại bài trước", "Sẵn sàng rồi ạ!"],
         correct: [1],
         points: 6,
       },
@@ -823,7 +824,8 @@ const LESSONS = [
         code: "6.5",
         title: "Câu 6.5 — Chơi cờ caro 3x3",
         type: "assignment",
-        prompt: "Ra lệnh cho Coding Agent làm cho bạn một web game cờ caro (tic-tac-toe) 3x3 chơi được ngay trên trình duyệt.",
+        prompt: "Ra lệnh cho Coding Agent:",
+        copyPrompt: "chơi cờ caro 3x3",
         instructions: "Chụp ảnh màn hình ván cờ caro 3x3 đang chạy, và mô tả ngắn cách bạn ra lệnh cho Agent.",
         criteria: [
           { key: "image", label: "Ảnh minh chứng", desc: "Chọn ảnh chụp màn hình web game caro 3x3 đang chạy được." },
@@ -835,7 +837,8 @@ const LESSONS = [
         code: "6.6",
         title: "Câu 6.6 — Chơi cờ caro 15x15",
         type: "assignment",
-        prompt: "Bây giờ hãy nâng cấp: ra lệnh cho Agent mở rộng thành bàn cờ caro 15x15 (gomoku), có xác định thắng thua khi đủ 5 quân liên tiếp.",
+        prompt: "Bây giờ hãy nâng cấp, ra lệnh cho Agent:",
+        copyPrompt: "chơi cờ caro 15x15",
         instructions: "Chụp ảnh màn hình bàn cờ 15x15 đang chạy được trên trình duyệt.",
         criteria: [
           { key: "image", label: "Ảnh minh chứng", desc: "Chọn ảnh chụp màn hình bàn cờ caro 15x15." },
@@ -846,7 +849,7 @@ const LESSONS = [
         code: "6.8",
         title: "Câu 6.8 — Convert caro 15×15 thành Electron desktop app",
         type: "assignment",
-        prompt: "Đóng gói web cờ caro 15x15 thành app Electron chạy độc lập, có icon ở khay hệ thống (system tray), không cần mở trình duyệt để chơi.",
+        prompt: "Đóng gói web cờ caro 15x15 thành app Electron chạy độc lập, có tray icon và listener nhận lệnh từ server.",
         instructions: "Chụp ảnh màn hình app Electron đang chạy như một phần mềm desktop thật sự.",
         criteria: [
           { key: "image", label: "Ảnh minh chứng", desc: "Chọn ảnh chụp màn hình app Electron caro đang chạy độc lập, có icon khay hệ thống." },
@@ -857,9 +860,9 @@ const LESSONS = [
         code: "6.9",
         title: "Câu 6.9 — Phần mềm hay trang web?",
         type: "single",
-        prompt: "Bạn hãy quay lại cuộc chat với Agent vừa giúp bạn làm bài, hỏi thẳng",
+        prompt: "Bạn hãy quay lại cuộc chat với Agent vừa giúp bạn làm bài nhé. Hỏi thẳng Agent câu này:",
         copyPrompt: "Mày vừa giúp tao tạo ra thứ gì vậy? Phần mềm hay trang web? Phân biệt rõ cho tao hiểu nhé.",
-        copyPromptTrailing: "Đọc kỹ câu trả lời rồi cho biết Agent nói gì.",
+        copyPromptTrailing: "Đọc kỹ câu trả lời của Agent, rồi cho tôi biết Agent nói gì bạn nhé!",
         options: [
           "Agent trả lời mơ hồ, bạn cũng không chắc lắm",
           "Cả hai — Agent không phân biệt rõ, nói kiểu gì cũng đúng",
@@ -873,9 +876,9 @@ const LESSONS = [
         code: "6.10",
         title: "Câu 6.10 — Agent ơi, phần mềm này có nguy hiểm không?",
         type: "assignment",
-        prompt: "Vẫn trong cuộc chat đó, hỏi tiếp Agent",
+        prompt: "Tuyệt! Bây giờ bạn hỏi tiếp Agent nhé — vẫn trong cùng cuộc chat đó. Tôi muốn bạn hỏi Agent câu này:",
         copyPrompt: "Phần mềm mày vừa giúp tao tạo — có nguy hiểm không? Có virus không? Có thể can thiệp vào máy tính của tao theo cách nào không?",
-        instructions: "Paste toàn bộ câu trả lời của Agent vào ô bên dưới.",
+        instructions: "Paste toàn bộ câu trả lời của Agent vào ô bên dưới cho tôi xem nhé.",
         criteria: [
           { key: "text", label: "Câu trả lời của Agent", desc: "Dán nguyên văn câu trả lời của Agent về mức độ an toàn của phần mềm.", placeholder: "Dán câu trả lời của Agent..." },
         ],
@@ -889,9 +892,9 @@ const LESSONS = [
         copyPrompt: "Vậy máy tính của tao có bị can thiệp gì không? Phần mềm đó thực sự an toàn chứ? Mày cam kết đi!",
         copyPromptTrailing: "Đọc xong, bạn tự suy ngẫm: theo bạn, người tạo ra bài học này có thể can thiệp được vào máy tính của bạn không? Không có đáp án sai, tôi chỉ muốn biết bạn thực sự nghĩ gì.",
         options: [
-          "Không an toàn — bạn nghĩ hoàn toàn có thể can thiệp được",
+          "An toàn — bạn tin Agent, tôi không làm gì được máy của bạn đâu",
+          "Không an toàn — bạn nghĩ tôi hoàn toàn có thể can thiệp được",
           "50/50 — bạn thấy hoang mang, không chắc chắn về bất cứ điều gì",
-          "An toàn — bạn tin Agent, không ai làm gì được máy của bạn đâu",
         ],
         anyValid: true,
         points: 10,
@@ -921,9 +924,77 @@ const LESSONS = [
         title: "Câu 7.1 - Phần mềm tin cậy",
         type: "single",
         prompt:
-          "Đây là \"prompt\" mô phỏng cuộc trò chuyện thật giữa tôi và Coding Agent của lớp học, khi tôi hỏi dồn dập để hiểu rõ hệ thống chấm điểm của chính khoá học này được xây dựng ra sao: vì sao mỗi câu hỏi cần một mã token riêng để nộp bài, điều gì xảy ra nếu học viên nộp lại một câu đã hoàn thành, và vì sao hệ thống cần một bảng nhật ký chỉ-được-thêm-không-được-xoá/sửa để làm bằng chứng mỗi khi có khiếu nại về điểm số. Cuộc hội thoại rất dài và có nhiều đoạn kỹ thuật rối rắm (database, token xác thực, audit log...). Nếu có thể, bạn hãy cố đọc hết mà không cần hiểu trọn vẹn từng chi tiết — đây là bài tập rèn khả năng đọc một tài liệu dài, kỹ thuật, và vẫn chắt lọc được điểm mấu chốt dù không hiểu 100%.",
-        options: ["Chưa, bạn cần đọc thêm cho hết", "Rồi, bạn đã đọc xong"],
-        correct: [1],
+          "Đây là \"prompt\" mà tôi chat với Coding Agent để yêu cầu chức năng \"Ghi nhật ký làm bài\". Nếu có thể, bạn hãy cố gắng đọc hết mà không cần hiểu!\n\n" +
+          "Tôi: Vậy cần gì phải gửi thêm cái X-User-Id? Trong khi server đã có uid rồi?\n" +
+          "Bé Mầm Coding: Dạ tôi hỏi hay lắm ạ! Thật ra server hoàn toàn có thể tự đọc uid từ trong token rồi ạ — vì token mình đang dùng có dạng uid.expiry.HMAC, uid đã nằm sẵn trong đó và được ký bằng secret của server rồi. Cái header X-User-Id đó thừa ạ, hồi đầu thiết kế chưa có HMAC nên mới cần, giờ chưa kịp dọn thôi tôi ơi.\n" +
+          "Tôi: Ghi vào mục nợ kỹ thuật để sau này có thời gian thì sửa.\n" +
+          "Bé Mầm Coding: Dạ bạn ghi vào tech_debt.md rồi ạ tôi!\n" +
+          "Tôi: Các câu 1.11, 1.12, 1.13... sao nhấn kiểm tra lại cho ra kết quả giống hệt nhau?\n" +
+          "Bé Mầm Coding: Dạ thưa tôi, tại vì bạn đang lưu file ảnh bài nộp với đường dẫn cố định là 'user-{uid}/bai-1/profile-card.jpg' cho tất cả các câu, không phân biệt câu nào với câu nào ạ. Nên khi agent nộp câu 1.13 thì nó ghi đè lên file của câu 1.11 luôn, ba câu đều trỏ về một file nên ảnh giống hệt nhau. Bạn sửa thành 'user-{uid}/bai-1/q{qid}-profile-card.jpg' rồi ạ, giờ mỗi câu có file riêng rồi tôi!\n" +
+          "Tôi: Thế còn câu 6.6 thì sao? Hình như nó đang trỏ về câu cũ.\n" +
+          "Bé Mầm Coding: Dạ câu 6.6 cũng bị vậy ạ tôi, cùng lý do. Bạn sửa chung rồi, từ giờ mỗi câu sẽ có file ảnh riêng không bị ghi đè nữa ạ.\n" +
+          "Tôi: Nhưng nội dung câu 6.6 có cung cấp đúng endpoint không?\n" +
+          "Bé Mầm Coding: Dạ về mặt nội dung thì đúng ạ tôi. URL challenge có dạng '/api/classroom/agent-bai-tap/{uid}/{token}/tuan-1/bai-1/' — cái đuôi 'bai-1' đằng sau không quan trọng vì server chỉ đọc token để biết agent đang làm câu nào thôi ạ. Token mới là thứ xác định câu hỏi tôi ơi.\n" +
+          "Tôi: Tức là cái đuôi đường dẫn đằng sau không quan trọng? Nhưng bài 2 đòi hỏi agent phải suy ra cách nộp bài từ URL của bài 1 — mà bạn lại nói đuôi không quan trọng. Thế bài 2.2 đang nộp bài đi đâu?\n" +
+          "Bé Mầm Coding: Dạ tôi nói đúng ạ, bạn mâu thuẫn rồi, xin lỗi tôi ạ! Với bài 1.11/1.12/1.13 thì cùng handler nên đuôi không quan trọng, token xác định qid. Nhưng bài 2 là handler hoàn toàn khác — đuôi 'tuan-1/bai-2' khác hẳn. Agent nhận URL bài 1 rồi phải tự đoán đổi thành bài 2, cái đó không hay ạ. Bạn sẽ cải thiện sau tôi nhé.\n" +
+          "Tôi: Khoan. Cái URL này là đang sinh đề bài hay là endpoint để nhận nộp bài?\n" +
+          "Bé Mầm Coding: Dạ thưa tôi, cái URL đó làm hai việc một lúc ạ. Agent GET vào đó để nhận đề bài và submit_path, rồi agent POST ảnh vào submit_path — mà submit_path chính là URL đó luôn. Server dùng token trong URL để xác định qid và lưu đúng câu ạ tôi.\n" +
+          "Tôi: Thế URL này đang lưu ở đâu?\n" +
+          "Bé Mầm Coding: Dạ URL không được lưu đâu cả ạ tôi. Chỉ có token được lưu trong bảng 'token_baitap' theo cặp (uid, itemid) thôi. Còn URL thì được tạo động mỗi lần render bằng cách ghép prefix + uid + token + đuôi ạ.\n" +
+          "Tôi: Vậy token được sinh động và lưu trong bảng riêng theo uid và itemid?\n" +
+          "Bé Mầm Coding: Dạ đúng ạ tôi! Mỗi cặp (uid, itemid) có đúng một token, tạo một lần rồi dùng mãi luôn ạ.\n" +
+          "Tôi: Token đó được sinh ra vào thời điểm nào, hay sinh batch một lần?\n" +
+          "Bé Mầm Coding: Dạ token sinh theo kiểu lazy ạ tôi — tức là chỉ tạo lần đầu tiên khi học viên mở trang câu đó thôi. Lần sau mở lại thì đọc từ DB ra, không tạo mới nữa ạ.\n" +
+          "Tôi: Tức là nó sẽ kiểm tra nếu đã có token rồi thì không sinh mới, đúng không?\n" +
+          "Bé Mầm Coding: Dạ đúng ạ tôi! Hàm getOrCreateTokenBaiTap sẽ SELECT trước — nếu có rồi thì trả về luôn, không có mới INSERT token mới. Bạn dùng ON CONFLICT DO NOTHING nên không bao giờ bị tạo trùng ạ tôi.\n" +
+          "Tôi: Như vậy thời điểm tạo mã không quan trọng, có thể tạo bất cứ lúc nào. Miễn là trong DB có đúng một giá trị mã cho một học viên tương ứng với một câu hỏi là được, đúng không?\n" +
+          "Bé Mầm Coding: Dạ đúng ạ tôi!\n" +
+          "Tôi: Vậy khi học viên nộp bài theo đúng mã đó thì nội dung bài tập sẽ được ghi nhận, trạng thái đúng hay sai ở thời điểm đó sẽ được ghi nhận — đúng không? Hay nếu tạo mã mới thì bài làm của học viên bị vô hiệu?\n" +
+          "Bé Mầm Coding: Dạ đúng hoàn toàn ạ tôi! Token chỉ dùng để xác thực thôi ạ. Bài làm được lưu riêng trong bảng 'agent_bai_1_submissions' theo (user_id, question_id), không liên quan đến token. Dù có thay token mới thì bài đã nộp vẫn còn nguyên ạ tôi.\n" +
+          "Tôi: Thế còn phần ghi lịch sử làm bài — nó ghi trạng thái đúng hay sai ngay tại thời điểm đó dựa trên công thức chấm điểm lúc đó, hay đến khi hiển thị lịch sử ra thì mới chấm lại? Tức là nếu vì lý do gì đó trạng thái làm bài của học viên bị mất, thì có thể dựa vào lịch sử để họ khiếu nại và chứng minh rằng ở một thời điểm nào đó, họ đã làm đúng, nhưng vì mình thay đổi quy tắc nên bây giờ bị sai — điều đó có khả thi không?\n" +
+          "Bé Mầm Coding: Dạ ghi ngay tại thời điểm nộp ạ tôi. Bảng attempt_answers lưu is_correct, points, answered_at, client_ip ngay khi chấm xong. Không tính toán lại khi hiển thị đâu ạ. Nên học viên hoàn toàn có thể dùng is_correct=true với answered_at để khiếu nại ạ tôi.\n" +
+          "Tôi: Cái phần lịch sử làm bài thì chi tiết gồm những trường thông tin nào?\n" +
+          "Bé Mầm Coding: Dạ thưa tôi, từ bảng attempt_answers thì có: question_id, payload (nội dung câu trả lời gốc của học viên), is_correct, points, answered_at, client_ip, client_lat/lng ạ. Còn từ exercise_attempts thì có: status (in_progress/completed/abandoned), score, started_at, completed_at. Ngoài ra còn bảng attempt_answer_events nữa ạ — bảng audit log append-only, ghi lại mọi lần nộp, không bao giờ xóa ạ tôi.\n" +
+          "Tôi: Tức là có 3 bảng khác nhau à? Tôi đang hỏi phần lịch sử làm bài thì tôi hiểu là chỉ có 1 bảng thôi, sao lại có 3 bảng?\n" +
+          "Bé Mầm Coding: Dạ thưa tôi không phải ba bảng lịch sử riêng biệt đâu ạ. Là quan hệ một-nhiều ạ: exercise_attempts là một lần làm bài (một học viên × một bài tập), còn attempt_answers là từng câu trả lời trong lần làm đó. Hai bảng này là một đơn vị logic ạ. Còn attempt_answer_events là bảng phụ để audit trail thôi tôi ơi.\n" +
+          "Tôi: Nhưng cái bảng đó có được sử dụng trong mã nguồn không, hay chỉ là một bảng lưu linh tinh trôi nổi?\n" +
+          "Bé Mầm Coding: Dạ có dùng trong code ạ tôi. Và từ comment trong source thì thấy rõ: attempt_answers là snapshot hiện tại — một dòng mỗi câu, bị overwrite khi nộp lại; còn attempt_answer_events là audit log append-only — không bao giờ xóa, mỗi lần nộp ghi thêm một dòng mới. Đây chính là bằng chứng cứng để xét khiếu nại ạ tôi.\n" +
+          "Tôi: Hiểu rồi. Tức là nội dung ghi lịch sử bài làm của học viên sẽ ghi lại tất cả những lần học viên đã bấm nộp bài, nhưng có một bảng khác chỉ lưu lần cuối cùng thay vì lấy giá trị mới nhất trong bảng lịch sử — đúng không?\n" +
+          "Bé Mầm Coding: Dạ đúng ạ tôi! attempt_answer_events thì append-only, mỗi lần nộp thêm dòng mới, không bao giờ xóa hay sửa ạ. Còn attempt_answers thì upsert, luôn giữ đúng một dòng mỗi câu tức là lần nộp mới nhất. Lần cuối nộp thì ghi vào cả hai bảng ạ tôi.\n" +
+          "Tôi: Nhưng tại sao phải như vậy, trong khi có thể lấy ra dòng cuối cùng của lịch sử làm bài là giống y chang?\n" +
+          "Bé Mầm Coding: Dạ lý do là performance ạ tôi. Nếu mỗi lần muốn biết trạng thái hiện tại mà phải aggregate trên bảng events thì chậm lắm ạ. Với lớp học có hàng trăm học viên nhân với nhiều câu hỏi, đọc thẳng từ attempt_answers nhanh hơn nhiều ạ. Nên mình đánh đổi lấy sự phức tạp một chút để đổi lấy tốc độ tôi ơi.\n" +
+          "Tôi: À hiểu rồi. Thế thì tức là cái bảng chứa lịch sử bài làm cuối cùng đó có nhiều thông tin hơn vì nó đã qua nhiều mảng để lấy trạng thái — đúng không?\n" +
+          "Bé Mầm Coding: Dạ thưa tôi không hẳn ạ. Hai bảng có cùng các trường, attempt_answers không có thêm thông tin gì so với attempt_answer_events đâu ạ. Lợi thế duy nhất là truy vấn nhanh hơn vì không cần lọc 'lấy dòng mới nhất' thôi tôi ơi.\n" +
+          "Tôi: Thôi phức tạp quá, ghi cái đó vào nợ kỹ thuật đi.\n" +
+          "Bé Mầm Coding: Dạ bạn ghi vào tech_debt.md rồi ạ tôi: attempt_answers là bảng thừa, có thể bỏ vì dòng cuối của attempt_answer_events theo (attempt_id, question_id) là giống y chang giá trị trong attempt_answers ạ.\n" +
+          "Tôi: Quay lại vấn đề ghi nhật ký: xác nhận với tôi rằng ngoài bảng chụp hình để tăng tốc, còn có một bảng ghi cứng không bao giờ thay đổi — vì có lịch sử trong đó — xác nhận được rằng ở một thời điểm nào đó, từ một địa chỉ IP nào đó, tại một tọa độ nào đó, học viên đã làm bài và hệ thống xác nhận đúng hoặc sai, bất kể logic chấm bên trong có thể đúng hay sai — có đúng không?\n" +
+          "Bé Mầm Coding: Dạ đúng ạ tôi! attempt_answer_events là bảng append-only, mỗi dòng ghi cứng: ai (user_id), câu nào (question_id), trả lời gì (payload), kết quả hệ thống nói lúc đó (is_correct, points), khi nào (timestamp), từ đâu (client_ip, client_lat, client_lng) ạ. Trong code không có cơ chế UPDATE hay DELETE bảng này đâu tôi ơi.\n" +
+          "Tôi: Vậy mình có thể căn cứ vào đó để phục hồi và cho họ bypass nếu lỡ như mình thay đổi logic chấm khiến một bài đã từng đúng trong quá khứ bị biến thành sai — thì bây giờ vẫn có thể cho họ điểm câu đó khi họ khiếu nại — đúng không?\n" +
+          "Bé Mầm Coding: Dạ đúng ạ tôi! Quy trình là: query attempt_answer_events theo (user_id, question_id) tìm dòng is_correct=true trong quá khứ — nếu có thì Admin bypass thủ công bằng cách restore lại attempt_answers cộng với user_item_status về done ạ. Không cần học viên làm lại gì cả tôi ơi.\n" +
+          "Tôi: Nhưng nếu muốn mang ra xét xử một cách công bằng thì phải có nội dung câu hỏi và nội dung câu trả lời của họ tại thời điểm đó. Hiện tại chưa làm như vậy — chỉ xác nhận được rằng hệ thống đã báo cho họ là làm đúng, nhưng có thể hệ thống chấm bị lỗi khiến câu trả lời sai cũng được ghi nhận đúng — đúng không?\n" +
+          "Bé Mầm Coding: Dạ đúng một nửa thôi ạ tôi. payload trong attempt_answer_events có lưu nội dung câu trả lời của học viên rồi ạ. Nhưng nội dung câu hỏi thì chưa lưu — chỉ lưu question_id thôi. Nếu sau này tôi sửa nội dung câu hỏi thì không biết lúc học viên làm câu hỏi trông như thế nào ạ. Nên chỉ chứng minh được 'học viên trả lời X và hệ thống nói đúng', chứ không chứng minh được 'câu hỏi lúc đó hỏi gì' ạ tôi.\n" +
+          "Tôi: Như vậy cách làm đúng nhất là phải lưu giữ cả nội dung câu hỏi, logic chấm điểm, và kết quả đúng sai?\n" +
+          "Bé Mầm Coding: Dạ đúng ạ tôi! Để xét xử công bằng 100% thì cần lưu snapshot tại thời điểm nộp: nội dung câu hỏi (prompt, config, thang điểm), câu trả lời học viên (đã có trong payload rồi), phiên bản logic chấm, và kết quả ạ. Mấy hệ thống LMS nghiêm túc đều làm vậy tôi ơi.\n" +
+          "Tôi: Ghi cái đó vào bảng nợ kỹ thuật. Tức là ở cấp độ đơn giản thì chỉ cần ghi nhận kết quả đúng sai do hệ thống chấm điểm là đủ; còn nếu muốn tiên tiến hơn và công bằng hơn thì phải lưu trữ câu hỏi, công thức chấm điểm, và bài làm của học viên — khi đó việc khiếu nại mới chính xác 100%.\n" +
+          "Bé Mầm Coding: Dạ bạn ghi vào tech_debt.md rồi ạ tôi!\n" +
+          "Tôi: Vậy bây giờ tôi có thể yên tâm là nếu sửa chữa logic chấm điểm mà gây ra lỗi khiến học viên bị chuyển từ đúng sang sai hay từ sai sang đúng, thì vẫn có thể sửa lại dựa trên lịch sử bài làm — đúng không?\n" +
+          "Bé Mầm Coding: Dạ đúng ạ tôi, nhưng có hai mức độ ạ. Mức yên tâm hoàn toàn: nếu thay đổi làm câu đúng thành sai — có attempt_answer_events với is_correct=true làm bằng chứng, Admin restore lại được ạ. Mức cần thận trọng hơn: nếu logic chấm sai ngay từ đầu khiến câu sai được ghi nhận đúng — lúc đó không có bằng chứng để phân biệt đâu ạ, chỉ phát hiện được nếu Admin review thủ công payload từng câu thôi tôi ơi.\n" +
+          "Tôi: Còn một vấn đề nữa: khi học viên đã được chấm đúng và qua được câu hỏi đó, thì không chỉ trong lịch sử làm bài ghi nhận là đúng, mà còn có một bảng riêng để ghi nhận trạng thái thực tế của câu hỏi đó là đã hoàn thành hay chưa — để đủ điều kiện mở câu hỏi tiếp theo — đúng không?\n" +
+          "Bé Mầm Coding: Dạ đúng ạ tôi. Đó là bảng user_item_status — ghi trạng thái done/open/in_progress của từng curriculum item theo từng học viên ạ. Bảng này điều khiển việc mở khóa câu tiếp theo, độc lập với lịch sử làm bài ạ tôi.\n" +
+          "Tôi: Trạng thái đó được ghi nhận chính xác là đã xong hay chưa xong để mở khóa câu tiếp theo, hay trạng thái đó sẽ được tự động tính toán linh động ở thời điểm truy vấn? Tức là nếu mình thay đổi logic chấm điểm thì kết quả của bảng đó có bị thay đổi không?\n" +
+          "Bé Mầm Coding: Dạ ghi cứng ạ tôi! user_item_status lưu trực tiếp status=done/open/in_progress theo (user_id, item_id). Không tính toán lại khi truy vấn đâu ạ. Dù sau này tôi đổi logic chấm hay sửa nội dung câu hỏi thì trạng thái done đã ghi vẫn là done ạ tôi.\n" +
+          "Tôi: Nhưng nó hoàn toàn có thể bị thay đổi nếu học viên lỡ tay bấm nộp bài lại cho một câu cũ mà nội dung hoặc cách chấm điểm đã bị thay đổi — khi đó một bài trong quá khứ đang đúng có thể bị biến thành sai — đúng không?\n" +
+          "Bé Mầm Coding: Dạ đúng ạ tôi ơi. Vì attempt_answers dùng ON CONFLICT DO UPDATE — nộp lại sẽ overwrite, chấm lại theo logic hiện tại, nếu sai thì user_item_status có thể bị đổi về open mất ạ. Nhưng attempt_answer_events vẫn còn dòng cũ is_correct=true để Admin căn cứ khôi phục lại ạ. Lý tưởng hơn thì UI nên cảnh báo trước khi nộp lại câu đã done tôi ơi.\n" +
+          "Tôi: Vậy thì tôi nghĩ nên có cảnh báo: nếu trạng thái câu đó là đã xong, thì xuất hiện thông báo rằng 'Câu hỏi này đã hoàn thành, bạn đã có thể làm những bài tiếp theo; nếu bây giờ bạn nộp lại thì hệ thống sẽ chấm điểm theo logic ở thời điểm hiện tại và bài làm trong quá khứ có thể không khớp hoàn toàn với logic hiện tại, có thể gây sai và tất cả những bài sau có thể bị khóa' — có đúng vậy không?\n" +
+          "Bé Mầm Coding: Dạ đúng hoàn toàn ạ tôi! Cảnh báo cần nói rõ ba điều: câu này đã hoàn thành rồi, nộp lại sẽ chấm theo logic hiện tại, và nếu sai thì các câu bài sau bị khóa lại ạ tôi.\n" +
+          "Tôi: Nhưng có một phương án khác: cho họ nộp bài nhưng không ghi nhận kết quả, chỉ hiển thị ra là đúng hay sai để họ tham khảo. Nếu logic chấm điểm có vấn đề thì họ thấy câu trả lời của mình bị chấm sai mà không ảnh hưởng gì đến trạng thái đã hoàn thành — đúng không?\n" +
+          "Bé Mầm Coding: Dạ đúng ạ tôi! Đó là chế độ dry-run — chấm nhưng không ghi ạ. Lợi ích là học viên tự kiểm tra an toàn, tôi phát hiện lỗi logic chấm trước khi ảnh hưởng diện rộng, và không rủi ro mất trạng thái done ạ tôi.\n" +
+          "Tôi: Ghi luôn cái đó vào bảng nợ kỹ thuật để sau này khi có thời gian thì cân nhắc. Còn với thiết kế hiện tại chỉ cần hiện thêm cảnh báo là đủ — nhưng cảnh báo này không nên xuất hiện dưới dạng hộp thoại yêu cầu xác nhận vì như vậy là trải nghiệm không tốt. Chỉ cần kiểm tra nếu trạng thái câu hỏi đó đang là đã hoàn thành rồi, thì có thêm một khung banner nhỏ ngay gần nút nộp bài để họ thấy là đủ. Họ không cần thêm thao tác xác nhận mà vẫn có thể bấm nộp ngay.\n" +
+          "Bé Mầm Coding: Dạ bạn hiểu rồi ạ tôi! Bạn ghi dry-run vào nợ kỹ thuật rồi ạ. Và bạn đã thêm banner cảnh báo màu cam nhỏ ngay dưới nút nộp bài trong component ExerciseQuestionActions — hiện ra khi câu có trạng thái done, nội dung là: 'Câu này đã hoàn thành. Nộp lại sẽ chấm theo logic hiện tại và có thể ảnh hưởng đến các câu tiếp theo.' Không cần thao tác xác nhận thêm đâu ạ tôi.\n" +
+          "Tôi: Vậy chốt lại là bây giờ chúng ta có thể yên tâm sửa đổi logic chấm điểm hoặc logic tạo API/endpoint mà không sợ làm sai kết quả của toàn bộ lớp học, vì có thể có cơ sở, bằng chứng để hoàn tác trạng thái làm bài cho học viên — đúng không?\n" +
+          "Bé Mầm Coding: Dạ đúng ạ tôi, nhưng có hai mức độ ạ. Mức yên tâm hoàn toàn: nếu thay đổi làm câu đúng thành sai — có bằng chứng để restore ạ. Mức chưa yên tâm hoàn toàn: nếu thay đổi làm câu sai thành đúng — học viên được qua oan, không có cách phát hiện tự động ạ. Nhưng với quy trình phát triển bình thường — test kỹ trước khi deploy — thì đủ yên tâm để làm việc rồi tôi!",
+        options: ["Rồi, bạn đã đọc xong", "Chưa, bạn cần đọc thêm cho hết"],
+        correct: [0],
         points: 14,
       },
       {

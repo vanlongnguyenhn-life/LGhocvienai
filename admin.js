@@ -69,6 +69,14 @@ const ADMIN_API = {
     if (chatId) fd.append("chat_id", chatId);
     return this._send("/api/admin/digest/send-now", { method: "POST", body: fd });
   },
+  gradingStats() {
+    return this._send("/api/admin/diag/grading");
+  },
+  regrade(limit) {
+    const fd = new FormData();
+    fd.append("limit", String(limit || 15));
+    return this._send("/api/admin/regrade", { method: "POST", body: fd });
+  },
 };
 
 function el(tag, attrs, children) {
@@ -167,6 +175,9 @@ const state = {
   digestSaving: false,
   digestSending: false,
   digestMsg: "",
+  gradingStats: null,
+  regrading: false,
+  regradeMsg: "",
 };
 
 function fmtDate(s) {
@@ -189,6 +200,7 @@ async function boot() {
     await loadTimeline();
     await loadLarkChats();
     await loadDigest();
+    await loadGradingStats();
   } catch (e) {
     state.admin = null;
   }
@@ -271,6 +283,58 @@ async function handleDigestSendNow() {
     state.digestMsg = "Gửi thất bại: " + (err.message || "lỗi không rõ");
   }
   state.digestSending = false; render();
+}
+
+async function loadGradingStats() {
+  try {
+    state.gradingStats = await ADMIN_API.gradingStats();
+  } catch (e) {
+    state.gradingStats = null;
+  }
+}
+
+async function handleRegrade() {
+  state.regrading = true; state.regradeMsg = "Đang chấm bằng AI..."; render();
+  try {
+    let guard = 0, totalDone = 0;
+    while (guard++ < 200) {
+      const r = await ADMIN_API.regrade(15);
+      totalDone += r.regraded;
+      state.regradeMsg = `Đã chấm ${totalDone} câu, còn lại ${r.remaining}...`;
+      render();
+      if (r.remaining <= 0 || r.regraded === 0) break;
+    }
+    state.gradingStats = await ADMIN_API.gradingStats();
+    state.regradeMsg = "✓ Xong. Đã chấm lại " + totalDone + " câu bằng AI.";
+  } catch (err) {
+    state.regradeMsg = "Lỗi: " + (err.message || "không rõ");
+  }
+  state.regrading = false; render();
+}
+
+function renderGradingPanel() {
+  const box = el("div", { class: "admin-broadcast admin-grading" });
+  box.appendChild(el("div", { class: "admin-broadcast-title" }, ["Chấm bài bằng AI (tự luận · ảnh · link)"]));
+  const g = state.gradingStats;
+  if (!g) {
+    box.appendChild(el("div", { class: "admin-broadcast-hint" }, ["Đang tải..."]));
+    return box;
+  }
+  const r = g.cau_tu_luan_reflect || {};
+  const s = g.cau_minh_chung_anh_link_chu || {};
+  const pending = (r.chua_AI_cham || 0) + (s.chua_AI_cham || 0);
+  box.appendChild(el("div", { class: "admin-broadcast-hint" }, [
+    el("div", {}, [`Tự luận: ${r.da_AI_cham || 0}/${r.tong_luot_nop || 0} đã AI chấm.`]),
+    el("div", {}, [`Minh chứng (ảnh/link/chữ): ${(s.tong_tieu_chi_nop || 0) - (s.chua_AI_cham || 0)}/${s.tong_tieu_chi_nop || 0} đã AI chấm.`]),
+    el("div", { style: pending ? "color:#b8630a;font-weight:600;margin-top:4px" : "color:#1d7a34;margin-top:4px" },
+      [pending ? `Còn ${pending} bài chưa AI chấm.` : "✓ Tất cả đã được AI chấm."]),
+  ]));
+  box.appendChild(el("div", { class: "admin-broadcast-row" }, [
+    el("button", { class: "admin-broadcast-send", disabled: (state.regrading || !pending) ? "true" : null, onclick: handleRegrade },
+      [state.regrading ? "Đang chấm..." : "Chấm lại bằng AI"]),
+    state.regradeMsg ? el("span", { class: "admin-broadcast-msg" }, [state.regradeMsg]) : null,
+  ]));
+  return box;
 }
 
 async function handleBroadcast() {
@@ -663,6 +727,7 @@ function renderDashboard() {
   wrap.appendChild(topbar);
   wrap.appendChild(renderBroadcastPanel());
   wrap.appendChild(renderDigestPanel());
+  wrap.appendChild(renderGradingPanel());
 
   const enriched = state.students.map((s) => {
     const learning = studentLearningState(s);
