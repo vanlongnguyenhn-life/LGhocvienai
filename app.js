@@ -831,8 +831,10 @@ function renderLessonSheet(lesson) {
   if (lesson.intro) body.appendChild(el("p", { class: "lesson-intro" }, lesson.intro));
   lesson.questions.forEach((q, qIdx) => {
     const seqLocked = qIdx > 0 && !isQuestionDone(lesson.questions[qIdx - 1].code);
-    // Khoá tạm thời (admin) ưu tiên hiển thị thông báo riêng.
-    const locked = LOCKED_CODES.has(q.code) ? ADMIN_LOCK_MSG : seqLocked;
+    // Khoá tạm thời (admin) ưu tiên hiển thị thông báo riêng — giáo viên (is_teacher) luôn
+    // được bỏ qua khoá tạm này để xem/kiểm tra nội dung không bị chặn.
+    const isTeacher = !!(state.currentUser && state.currentUser.is_teacher);
+    const locked = LOCKED_CODES.has(q.code) && !isTeacher ? ADMIN_LOCK_MSG : seqLocked;
     body.appendChild(renderQuestionCard(lesson, q, locked));
   });
   return renderSheet(header, body, closeLessonSheet);

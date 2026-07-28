@@ -43,7 +43,7 @@ def get_user_by_session(token: str | None):
     with get_db() as conn:
         row = conn.execute(
             """
-            SELECT u.id, u.username, u.display_name, u.avatar_url, u.approved
+            SELECT u.id, u.username, u.display_name, u.avatar_url, u.approved, u.is_teacher
             FROM sessions s JOIN users u ON u.id = s.user_id
             WHERE s.token = ?
             """,
