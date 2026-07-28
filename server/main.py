@@ -4,6 +4,7 @@ import json
 import mimetypes
 import os
 import secrets
+from datetime import datetime, timezone
 from pathlib import Path
 
 import httpx
@@ -904,6 +905,50 @@ def _normalize_secret(s: str) -> str:
     return (s or "").strip().upper().replace(" ", "").replace("-", "")
 
 
+# Gợi ý câu 6.11 mở dần theo số "ngày đạt" (một ngày chỉ tính "đạt" nếu học viên đã thử ≥3 lần
+# trong đúng ngày hôm đó — khuyến khích tự tìm nhiều lần trước khi được trợ giúp thêm).
+SECRET_HINT_ATTEMPTS_PER_DAY = 3
+SECRET_HINTS = {
+    "6.11": [
+        "Gợi ý 1: Agent của bạn (câu 6.7) đã tự ghi một file mới vào máy bạn — thử tìm trong các thư mục cá nhân hay dùng.",
+        "Gợi ý 2: File đó nằm trong thư mục Documents.",
+        "Gợi ý 3: Tên file bắt đầu bằng ags-.",
+    ],
+}
+
+
+def _secret_hint_progress(user_id: int, question_code: str):
+    with get_db() as conn:
+        rows = conn.execute(
+            """
+            SELECT DATE(created_at) AS day, COUNT(*) AS cnt
+            FROM secret_code_attempts
+            WHERE user_id = ? AND question_code = ?
+            GROUP BY DATE(created_at)
+            """,
+            (user_id, question_code),
+        ).fetchall()
+    qualifying_days = sum(1 for r in rows if r["cnt"] >= SECRET_HINT_ATTEMPTS_PER_DAY)
+    today = next((r["cnt"] for r in rows if r["day"] == datetime.now(timezone.utc).strftime("%Y-%m-%d")), 0)
+    hints_all = SECRET_HINTS.get(question_code, [])
+    hints_unlocked = hints_all[: min(qualifying_days, len(hints_all))]
+    return {
+        "qualifying_days": qualifying_days,
+        "today_attempts": today,
+        "attempts_needed_today": max(0, SECRET_HINT_ATTEMPTS_PER_DAY - today),
+        "hints_unlocked": hints_unlocked,
+        "hints_total": len(hints_all),
+    }
+
+
+@app.get("/api/secret-hint-status")
+def secret_hint_status(request: Request, question_code: str):
+    user = require_approved_user(request)
+    if question_code not in SECRET_CODE_MANIFEST:
+        raise HTTPException(status_code=400, detail="Câu hỏi không hợp lệ cho luồng mật thư.")
+    return _secret_hint_progress(user["id"], question_code)
+
+
 @app.post("/api/verify-secret-code")
 def verify_secret_code(
     request: Request,
@@ -918,6 +963,10 @@ def verify_secret_code(
         raise HTTPException(status_code=400, detail="Câu hỏi không hợp lệ cho luồng mật thư.")
 
     with get_db() as conn:
+        conn.execute(
+            "INSERT INTO secret_code_attempts (user_id, question_code) VALUES (?, ?)",
+            (user["id"], question_code),
+        )
         row = conn.execute("SELECT secret_code FROM users WHERE id = ?", (user["id"],)).fetchone()
 
     if not row or not row["secret_code"]:
@@ -927,7 +976,7 @@ def verify_secret_code(
             "giữ app chạy nền để nhận file bí mật.",
         }
     if _normalize_secret(code) != _normalize_secret(row["secret_code"]):
-        return {"valid": False, "reason": "Mã chưa đúng — kiểm tra lại file trong thư mục Documents (bắt đầu bằng ags-)."}
+        return {"valid": False, "reason": "Mã chưa đúng — thử tìm lại trên máy bạn, hoặc xem các gợi ý bên dưới."}
     return {"valid": True, "reason": "Đúng mã bí mật!"}
 
 

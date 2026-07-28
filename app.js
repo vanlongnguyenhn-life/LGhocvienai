@@ -934,8 +934,10 @@ function renderQuestionCard(lesson, q, locked) {
       body.appendChild(renderMatchGrid(q, a));
     } else if (q.type === "assignment") {
       body.appendChild(renderAssignment(q, a));
-    } else if (q.type === "code" || q.type === "agent_secret_code") {
+    } else if (q.type === "code") {
       body.appendChild(renderCodeInput(q, a));
+    } else if (q.type === "agent_secret_code") {
+      body.appendChild(renderAgentSecretCode(q, a));
     } else if (q.type === "agent_media" || q.type === "agent_electron") {
       body.appendChild(renderAgentMediaStatus(q, a));
     } else if (q.type === "token_scope_check") {
@@ -1196,6 +1198,74 @@ function renderCodeInput(q, a) {
     class: "reflect-input",
     type: "text",
     placeholder: "Nhập mã xác nhận...",
+  });
+  input.value = a.text || "";
+  input.addEventListener("input", (e) => {
+    a.text = e.target.value;
+    saveState();
+  });
+  wrap.appendChild(input);
+  return wrap;
+}
+
+async function fetchSecretHintStatus(q, a) {
+  a.hintStatus = "loading";
+  render();
+  try {
+    a.hintStatus = await API.request(`/api/secret-hint-status?question_code=${encodeURIComponent(q.code)}`);
+  } catch (err) {
+    a.hintStatus = { error: err.message };
+  }
+  render();
+  openQuestion(q.code);
+}
+
+function renderAgentSecretCode(q, a) {
+  const wrap = el("div", {});
+
+  if (a.hintStatus === undefined) {
+    fetchSecretHintStatus(q, a);
+    a.hintStatus = "loading";
+  }
+
+  if (a.hintStatus === "loading") {
+    wrap.appendChild(el("div", { class: "secret-note" }, "Đang tải trạng thái gợi ý..."));
+  } else if (a.hintStatus.error) {
+    wrap.appendChild(el("div", { class: "secret-note" }, "Lỗi tải gợi ý: " + a.hintStatus.error));
+  } else {
+    const hs = a.hintStatus;
+    wrap.appendChild(
+      el(
+        "div",
+        { class: "secret-note" },
+        `Hôm nay bạn đã thử ${hs.today_attempts} lần` +
+          (hs.attempts_needed_today > 0
+            ? ` (cần thêm ${hs.attempts_needed_today} lần nữa hôm nay mới tính là 1 ngày đạt).`
+            : ` — đã đủ, hôm nay tính là 1 ngày đạt rồi!`) +
+          ` Số ngày đạt: ${hs.qualifying_days}/${hs.hints_total}.`
+      )
+    );
+    hs.hints_unlocked.forEach((hint) => {
+      wrap.appendChild(el("div", { class: "secret-note" }, "🔓 " + hint));
+    });
+    if (hs.hints_unlocked.length < hs.hints_total) {
+      wrap.appendChild(
+        el(
+          "div",
+          { class: "secret-note" },
+          `🔒 Còn ${hs.hints_total - hs.hints_unlocked.length} gợi ý nữa — thử đủ 3 lần/ngày trong vài ngày liên tiếp để mở dần.`
+        )
+      );
+    }
+    wrap.appendChild(
+      el("button", { class: "help-link", onclick: () => fetchSecretHintStatus(q, a) }, "🔄 Kiểm tra lại gợi ý")
+    );
+  }
+
+  const input = el("input", {
+    class: "reflect-input",
+    type: "text",
+    placeholder: "Nhập mã bí mật (vd: AGS-XXXXXXXX)...",
   });
   input.value = a.text || "";
   input.addEventListener("input", (e) => {

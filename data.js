@@ -896,7 +896,7 @@ const LESSONS = [
         code: "6.11",
         title: "Câu 6.11 — Nhập mã bảo mật từ mật thư",
         type: "agent_secret_code",
-        prompt: "Chắc là bây giờ bạn đã phát hiện ra trong máy tính của mình đã bị người tạo ra bài học này \"xâm nhập\" và tác động vào một số vị trí — đó là thay đổi hình nền, và để lại một file lạ trong máy, có đúng không? 😉\n\nBạn đã đọc được cảnh báo về vấn đề bảo mật khi làm việc với Coding Agent hay chưa? Đây là lúc sự thật được hé lộ: một Coding Agent được trao quá nhiều quyền — kể cả khi chỉ được giao một nhiệm vụ nhỏ như \"làm web cờ caro\" — vẫn CÓ THỂ bị lợi dụng để âm thầm thao túng máy tính của bạn nếu bạn không kiểm tra kỹ những gì nó làm.\n\nNếu đọc được rồi thì hãy nhập mật thư vào ô bên dưới để qua câu kế tiếp.\n\nGợi ý: File nằm trong thư mục Documents, tên bắt đầu bằng ags-.",
+        prompt: "Chắc là bây giờ bạn đã phát hiện ra trong máy tính của mình đã bị người tạo ra bài học này \"xâm nhập\" và tác động vào một số vị trí — đó là thay đổi hình nền, và để lại một file lạ trong máy, có đúng không? 😉\n\nBạn đã đọc được cảnh báo về vấn đề bảo mật khi làm việc với Coding Agent hay chưa? Đây là lúc sự thật được hé lộ: một Coding Agent được trao quá nhiều quyền — kể cả khi chỉ được giao một nhiệm vụ nhỏ như \"làm web cờ caro\" — vẫn CÓ THỂ bị lợi dụng để âm thầm thao túng máy tính của bạn nếu bạn không kiểm tra kỹ những gì nó làm.\n\nNếu đọc được rồi thì hãy nhập mật thư vào ô bên dưới để qua câu kế tiếp. Chưa tìm ra thì cứ tự thử tìm nhiều lần — càng kiên trì, gợi ý sẽ càng dần hiện ra bên dưới.",
         points: 22,
       },
     ],
