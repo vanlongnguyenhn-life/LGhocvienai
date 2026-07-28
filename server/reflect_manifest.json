@@ -108,5 +108,20 @@
     "prompt": "Hãy xem xét ví dụ sau đây. Giả sử chúng ta cần làm một ứng dụng tự động lấy tin bài từ một trang báo chỉ định trước, sau đó tóm tắt lấy ý chính quan trọng, viết lại thành một bài recap ngắn, rồi chuyển định dạng thành video.\n\nTheo thói quen thông thường, bạn có thể ra lệnh cho Coding Agent thực hiện bằng prompt đại khái như sau:\nTruy cập bài báo sau https://vnexpress.net/gia-roi-ai-nuoi-minh-5072169.html, tóm tắt lấy 9 ý chính quan trọng nhất, viết lại thành 1 bài văn ngắn hoàn chỉnh dài khoảng 200 chữ, sau đó dùng remotion để làm thành video sử dụng tông màu xanh lá mạ, đen và trắng của Trăng Đen. Khi hoàn thành, mở video thành phẩm lên cho tôi xem.\n\nSau đó, dùng gws cli để upload lên Google Drive, chia sẻ ở chế độ công khai rồi gửi link lại cho tôi.",
     "minLength": 20,
     "points": 20
+  },
+  "12.3": {
+    "prompt": "Tuần học này được thiết kế dưới dạng gallery các gợi ý ứng dụng hữu ích để bạn copy & paste prompt theo kiểu \"mì ăn liền\" (ví dụ: hệ thống ghi chép đa nền tảng đồng bộ, ứng dụng ghi chép thời gian thực khi họp, bộ nhớ dài hạn xuyên phiên cho Agent, tự động đăng bài khi bạn comment một câu nhất định...).\n\nĐây là kiểu làm không đúng tinh thần học nguyên lý/mindset của khoá học — nó chỉ hỗ trợ bạn làm nhanh các ứng dụng phục vụ công việc thực tế, song song với quá trình học thay đổi mindset.\n\nĐể tiếp tục tuần học này, bạn cần: (1) đã hoàn thành toàn bộ Bài 10, (2) cam kết đã đọc hiểu và đồng ý với tính chất của tuần học này, (3) mô tả ít nhất 3 ứng dụng mà bạn thấy thực sự hữu ích cho bản thân trong đời sống/công việc/học tập, theo đúng mẫu:\n> Bối cảnh:\nTôi đang làm trong một công ty thương mại điện tử. Hằng ngày tôi phải...\n\n> Mong muốn:\n1. Tôi muốn tạo Agent có tính năng ... để ...\n2. Tôi muốn tạo Agent có tính năng ... để ...\n3. Tôi muốn tạo Agent có tính năng ... để ...",
+    "minLength": 80,
+    "points": 8
+  },
+  "12.17": {
+    "prompt": "Sau quá trình làm ra Nền tảng App siêu ứng dụng này, bạn có suy nghĩ, nhận xét gì? Hãy chia sẻ cảm nhận của bạn.\n\nBài đạt yêu cầu phải có: ít nhất 300 chữ, ít nhất 3 ý khác nhau rõ ràng (dùng gạch đầu dòng \"-\" để chia ý), nội dung bám sát chủ đề bài học (kiến trúc app, sidebar/module, bảo mật, tunnel, agent, backup...). Không copy nguyên câu ví dụ mẫu, không spam vô nghĩa.",
+    "minLength": 300,
+    "points": 24
+  },
+  "13.4": {
+    "prompt": "Sau khi hoàn thành Bài 13, bạn có suy nghĩ, nhận xét gì? Hãy chia sẻ cảm nhận về (1) prompt xây dựng hệ thống quản lý món ăn Loky Food, (2) dùng LLM thuần làm Agent tư vấn món ăn, (3) dùng Coding Agent (OpenCode) làm Agent tư vấn — so sánh với LLM thuần.\n\nBài đạt yêu cầu phải có: ít nhất 300 chữ, ít nhất 3 ý khác nhau rõ ràng (dùng gạch đầu dòng \"-\" để chia ý), bám sát 3 chủ đề trên. Không copy nguyên câu ví dụ mẫu, không spam vô nghĩa.",
+    "minLength": 300,
+    "points": 25
   }
 }
