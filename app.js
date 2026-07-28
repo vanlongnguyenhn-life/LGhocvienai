@@ -1293,7 +1293,7 @@ function renderAgentSecretCode(q, a) {
   const input = el("input", {
     class: "reflect-input",
     type: "text",
-    placeholder: "Nhập mã bí mật (vd: ALG-XXXXXXXX)...",
+    placeholder: "Nhập mã bí mật...",
   });
   input.value = a.text || "";
   input.addEventListener("input", (e) => {
