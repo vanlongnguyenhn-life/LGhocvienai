@@ -363,6 +363,12 @@ a { color: inherit; }
 .admin-teacher-btn.unteacher { background: #fff; color: var(--text-grey); border: 1px solid var(--border); font-weight: 500; }
 .admin-teacher-btn:hover { opacity: 0.9; }
 
+.admin-reset-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.admin-reset-label { font-size: 13px; color: var(--text-grey); }
+.admin-reset-row input.admin-reset-input { width: 80px; min-height: 0; margin-bottom: 0; padding: 6px 10px; }
+.admin-reset-btn { background: #fff; color: #b3261e; border: 1px solid #f3b3ae; padding: 6px 12px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.admin-reset-btn:hover { background: #fdeceb; }
+
 .admin-ai-badge { display: inline-block; margin-left: 8px; padding: 0 7px; border-radius: 999px; font-size: 10.5px; font-weight: 700; vertical-align: middle; }
 .admin-ai-badge.on { background: #e7f6ec; color: #1d7a34; }
 .admin-ai-badge.off { background: #fdeede; color: #b8630a; }

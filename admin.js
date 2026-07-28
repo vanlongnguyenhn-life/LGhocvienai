@@ -45,6 +45,11 @@ const ADMIN_API = {
     fd.append("is_teacher", isTeacher ? "1" : "0");
     return this._send(`/api/admin/students/${id}/teacher`, { method: "POST", body: fd });
   },
+  resetFromCode(id, codes) {
+    const fd = new FormData();
+    fd.append("codes", codes.join(","));
+    return this._send(`/api/admin/students/${id}/reset-codes`, { method: "POST", body: fd });
+  },
   larkChats() {
     return this._send("/api/admin/lark/chats");
   },
@@ -411,6 +416,28 @@ async function handleTeacher(id, isTeacher) {
     alert(err.message || "Không cập nhật được quyền giáo viên.");
   }
   render();
+}
+
+async function handleResetFromCode(userId) {
+  const input = document.getElementById("admin-reset-code-input");
+  const fromCode = (input && input.value || "").trim();
+  const idx = ALL_QUESTIONS_ORDERED.indexOf(fromCode);
+  if (idx < 0) {
+    alert("Không tìm thấy câu '" + fromCode + "'. Nhập đúng mã câu, ví dụ 6.5");
+    return;
+  }
+  const codes = ALL_QUESTIONS_ORDERED.slice(idx);
+  if (!confirm(`Xoá tiến độ ${codes.length} câu (TỪ câu ${fromCode} trở đi) của học viên này?\nHọc viên sẽ quay về ngay trước câu ${fromCode}. Không thể hoàn tác.`)) {
+    return;
+  }
+  try {
+    const r = await ADMIN_API.resetFromCode(userId, codes);
+    await loadStudents();
+    await openStudent(userId);
+    alert(`Đã xoá: ${r.deleted_status} tiến độ, ${r.deleted_reflect} bài tự luận, ${r.deleted_submissions} minh chứng.`);
+  } catch (err) {
+    alert("Xoá thất bại: " + (err.message || "lỗi không rõ"));
+  }
 }
 
 async function openStudent(id) {
@@ -949,6 +976,11 @@ function renderStudentDetail() {
           user.is_teacher
             ? el("button", { class: "admin-teacher-btn unteacher", onclick: () => handleTeacher(user.id, 0) }, ["Bỏ quyền giáo viên"])
             : el("button", { class: "admin-teacher-btn", onclick: () => handleTeacher(user.id, 1) }, ["★ Đặt làm giáo viên"]),
+        ]),
+        el("div", { class: "admin-reset-row" }, [
+          el("span", { class: "admin-reset-label" }, ["Xoá tiến độ từ câu"]),
+          el("input", { id: "admin-reset-code-input", class: "reflect-input admin-reset-input", type: "text", placeholder: "6.5" }),
+          el("button", { class: "admin-reset-btn", onclick: () => handleResetFromCode(user.id) }, ["Xoá về trước câu này"]),
         ]),
       ]),
     ])

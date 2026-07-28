@@ -773,8 +773,10 @@ function renderLessonSheet(lesson) {
   body.appendChild(el("h3", { class: "sheet-body-title" }, lesson.title));
   if (lesson.intro) body.appendChild(el("p", { class: "lesson-intro" }, lesson.intro));
   lesson.questions.forEach((q, qIdx) => {
-    const qLocked = qIdx > 0 && !isQuestionDone(lesson.questions[qIdx - 1].code);
-    body.appendChild(renderQuestionCard(lesson, q, qLocked));
+    const seqLocked = qIdx > 0 && !isQuestionDone(lesson.questions[qIdx - 1].code);
+    // Khoá tạm thời (admin) ưu tiên hiển thị thông báo riêng.
+    const locked = LOCKED_CODES.has(q.code) ? ADMIN_LOCK_MSG : seqLocked;
+    body.appendChild(renderQuestionCard(lesson, q, locked));
   });
   return renderSheet(header, body, closeLessonSheet);
 }
@@ -842,14 +844,29 @@ function renderQuestionVideo(src) {
   return wrap;
 }
 
+// ===== TẠM KHOÁ theo mã câu: khoá mọi câu TỪ mã này trở đi (theo thứ tự khoá học). =====
+// Đặt "" hoặc null để MỞ HẾT trở lại.
+const LOCKED_FROM_CODE = "6.5";
+const ALL_CODES_ORDERED = [];
+(typeof LESSONS !== "undefined" ? LESSONS : []).forEach((l) => l.questions.forEach((q) => ALL_CODES_ORDERED.push(q.code)));
+const LOCKED_CODES = (() => {
+  if (!LOCKED_FROM_CODE) return new Set();
+  const idx = ALL_CODES_ORDERED.indexOf(LOCKED_FROM_CODE);
+  return idx < 0 ? new Set() : new Set(ALL_CODES_ORDERED.slice(idx));
+})();
+const ADMIN_LOCK_MSG = "Phần này đang tạm khoá — thầy/cô sẽ mở lại sau nhé.";
+
 function renderQuestionCard(lesson, q, locked) {
+  // locked có thể là false, true (khoá tuần tự), hoặc chuỗi thông báo (khoá tạm thời).
+  const lockMsg = typeof locked === "string" ? locked : locked ? "Hoàn thành câu trước để mở khoá" : null;
+  locked = !!locked;
   const a = getAnswer(q.code);
   const expanded = !locked && !!state.expandedQuestions[q.code];
   const statusClass = locked ? "locked" : a.status === "correct" || a.status === "done" ? "" : a.status === "wrong" ? "wrong" : "pending";
   const card = el("div", { class: "q-card " + statusClass });
 
   const statusText = locked
-    ? "Hoàn thành câu trước để mở khoá"
+    ? lockMsg
     : a.status === "correct" || a.status === "done"
     ? "Đã xong — trả lời đúng"
     : a.status === "wrong"
@@ -864,7 +881,7 @@ function renderQuestionCard(lesson, q, locked) {
       class: "q-card-header",
       onclick: () => {
         if (locked) {
-          showToast("Em hãy hoàn thành câu trước đó để mở khoá câu này");
+          showToast(lockMsg);
           return;
         }
         if (expanded) delete state.expandedQuestions[q.code];

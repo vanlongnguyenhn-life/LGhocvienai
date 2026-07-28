@@ -773,6 +773,25 @@ def admin_set_teacher(request: Request, user_id: int, is_teacher: int = Form(1))
     return {"ok": True, "is_teacher": 1 if is_teacher else 0}
 
 
+@app.post("/api/admin/students/{user_id}/reset-codes")
+def admin_reset_codes(request: Request, user_id: int, codes: str = Form(...)):
+    """Xoá tiến độ (question_status + reflect + minh chứng) của học viên cho các câu chỉ định."""
+    current_admin(request)
+    code_list = [c.strip() for c in (codes or "").split(",") if c.strip()]
+    if not code_list:
+        raise HTTPException(status_code=400, detail="Chưa có câu nào để xoá.")
+    ph = ",".join("?" * len(code_list))
+    args = [user_id] + code_list
+    with get_db() as conn:
+        row = conn.execute("SELECT id FROM users WHERE id = ?", (user_id,)).fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Không tìm thấy học viên.")
+        d1 = conn.execute(f"DELETE FROM question_status WHERE user_id = ? AND question_code IN ({ph})", args).rowcount
+        d2 = conn.execute(f"DELETE FROM reflect_grades WHERE user_id = ? AND question_code IN ({ph})", args).rowcount
+        d3 = conn.execute(f"DELETE FROM submissions WHERE user_id = ? AND question_code IN ({ph})", args).rowcount
+    return {"ok": True, "deleted_status": d1, "deleted_reflect": d2, "deleted_submissions": d3}
+
+
 @app.get("/api/admin/diag/ai")
 async def admin_diag_ai(request: Request):
     """Chẩn đoán kết nối AI của bot: gọi thử Claude, trả về trạng thái/lỗi (không lộ API key)."""
