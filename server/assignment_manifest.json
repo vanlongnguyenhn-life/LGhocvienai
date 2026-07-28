@@ -66,19 +66,6 @@
     ],
     "points": 30
   },
-  "6.6": {
-    "prompt": "Bây giờ hãy nâng cấp, ra lệnh cho Agent:\nChụp ảnh màn hình bàn cờ 15x15 đang chạy được trên trình duyệt.",
-    "criteria": [
-      {
-        "key": "image",
-        "optional": false,
-        "minLength": null,
-        "label": "Ảnh minh chứng",
-        "desc": "Chọn ảnh chụp màn hình bàn cờ caro 15x15."
-      }
-    ],
-    "points": 26
-  },
   "6.8": {
     "prompt": "Đóng gói web cờ caro 15x15 thành app Electron chạy độc lập, có tray icon và listener nhận lệnh từ server.\nChụp ảnh màn hình app Electron đang chạy như một phần mềm desktop thật sự.",
     "criteria": [

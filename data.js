@@ -835,13 +835,10 @@ const LESSONS = [
       {
         code: "6.6",
         title: "Câu 6.6 — Chơi cờ caro 15x15",
-        type: "assignment",
-        prompt: "Bây giờ hãy nâng cấp, ra lệnh cho Agent:",
-        copyPrompt: "chơi cờ caro 15x15",
-        instructions: "Chụp ảnh màn hình bàn cờ 15x15 đang chạy được trên trình duyệt.",
-        criteria: [
-          { key: "image", label: "Ảnh minh chứng", desc: "Chọn ảnh chụp màn hình bàn cờ caro 15x15." },
-        ],
+        type: "agent_media",
+        prompt: "Copy đoạn prompt dưới đây và paste vào ô chat của Agent để yêu cầu nó nâng cấp bài trước — Agent sẽ tự sửa app, tự chụp ảnh và tự nộp bài qua API. Bạn không cần thao tác gì thêm: sau khi Agent báo đã nộp xong, quay lại trang này, bấm \"Kiểm tra lại\" để xem kết quả từng tiêu chí, rồi bấm Nộp bài.",
+        copyPrompt:
+          "TIẾP TỤC cuộc chat trước đó (KHÔNG mở chat mới).\n\nNhiệm vụ: Sửa lại web caro bạn vừa làm ở câu trước, nâng cấp thành bàn 15×15:\n- Đổi lưới từ 3×3 thành 15×15 ô.\n- Đổi luật thắng từ \"3 liên tiếp\" thành \"5 liên tiếp\" (theo luật caro chuẩn — gomoku).\n- Giữ nguyên cơ chế 2 người chơi cùng máy (luân phiên X / O), có lượt, có nút \"Chơi lại\".\n- Giao diện nên responsive (bàn fit màn hình, ô vuông, click dễ).\n\nCác bước:\n1. Sửa code index.html hiện có (không tạo file mới).\n2. Reload http://localhost:8080, chơi ít nhất 8–15 nước để bàn 15×15 có nhiều quân, dễ thấy sự khác biệt với 3×3.\n3. Chụp screenshot toàn trang bàn 15×15 có quân đã đánh, lưu PNG.\n\nBước 1 — Upload ảnh lên kho media:\ncurl -X POST '{{media_upload_url}}' \\\n  -H 'X-User-Id: {{uid}}' \\\n  -H 'X-Auth-Token: {{token}}' \\\n  -F 'file=@screenshot.png' \\\n  -F 'question_code=6.6'\nTrong JSON trả về, lấy số nguyên trường \"id\" làm media_item_id ở bước 2.\n\nBước 2 — Nộp bài làm:\ncurl -X POST '{{attempt_answers_url}}' \\\n  -H 'X-User-Id: {{uid}}' \\\n  -H 'X-Auth-Token: {{token}}' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\"question_code\": \"6.6\", \"media_item_id\": 0, \"local_url\": \"http://localhost:8080\"}'\nThay 0 trong media_item_id bằng số thật từ bước 1 (không có dấu ngoặc).\n\nĐiều kiện chấm tự động (đủ 4 tiêu chí mới đạt; JSON trả về liệt kê từng tiêu chí đạt/không đạt):\n(1) media_item_id là số dương trùng id do bước upload trả về.\n(2) Id đó trỏ tới file thuộc kho media của đúng học viên, đúng câu hỏi này.\n(3) Tên file lưu trong hệ thống đúng quy ước (server tự thêm tiền tố theo user khi lưu).\n(4) local_url là URL http:// hoặc https:// tới trang đang chạy bài.\n\nSau khi is_correct=true, báo cho học viên là đã xong — họ chỉ cần quay lại trang web (câu 6.6), bấm \"Kiểm tra lại\" để xem đủ 4 tiêu chí Đạt, rồi bấm Nộp bài. Không cần dán gì thủ công.",
         points: 26,
       },
       {

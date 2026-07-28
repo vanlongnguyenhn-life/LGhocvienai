@@ -46,9 +46,12 @@ with open(Path(__file__).parent / "reflect_manifest.json", encoding="utf-8") as 
 MEDIA_SUBMIT_RUBRICS = {
     "6.5": "Ảnh chụp màn hình một bàn cờ caro (tic-tac-toe) 3×3 đang chạy trên trình duyệt, "
     "có ít nhất vài nước đã đánh (một số ô đã có X hoặc O).",
+    "6.6": "Ảnh chụp màn hình một bàn cờ caro (gomoku) 15×15 đang chạy trên trình duyệt, "
+    "có nhiều nước đã đánh (nhiều ô đã có X hoặc O) — không phải bàn 3×3.",
 }
 MEDIA_SUBMIT_MANIFEST = {
     "6.5": {"points": 24},
+    "6.6": {"points": 26},
 }
 
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
