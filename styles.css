@@ -737,6 +737,10 @@ a { color: inherit; }
 .q-card-body { padding: 0 16px 18px; }
 .q-prompt { font-size: 15px; margin: 4px 0 14px; line-height: 1.5; }
 
+.q-video { margin: 2px 0 16px; border-radius: var(--radius-md); overflow: hidden; background: #000; }
+.q-video .q-video-el { width: 100%; height: auto; display: block; }
+.q-video iframe { width: 100%; aspect-ratio: 16 / 9; display: block; border: 0; }
+
 .copy-prompt-box { background: var(--grey-bg); border-radius: var(--radius-sm); padding: 14px; margin: 0 0 14px; }
 .copy-prompt-text { font-size: 14px; line-height: 1.6; color: var(--text-dark); white-space: pre-line; }
 .copy-prompt-text.clamped {

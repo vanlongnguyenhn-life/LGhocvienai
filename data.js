@@ -780,6 +780,7 @@ const LESSONS = [
         code: "6.1",
         title: "Câu 6.1 — Bạn đã xem video chưa?",
         type: "single",
+        video: "assets/intro.mp4",
         prompt: "Trước khi bắt đầu bài học, hãy xem video phía trên nhé.",
         options: ["Chưa xem", "Xem xong rồi ạ"],
         correct: [1],

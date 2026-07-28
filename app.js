@@ -817,6 +817,31 @@ function openQuestion(code) {
   if (code) state.expandedQuestions[code] = true;
 }
 
+function parseYouTubeId(url) {
+  const m = String(url || "").match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([\w-]{11})/);
+  return m ? m[1] : null;
+}
+
+function renderQuestionVideo(src) {
+  const wrap = el("div", { class: "q-video" });
+  const ytId = parseYouTubeId(src);
+  if (ytId) {
+    wrap.appendChild(
+      el("iframe", {
+        src: `https://www.youtube.com/embed/${ytId}`,
+        allow: "accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
+        allowfullscreen: "true",
+        loading: "lazy",
+      })
+    );
+  } else {
+    const v = el("video", { class: "q-video-el", controls: "", preload: "metadata", playsinline: "" });
+    v.appendChild(el("source", { src }));
+    wrap.appendChild(v);
+  }
+  return wrap;
+}
+
 function renderQuestionCard(lesson, q, locked) {
   const a = getAnswer(q.code);
   const expanded = !locked && !!state.expandedQuestions[q.code];
@@ -860,6 +885,7 @@ function renderQuestionCard(lesson, q, locked) {
 
   if (expanded) {
     const body = el("div", { class: "q-card-body" });
+    if (q.video) body.appendChild(renderQuestionVideo(q.video));
     body.appendChild(el("p", { class: "q-prompt" }, q.prompt));
     if (q.copyPrompt) body.appendChild(renderCopyPromptBox(q.copyPrompt));
     if (q.copyPromptTrailing) body.appendChild(el("p", { class: "q-prompt" }, q.copyPromptTrailing));
