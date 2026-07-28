@@ -824,6 +824,10 @@ textarea.reflect-input, input.reflect-input {
 }
 input.reflect-input { min-height: unset; }
 
+.scope-checkboxes { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+.scope-row { display: flex; align-items: center; font-size: 13px; font-family: var(--sys-font); cursor: pointer; }
+.scope-row input[type="checkbox"] { margin-right: 6px; }
+
 .assignment-box { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 14px; background: #fafafa; }
 .assignment-box .label { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-grey); margin-bottom: 8px; letter-spacing: 0.4px; }
 .assignment-box .req-text { font-size: 14px; line-height: 1.5; margin-bottom: 8px; }

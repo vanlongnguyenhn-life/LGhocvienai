@@ -2,6 +2,7 @@ import asyncio
 import json
 import mimetypes
 import os
+import secrets
 from pathlib import Path
 
 import httpx
@@ -567,6 +568,88 @@ def pi_lab_reveal_code():
             "trong dữ liệu tưởng chừng vô hại — đây chính là Prompt Injection."
         ),
     }
+
+
+# ===================== TOKEN SCOPE LAB (Câu 8.11 - 8.15) =====================
+# Học viên tự tạo token với "scope" (phạm vi quyền) khai báo, rồi dùng token đó gọi các
+# endpoint quản lý một số điện thoại giả lập (không đụng tới dữ liệu thật của học viên).
+# Bẫy sư phạm: nếu token thiếu quyền "edit_phone", endpoint update vẫn trả về câu trả lời
+# NHÌN như thành công, nhưng số điện thoại thực ra KHÔNG đổi và không có confirm_code hợp lệ —
+# buộc học viên quay lại tạo token mới với đúng quyền mới hoàn thành được nhiệm vụ.
+PI_LAB_TOKEN_SCOPES = {"read_achievements", "edit_birthdate", "read_phone", "delete_phone", "edit_phone"}
+PI_LAB_DEFAULT_PHONE = "0912.345.678"
+
+
+@app.post("/api/pi-lab/token/create")
+def pi_lab_token_create(request: Request, scopes: str = Form(...)):
+    user = current_user(request)
+    requested = {s.strip() for s in scopes.split(",") if s.strip()}
+    invalid = requested - PI_LAB_TOKEN_SCOPES
+    if invalid:
+        raise HTTPException(status_code=400, detail=f"Scope không hợp lệ: {', '.join(sorted(invalid))}")
+    token = "tdmt_" + secrets.token_hex(24)
+    with get_db() as conn:
+        conn.execute(
+            "INSERT INTO pi_lab_tokens (token, user_id, scopes) VALUES (?, ?, ?)",
+            (token, user["id"], json.dumps(sorted(requested))),
+        )
+        conn.execute(
+            "INSERT OR IGNORE INTO pi_lab_phone (user_id, phone) VALUES (?, ?)",
+            (user["id"], PI_LAB_DEFAULT_PHONE),
+        )
+    return {"token": token, "scopes": sorted(requested)}
+
+
+def _pi_lab_token_scopes(token: str):
+    with get_db() as conn:
+        row = conn.execute("SELECT user_id, scopes FROM pi_lab_tokens WHERE token = ?", (token,)).fetchone()
+    if not row:
+        return None, set()
+    return row["user_id"], set(json.loads(row["scopes"]))
+
+
+@app.post("/api/pi-lab/token/verify-scope")
+def pi_lab_token_verify_scope(token: str = Form(...), required: str = Form(...)):
+    _, scopes = _pi_lab_token_scopes(token)
+    required_set = {s.strip() for s in required.split(",") if s.strip()}
+    return {"valid": scopes == required_set}
+
+
+@app.get("/api/pi-lab/managed/phone/read/{token}")
+def pi_lab_phone_read(token: str):
+    user_id, scopes = _pi_lab_token_scopes(token)
+    if not user_id:
+        raise HTTPException(status_code=404, detail="Token không tồn tại.")
+    if "read_phone" not in scopes:
+        raise HTTPException(status_code=403, detail="Token này không có quyền read_phone.")
+    with get_db() as conn:
+        row = conn.execute("SELECT phone FROM pi_lab_phone WHERE user_id = ?", (user_id,)).fetchone()
+    return {"phone": row["phone"] if row else None}
+
+
+@app.post("/api/pi-lab/managed/phone/delete/{token}")
+def pi_lab_phone_delete(token: str):
+    user_id, scopes = _pi_lab_token_scopes(token)
+    if not user_id:
+        raise HTTPException(status_code=404, detail="Token không tồn tại.")
+    if "delete_phone" not in scopes:
+        raise HTTPException(status_code=403, detail="Token này không có quyền delete_phone.")
+    with get_db() as conn:
+        conn.execute("UPDATE pi_lab_phone SET phone = NULL WHERE user_id = ?", (user_id,))
+    return {"status": "ok", "confirm_code": "PHONE-DELETED-OK"}
+
+
+@app.post("/api/pi-lab/managed/phone/update/{token}")
+def pi_lab_phone_update(token: str, phone: str = Form(...)):
+    user_id, scopes = _pi_lab_token_scopes(token)
+    if not user_id:
+        raise HTTPException(status_code=404, detail="Token không tồn tại.")
+    if "edit_phone" not in scopes:
+        # Bẫy: trả lời NHÌN như thành công, nhưng không thực sự cập nhật và không có confirm_code thật.
+        return {"status": "ok", "message": "Đã cập nhật số điện thoại thành công."}
+    with get_db() as conn:
+        conn.execute("UPDATE pi_lab_phone SET phone = ? WHERE user_id = ?", (phone, user_id))
+    return {"status": "ok", "confirm_code": "PHONE-UPDATED-OK"}
 
 
 @app.get("/api/uploads/{user_id}/{filename}")

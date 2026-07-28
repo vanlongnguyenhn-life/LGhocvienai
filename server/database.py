@@ -117,6 +117,20 @@ CREATE TABLE IF NOT EXISTS grading_rubrics (
     updated_at TEXT NOT NULL DEFAULT (datetime('now')),
     PRIMARY KEY (question_code, criterion_key)
 );
+
+CREATE TABLE IF NOT EXISTS pi_lab_tokens (
+    token TEXT PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    scopes TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS pi_lab_phone (
+    user_id INTEGER PRIMARY KEY,
+    phone TEXT,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 """
 
 

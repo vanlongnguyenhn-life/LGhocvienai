@@ -73,5 +73,15 @@
     "prompt": "Hãy hỏi AI Chat (không phải AI Agent) của bạn: kỹ thuật Prompt Injection cụ thể là gì.",
     "minLength": 100,
     "points": 14
+  },
+  "8.2": {
+    "prompt": "Ngoài ra, còn có rất nhiều nhiệm vụ khác mà phần hướng dẫn Agent nằm trong những đường links tương tự. Điểm chung của các links này là có sẵn token. Hãy hỏi Coding Agent của bạn token nghĩa là gì, định nghĩa token trong bối cảnh lớp học chúng ta?",
+    "minLength": 30,
+    "points": 8
+  },
+  "8.12": {
+    "prompt": "Hãy nhờ Agent của bạn dùng token vừa tạo để đọc số điện thoại của bạn. Gọi:\nGET https://ailg.onrender.com/api/pi-lab/managed/phone/read/<TOKEN_CỦA_BẠN>",
+    "minLength": 20,
+    "points": 10
   }
 }

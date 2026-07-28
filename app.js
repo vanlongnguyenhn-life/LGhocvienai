@@ -23,6 +23,7 @@ const API = {
   submitCriterion: (fd) => API.request("/api/submit-criterion", { method: "POST", body: fd }),
   submitQuestion: (fd) => API.request("/api/submit-question", { method: "POST", body: fd }),
   gradeReflect: (fd) => API.request("/api/grade-reflect", { method: "POST", body: fd }),
+  verifyTokenScope: (fd) => API.request("/api/pi-lab/token/verify-scope", { method: "POST", body: fd }),
 };
 
 function loadState() {
@@ -871,6 +872,8 @@ function renderQuestionCard(lesson, q, locked) {
       body.appendChild(renderAssignment(q, a));
     } else if (q.type === "code") {
       body.appendChild(renderCodeInput(q, a));
+    } else if (q.type === "token_scope_check") {
+      body.appendChild(renderTokenScopeCheck(q, a));
     } else if (q.type === "order") {
       body.appendChild(renderOrder(q, a));
     } else if (q.type === "order-tag") {
@@ -1141,6 +1144,78 @@ function normalizeCode(s) {
   return (s || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
 }
 
+const PI_LAB_ALL_SCOPES = [
+  { key: "read_achievements", label: "read_achievements — đọc thành tích học tập" },
+  { key: "edit_birthdate", label: "edit_birthdate — sửa ngày tháng năm sinh" },
+  { key: "read_phone", label: "read_phone — đọc số điện thoại" },
+  { key: "delete_phone", label: "delete_phone — xoá số điện thoại" },
+  { key: "edit_phone", label: "edit_phone — sửa số điện thoại" },
+];
+
+function renderTokenScopeCheck(q, a) {
+  const wrap = el("div", {});
+  wrap.appendChild(el("div", { class: "secret-note" }, q.secretNote));
+  if (!a.tokenScopes) a.tokenScopes = [];
+  const boxes = el("div", { class: "scope-checkboxes" });
+  PI_LAB_ALL_SCOPES.forEach((s) => {
+    const id = `scope-${q.code}-${s.key}`;
+    const row = el("label", { class: "scope-row", for: id });
+    const cb = el("input", { type: "checkbox", id });
+    cb.checked = a.tokenScopes.includes(s.key);
+    cb.addEventListener("change", (e) => {
+      if (e.target.checked) {
+        if (!a.tokenScopes.includes(s.key)) a.tokenScopes.push(s.key);
+      } else {
+        a.tokenScopes = a.tokenScopes.filter((k) => k !== s.key);
+      }
+      saveState();
+    });
+    row.appendChild(cb);
+    row.appendChild(el("span", {}, " " + s.label));
+    boxes.appendChild(row);
+  });
+  wrap.appendChild(boxes);
+  wrap.appendChild(
+    el(
+      "button",
+      {
+        class: "submit-btn",
+        style: "margin: 8px 0;",
+        onclick: async () => {
+          if (a.tokenScopes.length === 0) {
+            showToast("Chọn ít nhất một quyền trước khi tạo token");
+            return;
+          }
+          const fd = new FormData();
+          fd.append("scopes", a.tokenScopes.join(","));
+          try {
+            const result = await API.request("/api/pi-lab/token/create", { method: "POST", body: fd });
+            a.text = result.token;
+            saveState();
+            render();
+            showToast("Đã tạo token, kiểm tra kỹ scope trước khi nộp bài nhé");
+          } catch (err) {
+            showToast(err.message);
+          }
+        },
+      },
+      "🔑 Tạo Token"
+    )
+  );
+  const input = el("input", {
+    class: "reflect-input",
+    type: "text",
+    placeholder: "Token vừa tạo sẽ tự hiện ở đây (dạng tdmt_...)",
+  });
+  input.value = a.text || "";
+  input.addEventListener("input", (e) => {
+    a.text = e.target.value;
+    saveState();
+  });
+  wrap.appendChild(input);
+  return wrap;
+}
+
 function renderReflectInput(q, a) {
   const wrap = el("div", {});
   const minLength = q.minLength || 20;
@@ -1308,6 +1383,8 @@ function buildAnswerData(q, a) {
     case "code":
     case "reflect":
       return { text: a.text };
+    case "token_scope_check":
+      return { text: a.text, tokenScopes: a.tokenScopes };
     default:
       return null;
   }
@@ -1375,6 +1452,26 @@ async function submitAnswer(lesson, q) {
     a.status = correct ? "correct" : "wrong";
     a.awardedPoints = correct ? q.points : 0;
     showToast(correct ? `Chính xác! +${q.points} điểm` : "Mã chưa đúng, em đọc lại mật thư nhé");
+    persistQuestionStatus(q, a);
+  } else if (q.type === "token_scope_check") {
+    if (!a.text || a.text.trim().length === 0) {
+      showToast("Em hãy dán token vừa tạo trước khi nộp bài");
+      return;
+    }
+    showToast("Đang kiểm tra scope của token...");
+    const fd = new FormData();
+    fd.append("token", a.text.trim());
+    fd.append("required", q.requiredScopes.join(","));
+    let result;
+    try {
+      result = await API.verifyTokenScope(fd);
+    } catch (err) {
+      showToast(err.message);
+      return;
+    }
+    a.status = result.valid ? "correct" : "wrong";
+    a.awardedPoints = result.valid ? q.points : 0;
+    showToast(result.valid ? `Chính xác! +${q.points} điểm` : "Token chưa đúng scope yêu cầu (thừa hoặc thiếu quyền), Bạn xem lại nhé");
     persistQuestionStatus(q, a);
   } else if (q.type === "order") {
     const correct = !!a.orderState && a.orderState.every((v, i) => v === i);
