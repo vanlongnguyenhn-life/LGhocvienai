@@ -227,7 +227,8 @@ async def lark_callback(request: Request, code: str = None, state: str = None, e
 
     try:
         profile = await lark_auth.exchange_code_for_user(code)
-    except Exception:
+    except Exception as e:
+        print(f"[Lark exchange_failed] {e!r}")
         return RedirectResponse("/?lark_error=exchange_failed")
 
     tenant_key = profile.get("tenant_key")
