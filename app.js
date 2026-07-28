@@ -1416,15 +1416,28 @@ function buildAnswerData(q, a) {
   }
 }
 
-function persistQuestionStatus(q, a) {
+async function persistQuestionStatus(q, a) {
   const fd = new FormData();
   fd.append("question_code", q.code);
   fd.append("status", a.status);
   fd.append("awarded_points", String(a.awardedPoints || 0));
   const answerData = buildAnswerData(q, a);
   if (answerData) fd.append("answer_data", JSON.stringify(answerData));
-  // fire-and-forget: state cục bộ đã cập nhật để UI phản hồi ngay, server chỉ cần đồng bộ theo
-  API.submitQuestion(fd).catch(() => {});
+  // Thử lại nhiều lần để tránh MẤT TIẾN ĐỘ ÂM THẦM khi mạng/server chập chờn.
+  // Nếu vẫn thất bại sau nhiều lần thì báo học viên (không nuốt lỗi lặng lẽ).
+  for (let attempt = 0; attempt < 4; attempt++) {
+    try {
+      await API.submitQuestion(fd);
+      return; // đã lưu xong
+    } catch (err) {
+      if (attempt === 3) {
+        console.warn("Lưu tiến độ thất bại sau nhiều lần thử:", q.code, err);
+        showToast("⚠️ Chưa lưu được tiến độ câu này lên hệ thống. Kiểm tra mạng rồi nộp lại giúp mình nhé.");
+        return;
+      }
+      await new Promise((r) => setTimeout(r, 700 * (attempt + 1)));
+    }
+  }
 }
 
 async function submitAnswer(lesson, q) {
