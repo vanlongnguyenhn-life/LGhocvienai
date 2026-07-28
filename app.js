@@ -1329,10 +1329,10 @@ function renderAgentSecretCode(q, a) {
         el(
           "div",
           { class: "secret-note" },
-          `Hôm nay bạn đã thử ${hs.today_attempts} lần` +
+          `Trong 24 giờ hiện tại bạn đã thử ${hs.today_attempts} lần` +
             (hs.attempts_needed_today > 0
-              ? ` (cần thêm ${hs.attempts_needed_today} lần nữa hôm nay mới tính là 1 ngày đạt).`
-              : ` — đã đủ, hôm nay tính là 1 ngày đạt rồi!`) +
+              ? ` (cần thêm ${hs.attempts_needed_today} lần nữa trong 24 giờ này mới tính là 1 ngày đạt).`
+              : ` — đã đủ, 24 giờ này tính là 1 ngày đạt rồi!`) +
             ` Số ngày đạt: ${hs.qualifying_days}/${hs.hints_total}.`
         )
       );

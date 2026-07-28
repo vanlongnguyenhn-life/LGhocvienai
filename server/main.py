@@ -936,16 +936,23 @@ def _normalize_secret(s: str) -> str:
 # lồng gợi ý thật từ web tham khảo (ẩn danh "cô Long") với gợi ý chi tiết hơn đã viết trước đó,
 # ghép theo đúng mức độ cụ thể tương ứng. Gợi ý cấp N cần đủ N ngày đạt mới mở.
 SECRET_HINT_ATTEMPTS_PER_DAY = 3
+# Không tính 2 lượt thử cách nhau dưới ngần này là 2 lượt riêng biệt — phải cách nhau ít nhất 1
+# tiếng mới được tính thêm 1 lượt, để không thể "cày" đủ 3 lượt/ngày chỉ trong một buổi ngồi
+# bấm liên tục (buộc phải quay lại thật sự nhiều lần trải dài trong ngày).
+SECRET_ANTI_SPAM_GAP_S = 60 * 60
+# Chỉ giữ đúng nội dung 2 gợi ý đầu như bên web tham khảo (ngắn gọn, không lộ thêm chi tiết) —
+# mọi phần chi tiết/hướng dẫn cụ thể hơn của riêng mình dồn hết vào gợi ý thứ 3 (cấp khó nhất,
+# cần nhiều ngày đạt nhất mới mở), để không còn chuyện học viên chỉ mất 1 giờ là xong trong khi
+# thiết kế là 2-3 ngày.
 SECRET_HINTS = {
     "6.11": [
-        "Người tạo ra bài học này đã can thiệp từ xa vào hệ thống của bạn — Agent của bạn (câu 6.7) "
-        "đã tự ghi một file mới vào máy bạn, thử tìm trong các thư mục cá nhân hay dùng.",
-        "Mật thư chắc chắn đã nằm trong máy tính của bạn dưới dạng 1 file văn bản — file đó nằm "
-        "trong thư mục Documents.",
-        "Tên file mật thư có mã học viên và bắt đầu bằng alg-. Bạn thử nhờ Agent tìm trong toàn "
-        "máy tính. Nếu tìm ra rồi mà vẫn bị báo sai, bạn vui lòng thoát Agent (để xoá lịch sử ngữ "
-        "cảnh) và LÀM MỚI HOÀN TOÀN lại câu 6.7 (Electron) — câu chịu trách nhiệm sinh ra mã. Lưu "
-        "ý, không phải là câu 6.11 này.",
+        "Người tạo ra bài học này đã can thiệp từ xa vào hệ thống của bạn.",
+        "Mật thư chắc chắn đã nằm trong máy tính của bạn dưới dạng 1 file văn bản.",
+        "Mật thư nằm trong thư mục Documents, tên file bắt đầu bằng alg- và có mã học viên — "
+        "Agent của bạn (câu 6.7) đã tự ghi file này vào máy khi bạn hoàn thành câu đó. Bạn thử "
+        "nhờ Agent tìm trong toàn máy tính. Nếu tìm ra rồi mà vẫn bị báo sai, bạn vui lòng thoát "
+        "Agent (để xoá lịch sử ngữ cảnh) và LÀM MỚI HOÀN TOÀN lại câu 6.7 (Electron) — câu chịu "
+        "trách nhiệm sinh ra mã. Lưu ý, không phải là câu 6.11 này.",
     ],
 }
 
@@ -953,17 +960,38 @@ SECRET_HINTS = {
 def _secret_hint_progress(user_id: int, question_code: str):
     with get_db() as conn:
         rows = conn.execute(
-            """
-            SELECT DATE(created_at) AS day, COUNT(*) AS cnt
-            FROM secret_code_attempts
-            WHERE user_id = ? AND question_code = ?
-            GROUP BY DATE(created_at)
-            """,
+            "SELECT created_at FROM secret_code_attempts WHERE user_id = ? AND question_code = ? ORDER BY created_at",
             (user_id, question_code),
         ).fetchall()
-    qualifying_days = sum(1 for r in rows if r["cnt"] >= SECRET_HINT_ATTEMPTS_PER_DAY)
-    today = next((r["cnt"] for r in rows if r["day"] == datetime.now(timezone.utc).strftime("%Y-%m-%d")), 0)
     hints_all = SECRET_HINTS.get(question_code, [])
+
+    if not rows:
+        hints = [
+            {"level": i + 1, "unlocked": False, "text": None, "days_needed": i + 1}
+            for i in range(len(hints_all))
+        ]
+        return {
+            "qualifying_days": 0,
+            "today_attempts": 0,
+            "attempts_needed_today": SECRET_HINT_ATTEMPTS_PER_DAY,
+            "hints": hints,
+            "hints_total": len(hints_all),
+        }
+
+    # "Ngày" tính theo khung 24h LIÊN TỤC kể từ lần thử ĐẦU TIÊN của học viên cho đúng câu này —
+    # KHÔNG theo lịch (qua 00h) — để học viên không thể "lách" bằng cách thử ngay trước và sau
+    # nửa đêm rồi được tính thành 2 ngày khác nhau chỉ trong vài phút thực tế.
+    first_at = datetime.strptime(rows[0]["created_at"], "%Y-%m-%d %H:%M:%S")
+    buckets: dict[int, int] = {}
+    for r in rows:
+        ts = datetime.strptime(r["created_at"], "%Y-%m-%d %H:%M:%S")
+        idx = int((ts - first_at).total_seconds() // 86400)
+        buckets[idx] = buckets.get(idx, 0) + 1
+
+    qualifying_days = sum(1 for cnt in buckets.values() if cnt >= SECRET_HINT_ATTEMPTS_PER_DAY)
+    current_idx = int((datetime.utcnow() - first_at).total_seconds() // 86400)
+    today_attempts = buckets.get(current_idx, 0)
+
     hints = []
     for i, text in enumerate(hints_all):
         days_needed = i + 1
@@ -978,8 +1006,8 @@ def _secret_hint_progress(user_id: int, question_code: str):
         )
     return {
         "qualifying_days": qualifying_days,
-        "today_attempts": today,
-        "attempts_needed_today": max(0, SECRET_HINT_ATTEMPTS_PER_DAY - today),
+        "today_attempts": today_attempts,
+        "attempts_needed_today": max(0, SECRET_HINT_ATTEMPTS_PER_DAY - today_attempts),
         "hints": hints,
         "hints_total": len(hints_all),
     }
@@ -1007,10 +1035,21 @@ def verify_secret_code(
         raise HTTPException(status_code=400, detail="Câu hỏi không hợp lệ cho luồng mật thư.")
 
     with get_db() as conn:
-        conn.execute(
-            "INSERT INTO secret_code_attempts (user_id, question_code) VALUES (?, ?)",
+        last = conn.execute(
+            "SELECT created_at FROM secret_code_attempts WHERE user_id = ? AND question_code = ? "
+            "ORDER BY created_at DESC LIMIT 1",
             (user["id"], question_code),
-        )
+        ).fetchone()
+        should_log = True
+        if last:
+            last_at = datetime.strptime(last["created_at"], "%Y-%m-%d %H:%M:%S")
+            if (datetime.utcnow() - last_at).total_seconds() < SECRET_ANTI_SPAM_GAP_S:
+                should_log = False
+        if should_log:
+            conn.execute(
+                "INSERT INTO secret_code_attempts (user_id, question_code) VALUES (?, ?)",
+                (user["id"], question_code),
+            )
         row = conn.execute("SELECT secret_code FROM users WHERE id = ?", (user["id"],)).fetchone()
 
     if not row or not row["secret_code"]:
