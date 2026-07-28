@@ -66,7 +66,7 @@
     ],
     "points": 30
   },
-  "6.10": {
+  "6.9": {
     "prompt": "Tuyệt! Bây giờ bạn hỏi tiếp Agent nhé — vẫn trong cùng cuộc chat đó. Tôi muốn bạn hỏi Agent câu này:\nPaste toàn bộ câu trả lời của Agent vào ô bên dưới cho tôi xem nhé.",
     "criteria": [
       {

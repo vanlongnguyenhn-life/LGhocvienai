@@ -219,3 +219,45 @@ def init_db():
             conn.execute("ALTER TABLE reflect_grades ADD COLUMN ai_graded INTEGER NOT NULL DEFAULT 0")
             # Câu tự luận đã được AI chấm trước đây (không có dấu 'lỗi kết nối') → coi như đã AI chấm.
             conn.execute("UPDATE reflect_grades SET ai_graded = 1 WHERE reason NOT LIKE '%Không chấm được bằng AI%'")
+
+        # Đánh lại số Bài 6 từ câu 6.7 (bỏ khoảng trống do câu 6.7 cũ đã xoá):
+        # 6.8→6.7, 6.9→6.8, 6.10→6.9, 6.11→6.10, 6.12→6.11. Giữ nguyên tiến độ học viên
+        # đã làm trước đó bằng cách đổi tên question_code trong mọi bảng liên quan.
+        # CASE đánh giá theo giá trị CŨ của từng dòng trong 1 câu lệnh nên không bị đổi
+        # chồng lên nhau (6.9 không bị đổi 2 lần thành 6.7). Idempotent: chạy lại vô hại
+        # vì sau lần đầu không còn dòng nào mang mã cũ để khớp WHERE nữa.
+        migrated_flag = conn.execute(
+            "SELECT value FROM app_settings WHERE key = 'migrated_bai6_renumber_20260728'"
+        ).fetchone()
+        if not migrated_flag:
+            rename_case = """
+                CASE question_code
+                    WHEN '6.12' THEN '6.11'
+                    WHEN '6.11' THEN '6.10'
+                    WHEN '6.10' THEN '6.9'
+                    WHEN '6.9' THEN '6.8'
+                    WHEN '6.8' THEN '6.7'
+                    ELSE question_code
+                END
+            """
+            # UPDATE OR IGNORE: nếu (user_id, mã mới) đã tồn tại sẵn (dữ liệu rác/orphan từ câu
+            # 6.7 giả đã xoá trước đây) thì bỏ qua dòng đó thay vì crash toàn bộ migration —
+            # ưu tiên app khởi động thành công cho mọi học viên hơn là chặn đứng vì 1 trường hợp hiếm.
+            for table in (
+                "question_status",
+                "submissions",
+                "reflect_grades",
+                "media_submissions",
+                "electron_submissions",
+            ):
+                conn.execute(
+                    f"UPDATE OR IGNORE {table} SET question_code = ({rename_case}) "
+                    f"WHERE question_code IN ('6.8','6.9','6.10','6.11','6.12')"
+                )
+            conn.execute(
+                f"UPDATE OR IGNORE grading_rubrics SET question_code = ({rename_case}) "
+                f"WHERE question_code IN ('6.8','6.9','6.10','6.11','6.12')"
+            )
+            conn.execute(
+                "INSERT INTO app_settings (key, value) VALUES ('migrated_bai6_renumber_20260728', '1')"
+            )

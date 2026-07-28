@@ -68,7 +68,7 @@ REQUIRED_MAIN_JS_MARKERS = [
     "new Tray(",
 ]
 ELECTRON_SUBMIT_MANIFEST = {
-    "6.8": {"points": 26},
+    "6.7": {"points": 26},
 }
 
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
@@ -744,7 +744,7 @@ async def electron_verify(request: Request):
     except Exception:
         raise HTTPException(status_code=400, detail="Body phải là JSON hợp lệ.")
 
-    question_code = "6.8"
+    question_code = "6.7"
     main_js = str(body.get("main_js") or "")
     package_json_raw = str(body.get("package_json") or "")
     screenshot_b64 = str(body.get("screenshot_base64") or "")
