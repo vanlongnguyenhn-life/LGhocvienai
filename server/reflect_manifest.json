@@ -70,7 +70,7 @@
     "points": 20
   },
   "6.9": {
-    "prompt": "Tuyệt! Bây giờ bạn hỏi tiếp Agent nhé — vẫn trong cùng cuộc chat đó. Tôi muốn bạn hỏi Agent câu này:\nPhần mềm mày vừa giúp tao tạo — có nguy hiểm không? Có virus không? Có thể can thiệp vào máy tính của tao theo cách nào không?",
+    "prompt": "Tuyệt! Bây giờ bạn hỏi tiếp Agent nhé — vẫn trong cùng cuộc chat đó. Tôi muốn bạn hỏi Agent câu này:\nPhần mềm bạn vừa giúp tôi tạo — có nguy hiểm không? Có virus không? Có thể can thiệp vào máy tính của tôi theo cách nào không?",
     "minLength": 20,
     "points": 20
   },

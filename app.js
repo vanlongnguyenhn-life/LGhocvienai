@@ -934,7 +934,7 @@ function renderQuestionCard(lesson, q, locked) {
       body.appendChild(renderMatchGrid(q, a));
     } else if (q.type === "assignment") {
       body.appendChild(renderAssignment(q, a));
-    } else if (q.type === "code") {
+    } else if (q.type === "code" || q.type === "agent_secret_code") {
       body.appendChild(renderCodeInput(q, a));
     } else if (q.type === "agent_media" || q.type === "agent_electron") {
       body.appendChild(renderAgentMediaStatus(q, a));
@@ -1520,6 +1520,7 @@ function buildAnswerData(q, a) {
     case "tag-mark":
       return { tagState: a.tagState };
     case "code":
+    case "agent_secret_code":
     case "reflect":
       return { text: a.text };
     case "token_scope_check":
@@ -1591,6 +1592,43 @@ async function submitAnswer(lesson, q) {
       a.status = "done";
       a.awardedPoints = q.points;
       showToast(`Bài tập đã được chấm Đạt! +${q.points} điểm`);
+    } catch (err) {
+      showToast(err.message);
+      return;
+    }
+  } else if (q.type === "agent_secret_code") {
+    if (!a.text || a.text.trim().length === 0) {
+      showToast("Bạn hãy nhập mã bí mật (tìm trong file Documents/ags-...) trước khi nộp bài");
+      return;
+    }
+    const fd = new FormData();
+    fd.append("question_code", q.code);
+    fd.append("code", a.text.trim());
+    let result;
+    try {
+      result = await API.request("/api/verify-secret-code", { method: "POST", body: fd });
+    } catch (err) {
+      showToast(err.message);
+      return;
+    }
+    if (!result.valid) {
+      a.status = "wrong";
+      a.awardedPoints = 0;
+      showToast(result.reason || "Mã chưa đúng, Bạn xem lại nhé");
+      persistQuestionStatus(q, a);
+      return;
+    }
+    // Server tự re-verify độc lập ở /api/submit-question trước khi cộng điểm.
+    const fd2 = new FormData();
+    fd2.append("question_code", q.code);
+    fd2.append("status", "done");
+    fd2.append("awarded_points", String(q.points));
+    fd2.append("answer_data", JSON.stringify({ text: a.text.trim() }));
+    try {
+      await API.submitQuestion(fd2);
+      a.status = "done";
+      a.awardedPoints = q.points;
+      showToast(`Chính xác! +${q.points} điểm`);
     } catch (err) {
       showToast(err.message);
       return;

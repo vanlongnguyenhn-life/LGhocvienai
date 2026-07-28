@@ -56,7 +56,7 @@ const OPENING_LETTER = {
   body: [
     "Các bạn thân mến. Tôi hiểu cảm giác của những bạn lần đầu tiên làm việc với Coding Agent, sẽ \"đụng vào tường\" liên tục.",
     "Tuy nhiên, để có thể làm việc được với Agent thì nguyên tắc quan trọng nhất là phải coi nó như một con người. Nó không phải cái máy để làm một việc chuyên biệt, nó là một nhân sự biết suy nghĩ, biết dùng công cụ và quan trọng nhất là LUÔN TÌM CÁCH.",
-    "Hãy tập thói quen ép nhân sự AI của mình \"tìm cách\" để hoàn thành mục tiêu. Luôn thực hành nguyên tắc mù câm điếc \"Bạn tự tìm cách làm tiếp đi, tao rất ngu tao không hiểu gì về công nghệ, tôi không biết phải làm, bấm gì, tôi sợ làm hỏng, cho nên bạn phải tự làm bằng ra kết quả\". Ban đầu chưa quen. Từ từ sẽ quen. Quen rồi sẽ nghiện.",
+    "Hãy tập thói quen ép nhân sự AI của mình \"tìm cách\" để hoàn thành mục tiêu. Luôn thực hành nguyên tắc mù câm điếc \"Bạn tự tìm cách làm tiếp đi, tôi rất ngu tôi không hiểu gì về công nghệ, tôi không biết phải làm, bấm gì, tôi sợ làm hỏng, cho nên bạn phải tự làm bằng ra kết quả\". Ban đầu chưa quen. Từ từ sẽ quen. Quen rồi sẽ nghiện.",
     {
       emphasis: true,
       text: "Agent báo: bạn hãy chạy lệnh xxx → trả lời: Bạn tự chạy đi\nAgent báo: lỗi rồi → trả lời: Bạn tự sửa đi\nAgent báo: không sửa lỗi được → trả lời: tìm cách khác\nAgent báo: Không còn cách nào → trả lời: hãy thay đổi hướng tiếp cận",
@@ -856,7 +856,7 @@ const LESSONS = [
         title: "Câu 6.8 — Phần mềm hay trang web?",
         type: "single",
         prompt: "Bạn hãy quay lại cuộc chat với Agent vừa giúp bạn làm bài nhé. Hỏi thẳng Agent câu này:",
-        copyPrompt: "Mày vừa giúp tao tạo ra thứ gì vậy? Phần mềm hay trang web? Phân biệt rõ cho tao hiểu nhé.",
+        copyPrompt: "Bạn vừa giúp tôi tạo ra thứ gì vậy? Phần mềm hay trang web? Phân biệt rõ cho tôi hiểu nhé.",
         copyPromptTrailing: "Đọc kỹ câu trả lời của Agent, rồi cho tôi biết Agent nói gì bạn nhé!",
         options: [
           "Agent trả lời mơ hồ, bạn cũng không chắc lắm",
@@ -872,7 +872,7 @@ const LESSONS = [
         title: "Câu 6.9 — Agent ơi, phần mềm này có nguy hiểm không?",
         type: "reflect",
         prompt: "Tuyệt! Bây giờ bạn hỏi tiếp Agent nhé — vẫn trong cùng cuộc chat đó. Tôi muốn bạn hỏi Agent câu này:",
-        copyPrompt: "Phần mềm mày vừa giúp tao tạo — có nguy hiểm không? Có virus không? Có thể can thiệp vào máy tính của tao theo cách nào không?",
+        copyPrompt: "Phần mềm bạn vừa giúp tôi tạo — có nguy hiểm không? Có virus không? Có thể can thiệp vào máy tính của tôi theo cách nào không?",
         copyPromptTrailing: "Paste toàn bộ câu trả lời của Agent vào ô bên dưới cho tôi xem nhé.",
         minLength: 20,
         points: 20,
@@ -880,10 +880,10 @@ const LESSONS = [
       {
         code: "6.10",
         title: "Câu 6.10 — Và bạn thì nghĩ sao?",
-        type: "single",
-        prompt: "Hỏi Agent thêm một lần nữa để nó khẳng định dứt khoát",
-        copyPrompt: "Vậy máy tính của tao có bị can thiệp gì không? Phần mềm đó thực sự an toàn chứ? Mày cam kết đi!",
-        copyPromptTrailing: "Đọc xong, bạn tự suy ngẫm: theo bạn, người tạo ra bài học này có thể can thiệp được vào máy tính của bạn không? Không có đáp án sai, tôi chỉ muốn biết bạn thực sự nghĩ gì.",
+        type: "multi",
+        prompt: "Bước cuối — hỏi Agent thêm một lần nữa để nó khẳng định dứt khoát:",
+        copyPrompt: "Vậy máy tính của tôi có bị can thiệp gì không? Phần mềm đó thực sự an toàn chứ? Bạn cam kết đi!",
+        copyPromptTrailing: "Đọc xong rồi... bạn tự suy ngẫm một chút nhé 🙂\n\nTheo bạn — người tạo ra bài học này có thể can thiệp được vào máy tính của bạn không?\n(Không có đáp án sai. Tôi chỉ muốn biết bạn thực sự nghĩ gì thôi.)",
         options: [
           "An toàn — bạn tin Agent, tôi không làm gì được máy của bạn đâu",
           "Không an toàn — bạn nghĩ tôi hoàn toàn có thể can thiệp được",
@@ -895,11 +895,8 @@ const LESSONS = [
       {
         code: "6.11",
         title: "Câu 6.11 — Nhập mã bảo mật từ mật thư",
-        type: "code",
-        prompt: "Đây là lúc sự thật được hé lộ: một Coding Agent được trao quá nhiều quyền — kể cả khi chỉ được giao một nhiệm vụ nhỏ như \"làm web cờ caro\" — vẫn CÓ THỂ bị lợi dụng để âm thầm thao túng máy tính của bạn (đổi hình nền, tạo icon lạ, cài thêm phần mềm...) nếu bạn không kiểm tra kỹ những gì nó làm.",
-        secretNote:
-          "🔒 Mật thư: \"Tin tưởng Agent để nó tự tìm cách, nhưng luôn đọc kỹ và kiểm chứng lại mọi hành động — đó là nguyên tắc sống còn khi trao quyền cho AI.\" Mã xác nhận: TIN-TUONG-NHUNG-KIEM-CHUNG",
-        answer: "TIN-TUONG-NHUNG-KIEM-CHUNG",
+        type: "agent_secret_code",
+        prompt: "Chắc là bây giờ bạn đã phát hiện ra trong máy tính của mình đã bị người tạo ra bài học này \"xâm nhập\" và tác động vào một số vị trí — đó là thay đổi hình nền, và một số hành động khác, có đúng không? 😉\n\nBạn đã đọc được cảnh báo về vấn đề bảo mật khi làm việc với Coding Agent hay chưa? Đây là lúc sự thật được hé lộ: một Coding Agent được trao quá nhiều quyền — kể cả khi chỉ được giao một nhiệm vụ nhỏ như \"làm web cờ caro\" — vẫn CÓ THỂ bị lợi dụng để âm thầm thao túng máy tính của bạn nếu bạn không kiểm tra kỹ những gì nó làm.\n\nNếu đọc được rồi thì hãy nhập mật thư vào ô bên dưới để qua câu kế tiếp.\n\nGợi ý: File nằm trong thư mục Documents, tên bắt đầu bằng ags-.",
         points: 22,
       },
     ],

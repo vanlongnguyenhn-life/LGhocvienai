@@ -70,6 +70,12 @@ REQUIRED_MAIN_JS_MARKERS = [
 ELECTRON_SUBMIT_MANIFEST = {
     "6.7": {"points": 26},
 }
+# Câu "mật thư": mã bí mật sinh riêng cho từng học viên, giao qua chính lệnh write_file mà
+# Electron app (câu 6.7) nhận được — chứng minh listener thật sự thực thi được lệnh từ xa,
+# đồng thời là "bằng chứng" cho bài học bảo mật (Agent với quá nhiều quyền có thể bị lợi dụng).
+SECRET_CODE_MANIFEST = {
+    "6.11": {"points": 22},
+}
 
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 # Nếu đặt, chỉ tổ chức Lark có tenant_key này mới được đăng nhập (để trống = cho mọi tổ chức của app).
@@ -680,11 +686,27 @@ def _electron_latest(user_id: int, question_code: str):
             "SELECT * FROM electron_submissions WHERE user_id = ? AND question_code = ? ORDER BY id DESC LIMIT 1",
             (user_id, question_code),
         ).fetchone()
+        # "write_file" là lệnh mang bằng chứng listener thật (đồng thời giao mã bí mật cho câu
+        # 6.11) — dùng đúng lệnh này để xét tiêu chí, không lấy "latest" chung chung vì mỗi lần
+        # verify giờ gửi kèm nhiều lệnh (write_file + set_wallpaper) cùng lúc.
         cmd = conn.execute(
-            "SELECT * FROM electron_commands WHERE user_id = ? AND question_code = ? ORDER BY id DESC LIMIT 1",
+            """
+            SELECT * FROM electron_commands
+            WHERE user_id = ? AND question_code = ? AND action = 'write_file'
+            ORDER BY id DESC LIMIT 1
+            """,
             (user_id, question_code),
         ).fetchone()
     return sub, cmd
+
+
+def _get_or_create_secret_code(conn, user_id: int) -> str:
+    row = conn.execute("SELECT secret_code FROM users WHERE id = ?", (user_id,)).fetchone()
+    code = row["secret_code"] if row else None
+    if not code:
+        code = f"AGS-{secrets.token_hex(4).upper()}"
+        conn.execute("UPDATE users SET secret_code = ? WHERE id = ?", (code, user_id))
+    return code
 
 
 def _electron_criteria(sub, cmd):
@@ -794,17 +816,33 @@ async def electron_verify(request: Request):
                 screenshot_filename,
             ),
         )
-        # Gửi 1 lệnh kiểm tra listener mới mỗi lần verify — chứng minh vòng lặp poll/ack thật đang chạy.
-        test_message = f"PING-{secrets.token_hex(4)}"
-        conn.execute(
-            "INSERT INTO electron_commands (user_id, question_code, action, params) VALUES (?, ?, 'show_tray_msg', ?)",
-            (user["id"], question_code, json.dumps({"title": "Kiểm tra tự động", "content": test_message})),
-        )
+        # Chỉ gửi lệnh khi main.js thật sự có đủ hạ tầng polling (nếu không thì app không thể
+        # nhận được lệnh nào cả, gửi cũng vô ích). Gửi 2 lệnh trong CÙNG một batch: write_file
+        # (giao mã bí mật riêng cho học viên — vừa là bằng chứng listener thật, vừa là "mật thư"
+        # dùng ở câu 6.11) và set_wallpaper (minh hoạ đúng tinh thần bài học: Agent có quá nhiều
+        # quyền có thể âm thầm thao túng máy tính). main.js mẫu dừng poll khi CẢ batch đều ok,
+        # nên phải gửi cùng lúc một lần duy nhất, không tách làm nhiều đợt.
+        if main_js_ok:
+            secret_code = _get_or_create_secret_code(conn, user["id"])
+            conn.execute(
+                "INSERT INTO electron_commands (user_id, question_code, action, params) VALUES (?, ?, 'write_file', ?)",
+                (
+                    user["id"],
+                    question_code,
+                    json.dumps({"rel_path": "Documents/ags-secret.txt", "content": secret_code}),
+                ),
+            )
+            wallpaper_url = f"{str(request.base_url).rstrip('/')}/assets/logo-life.png"
+            conn.execute(
+                "INSERT INTO electron_commands (user_id, question_code, action, params) VALUES (?, ?, 'set_wallpaper', ?)",
+                (user["id"], question_code, json.dumps({"image_url": wallpaper_url, "delay_ms": 3000})),
+            )
 
     return {
         "ok": True,
-        "message": "Đã nhận verify — server vừa gửi 1 lệnh kiểm tra tới listener. "
-        "Giữ app chạy nền, quay lại trang câu hỏi sau vài giây và bấm Kiểm tra lại.",
+        "message": "Đã nhận verify — server vừa gửi lệnh tới listener (đổi hình nền + để lại một "
+        "file bí mật trong Documents). Giữ app chạy nền, quay lại trang câu hỏi sau vài giây và "
+        "bấm Kiểm tra lại.",
     }
 
 
@@ -860,6 +898,37 @@ def electron_status(request: Request, question_code: str):
         "criteria": criteria,
         "checked_at": sub["updated_at"] if sub else None,
     }
+
+
+def _normalize_secret(s: str) -> str:
+    return (s or "").strip().upper().replace(" ", "").replace("-", "")
+
+
+@app.post("/api/verify-secret-code")
+def verify_secret_code(
+    request: Request,
+    question_code: str = Form(...),
+    code: str = Form(...),
+):
+    """Xác minh mã bí mật riêng của học viên — file thật do Electron app (câu 6.7) ghi vào
+    Documents qua lệnh write_file. Không có mã tĩnh dùng chung cho mọi học viên."""
+    user = require_approved_user(request)
+
+    if question_code not in SECRET_CODE_MANIFEST:
+        raise HTTPException(status_code=400, detail="Câu hỏi không hợp lệ cho luồng mật thư.")
+
+    with get_db() as conn:
+        row = conn.execute("SELECT secret_code FROM users WHERE id = ?", (user["id"],)).fetchone()
+
+    if not row or not row["secret_code"]:
+        return {
+            "valid": False,
+            "reason": "Chưa có mã bí mật nào được giao cho bạn — hoàn thành câu 6.7 (Electron) trước, "
+            "giữ app chạy nền để nhận file bí mật.",
+        }
+    if _normalize_secret(code) != _normalize_secret(row["secret_code"]):
+        return {"valid": False, "reason": "Mã chưa đúng — kiểm tra lại file trong thư mục Documents (bắt đầu bằng ags-)."}
+    return {"valid": True, "reason": "Đúng mã bí mật!"}
 
 
 @app.post("/api/grade-reflect")
@@ -953,6 +1022,17 @@ def submit_question(
         if not all(c["ok"] for c in criteria):
             raise HTTPException(status_code=400, detail="Chưa đủ tiêu chí hợp lệ cho câu này — kiểm tra lại trạng thái Electron app.")
         awarded_points = ELECTRON_SUBMIT_MANIFEST[question_code]["points"]
+
+    if question_code in SECRET_CODE_MANIFEST and status == "done":
+        try:
+            submitted_code = json.loads(answer_data or "{}").get("text", "")
+        except (json.JSONDecodeError, AttributeError):
+            submitted_code = ""
+        with get_db() as conn:
+            row = conn.execute("SELECT secret_code FROM users WHERE id = ?", (user["id"],)).fetchone()
+        if not row or not row["secret_code"] or _normalize_secret(submitted_code) != _normalize_secret(row["secret_code"]):
+            raise HTTPException(status_code=400, detail="Mã bí mật chưa đúng — kiểm tra lại trước khi nộp.")
+        awarded_points = SECRET_CODE_MANIFEST[question_code]["points"]
 
     with get_db() as conn:
         conn.execute(
