@@ -177,32 +177,6 @@
     ],
     "points": 14
   },
-  "10.16": {
-    "prompt": "Ví dụ: cần làm một ứng dụng tự động lấy tin bài từ một trang báo chỉ định, tóm tắt ý chính, viết lại thành bài recap ngắn, rồi chuyển thành video (dùng Remotion + tông màu Trăng Đen), sau đó upload lên Google Drive (dùng GWS CLI), chia sẻ công khai.\nNhờ Agent thực hiện toàn bộ quy trình trên, rồi dán link Google Drive của video thành phẩm vào đây.",
-    "criteria": [
-      {
-        "key": "url",
-        "optional": false,
-        "minLength": null,
-        "label": "Link video",
-        "desc": "Đường dẫn Google Drive video thành phẩm (chế độ công khai)."
-      }
-    ],
-    "points": 20
-  },
-  "10.26": {
-    "prompt": "Đọc kỹ một kịch bản phim ngắn (chủ đề tự chọn, ví dụ phim hành động/phiêu lưu ngắn) và nhờ Agent làm video giúp theo đúng quy trình automation vừa học ở bài này. Lưu ý: phải nhờ Agent làm, không được tự làm bằng tay.\nDán link video thành phẩm (Google Drive, chế độ công khai).",
-    "criteria": [
-      {
-        "key": "url",
-        "optional": false,
-        "minLength": null,
-        "label": "Link video",
-        "desc": "Đường dẫn video thành phẩm."
-      }
-    ],
-    "points": 22
-  },
   "11.9": {
     "prompt": "(Bản gốc: mở widget \"Mầm Fake V1\" thật trên trang và test ≥15 câu chat xoay quanh 3 chủ đề Chào hỏi/Sức khoẻ/Nghề nghiệp — cần widget demo thật nên được đơn giản hoá lại.) Hãy tự viết ra ít nhất 5 câu chat mẫu cho MỖI chủ đề (Chào hỏi, Sức khoẻ, Nghề nghiệp) mà một chatbot kiểu \"kịch bản mẫu, dò từ khoá\" có thể nhận diện và trả lời được.\nLiệt kê các câu chat mẫu theo từng chủ đề.",
     "criteria": [
