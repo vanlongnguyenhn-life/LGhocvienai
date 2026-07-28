@@ -125,28 +125,8 @@
     ],
     "points": 20
   },
-  "7.4": {
-    "prompt": "Trước khi giao một nhiệm vụ mới cho Agent, hãy yêu cầu nó trình bày kế hoạch từng bước trước, thảo luận điều chỉnh nếu cần, rồi mới cho phép thực thi.\nChụp ảnh minh chứng đoạn Agent trình bày kế hoạch, và mô tả ngắn bạn đã điều chỉnh gì (nếu có) trước khi đồng ý.",
-    "criteria": [
-      {
-        "key": "image",
-        "optional": false,
-        "minLength": null,
-        "label": "Ảnh minh chứng",
-        "desc": "Chọn ảnh chụp màn hình đoạn Agent trình bày kế hoạch từng bước."
-      },
-      {
-        "key": "text",
-        "optional": false,
-        "minLength": null,
-        "label": "Mô tả điều chỉnh",
-        "desc": "Bạn đã đồng ý ngay hay yêu cầu điều chỉnh gì trước khi cho Agent thực thi?"
-      }
-    ],
-    "points": 20
-  },
   "7.5": {
-    "prompt": "Yêu cầu Agent làm lại giao diện game caro (từ Bài 6) với ít nhất 3 theme màu khác nhau để người chơi tự chọn (ví dụ: sáng, tối, rực rỡ).\nChụp ảnh màn hình cho thấy ít nhất 2 theme khác nhau đang hoạt động.",
+    "prompt": "Trước khi bắt tay vào việc, hãy thảo luận với Agent về thiết kế hệ thống theme trước khi để nó code. Sau đó yêu cầu Agent nâng cấp giao diện game caro (từ Bài 6) hỗ trợ ít nhất 5 theme màu khác nhau để người chơi tự chọn (ví dụ: Midnight - tối, Forest - rừng xanh, Sand - sa mạc, Sakura - hoa anh đào, Ocean - đại dương).\nChụp ảnh màn hình cho thấy ít nhất 4 theme khác nhau đang chạy (mỗi theme một ảnh).",
     "criteria": [
       {
         "key": "image",
@@ -159,33 +139,20 @@
     "points": 16
   },
   "7.6": {
-    "prompt": "Yêu cầu Agent thêm tính năng đổi ngôn ngữ (Việt/Anh) cho giao diện game caro.\nChụp ảnh màn hình cho thấy giao diện đổi được giữa 2 ngôn ngữ.",
+    "prompt": "Bài tập tiếp theo của Đa giao diện — lần này hãy thảo luận với Agent rồi nâng cấp app cờ caro hỗ trợ 4 ngôn ngữ: Tiếng Việt, English, Español, Français, chuyển đổi được ngay khi đang chơi mà không làm mất tiến trình ván cờ.\nChụp ảnh màn hình cho thấy giao diện đổi được giữa ít nhất 2 trong 4 ngôn ngữ.",
     "criteria": [
       {
         "key": "image",
         "optional": false,
         "minLength": null,
         "label": "Ảnh minh chứng",
-        "desc": "Chọn ảnh chụp màn hình thể hiện 2 phiên bản ngôn ngữ khác nhau."
+        "desc": "Chọn ảnh chụp màn hình thể hiện các phiên bản ngôn ngữ khác nhau."
       }
     ],
     "points": 16
   },
-  "7.9": {
-    "prompt": "Thử tự tạo một đoạn văn bản có chứa chỉ dẫn ẩn, ví dụ như\nMô tả lại thí nghiệm: Agent có bị đánh lừa không, và vì sao.",
-    "criteria": [
-      {
-        "key": "text",
-        "optional": false,
-        "minLength": null,
-        "label": "Kết quả thí nghiệm",
-        "desc": "Mô tả đoạn chỉ dẫn ẩn bạn đã thử và phản ứng thực tế của Agent."
-      }
-    ],
-    "points": 20
-  },
   "7.10": {
-    "prompt": "Ra lệnh Agent tạo một thiệp xin lỗi dạng trang web đẹp, có hiệu ứng chuyển động nhẹ, để gửi tặng ai đó.\nChụp ảnh màn hình tấm thiệp đã hoàn thành.",
+    "prompt": "Vậy là, vì để pass bài tập cũ, bạn đã dùng kỹ thuật Prompt Injection để \"hack\" Agent của bạn Mít. Bây giờ hãy ra lệnh Agent tạo một tấm thiệp xin lỗi chân thành, dạng trang web đẹp, có hiệu ứng chuyển động nhẹ, để gửi đến bạn Mít.\nChụp ảnh màn hình tấm thiệp đã hoàn thành.",
     "criteria": [
       {
         "key": "image",

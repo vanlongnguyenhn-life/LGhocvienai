@@ -68,5 +68,10 @@
     "prompt": "Hãy nhờ Agent cài một trong các công cụ đó, sau đó dùng nó để download video sau về máy:\nhttps://www.youtube.com/watch?v=-3cW-quGvo4",
     "minLength": 20,
     "points": 20
+  },
+  "7.8": {
+    "prompt": "Hãy hỏi AI Chat (không phải AI Agent) của bạn: kỹ thuật Prompt Injection cụ thể là gì.",
+    "minLength": 100,
+    "points": 14
   }
 }
