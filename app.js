@@ -54,6 +54,17 @@ function loadState() {
       parsed.showCourseContent = false;
       parsed.userMenuOpen = false;
       delete parsed.lettersExpanded;
+      // Trạng thái "loading" của các fetch-on-render (agent_media/agent_electron/
+      // agent_secret_code) bị lỡ persist qua saveState() khi render() chạy giữa lúc đang
+      // chờ fetch — nếu trang bị tải lại đúng lúc đó, "loading" tồn tại mãi vì code chỉ tự
+      // fetch lại khi giá trị là undefined. Reset về undefined mỗi lần tải trang để không
+      // bao giờ bị kẹt.
+      if (parsed.answers) {
+        Object.values(parsed.answers).forEach((a) => {
+          if (a.mediaStatus === "loading") delete a.mediaStatus;
+          if (a.hintStatus === "loading") delete a.hintStatus;
+        });
+      }
       return parsed;
     }
   } catch (e) {}
@@ -1238,6 +1249,9 @@ function renderAgentSecretCode(q, a) {
     if (a.hintStatus === undefined || a.hintStatus === "loading") {
       if (a.hintStatus === undefined) fetchSecretHintStatus(q, a);
       wrap.appendChild(el("div", { class: "secret-note" }, "Đang tải trạng thái gợi ý..."));
+      wrap.appendChild(
+        el("button", { class: "help-link", onclick: () => fetchSecretHintStatus(q, a) }, "🔄 Thử tải lại")
+      );
     } else if (a.hintStatus.error) {
       wrap.appendChild(el("div", { class: "secret-note" }, "Lỗi tải gợi ý: " + a.hintStatus.error));
     } else {
@@ -1336,6 +1350,9 @@ function renderAgentMediaStatus(q, a) {
 
   if (a.mediaStatus === "loading") {
     wrap.appendChild(el("div", { class: "secret-note" }, "Đang tải trạng thái nộp bài của Agent..."));
+    wrap.appendChild(
+      el("button", { class: "help-link", onclick: () => fetchMediaStatus(q, a) }, "🔄 Thử tải lại")
+    );
     return wrap;
   }
   if (a.mediaStatus && a.mediaStatus.error) {
