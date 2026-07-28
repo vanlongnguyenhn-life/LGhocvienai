@@ -97,7 +97,13 @@ GRADER_SYSTEM_PROMPT = (
 
 
 def grade_with_llm(question_prompt: str, answer: str):
-    """Gọi Claude để chấm nội dung câu trả lời tự luận. Thử lại 1 lần; trả None nếu vẫn thất bại."""
+    """Gọi Claude để chấm nội dung câu trả lời tự luận. Thử lại 1 lần.
+
+    Trả (valid_bool, reason) khi thành công, hoặc (None, mô_tả_lỗi) khi thất bại — mô tả lỗi
+    luôn có giá trị cụ thể (không chỉ None đơn thuần) để nơi gọi có thể hiển thị/chẩn đoán
+    được nguyên nhân thật, thay vì chỉ biết "chưa chấm được" mà không rõ vì sao.
+    """
+    last_err = "không rõ lỗi"
     for attempt in range(2):
         try:
             resp = httpx.post(
@@ -121,11 +127,13 @@ def grade_with_llm(question_prompt: str, answer: str):
             text = resp.json()["content"][0]["text"]
             parsed = json.loads(text)
             return bool(parsed.get("valid")), str(parsed.get("reason", ""))[:200]
+        except httpx.HTTPStatusError as e:
+            last_err = f"HTTP {e.response.status_code}: {e.response.text[:200]}"
         except Exception as e:
-            if attempt == 0:
-                continue
-            print(f"[grade_with_llm error] {e!r}")
-            return None
+            last_err = f"{type(e).__name__}: {e}"[:250]
+        if attempt == 1:
+            print(f"[grade_with_llm error] {last_err}")
+    return None, last_err
 
 SESSION_COOKIE = "ags_session"
 ADMIN_SESSION_COOKIE = "ags_admin_session"
@@ -1025,13 +1033,13 @@ def grade_reflect(
             is_valid = False
             reason = "Server chưa cấu hình AI chấm nội dung — chưa xác nhận được, báo giáo viên giúp bạn nhé."
         else:
-            result = grade_with_llm(manifest["prompt"], answer)
-            if result is not None:
-                is_valid, reason = result
+            ai_valid, ai_reason = grade_with_llm(manifest["prompt"], answer)
+            if ai_valid is not None:
+                is_valid, reason = ai_valid, ai_reason
                 ai_graded = 1
             else:
                 is_valid = False
-                reason = "AI chấm nội dung đang gặp sự cố — chưa xác nhận được, hãy thử Nộp lại sau ít phút."
+                reason = f"AI chấm nội dung đang gặp sự cố ({ai_reason}) — chưa xác nhận được, hãy thử Nộp lại sau ít phút."
 
     with get_db() as conn:
         conn.execute(
@@ -1538,6 +1546,8 @@ async def admin_regrade(request: Request, limit: int = Form(15)):
     if not ai_grader.is_configured():
         raise HTTPException(status_code=400, detail="Server chưa cấu hình ANTHROPIC_API_KEY nên chưa chấm AI được.")
     regraded = 0
+    skipped_no_manifest = set()
+    error_samples = []
 
     with get_db() as conn:
         r_rows = [dict(r) for r in conn.execute(
@@ -1546,15 +1556,18 @@ async def admin_regrade(request: Request, limit: int = Form(15)):
     for r in r_rows:
         manifest = REFLECT_MANIFEST.get(r["question_code"])
         if not manifest:
+            skipped_no_manifest.add(r["question_code"])
             continue
-        res = await asyncio.to_thread(grade_with_llm, manifest["prompt"], r["answer_text"])
-        if res is not None:
+        ai_valid, ai_reason = await asyncio.to_thread(grade_with_llm, manifest["prompt"], r["answer_text"])
+        if ai_valid is not None:
             with get_db() as conn:
                 conn.execute(
                     "UPDATE reflect_grades SET is_valid = ?, reason = ?, ai_graded = 1 WHERE user_id = ? AND question_code = ?",
-                    (int(res[0]), res[1], r["user_id"], r["question_code"]),
+                    (int(ai_valid), ai_reason, r["user_id"], r["question_code"]),
                 )
             regraded += 1
+        elif len(error_samples) < 3:
+            error_samples.append(f"{r['question_code']}: {ai_reason}")
 
     with get_db() as conn:
         s_rows = [dict(r) for r in conn.execute(
@@ -1582,7 +1595,14 @@ async def admin_regrade(request: Request, limit: int = Form(15)):
     with get_db() as conn:
         rem_reflect = conn.execute("SELECT COUNT(*) c FROM reflect_grades WHERE ai_graded = 0").fetchone()["c"]
         rem_sub = conn.execute("SELECT COUNT(*) c FROM submissions WHERE ai_graded = 0").fetchone()["c"]
-    return {"regraded": regraded, "remaining": rem_reflect + rem_sub, "remaining_reflect": rem_reflect, "remaining_submission": rem_sub}
+    return {
+        "regraded": regraded,
+        "remaining": rem_reflect + rem_sub,
+        "remaining_reflect": rem_reflect,
+        "remaining_submission": rem_sub,
+        "skipped_no_manifest": sorted(skipped_no_manifest),
+        "error_samples": error_samples,
+    }
 
 
 @app.get("/api/admin/rubric")

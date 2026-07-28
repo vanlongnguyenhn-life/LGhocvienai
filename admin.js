@@ -312,16 +312,28 @@ async function loadGradingStats() {
 async function handleRegrade() {
   state.regrading = true; state.regradeMsg = "Đang chấm bằng AI..."; render();
   try {
-    let guard = 0, totalDone = 0;
+    let guard = 0, totalDone = 0, lastResult = null;
     while (guard++ < 200) {
       const r = await ADMIN_API.regrade(15);
+      lastResult = r;
       totalDone += r.regraded;
       state.regradeMsg = `Đã chấm ${totalDone} câu, còn lại ${r.remaining}...`;
       render();
       if (r.remaining <= 0 || r.regraded === 0) break;
     }
     state.gradingStats = await ADMIN_API.gradingStats();
-    state.regradeMsg = "✓ Xong. Đã chấm lại " + totalDone + " câu bằng AI.";
+    let msg = "✓ Xong. Đã chấm lại " + totalDone + " câu bằng AI.";
+    if (lastResult && lastResult.remaining > 0) {
+      const bits = [];
+      if (lastResult.skipped_no_manifest && lastResult.skipped_no_manifest.length) {
+        bits.push(`Bỏ qua vì thiếu cấu hình câu hỏi (chưa có trong manifest): ${lastResult.skipped_no_manifest.join(", ")}`);
+      }
+      if (lastResult.error_samples && lastResult.error_samples.length) {
+        bits.push(`Mẫu lỗi gọi AI: ${lastResult.error_samples.join(" | ")}`);
+      }
+      if (bits.length) msg += " Còn " + lastResult.remaining + " câu chưa chấm được — " + bits.join(" — ");
+    }
+    state.regradeMsg = msg;
   } catch (err) {
     state.regradeMsg = "Lỗi: " + (err.message || "không rõ");
   }
