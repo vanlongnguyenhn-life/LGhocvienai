@@ -44,6 +44,9 @@ with open(Path(__file__).parent / "assignment_manifest.json", encoding="utf-8") 
 with open(Path(__file__).parent / "reflect_manifest.json", encoding="utf-8") as f:
     REFLECT_MANIFEST = json.load(f)
 
+with open(Path(__file__).parent / "answer_manifest.json", encoding="utf-8") as f:
+    ANSWER_MANIFEST = json.load(f)
+
 # Câu dạng "media_submit": học viên KHÔNG tự upload qua form — chính Coding Agent của họ phải
 # gọi /api/media/upload + /api/attempt-answers bằng curl thật, dựng từ app đang chạy thật.
 MEDIA_SUBMIT_RUBRICS = {
@@ -1065,6 +1068,61 @@ def grade_reflect(
     return {"valid": is_valid, "reason": reason}
 
 
+def _normalize_code_answer(s: str) -> str:
+    return re.sub(r"[^A-Z0-9]", "", (s or "").upper())
+
+
+def _verify_answer_manifest_entry(entry: dict, ad: dict) -> bool:
+    """Tự tính lại đúng/sai cho các loại câu có đáp án cố định (trắc nghiệm/nối/sắp xếp/nhập
+    mã/token scope/gate) từ answer_data client gửi — KHÔNG bao giờ tin status client tự báo,
+    để học viên không thể tự gọi thẳng API cho mình "đúng" mà không thật sự trả lời."""
+    t = entry.get("type")
+    if t in ("single", "multi"):
+        selected = ad.get("selected")
+        if not isinstance(selected, list):
+            return False
+        if entry.get("anyValid"):
+            return len(selected) > 0
+        return sorted(selected) == sorted(entry.get("correct") or [])
+    if t == "match":
+        matchSelected = ad.get("matchSelected")
+        correctMap = entry.get("correctMap") or []
+        if not isinstance(matchSelected, list) or len(matchSelected) != len(correctMap):
+            return False
+        return list(matchSelected) == list(correctMap)
+    if t == "order":
+        orderState = ad.get("orderState")
+        count = entry.get("count") or 0
+        if not isinstance(orderState, list) or len(orderState) != count:
+            return False
+        return list(orderState) == list(range(count))
+    if t == "order-tag":
+        orderState = ad.get("orderState")
+        tagState = ad.get("tagState")
+        count = entry.get("count") or 0
+        if not isinstance(orderState, list) or len(orderState) != count or list(orderState) != list(range(count)):
+            return False
+        tags = entry.get("tags") or []
+        if not isinstance(tagState, list) or len(tagState) != len(tags):
+            return False
+        return list(tagState) == list(tags)
+    if t == "tag-mark":
+        tagState = ad.get("tagState")
+        icons = entry.get("icons") or []
+        if not isinstance(tagState, list) or len(tagState) != len(icons):
+            return False
+        return list(tagState) == list(icons)
+    if t == "code":
+        return _normalize_code_answer(ad.get("text") or "") == _normalize_code_answer(entry.get("answer") or "")
+    if t == "token_scope_check":
+        token = ad.get("text") or ""
+        required = set(entry.get("requiredScopes") or [])
+        _, scopes = _pi_lab_token_scopes(token)
+        return scopes == required
+    # "gate": câu chưa có cơ chế thật — luôn không cho qua.
+    return False
+
+
 @app.post("/api/submit-question")
 def submit_question(
     request: Request,
@@ -1074,6 +1132,18 @@ def submit_question(
     answer_data: str = Form(None),
 ):
     user = require_approved_user(request)
+
+    if question_code in ANSWER_MANIFEST:
+        # Câu có đáp án cố định (trắc nghiệm/nối/sắp xếp/nhập mã/token scope/gate) — server tự
+        # tính lại đúng/sai từ answer_data, bỏ qua hoàn toàn status/awarded_points client gửi.
+        entry = ANSWER_MANIFEST[question_code]
+        try:
+            parsed_answer = json.loads(answer_data or "{}")
+        except (json.JSONDecodeError, AttributeError):
+            parsed_answer = {}
+        is_correct = _verify_answer_manifest_entry(entry, parsed_answer)
+        status = "correct" if is_correct else "wrong"
+        awarded_points = entry["points"] if is_correct else 0
 
     if question_code in ASSIGNMENT_MANIFEST and status == "done":
         if not _assignment_all_valid(user["id"], question_code):

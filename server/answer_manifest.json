@@ -1,0 +1,1390 @@
+{
+  "1.1": {
+    "type": "multi",
+    "points": 4,
+    "correct": [],
+    "anyValid": true
+  },
+  "1.2": {
+    "type": "single",
+    "points": 6,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "1.3": {
+    "type": "single",
+    "points": 6,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "1.4": {
+    "type": "multi",
+    "points": 8,
+    "correct": [
+      0,
+      3,
+      4
+    ],
+    "anyValid": false
+  },
+  "1.5": {
+    "type": "single",
+    "points": 6,
+    "correct": [
+      1
+    ],
+    "anyValid": false
+  },
+  "1.6": {
+    "type": "match",
+    "points": 8,
+    "correctMap": [
+      1,
+      0
+    ]
+  },
+  "1.7": {
+    "type": "multi",
+    "points": 10,
+    "correct": [
+      0,
+      1,
+      2,
+      3,
+      5,
+      7,
+      10,
+      12
+    ],
+    "anyValid": false
+  },
+  "1.8": {
+    "type": "match",
+    "points": 10,
+    "correctMap": [
+      2,
+      1,
+      3,
+      0
+    ]
+  },
+  "1.9": {
+    "type": "single",
+    "points": 6,
+    "correct": [
+      1
+    ],
+    "anyValid": false
+  },
+  "1.10": {
+    "type": "single",
+    "points": 8,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "3.7": {
+    "type": "single",
+    "points": 12,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "3.10": {
+    "type": "single",
+    "points": 12,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "3.11": {
+    "type": "multi",
+    "points": 24,
+    "correct": [
+      0,
+      1,
+      2
+    ],
+    "anyValid": false
+  },
+  "3.12": {
+    "type": "multi",
+    "points": 24,
+    "correct": [
+      0,
+      1,
+      2
+    ],
+    "anyValid": false
+  },
+  "3.13": {
+    "type": "single",
+    "points": 30,
+    "correct": [
+      1
+    ],
+    "anyValid": false
+  },
+  "4.1": {
+    "type": "single",
+    "points": 18,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "4.2": {
+    "type": "single",
+    "points": 18,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "4.3": {
+    "type": "single",
+    "points": 18,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "4.4": {
+    "type": "single",
+    "points": 18,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "4.5": {
+    "type": "single",
+    "points": 18,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "4.6": {
+    "type": "single",
+    "points": 18,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "4.7": {
+    "type": "match",
+    "points": 30,
+    "correctMap": [
+      2,
+      0,
+      1
+    ]
+  },
+  "5.1": {
+    "type": "multi",
+    "points": 12,
+    "correct": [
+      2,
+      11,
+      13
+    ],
+    "anyValid": false
+  },
+  "5.2": {
+    "type": "multi",
+    "points": 12,
+    "correct": [
+      9,
+      13,
+      5,
+      11
+    ],
+    "anyValid": false
+  },
+  "5.3": {
+    "type": "multi",
+    "points": 10,
+    "correct": [
+      4,
+      7,
+      8
+    ],
+    "anyValid": false
+  },
+  "5.4": {
+    "type": "multi",
+    "points": 12,
+    "correct": [
+      13,
+      6,
+      2
+    ],
+    "anyValid": false
+  },
+  "5.5": {
+    "type": "multi",
+    "points": 10,
+    "correct": [
+      14,
+      5
+    ],
+    "anyValid": false
+  },
+  "5.6": {
+    "type": "multi",
+    "points": 10,
+    "correct": [
+      1,
+      3
+    ],
+    "anyValid": false
+  },
+  "5.7": {
+    "type": "multi",
+    "points": 8,
+    "correct": [
+      7,
+      11
+    ],
+    "anyValid": false
+  },
+  "5.8": {
+    "type": "multi",
+    "points": 12,
+    "correct": [
+      15,
+      13,
+      2
+    ],
+    "anyValid": false
+  },
+  "5.9": {
+    "type": "multi",
+    "points": 10,
+    "correct": [
+      10,
+      16
+    ],
+    "anyValid": false
+  },
+  "5.10": {
+    "type": "multi",
+    "points": 8,
+    "correct": [
+      2,
+      4,
+      13
+    ],
+    "anyValid": false
+  },
+  "5.11": {
+    "type": "multi",
+    "points": 10,
+    "correct": [
+      14,
+      15
+    ],
+    "anyValid": false
+  },
+  "5.12": {
+    "type": "multi",
+    "points": 8,
+    "correct": [
+      1,
+      7,
+      11
+    ],
+    "anyValid": false
+  },
+  "5.13": {
+    "type": "multi",
+    "points": 10,
+    "correct": [
+      2,
+      12,
+      13
+    ],
+    "anyValid": false
+  },
+  "5.14": {
+    "type": "multi",
+    "points": 10,
+    "correct": [
+      1,
+      3,
+      16
+    ],
+    "anyValid": false
+  },
+  "5.15": {
+    "type": "multi",
+    "points": 12,
+    "correct": [
+      9,
+      5,
+      11
+    ],
+    "anyValid": false
+  },
+  "5.16": {
+    "type": "multi",
+    "points": 8,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "5.17": {
+    "type": "multi",
+    "points": 10,
+    "correct": [
+      14,
+      6
+    ],
+    "anyValid": false
+  },
+  "5.18": {
+    "type": "multi",
+    "points": 12,
+    "correct": [
+      2,
+      4,
+      11,
+      13
+    ],
+    "anyValid": false
+  },
+  "5.19": {
+    "type": "multi",
+    "points": 10,
+    "correct": [
+      1,
+      7,
+      11
+    ],
+    "anyValid": false
+  },
+  "5.20": {
+    "type": "multi",
+    "points": 12,
+    "correct": [
+      2,
+      6,
+      9,
+      13
+    ],
+    "anyValid": false
+  },
+  "6.1": {
+    "type": "single",
+    "points": 6,
+    "correct": [
+      1
+    ],
+    "anyValid": false
+  },
+  "6.2": {
+    "type": "single",
+    "points": 8,
+    "correct": [
+      1
+    ],
+    "anyValid": false
+  },
+  "6.3": {
+    "type": "multi",
+    "points": 10,
+    "correct": [
+      0,
+      1,
+      2
+    ],
+    "anyValid": false
+  },
+  "6.4": {
+    "type": "single",
+    "points": 6,
+    "correct": [
+      1
+    ],
+    "anyValid": false
+  },
+  "6.8": {
+    "type": "single",
+    "points": 10,
+    "correct": [
+      2
+    ],
+    "anyValid": false
+  },
+  "6.10": {
+    "type": "multi",
+    "points": 10,
+    "correct": [],
+    "anyValid": true
+  },
+  "7.1": {
+    "type": "single",
+    "points": 14,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "7.2": {
+    "type": "single",
+    "points": 14,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "7.3": {
+    "type": "single",
+    "points": 16,
+    "correct": [
+      7
+    ],
+    "anyValid": false
+  },
+  "7.4": {
+    "type": "code",
+    "points": 20,
+    "answer": "TOI DONG Y"
+  },
+  "7.7": {
+    "type": "single",
+    "points": 14,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "7.9": {
+    "type": "code",
+    "points": 20,
+    "answer": "MIT-4729-TIN"
+  },
+  "7.11": {
+    "type": "order",
+    "points": 10,
+    "count": 3
+  },
+  "7.12": {
+    "type": "single",
+    "points": 14,
+    "correct": [
+      1
+    ],
+    "anyValid": false
+  },
+  "7.13": {
+    "type": "single",
+    "points": 14,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "7.14": {
+    "type": "single",
+    "points": 14,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "7.15": {
+    "type": "match",
+    "points": 20,
+    "correctMap": [
+      2,
+      0,
+      1
+    ]
+  },
+  "8.1": {
+    "type": "single",
+    "points": 8,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "8.4": {
+    "type": "single",
+    "points": 8,
+    "correct": [
+      1
+    ],
+    "anyValid": false
+  },
+  "8.5": {
+    "type": "multi",
+    "points": 12,
+    "correct": [
+      0,
+      2,
+      3,
+      5,
+      6
+    ],
+    "anyValid": false
+  },
+  "8.6": {
+    "type": "single",
+    "points": 8,
+    "correct": [
+      2
+    ],
+    "anyValid": false
+  },
+  "8.7": {
+    "type": "single",
+    "points": 8,
+    "correct": [
+      1
+    ],
+    "anyValid": false
+  },
+  "8.8": {
+    "type": "multi",
+    "points": 12,
+    "correct": [
+      0,
+      2,
+      3,
+      5,
+      6,
+      8,
+      9
+    ],
+    "anyValid": false
+  },
+  "8.9": {
+    "type": "code",
+    "points": 8,
+    "answer": "THE TU"
+  },
+  "8.10": {
+    "type": "match",
+    "points": 10,
+    "correctMap": [
+      1,
+      0
+    ]
+  },
+  "8.11": {
+    "type": "token_scope_check",
+    "points": 18,
+    "requiredScopes": [
+      "read_achievements",
+      "edit_birthdate",
+      "read_phone",
+      "delete_phone"
+    ]
+  },
+  "8.13": {
+    "type": "code",
+    "points": 14,
+    "answer": "PHONE-DELETED-OK"
+  },
+  "8.14": {
+    "type": "code",
+    "points": 16,
+    "answer": "PHONE-UPDATED-OK"
+  },
+  "8.15": {
+    "type": "single",
+    "points": 8,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "8.16": {
+    "type": "code",
+    "points": 8,
+    "answer": "GUI"
+  },
+  "8.17": {
+    "type": "single",
+    "points": 10,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "8.18": {
+    "type": "single",
+    "points": 10,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "8.19": {
+    "type": "multi",
+    "points": 14,
+    "correct": [
+      0,
+      1
+    ],
+    "anyValid": false
+  },
+  "8.20": {
+    "type": "match",
+    "points": 16,
+    "correctMap": [
+      2,
+      0,
+      1,
+      3
+    ]
+  },
+  "9.2": {
+    "type": "single",
+    "points": 8,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "9.4": {
+    "type": "single",
+    "points": 10,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "9.5": {
+    "type": "single",
+    "points": 10,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "9.6": {
+    "type": "single",
+    "points": 8,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "9.7": {
+    "type": "single",
+    "points": 8,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "9.8": {
+    "type": "single",
+    "points": 8,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "9.11": {
+    "type": "code",
+    "points": 8,
+    "answer": "10:15:30 01/01/2026"
+  },
+  "9.12": {
+    "type": "code",
+    "points": 8,
+    "answer": "AVATAR-SWAPPED-OK"
+  },
+  "9.13": {
+    "type": "match",
+    "points": 10,
+    "correctMap": [
+      0,
+      1
+    ]
+  },
+  "9.14": {
+    "type": "single",
+    "points": 8,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "9.15": {
+    "type": "single",
+    "points": 10,
+    "correct": [
+      3
+    ],
+    "anyValid": false
+  },
+  "9.16": {
+    "type": "gate",
+    "points": 10
+  },
+  "9.17": {
+    "type": "gate",
+    "points": 8
+  },
+  "9.18": {
+    "type": "gate",
+    "points": 10
+  },
+  "9.19": {
+    "type": "gate",
+    "points": 8
+  },
+  "9.20": {
+    "type": "gate",
+    "points": 8
+  },
+  "9.22": {
+    "type": "gate",
+    "points": 6
+  },
+  "9.23": {
+    "type": "code",
+    "points": 8,
+    "answer": "DUNG-CONG-CU-DUNG-LUC"
+  },
+  "9.24": {
+    "type": "code",
+    "points": 6,
+    "answer": "DUNG-CONG-CU-DUNG-LUC"
+  },
+  "10.0": {
+    "type": "code",
+    "points": 6,
+    "answer": "TOI DONG Y"
+  },
+  "10.1": {
+    "type": "single",
+    "points": 8,
+    "correct": [
+      2
+    ],
+    "anyValid": false
+  },
+  "10.2": {
+    "type": "single",
+    "points": 8,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "10.3": {
+    "type": "single",
+    "points": 8,
+    "correct": [
+      3
+    ],
+    "anyValid": false
+  },
+  "10.4": {
+    "type": "match",
+    "points": 10,
+    "correctMap": [
+      0,
+      1
+    ]
+  },
+  "10.5": {
+    "type": "match",
+    "points": 24,
+    "correctMap": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ]
+  },
+  "10.6": {
+    "type": "multi",
+    "points": 12,
+    "correct": [
+      1,
+      4
+    ],
+    "anyValid": false
+  },
+  "10.7": {
+    "type": "single",
+    "points": 8,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "10.8": {
+    "type": "match",
+    "points": 16,
+    "correctMap": [
+      0,
+      1,
+      2
+    ]
+  },
+  "10.9": {
+    "type": "match",
+    "points": 16,
+    "correctMap": [
+      0,
+      1,
+      2
+    ]
+  },
+  "10.10": {
+    "type": "single",
+    "points": 8,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "10.11": {
+    "type": "single",
+    "points": 8,
+    "correct": [
+      1
+    ],
+    "anyValid": false
+  },
+  "10.12": {
+    "type": "code",
+    "points": 10,
+    "answer": "TIEU CHUAN CONG DONG"
+  },
+  "10.13": {
+    "type": "match",
+    "points": 12,
+    "correctMap": [
+      0,
+      1
+    ]
+  },
+  "10.14": {
+    "type": "tag-mark",
+    "points": 20,
+    "icons": [
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "10.15": {
+    "type": "single",
+    "points": 10,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "10.17": {
+    "type": "order",
+    "points": 16,
+    "count": 5
+  },
+  "10.18": {
+    "type": "order-tag",
+    "points": 12,
+    "count": 3,
+    "tags": [
+      0,
+      1,
+      0
+    ]
+  },
+  "10.19": {
+    "type": "order-tag",
+    "points": 14,
+    "count": 5,
+    "tags": [
+      0,
+      2,
+      1,
+      1,
+      1
+    ]
+  },
+  "10.20": {
+    "type": "order-tag",
+    "points": 16,
+    "count": 6,
+    "tags": [
+      1,
+      1,
+      0,
+      0,
+      1,
+      0
+    ]
+  },
+  "10.21": {
+    "type": "order-tag",
+    "points": 14,
+    "count": 5,
+    "tags": [
+      0,
+      2,
+      1,
+      0,
+      0
+    ]
+  },
+  "10.22": {
+    "type": "order-tag",
+    "points": 14,
+    "count": 5,
+    "tags": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "10.23": {
+    "type": "tag-mark",
+    "points": 20,
+    "icons": [
+      0,
+      1,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "10.24": {
+    "type": "order",
+    "points": 20,
+    "count": 12
+  },
+  "10.25": {
+    "type": "tag-mark",
+    "points": 18,
+    "icons": [
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1
+    ]
+  },
+  "10.26": {
+    "type": "gate",
+    "points": 22
+  },
+  "11.1": {
+    "type": "multi",
+    "points": 10,
+    "correct": [
+      2,
+      3
+    ],
+    "anyValid": false
+  },
+  "11.2": {
+    "type": "order",
+    "points": 10,
+    "count": 4
+  },
+  "11.3": {
+    "type": "code",
+    "points": 6,
+    "answer": "chatbot"
+  },
+  "11.4": {
+    "type": "single",
+    "points": 6,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "11.5": {
+    "type": "multi",
+    "points": 12,
+    "correct": [
+      1,
+      3
+    ],
+    "anyValid": false
+  },
+  "11.6": {
+    "type": "gate",
+    "points": 8
+  },
+  "11.7": {
+    "type": "single",
+    "points": 8,
+    "correct": [
+      1
+    ],
+    "anyValid": false
+  },
+  "11.8": {
+    "type": "single",
+    "points": 10,
+    "correct": [
+      5
+    ],
+    "anyValid": false
+  },
+  "11.10": {
+    "type": "single",
+    "points": 8,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "11.12": {
+    "type": "single",
+    "points": 8,
+    "correct": [
+      1
+    ],
+    "anyValid": false
+  },
+  "11.13": {
+    "type": "code",
+    "points": 10,
+    "answer": "Jackrong/Qwopus3.5-9B-Coder-MTP-GGUF"
+  },
+  "11.14": {
+    "type": "match",
+    "points": 8,
+    "correctMap": [
+      0,
+      0
+    ]
+  },
+  "11.16": {
+    "type": "match",
+    "points": 14,
+    "correctMap": [
+      0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      1
+    ]
+  },
+  "11.19": {
+    "type": "code",
+    "points": 10,
+    "answer": "get_class_age_stats"
+  },
+  "11.20": {
+    "type": "multi",
+    "points": 14,
+    "correct": [
+      3,
+      4,
+      5
+    ],
+    "anyValid": false
+  },
+  "11.21": {
+    "type": "match",
+    "points": 12,
+    "correctMap": [
+      0,
+      0,
+      1
+    ]
+  },
+  "11.22": {
+    "type": "order-tag",
+    "points": 22,
+    "count": 9,
+    "tags": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1
+    ]
+  },
+  "11.23": {
+    "type": "single",
+    "points": 10,
+    "correct": [
+      1
+    ],
+    "anyValid": false
+  },
+  "11.24": {
+    "type": "single",
+    "points": 10,
+    "correct": [
+      2
+    ],
+    "anyValid": false
+  },
+  "11.25": {
+    "type": "match",
+    "points": 14,
+    "correctMap": [
+      0,
+      1,
+      2
+    ]
+  },
+  "12.1": {
+    "type": "single",
+    "points": 10,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "12.2": {
+    "type": "single",
+    "points": 12,
+    "correct": [
+      1
+    ],
+    "anyValid": false
+  },
+  "12.4": {
+    "type": "single",
+    "points": 14,
+    "correct": [
+      1
+    ],
+    "anyValid": false
+  },
+  "12.5": {
+    "type": "single",
+    "points": 14,
+    "correct": [
+      1
+    ],
+    "anyValid": false
+  },
+  "12.6": {
+    "type": "single",
+    "points": 12,
+    "correct": [
+      1
+    ],
+    "anyValid": false
+  },
+  "12.7": {
+    "type": "single",
+    "points": 14,
+    "correct": [
+      1
+    ],
+    "anyValid": false
+  },
+  "12.8": {
+    "type": "single",
+    "points": 14,
+    "correct": [
+      1
+    ],
+    "anyValid": false
+  },
+  "12.9": {
+    "type": "single",
+    "points": 12,
+    "correct": [
+      1
+    ],
+    "anyValid": false
+  },
+  "12.10": {
+    "type": "single",
+    "points": 14,
+    "correct": [
+      1
+    ],
+    "anyValid": false
+  },
+  "12.11": {
+    "type": "single",
+    "points": 12,
+    "correct": [
+      1
+    ],
+    "anyValid": false
+  },
+  "12.12": {
+    "type": "single",
+    "points": 16,
+    "correct": [
+      1
+    ],
+    "anyValid": false
+  },
+  "12.13": {
+    "type": "single",
+    "points": 14,
+    "correct": [
+      1
+    ],
+    "anyValid": false
+  },
+  "12.14": {
+    "type": "single",
+    "points": 16,
+    "correct": [
+      1
+    ],
+    "anyValid": false
+  },
+  "12.15": {
+    "type": "single",
+    "points": 12,
+    "correct": [
+      1
+    ],
+    "anyValid": false
+  },
+  "12.16": {
+    "type": "single",
+    "points": 16,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "13.1": {
+    "type": "single",
+    "points": 20,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "13.2": {
+    "type": "single",
+    "points": 20,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "13.3": {
+    "type": "single",
+    "points": 16,
+    "correct": [
+      0
+    ],
+    "anyValid": false
+  },
+  "gate14.1": {
+    "type": "gate",
+    "points": 90
+  },
+  "gate.1": {
+    "type": "gate",
+    "points": 2
+  },
+  "gate2.1": {
+    "type": "gate",
+    "points": 57
+  },
+  "gate2.2": {
+    "type": "gate",
+    "points": 0
+  },
+  "gate2.3": {
+    "type": "gate",
+    "points": 0
+  },
+  "gate3.1": {
+    "type": "gate",
+    "points": 0
+  },
+  "gate4.1": {
+    "type": "gate",
+    "points": 0
+  },
+  "gate5.1": {
+    "type": "gate",
+    "points": 0
+  }
+}
