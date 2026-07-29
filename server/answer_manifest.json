@@ -508,20 +508,13 @@
     ]
   },
   "8.1": {
-    "type": "single",
+    "type": "match",
     "points": 8,
-    "correct": [
-      0
-    ],
-    "anyValid": false
-  },
-  "8.4": {
-    "type": "single",
-    "points": 8,
-    "correct": [
-      1
-    ],
-    "anyValid": false
+    "correctMap": [
+      0,
+      1,
+      2
+    ]
   },
   "8.5": {
     "type": "multi",
@@ -565,11 +558,6 @@
     ],
     "anyValid": false
   },
-  "8.9": {
-    "type": "code",
-    "points": 8,
-    "answer": "THE TU"
-  },
   "8.10": {
     "type": "match",
     "points": 10,
@@ -605,11 +593,6 @@
       0
     ],
     "anyValid": false
-  },
-  "8.16": {
-    "type": "code",
-    "points": 8,
-    "answer": "GUI"
   },
   "8.17": {
     "type": "single",

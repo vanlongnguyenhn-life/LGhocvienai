@@ -1000,7 +1000,7 @@ function renderQuestionCard(lesson, q, locked) {
       body.appendChild(renderMatchGrid(q, a));
     } else if (q.type === "assignment") {
       body.appendChild(renderAssignment(q, a));
-    } else if (q.type === "code") {
+    } else if (q.type === "code" || q.type === "my_token_check") {
       body.appendChild(renderCodeInput(q, a));
     } else if (q.type === "agent_secret_code" || q.type === "pi_lab_code") {
       body.appendChild(renderAgentSecretCode(q, a));
@@ -1857,6 +1857,42 @@ async function submitAnswer(lesson, q) {
       a.status = "wrong";
       a.awardedPoints = 0;
       showToast(result.reason || "Mã chưa đúng, Bạn xem lại nhé");
+      persistQuestionStatus(q, a);
+      return;
+    }
+    // Server tự re-verify độc lập ở /api/submit-question trước khi cộng điểm.
+    const fd2 = new FormData();
+    fd2.append("question_code", q.code);
+    fd2.append("status", "done");
+    fd2.append("awarded_points", String(q.points));
+    fd2.append("answer_data", JSON.stringify({ text: a.text.trim() }));
+    try {
+      await API.submitQuestion(fd2);
+      a.status = "done";
+      a.awardedPoints = q.points;
+      showToast(`Chính xác! +${q.points} điểm`);
+    } catch (err) {
+      showToast(err.message);
+      return;
+    }
+  } else if (q.type === "my_token_check") {
+    if (!a.text || a.text.trim().length === 0) {
+      showToast("Em hãy dán token của bạn trước khi nộp bài");
+      return;
+    }
+    const fd = new FormData();
+    fd.append("code", a.text.trim());
+    let result;
+    try {
+      result = await API.request("/api/verify-my-token", { method: "POST", body: fd });
+    } catch (err) {
+      showToast(err.message);
+      return;
+    }
+    if (!result.valid) {
+      a.status = "wrong";
+      a.awardedPoints = 0;
+      showToast(result.reason || "Chưa đúng token của bạn, xem lại nhé");
       persistQuestionStatus(q, a);
       return;
     }

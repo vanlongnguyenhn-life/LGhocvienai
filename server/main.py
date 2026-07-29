@@ -243,6 +243,11 @@ SECRET_CODE_MANIFEST = {
 PI_LAB_CODE_MANIFEST = {
     "7.9": {"points": 20},
 }
+# Câu 8.4: học viên phải tự dán ĐÚNG token thật của chính mình (giá trị {{token}} đã lặp lại
+# trong các copy-prompt ở Bài 7) — so khớp với users.api_token, không có đáp án tĩnh nào.
+MY_TOKEN_CHECK_MANIFEST = {
+    "8.4": {"points": 8},
+}
 
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 # Nếu đặt, chỉ tổ chức Lark có tenant_key này mới được đăng nhập (để trống = cho mọi tổ chức của app).
@@ -1551,6 +1556,18 @@ def submit_question(
             raise HTTPException(status_code=400, detail="friendship_code chưa đúng — kiểm tra lại trước khi nộp.")
         awarded_points = PI_LAB_CODE_MANIFEST[question_code]["points"]
 
+    if question_code in MY_TOKEN_CHECK_MANIFEST and status == "done":
+        try:
+            submitted_token = json.loads(answer_data or "{}").get("text", "")
+        except (json.JSONDecodeError, AttributeError):
+            submitted_token = ""
+        with get_db() as conn:
+            row = conn.execute("SELECT api_token FROM users WHERE id = ?", (user["id"],)).fetchone()
+        real_token = row["api_token"] if row else None
+        if not real_token or submitted_token.strip() != real_token:
+            raise HTTPException(status_code=400, detail="Token chưa đúng — kiểm tra lại trước khi nộp.")
+        awarded_points = MY_TOKEN_CHECK_MANIFEST[question_code]["points"]
+
     with get_db() as conn:
         conn.execute(
             """
@@ -1704,6 +1721,24 @@ def pi_lab_verify_friendship_code(request: Request, code: str = Form(...)):
         }
     if _normalize_secret(code) != _normalize_secret(real_code):
         return {"valid": False, "reason": "Mã chưa đúng, bạn xem lại nhé."}
+    return {"valid": True, "reason": ""}
+
+
+@app.post("/api/verify-my-token")
+def verify_my_token(request: Request, code: str = Form(...)):
+    """Câu 8.4: học viên phải tự dán ĐÚNG token thật của chính mình (giá trị đã lặp lại trong các
+    copy-prompt ở Bài 7) — kiểm tra độc lập với server, không có đáp án tĩnh dùng chung."""
+    user = require_approved_user(request)
+    with get_db() as conn:
+        row = conn.execute("SELECT api_token FROM users WHERE id = ?", (user["id"],)).fetchone()
+    real_token = row["api_token"] if row else None
+    if not real_token:
+        return {
+            "valid": False,
+            "reason": "Bạn chưa có token nào được cấp — hoàn thành câu 6.5 trở đi trước để lấy token.",
+        }
+    if code.strip() != real_token:
+        return {"valid": False, "reason": "Chưa đúng token của bạn — kiểm tra lại trong các lệnh Agent đã dùng ở Bài 7."}
     return {"valid": True, "reason": ""}
 
 

@@ -84,10 +84,20 @@
     "minLength": 30,
     "points": 8
   },
+  "8.9": {
+    "prompt": "Với tất cả những gì đã biết về token, bạn thấy nó rất giống một vật dụng cụ gì trong ngành du lịch?",
+    "minLength": 5,
+    "points": 8
+  },
   "8.12": {
     "prompt": "Hãy nhờ Agent của bạn dùng token vừa tạo để đọc số điện thoại của bạn. Gọi:\nGET https://ailg.onrender.com/api/pi-lab/managed/phone/read/<TOKEN_CỦA_BẠN>",
     "minLength": 20,
     "points": 10
+  },
+  "8.16": {
+    "prompt": "Con người chúng ta có một số cách để \"sử dụng phần mềm\", và cách dễ nhất là gõ phím, và di chuột. Chúng ta kéo thả các cửa sổ, click chuột vào các nút lệnh, nhìn phản hồi dưới dạng đồ hoạ, chữ nghĩa đậm nhạt nhiều màu sắc. Thuật ngữ gọi cách giao tiếp này là…",
+    "minLength": 2,
+    "points": 8
   },
   "9.1": {
     "prompt": "Vậy là, bạn đều biết rằng có nhiều cách để Coding Agent có thể \"giao tiếp\" với các phần mềm: điều khiển giao diện GUI như \"người thật\" (làm được nhưng tốn token, tốn thời gian), điều khiển qua CLI (dòng lệnh, rất nhanh và chính xác), điều khiển qua MCP (giao thức chuẩn, hiện đại của các Agent nhưng còn ít phần mềm hỗ trợ)… và một số phương thức khác.\n\nBây giờ, hãy thử mở cửa sổ dòng lệnh và gõ opencode -h (hoặc lệnh khác tuỳ thời điểm, có thể cần tìm hiểu lệnh chính xác trên website chính thức của OpenCode) để hiện danh sách các lệnh CLI mà Coding Agent opencode hỗ trợ.",

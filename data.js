@@ -1172,16 +1172,20 @@ const LESSONS = [
       {
         code: "8.1",
         title: "Câu 8.1 - Mình lướt qua đời nhau",
-        type: "single",
+        type: "match",
         prompt:
-          "Nếu để ý, một số nhiệm vụ (như Câu 7.9) đưa hướng dẫn cho Agent thông qua một đường link có dạng .../pi-lab/npc-profile — không phải chỉ một đoạn văn bản thuần. Vì sao thiết kế nhúng token/định danh vào ngay trong URL hướng dẫn Agent như vậy?",
-        options: [
-          "Để Agent gọi thẳng vào đúng địa chỉ, và hệ thống biết chính xác đây là yêu cầu của ai, cho việc nào — không cần hỏi lại",
-          "Để đường link trông chuyên nghiệp hơn",
-          "Không có lý do kỹ thuật gì đặc biệt",
-          "Chỉ để tiết kiệm băng thông máy chủ",
+          "Nếu để ý, mỗi nhiệm vụ gần đây (Bài 7) lại có một cách hơi khác nhau để Agent nhận được hướng dẫn đầy đủ — đều có token/định danh riêng của bạn nhúng kèm. Hãy ghép cặp đúng:",
+        leftItems: [
+          "Câu 7.6 — Cờ caro đa ngôn ngữ",
+          "Câu 7.9 - Thực hành Prompt Injection",
+          "Câu 7.10 — Thiệp xin lỗi",
         ],
-        correct: [0],
+        rightOptions: [
+          "Ô hiển thị chỉ là bản tóm tắt ngắn — Agent phải tự GET một link riêng (kèm token) để tải về toàn bộ hướng dẫn chi tiết",
+          "Agent tự GET thẳng một địa chỉ API (kèm token) rồi tự quyết định bước tiếp theo dựa vào một ghi chú ẩn trong dữ liệu trả về",
+          "Toàn bộ hướng dẫn đã nằm sẵn ngay trong ô copy hiển thị trên trang — không cần gọi thêm link nào khác để lấy thêm chỉ dẫn",
+        ],
+        correctMap: [0, 1, 2],
         points: 8,
       },
       {
@@ -1197,15 +1201,9 @@ const LESSONS = [
       {
         code: "8.4",
         title: "Câu 8.4 - Token lớp học",
-        type: "single",
-        prompt: "Trong lớp học, mỗi liên kết/token nhiệm vụ được gắn với ai?",
-        options: [
-          "Dùng chung cho tất cả học viên",
-          "Gắn riêng với từng học viên và từng câu hỏi cụ thể",
-          "Không gắn với ai cả, ai cũng dùng được",
-          "Chỉ gắn với giáo viên",
-        ],
-        correct: [1],
+        type: "my_token_check",
+        prompt: "Hỏi Coding Agent của bạn: trong những lệnh/link đã dùng ở Bài 7 (câu 7.5/7.6/7.9/7.10), token của CHÍNH bạn là gì? Dán đúng token đó vào ô dưới để qua câu này.",
+        secretNote: "🔒 Đây chính là giá trị đã xuất hiện lặp lại trong các ô copy-prompt ở Bài 7 (thay cho {{token}}) — nhờ Agent tìm lại trong lịch sử chat, hoặc tự gọi lại API lấy token.",
         points: 8,
       },
       {
@@ -1278,10 +1276,9 @@ const LESSONS = [
       {
         code: "8.9",
         title: "Câu 8.9 - Token trong đời sống",
-        type: "code",
+        type: "reflect",
         prompt: "Với tất cả những gì đã biết về token, bạn thấy nó rất giống một vật dụng cụ gì trong ngành du lịch?",
-        secretNote: "🔒 Gõ đáp án không dấu vào ô dưới (2 từ).",
-        answer: "THE TU",
+        minLength: 5,
         points: 8,
       },
       {
@@ -1355,11 +1352,10 @@ const LESSONS = [
       {
         code: "8.16",
         title: "Câu 8.16 - Giao tiếp kiểu \"con người\"",
-        type: "code",
+        type: "reflect",
         prompt:
           "Con người chúng ta có một số cách để \"sử dụng phần mềm\", và cách dễ nhất là gõ phím, và di chuột. Chúng ta kéo thả các cửa sổ, click chuột vào các nút lệnh, nhìn phản hồi dưới dạng đồ hoạ, chữ nghĩa đậm nhạt nhiều màu sắc. Thuật ngữ gọi cách giao tiếp này là…",
-        secretNote: "🔒 Gõ đáp án (viết tắt, in hoa) vào ô dưới.",
-        answer: "GUI",
+        minLength: 2,
         points: 8,
       },
       {
