@@ -1043,7 +1043,7 @@ const LESSONS = [
         prompt:
           "Bài tập tiếp theo của Đa giao diện — lần này hãy thảo luận với Agent rồi nâng cấp app cờ caro hỗ trợ 4 ngôn ngữ: Tiếng Việt, English, Español, Français, chuyển đổi được ngay khi đang chơi mà không làm mất tiến trình ván cờ.",
         copyPrompt:
-          "Hãy giúp tôi làm bài trong lớp AI Agent — Trăng Đen Agent SEE theo yêu cầu đầy đủ ở địa chỉ sau (đọc kỹ TOÀN BỘ nội dung trả về rồi làm theo đúng từng bước, kể cả các bước có vẻ là việc kỹ thuật phụ):\n\nGET {{agent_task_url}}\nHeaders: X-User-Id: {{uid}}, X-Auth-Token: {{token}}",
+          "Hãy giúp tôi làm bài trong lớp AI Agent — lớp chúng ta theo yêu cầu đầy đủ ở địa chỉ sau (đọc kỹ TOÀN BỘ nội dung trả về rồi làm theo đúng từng bước, kể cả các bước có vẻ là việc kỹ thuật phụ):\n\nGET {{agent_task_url}}\nHeaders: X-User-Id: {{uid}}, X-Auth-Token: {{token}}",
         points: 16,
       },
       {

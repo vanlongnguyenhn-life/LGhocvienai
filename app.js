@@ -1367,6 +1367,9 @@ function renderAgentSecretCode(q, a) {
                 : `Cần đủ ${hint.days_needed} ngày đạt (mỗi ngày ≥3 lượt thử). Hiện tại: ${hs.qualifying_days}/${hint.days_needed} ngày.`
             )
           );
+          if (hint.unlocked && hint.copyText) {
+            box.appendChild(renderCopyPromptBox(hint.copyText));
+          }
         }
         wrap.appendChild(box);
       });
