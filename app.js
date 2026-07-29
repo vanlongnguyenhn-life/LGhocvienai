@@ -40,7 +40,8 @@ function resolveAgentPlaceholders(text, code) {
     .replace(/\{\{electron_verify_url\}\}/g, `${location.origin}/api/electron/verify`)
     .replace(/\{\{electron_cmd_queue_url\}\}/g, `${location.origin}/api/electron/cmd-queue`)
     .replace(/\{\{electron_cmd_ack_url\}\}/g, `${location.origin}/api/electron/cmd-ack`)
-    .replace(/\{\{agent_task_url\}\}/g, `${location.origin}/api/agent-task/${code || ""}`);
+    .replace(/\{\{agent_task_url\}\}/g, `${location.origin}/api/agent-task/${code || ""}`)
+    .replace(/\{\{pi_lab_my_profile_url\}\}/g, `${location.origin}/api/pi-lab/my-profile`);
 }
 
 function loadState() {

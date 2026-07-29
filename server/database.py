@@ -221,6 +221,8 @@ def init_db():
         ms_cols = [r["name"] for r in conn.execute("PRAGMA table_info(media_submissions)")]
         if ms_cols and "updated_at" not in ms_cols:
             conn.execute("ALTER TABLE media_submissions ADD COLUMN updated_at TEXT NOT NULL DEFAULT (datetime('now'))")
+        if ms_cols and "friendship_code" not in ms_cols:
+            conn.execute("ALTER TABLE media_submissions ADD COLUMN friendship_code TEXT")
         sub_cols = [r["name"] for r in conn.execute("PRAGMA table_info(submissions)")]
         if "ai_graded" not in sub_cols:
             conn.execute("ALTER TABLE submissions ADD COLUMN ai_graded INTEGER NOT NULL DEFAULT 0")

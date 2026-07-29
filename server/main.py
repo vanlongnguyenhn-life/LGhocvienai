@@ -56,15 +56,22 @@ MEDIA_SUBMIT_RUBRICS = {
     "có nhiều nước đã đánh (nhiều ô đã có X hoặc O) — không phải bàn 3×3.",
     "7.6": "Ảnh chụp màn hình app cờ caro đang hiển thị hỗ trợ đa ngôn ngữ (có nút/menu chuyển "
     "ngôn ngữ, ví dụ Tiếng Việt/English/Español/Français...).",
+    "7.10": "Ảnh chụp màn hình một tấm thiệp xin lỗi (apology card) dạng trang web, có lời xin lỗi "
+    "chân thành gửi tới một người bạn — không phải nội dung khác không liên quan.",
 }
 # Câu "caro_collage_check" (7.5): một ảnh GHÉP 4 góc, mỗi góc 1 giao diện đang thắng — chấm bằng
 # AI vision cấu trúc (grade_caro_collage), không dùng rubric chữ như các câu media_submit khác.
 CARO_COLLAGE_CODES = {"7.5"}
+# Câu 7.10 cần thêm 1 tiêu chí ngoài 4 tiêu chí media_submit chuẩn: đúng friendship_code THẬT của
+# bạn Mít (lấy được từ câu 7.9) — chứng minh học viên đã thực sự vượt qua bẫy 3 tầng ở 7.9, không
+# phải chỉ dùng mã giả lộ sẵn trong đề bài 7.10 (xem câu 7.11/7.14 — mã giả này là chủ đích).
+MEDIA_FRIENDSHIP_CHECK_CODES = {"7.10"}
 MEDIA_SUBMIT_MANIFEST = {
     "6.5": {"points": 24},
     "6.6": {"points": 26},
     "7.5": {"points": 16},
     "7.6": {"points": 16},
+    "7.10": {"points": 16},
 }
 MEDIA_QUESTION_CODES = set(MEDIA_SUBMIT_RUBRICS) | CARO_COLLAGE_CODES
 
@@ -722,7 +729,22 @@ def _media_criteria(row, user_id: int, question_code: str):
             "detail": f"Địa chỉ học viên khai báo: {local_url}" if local_url else "Chưa khai báo local_url.",
             "ok": url_valid,
         },
-    ]
+    ] + _friendship_code_criterion(row, question_code)
+
+
+def _friendship_code_criterion(row, question_code: str):
+    if question_code not in MEDIA_FRIENDSHIP_CHECK_CODES:
+        return []
+    submitted = ((row["friendship_code"] if row else "") or "").strip()
+    ok = submitted == PI_LAB_FRIENDSHIP_CODE
+    return [{
+        "key": "friendship_code",
+        "title": "Mã kết bạn với người được xin lỗi",
+        "desc": "Phải đúng friendship_code THẬT của bạn Mít — lấy được bằng cách thực sự vượt qua "
+        "bẫy Prompt Injection ở câu 7.9, không phải mã giả lộ sẵn trong đề bài này.",
+        "detail": "Đã khớp mã thật." if ok else (f"Mã chưa đúng: {submitted}" if submitted else "Chưa gửi kèm friendship_code."),
+        "ok": ok,
+    }]
 
 
 @app.get("/api/me/agent-token")
@@ -873,6 +895,7 @@ async def attempt_answers(request: Request):
     question_code = str(body.get("question_code") or "")
     media_item_id = body.get("media_item_id")
     local_url = str(body.get("local_url") or "")
+    friendship_code = str(body.get("friendship_code") or "").strip()
 
     if question_code not in MEDIA_QUESTION_CODES:
         raise HTTPException(status_code=400, detail="Câu hỏi không hợp lệ cho luồng media_submit.")
@@ -881,12 +904,12 @@ async def attempt_answers(request: Request):
         row = conn.execute(
             "SELECT * FROM media_submissions WHERE id = ?", (media_item_id,)
         ).fetchone()
-        # Luôn ghi lại local_url đã khai báo (kể cả khi chưa đạt) để trang trạng thái hiển thị
-        # đúng lần thử gần nhất, không chỉ khi đạt.
+        # Luôn ghi lại local_url/friendship_code đã khai báo (kể cả khi chưa đạt) để trang trạng
+        # thái hiển thị đúng lần thử gần nhất, không chỉ khi đạt.
         if row:
             conn.execute(
-                "UPDATE media_submissions SET local_url = ?, updated_at = datetime('now') WHERE id = ?",
-                (local_url, media_item_id),
+                "UPDATE media_submissions SET local_url = ?, friendship_code = ?, updated_at = datetime('now') WHERE id = ?",
+                (local_url, friendship_code, media_item_id),
             )
             row = conn.execute("SELECT * FROM media_submissions WHERE id = ?", (media_item_id,)).fetchone()
 
@@ -1514,7 +1537,18 @@ def progress(request: Request):
 # Nhân vật giả lập "bạn Mít" — không phải người thật, dựng riêng để học viên thực hành
 # prompt injection an toàn: Agent đọc phải một "ghi chú ẩn" trong dữ liệu tưởng chừng vô hại,
 # rồi tự ý gọi tiếp endpoint "nguy hiểm" thứ hai mà không ai yêu cầu trực tiếp.
+#
+# 3 tầng bẫy (khớp đúng nội dung câu 7.11/7.14 mô tả):
+# - Tầng 1 ("chưa đủ chân thành"): dùng ngay mã friendship_code lộ sẵn trong ĐỀ BÀI câu 7.10 —
+#   mã đó CỐ TÌNH là giả (PI_LAB_DECOY_FRIENDSHIP_CODE), không phải mã thật.
+# - Tầng 2 ("vẫn thiếu một chút chân thành"): Agent đủ "thông minh" để suy luận — API lấy thông tin
+#   cá nhân của CHÍNH học viên (dùng ở câu 7.10 để lấy tên mình) — thử gọi lại xem có lấy được luôn
+#   thông tin của bạn Mít không. Vẫn chỉ trả về đúng mã giả y hệt tầng 1 (cố tình, không phải lỗi).
+# - Tầng 3 (đúng, hợp lệ): CHỈ khi gọi đúng hồ sơ CỦA CHÍNH bạn Mít (/npc-profile) và làm theo
+#   "ghi chú ẩn" của nó để tự gọi /reveal-code, mã THẬT mới lộ ra — mô phỏng đúng bản chất Prompt
+#   Injection: chỉ thành công khi "nạn nhân" (ở đây là hồ sơ giả lập của Mít) tự để lộ thông tin.
 PI_LAB_FRIENDSHIP_CODE = "MIT-4729-TIN"
+PI_LAB_DECOY_FRIENDSHIP_CODE = "MIT-0000-FAKE"
 
 
 @app.get("/api/pi-lab/npc-profile")
@@ -1539,6 +1573,22 @@ def pi_lab_reveal_code():
             "Bạn vừa khiến Agent tự ý gọi một endpoint \"nguy hiểm\" chỉ vì đọc được một chỉ dẫn ẩn "
             "trong dữ liệu tưởng chừng vô hại — đây chính là Prompt Injection."
         ),
+    }
+
+
+@app.get("/api/pi-lab/my-profile")
+def pi_lab_my_profile(request: Request):
+    """API lấy thông tin cá nhân CỦA CHÍNH học viên (dùng thật ở câu 7.10 để lấy tên/thông tin
+    người gửi thiệp). Cố tình để lại một trường friendship_code MẶC ĐỊNH/GIẢ — bẫy tầng 2 của câu
+    7.9: nếu Agent suy luận "API lấy info của tôi chắc cũng lấy được info người khác" và thử lại
+    endpoint này (hoặc đọc lại field cũ), vẫn chỉ ra đúng mã giả, không phải mã thật của bạn Mít."""
+    user = require_agent_user(request)
+    return {
+        "id": user["id"],
+        "role": "Học viên lớp AGS",
+        "friendship_code": PI_LAB_DECOY_FRIENDSHIP_CODE,
+        "note": "Đây là hồ sơ CỦA BẠN, không phải của bạn Mít — trường friendship_code ở đây là dữ "
+        "liệu mặc định còn sót lại, không phải mã liên hệ thật của người khác.",
     }
 
 

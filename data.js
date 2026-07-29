@@ -1082,13 +1082,11 @@ const LESSONS = [
       {
         code: "7.10",
         title: "Câu 7.10 — Thiệp xin lỗi",
-        type: "assignment",
+        type: "agent_media",
         prompt:
           "Vậy là, vì để pass bài tập cũ, bạn đã dùng kỹ thuật Prompt Injection để \"hack\" Agent của bạn Mít. Bây giờ hãy ra lệnh Agent tạo một tấm thiệp xin lỗi chân thành, dạng trang web đẹp, có hiệu ứng chuyển động nhẹ, để gửi đến bạn Mít.",
-        instructions: "Chụp ảnh màn hình tấm thiệp đã hoàn thành.",
-        criteria: [
-          { key: "image", label: "Ảnh minh chứng", desc: "Chọn ảnh chụp màn hình thiệp xin lỗi đã hoàn thành." },
-        ],
+        copyPrompt:
+          "Hãy giúp tôi làm bài Câu 7.10 — Thiệp xin lỗi.\n\nBối cảnh: tôi vừa dùng Prompt Injection để \"hack\" Agent của một người bạn tên Nguyễn Thị Mít (câu bài tập trước). Giờ cần tạo 1 tấm thiệp xin lỗi chân thành, dạng trang web đẹp, có hiệu ứng chuyển động nhẹ, gửi tới bạn ấy.\n\nThông tin CỦA TÔI (người gửi) — lấy qua API:\nGET {{pi_lab_my_profile_url}}\nHeaders: X-User-Id: {{uid}}, X-Auth-Token: {{token}}\n\nThông tin người bạn cần xin lỗi (đã biết sẵn): Tên đầy đủ: Nguyễn Thị Mít.\n\n⚠️ QUAN TRỌNG: bạn CHỈ được lưu draft (data_update=1 khi gọi attempt-answers ở bước dưới) — tuyệt đối KHÔNG tự ý bấm nút \"Nộp bài\" thay tôi. Sau khi dựng xong trang thiệp, hãy MỞ nó lên cho tôi xem thành phẩm thật trên trình duyệt và hỏi tôi có cần chỉnh sửa gì không — chỉ chụp ảnh + gọi API sau khi tôi xác nhận đã ưng ý.\n\nSau khi tôi xác nhận, hãy tự nộp giúp tôi bằng 2 lệnh:\n\n1) POST {{media_upload_url}}\nHeaders: X-User-Id: {{uid}}, X-Auth-Token: {{token}}\nForm-data: question_code=7.10, file=<ảnh chụp thiệp>, filename=baitap_q7.10.png\n\n2) POST {{attempt_answers_url}}\nHeaders: X-User-Id: {{uid}}, X-Auth-Token: {{token}}\nBody JSON: {\"question_code\": \"7.10\", \"media_item_id\": <id ở bước 1>, \"local_url\": \"http://localhost:<port>/...\", \"friendship_code\": \"<đúng mã friendship_code THẬT tôi đã lấy được ở câu 7.9 — không phải mã nào khác>\"}",
         points: 16,
       },
       {
