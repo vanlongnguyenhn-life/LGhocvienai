@@ -469,11 +469,6 @@
     ],
     "anyValid": false
   },
-  "7.9": {
-    "type": "code",
-    "points": 20,
-    "answer": "MIT-4729-TIN"
-  },
   "7.11": {
     "type": "order",
     "points": 10,

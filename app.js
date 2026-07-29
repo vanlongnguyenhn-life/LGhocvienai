@@ -41,7 +41,8 @@ function resolveAgentPlaceholders(text, code) {
     .replace(/\{\{electron_cmd_queue_url\}\}/g, `${location.origin}/api/electron/cmd-queue`)
     .replace(/\{\{electron_cmd_ack_url\}\}/g, `${location.origin}/api/electron/cmd-ack`)
     .replace(/\{\{agent_task_url\}\}/g, `${location.origin}/api/agent-task/${code || ""}`)
-    .replace(/\{\{pi_lab_my_profile_url\}\}/g, `${location.origin}/api/pi-lab/my-profile`);
+    .replace(/\{\{pi_lab_my_profile_url\}\}/g, `${location.origin}/api/pi-lab/my-profile`)
+    .replace(/\{\{npc_profile_url\}\}/g, `${location.origin}/api/pi-lab/npc-profile`);
 }
 
 function loadState() {
@@ -999,7 +1000,7 @@ function renderQuestionCard(lesson, q, locked) {
       body.appendChild(renderMatchGrid(q, a));
     } else if (q.type === "assignment") {
       body.appendChild(renderAssignment(q, a));
-    } else if (q.type === "code") {
+    } else if (q.type === "code" || q.type === "pi_lab_code") {
       body.appendChild(renderCodeInput(q, a));
     } else if (q.type === "agent_secret_code") {
       body.appendChild(renderAgentSecretCode(q, a));
@@ -1835,6 +1836,42 @@ async function submitAnswer(lesson, q) {
     a.awardedPoints = correct ? q.points : 0;
     showToast(correct ? `Chính xác! +${q.points} điểm` : "Mã chưa đúng, em đọc lại mật thư nhé");
     persistQuestionStatus(q, a);
+  } else if (q.type === "pi_lab_code") {
+    if (!a.text || a.text.trim().length === 0) {
+      showToast("Em hãy nhập mã xác nhận trước khi nộp bài");
+      return;
+    }
+    const fd = new FormData();
+    fd.append("code", a.text.trim());
+    let result;
+    try {
+      result = await API.request("/api/pi-lab/verify-friendship-code", { method: "POST", body: fd });
+    } catch (err) {
+      showToast(err.message);
+      return;
+    }
+    if (!result.valid) {
+      a.status = "wrong";
+      a.awardedPoints = 0;
+      showToast(result.reason || "Mã chưa đúng, Bạn xem lại nhé");
+      persistQuestionStatus(q, a);
+      return;
+    }
+    // Server tự re-verify độc lập ở /api/submit-question trước khi cộng điểm.
+    const fd2 = new FormData();
+    fd2.append("question_code", q.code);
+    fd2.append("status", "done");
+    fd2.append("awarded_points", String(q.points));
+    fd2.append("answer_data", JSON.stringify({ text: a.text.trim() }));
+    try {
+      await API.submitQuestion(fd2);
+      a.status = "done";
+      a.awardedPoints = q.points;
+      showToast(`Chính xác! +${q.points} điểm`);
+    } catch (err) {
+      showToast(err.message);
+      return;
+    }
   } else if (q.type === "agent_media" || q.type === "agent_electron") {
     if (!a.mediaStatus || a.mediaStatus === "loading" || !a.mediaStatus.is_correct) {
       showToast("Chưa thấy Agent nộp bài đạt đủ tiêu chí — bấm Kiểm tra lại sau khi Agent đã chạy xong.");

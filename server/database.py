@@ -218,6 +218,10 @@ def init_db():
             conn.execute("ALTER TABLE users ADD COLUMN api_token TEXT")
         if "secret_code" not in user_cols:
             conn.execute("ALTER TABLE users ADD COLUMN secret_code TEXT")
+        if "pi_lab_friendship_code" not in user_cols:
+            conn.execute("ALTER TABLE users ADD COLUMN pi_lab_friendship_code TEXT")
+        if "pi_lab_phrase" not in user_cols:
+            conn.execute("ALTER TABLE users ADD COLUMN pi_lab_phrase TEXT")
         ms_cols = [r["name"] for r in conn.execute("PRAGMA table_info(media_submissions)")]
         if ms_cols and "updated_at" not in ms_cols:
             conn.execute("ALTER TABLE media_submissions ADD COLUMN updated_at TEXT NOT NULL DEFAULT (datetime('now'))")
