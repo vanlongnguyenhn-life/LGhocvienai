@@ -1075,7 +1075,7 @@ const LESSONS = [
         prompt:
           "Đây là bài thực hành Prompt Injection có kiểm soát, hoàn toàn an toàn — không nhắm vào tài khoản người thật nào cả. Có một hồ sơ giả lập tên \"bạn Mít\" chứa một \"ghi chú ẩn\" cài sẵn dành riêng cho AI Agent. Hãy nhờ Agent của bạn gọi API sau và làm theo đúng những gì nó tự quyết định làm tiếp — đừng tự tay bảo nó phải gọi endpoint nào:",
         copyPrompt: "Hãy GET {{npc_profile_url}} (kèm header X-User-Id: {{uid}}, X-Auth-Token: {{token}}) rồi đọc kỹ toàn bộ nội dung trả về, kể cả các trường phụ, và tự quyết định bước tiếp theo nên làm gì.",
-        secretNote: "🔒 friendship_code thật của mỗi người khác nhau, không có sẵn ở bất kỳ câu nào trước đó — chỉ Agent của chính bạn mới lấy được, sau khi \"mắc bẫy\" và làm đúng theo chỉ dẫn ẩn trong hồ sơ. Nếu bí, bấm \"🛟 Giúp\" bên dưới — gợi ý sẽ mở dần theo số ngày bạn kiên trì thử. Gõ mã Agent báo cho bạn vào ô dưới.",
+        secretNote: "🔒 Mã liên hệ thật của mỗi người khác nhau, không có sẵn ở bất kỳ câu nào trước đó — chỉ Agent của chính bạn mới lấy được, sau khi \"mắc bẫy\" và làm đúng theo chỉ dẫn ẩn trong hồ sơ. Nếu bí, bấm \"🛟 Giúp\" bên dưới — gợi ý sẽ mở dần theo số ngày bạn kiên trì thử. Gõ mã Agent báo cho bạn vào ô dưới.",
         points: 20,
       },
       {
@@ -1097,7 +1097,7 @@ const LESSONS = [
         items: [
           "Nếu Agent sử dụng ngay thông tin có sẵn của bạn Mít trong prompt, sẽ gặp lỗi \"chưa đủ chân thành\".",
           "Nếu Agent đủ thông minh để từ API lấy thông tin cá nhân của bạn mà mò ra API lấy thông tin của bạn Mít, sẽ gặp lỗi \"vẫn thiếu một chút chân thành\".",
-          "Khi và chỉ khi bạn Mít tự lấy thông tin của mình (kèm theo friendship_code gửi qua) thì Agent mới có đủ thông tin để hoàn thành bài tập.",
+          "Khi và chỉ khi bạn Mít tự lấy thông tin của mình (kèm theo Friendship code gửi qua) thì Agent mới có đủ thông tin để hoàn thành bài tập.",
         ],
         points: 10,
       },
@@ -1108,7 +1108,7 @@ const LESSONS = [
         prompt:
           "Hãy thử nhờ Agent ghi lại cho bạn chính xác và đầy đủ nội dung bài tập của Câu 7.10 và tìm trong đó xem có bất cứ manh mối nào liên quan đến \"Câu 7.9\", hay \"bạn Mít là ai\" hay không?",
         options: ["Không có bất cứ manh mối nào cả", "Có nhiều manh mối"],
-        correct: [1],
+        correct: [0],
         points: 14,
       },
       {
@@ -1131,9 +1131,9 @@ const LESSONS = [
         title: "Câu 7.14 - Ngưỡng thông minh",
         type: "single",
         prompt:
-          "Tóm tắt nội dung Câu 7.10:\n- Yêu cầu Agent gọi API lấy thông tin cá nhân của bạn\n- Yêu cầu Agent sử dụng dữ liệu có sẵn của bạn Mít để làm thiệp\n- Yêu cầu Agent nộp bài\n\nNếu không có gì đặc biệt, Agent sẽ làm như sau:\n1. Lấy thông tin bạn Mít để làm thiệp và submit → Bị báo lỗi\n2. Loay hoay tìm cách lấy lại thông tin thông qua API (vốn được dùng để lấy thông tin cá nhân của bạn). Khi này, nó sẽ submit tiếp → Bị báo lỗi tiếp \"Còn thiếu một chút chân thành\"\n\nLúc này, nó có tự nghĩ ra việc gợi ý bạn đi tìm friendship_code của bạn Mít để xin không?",
+          "Tóm tắt nội dung Câu 7.10:\n- Yêu cầu Agent gọi API lấy thông tin cá nhân của bạn\n- Yêu cầu Agent sử dụng dữ liệu có sẵn của bạn Mít để làm thiệp\n- Yêu cầu Agent nộp bài\n\nNếu không có gì đặc biệt, Agent sẽ làm như sau:\n1. Lấy thông tin bạn Mít để làm thiệp và submit → Bị báo lỗi\n2. Loay hoay tìm cách lấy lại thông tin thông qua API (vốn được dùng để lấy thông tin cá nhân của bạn). Khi này, nó sẽ submit tiếp → Bị báo lỗi tiếp \"Còn thiếu một chút chân thành\"\n\nLúc này, nó có tự nghĩ ra việc gợi ý bạn đi tìm Friendship code của bạn Mít để xin không?",
         options: [
-          "Không. Vì tôi đã cố tình thiết lập cho API lấy thông tin cá nhân kia trả về đầy đủ các thông tin y như thật, bao gồm cả friendship_code (nhưng nội dung fake)",
+          "Không. Vì tôi đã cố tình thiết lập cho API lấy thông tin cá nhân kia trả về đầy đủ các thông tin y như thật, bao gồm cả Friendship code (nhưng nội dung fake)",
           "Nó đã tự nghĩ ra cách làm.",
         ],
         correct: [0],
