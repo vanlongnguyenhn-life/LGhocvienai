@@ -1000,9 +1000,9 @@ function renderQuestionCard(lesson, q, locked) {
       body.appendChild(renderMatchGrid(q, a));
     } else if (q.type === "assignment") {
       body.appendChild(renderAssignment(q, a));
-    } else if (q.type === "code" || q.type === "pi_lab_code") {
+    } else if (q.type === "code") {
       body.appendChild(renderCodeInput(q, a));
-    } else if (q.type === "agent_secret_code") {
+    } else if (q.type === "agent_secret_code" || q.type === "pi_lab_code") {
       body.appendChild(renderAgentSecretCode(q, a));
     } else if (q.type === "agent_media" || q.type === "agent_electron") {
       body.appendChild(renderAgentMediaStatus(q, a));
@@ -1032,7 +1032,7 @@ function renderQuestionCard(lesson, q, locked) {
         {
           class: "help-link",
           onclick: () => {
-            if (q.type === "agent_secret_code") {
+            if (q.type === "agent_secret_code" || q.type === "pi_lab_code") {
               a.hintPanelOpen = !a.hintPanelOpen;
               render();
               openQuestion(q.code);
