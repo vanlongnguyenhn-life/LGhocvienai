@@ -148,24 +148,24 @@ let TOTAL_POINTS = 0;
 function studentLearningState(s) {
   const doneCodes = new Set((s.done_codes || "").split(",").filter(Boolean));
   if (doneCodes.size === 0) {
-    return { status: "not_started", currentCode: ALL_QUESTIONS_ORDERED[0] || null, gaps: 0 };
+    return { status: "not_started", currentCode: ALL_QUESTIONS_ORDERED[0] || null, furthestCode: null, gaps: 0 };
   }
   if (doneCodes.size >= TOTAL_QUESTIONS) {
-    return { status: "completed", currentCode: null, gaps: 0 };
+    return { status: "completed", currentCode: null, furthestCode: null, gaps: 0 };
   }
-  // Câu XA NHẤT đã làm = frontier thực (vì có thể có "lỗ hổng" do lưu rớt trước đây).
+  // "Đang ở câu" = câu chưa làm ĐẦU TIÊN — đúng nơi app khoá/cho học viên tiếp tục (khớp trải nghiệm thật).
+  const firstGapCode = ALL_QUESTIONS_ORDERED.find((code) => !doneCodes.has(code)) || null;
+  const firstGapIdx = ALL_QUESTIONS_ORDERED.indexOf(firstGapCode);
+  // Câu XA NHẤT đã chạm tới (để biết học viên từng đi tới đâu).
   let furthestIdx = -1;
   ALL_QUESTIONS_ORDERED.forEach((code, i) => {
     if (doneCodes.has(code)) furthestIdx = i;
   });
-  // Câu đang làm = câu chưa xong đầu tiên SAU câu xa nhất.
-  let currentIdx = furthestIdx + 1;
-  while (currentIdx < ALL_QUESTIONS_ORDERED.length && doneCodes.has(ALL_QUESTIONS_ORDERED[currentIdx])) currentIdx++;
-  const currentCode = ALL_QUESTIONS_ORDERED[currentIdx] || null;
-  // Lỗ hổng = số câu ĐỨNG TRƯỚC frontier mà chưa được ghi nhận.
+  // Lỗ hổng = số câu chưa ghi nhận nằm TRƯỚC câu xa nhất (dấu hiệu tiến độ bị rớt trước đây).
   let gaps = 0;
   for (let i = 0; i <= furthestIdx; i++) if (!doneCodes.has(ALL_QUESTIONS_ORDERED[i])) gaps++;
-  return { status: "in_progress", currentCode, gaps };
+  const furthestCode = furthestIdx > firstGapIdx ? ALL_QUESTIONS_ORDERED[furthestIdx] : null;
+  return { status: "in_progress", currentCode: firstGapCode, furthestCode, gaps };
 }
 
 const STATUS_LABEL = {
@@ -208,7 +208,12 @@ const state = {
 
 function fmtDate(s) {
   if (!s) return "—";
-  return s.replace("T", " ").slice(0, 16);
+  // Server lưu mốc thời gian theo UTC → hiển thị theo giờ Việt Nam (UTC+7).
+  const iso = (s.includes("T") ? s : s.replace(" ", "T")) + "Z";
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return s.replace("T", " ").slice(0, 16);
+  const vn = new Date(d.getTime() + 7 * 3600 * 1000);
+  return vn.toISOString().replace("T", " ").slice(0, 16);
 }
 
 function daysSince(tsString) {
@@ -1035,8 +1040,10 @@ function renderDashboard() {
           ? el("div", { class: "admin-current-q" }, [
               el("div", { class: "admin-current-q-pos" }, [`Câu ${currentQ.position}/${TOTAL_QUESTIONS}`]),
               el("div", { class: "admin-current-q-title" }, [currentQ.title]),
-              s.gaps > 0
-                ? el("div", { class: "admin-current-q-gap" }, [`⚠ còn ${s.gaps} câu trước chưa ghi nhận`])
+              s.furthestCode && QUESTION_INDEX[s.furthestCode]
+                ? el("div", { class: "admin-current-q-gap" }, [
+                    `⚠ đã tới câu ${QUESTION_INDEX[s.furthestCode].position} · còn ${s.gaps} câu chưa ghi nhận`,
+                  ])
                 : null,
             ])
           : "—",
