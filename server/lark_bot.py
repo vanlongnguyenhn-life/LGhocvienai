@@ -517,10 +517,13 @@ async def parse_task_instruction(instruction: str, stats_ctx: str):
         '{"message": "<nội dung Bé Ailai sẽ đăng vào nhóm lớp: tiếng Việt, thân thiện, tự soạn hoàn '
         'chỉnh theo yêu cầu; nếu cần số liệu thì dùng phần Bối cảnh>", '
         '"tag": "created|not_created|all|none", '
+        '"tag_names": ["tên người cần tag cụ thể"], '
         '"schedule_time": "HH:MM" | null, '
         '"schedule_date": "today|tomorrow|YYYY-MM-DD" | null}\n'
         "Trong đó: 'created' = tag những người ĐÃ tạo tài khoản; 'not_created' = tag những người CHƯA "
-        "tạo tài khoản; 'all' = tất cả; 'none' = không tag ai.\n"
+        "tạo tài khoản; 'all' = tất cả; 'none' = không tag ai theo nhóm.\n"
+        "'tag_names' = danh sách TÊN cụ thể cần tag (ví dụ giáo viên nói 'tag chị Kỳ Anh' → [\"Kỳ Anh\"]); "
+        "để mảng rỗng [] nếu không cần tag ai theo tên.\n"
         "GIỌNG VĂN của 'message' (bắt buộc): viết dưới danh nghĩa BÉ AILAI — người HỖ TRỢ lớp học, "
         "KHÔNG phải giáo viên. Bé tự xưng là 'Bé', gọi người học là 'cả nhà' hoặc 'các bạn' (hoặc "
         "'anh/chị'). TUYỆT ĐỐI KHÔNG dùng từ 'Thầy/cô', KHÔNG tự xưng là giáo viên, KHÔNG viết thay lời "
@@ -564,13 +567,23 @@ async def _prepare_task(open_id: str, text: str) -> str:
     message = parsed["message"].strip()
     tag = parsed.get("tag") or "none"
     if tag == "created":
-        taglist = created
+        taglist = list(created)
     elif tag == "not_created":
-        taglist = not_created
+        taglist = list(not_created)
     elif tag == "all":
         taglist = [m for m in members if m["open_id"]]
     else:
         taglist = []
+    # Tag thêm những người CỤ THỂ theo tên (khớp trong danh sách thành viên nhóm).
+    seen = {m["open_id"] for m in taglist}
+    for nm in (parsed.get("tag_names") or []):
+        key = (nm or "").strip().lower()
+        if not key:
+            continue
+        for m in members:
+            if m["open_id"] and m["open_id"] not in seen and key in (m["name"] or "").lower():
+                taglist.append(m)
+                seen.add(m["open_id"])
     mentions = "".join(f'<at user_id="{m["open_id"]}"></at> ' for m in taglist)
     group_text = (mentions + "\n" + message).strip() if mentions else message
 
