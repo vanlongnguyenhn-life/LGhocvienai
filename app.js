@@ -440,20 +440,30 @@ async function hydrateProgress() {
     Object.keys(state.answers).forEach((code) => {
       const a = state.answers[code];
       if ((a.status === "done" || a.status === "correct") && !serverDoneCodes.has(code)) {
-        a.status = "pending";
-        a.awardedPoints = 0;
+        if (a.saved === false) {
+          // Đã làm nhưng CHƯA lưu được lên server (mất mạng / server đang deploy) →
+          // GIỮ NGUYÊN và đẩy bù ở cuối. KHÔNG xoá (đây chính là chỗ gây tụt tiến độ trước đây).
+        } else {
+          // saved === true hoặc cache cũ (undefined): từng lưu mà server không còn →
+          // giáo viên đã chủ động reset → đưa về "chưa làm".
+          a.status = "pending";
+          a.awardedPoints = 0;
+        }
       }
     });
     Object.entries(data.answers).forEach(([code, info]) => {
       const a = getAnswer(code);
       a.status = info.status;
       a.awardedPoints = info.awardedPoints;
+      a.saved = true; // server đã có → xác nhận đã lưu
       if (info.answerData) {
         try {
           Object.assign(a, JSON.parse(info.answerData));
         } catch (e) {}
       }
     });
+    // Đẩy bù ngay các câu đã làm nhưng lưu hụt (server thiếu, saved=false).
+    flushUnsavedProgress();
     Object.entries(data.submissions).forEach(([code, criteria]) => {
       const a = getAnswer(code);
       Object.entries(criteria).forEach(([key, sub]) => {
@@ -929,7 +939,13 @@ function renderQuestionVideo(src) {
 // Đặt "" hoặc null để MỞ HẾT trở lại.
 const LOCKED_FROM_CODE = "8.1";
 const ALL_CODES_ORDERED = [];
-(typeof LESSONS !== "undefined" ? LESSONS : []).forEach((l) => l.questions.forEach((q) => ALL_CODES_ORDERED.push(q.code)));
+const QUESTION_BY_CODE = {};
+(typeof LESSONS !== "undefined" ? LESSONS : []).forEach((l) =>
+  l.questions.forEach((q) => {
+    ALL_CODES_ORDERED.push(q.code);
+    QUESTION_BY_CODE[q.code] = q;
+  })
+);
 const LOCKED_CODES = (() => {
   if (!LOCKED_FROM_CODE) return new Set();
   const idx = ALL_CODES_ORDERED.indexOf(LOCKED_FROM_CODE);
@@ -1722,6 +1738,9 @@ function buildAnswerData(q, a) {
 }
 
 async function persistQuestionStatus(q, a) {
+  // Đánh dấu "chưa xác nhận lưu" — nếu tải lại giữa chừng, hydrateProgress sẽ đẩy bù thay vì xoá.
+  a.saved = false;
+  saveState();
   const fd = new FormData();
   fd.append("question_code", q.code);
   fd.append("status", a.status);
@@ -1729,21 +1748,53 @@ async function persistQuestionStatus(q, a) {
   const answerData = buildAnswerData(q, a);
   if (answerData) fd.append("answer_data", JSON.stringify(answerData));
   // Thử lại nhiều lần để tránh MẤT TIẾN ĐỘ ÂM THẦM khi mạng/server chập chờn.
-  // Nếu vẫn thất bại sau nhiều lần thì báo học viên (không nuốt lỗi lặng lẽ).
-  for (let attempt = 0; attempt < 4; attempt++) {
+  for (let attempt = 0; attempt < 5; attempt++) {
     try {
       await API.submitQuestion(fd);
-      return; // đã lưu xong
+      a.saved = true; // server đã xác nhận
+      saveState();
+      return;
     } catch (err) {
-      if (attempt === 3) {
+      if (attempt === 4) {
         console.warn("Lưu tiến độ thất bại sau nhiều lần thử:", q.code, err);
-        showToast("⚠️ Chưa lưu được tiến độ câu này lên hệ thống. Kiểm tra mạng rồi nộp lại giúp mình nhé.");
+        // KHÔNG mất: giữ cờ saved=false, flushUnsavedProgress() sẽ tự đẩy bù khi server sống lại.
+        showToast("⚠️ Mạng/hệ thống đang chập chờn — tiến độ câu này sẽ tự lưu lại khi ổn định, bạn cứ học tiếp nhé.");
         return;
       }
-      await new Promise((r) => setTimeout(r, 700 * (attempt + 1)));
+      await new Promise((r) => setTimeout(r, 800 * (attempt + 1)));
     }
   }
 }
+
+// Đẩy bù mọi câu đã làm mà CHƯA lưu được lên server (saved === false). Gọi khi tải xong + định kỳ.
+async function flushUnsavedProgress() {
+  const pending = Object.keys(state.answers).filter((code) => {
+    const a = state.answers[code];
+    return (a.status === "done" || a.status === "correct") && a.saved === false && QUESTION_BY_CODE[code];
+  });
+  for (const code of pending) {
+    const a = state.answers[code];
+    const q = QUESTION_BY_CODE[code];
+    const fd = new FormData();
+    fd.append("question_code", code);
+    fd.append("status", a.status);
+    fd.append("awarded_points", String(a.awardedPoints || 0));
+    const answerData = buildAnswerData(q, a);
+    if (answerData) fd.append("answer_data", JSON.stringify(answerData));
+    try {
+      await API.submitQuestion(fd);
+      a.saved = true;
+      saveState();
+    } catch (e) {
+      /* để lần sau đẩy tiếp */
+    }
+  }
+}
+
+// Định kỳ đẩy bù tiến độ chưa lưu (phòng trường hợp server vừa gián đoạn xong sống lại).
+setInterval(() => {
+  if (state.loggedIn) flushUnsavedProgress();
+}, 20000);
 
 async function submitAnswer(lesson, q) {
   const a = getAnswer(q.code);
