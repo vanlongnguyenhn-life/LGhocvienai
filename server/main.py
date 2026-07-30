@@ -2309,9 +2309,14 @@ def admin_get_upload(request: Request, user_id: int, filename: str):
 app.mount("/static", StaticFiles(directory=BASE_DIR), name="static")
 
 
+# HTML đầu vào KHÔNG được cache — luôn revalidate để trình duyệt nhận đúng phiên bản app.js/data.js
+# mới nhất (nhờ đó bản vá luôn tới được học viên, không kẹt ở bản cũ trong cache).
+_NO_CACHE_HTML = {"Cache-Control": "no-cache, must-revalidate"}
+
+
 @app.get("/admin")
 def admin_page():
-    return FileResponse(BASE_DIR / "admin.html")
+    return FileResponse(BASE_DIR / "admin.html", headers=_NO_CACHE_HTML)
 
 
 @app.get("/{full_path:path}")
@@ -2320,4 +2325,4 @@ def serve_frontend(full_path: str):
     candidate = BASE_DIR / full_path
     if full_path and candidate.is_file() and candidate.resolve().is_relative_to(BASE_DIR.resolve()):
         return FileResponse(candidate)
-    return FileResponse(BASE_DIR / "index.html")
+    return FileResponse(BASE_DIR / "index.html", headers=_NO_CACHE_HTML)
