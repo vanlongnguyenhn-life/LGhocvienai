@@ -481,6 +481,11 @@ async function hydrateProgress() {
 }
 
 async function handleLogout() {
+  // Đẩy nốt các câu đã làm nhưng chưa kịp lưu lên server, TRƯỚC khi xoá dữ liệu máy —
+  // nếu không, đăng xuất sẽ làm mất tiến độ chưa lưu (không còn gì để heal-forward).
+  try {
+    await flushUnsavedProgress();
+  } catch (e) {}
   try {
     await API.logout();
   } catch (e) {}
