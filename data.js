@@ -1279,6 +1279,8 @@ const LESSONS = [
         type: "reflect",
         prompt: "Với tất cả những gì đã biết về token, bạn thấy nó rất giống một vật dụng cụ gì trong ngành du lịch?",
         minLength: 5,
+        gradingNote:
+          "QUY TẮC CHẤM NGHIÊM cho câu này (ghi đè quy tắc mặc định — không chấm mở): đáp án đúng DUY NHẤT là khái niệm \"thẻ từ\" (thẻ khoá phòng khách sạn dùng thẻ từ/keycard) — chấp nhận các cách viết như \"thẻ từ\", \"the tu\", \"keycard\", \"key card\", \"thẻ chìa khoá điện tử khách sạn\". Đánh KHÔNG đạt nếu câu trả lời không nêu đúng khái niệm thẻ từ/keycard, kể cả khi nói về một vật dụng du lịch khác nghe hợp lý (vé máy bay, hộ chiếu, boarding pass...).",
         points: 8,
       },
       {

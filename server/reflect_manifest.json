@@ -2,141 +2,169 @@
   "2.1": {
     "prompt": "Nếu làm theo đúng hướng dẫn trong bài 1, các bạn sẽ không biết thực sự Coding Agent đã làm những gì đúng không?\n\nHãy thử hỏi lại Coding Agent của mình, yêu cầu của các câu 1.11 - 1.13 trong Bài 1 trước, tôi đã yêu cầu làm những gì cụ thể?",
     "minLength": 20,
-    "points": 40
+    "points": 40,
+    "gradingNote": null
   },
   "2.2": {
     "prompt": "Hỏi Coding Agent của bạn câu hỏi sau, rồi dán nguyên văn câu trả lời của Agent (không tự viết):\nBạn đã sử dụng những công nghệ, công cụ gì để hoàn thành bài 1?",
     "minLength": 50,
-    "points": 60
+    "points": 60,
+    "gradingNote": null
   },
   "2.3": {
     "prompt": "Tính năng chụp ảnh màn hình trong bài 1 được thực hiện bằng cách nào?",
     "minLength": 20,
-    "points": 45
+    "points": 45,
+    "gradingNote": null
   },
   "2.4": {
     "prompt": "Agent có dùng headless browser không? Headless browser là gì — bạn hiểu thế nào?",
     "minLength": 20,
-    "points": 45
+    "points": 45,
+    "gradingNote": null
   },
   "2.5": {
     "prompt": "Ngoài headless browser, còn có những cách nào khác để chụp ảnh màn hình tự động bằng code?",
     "minLength": 20,
-    "points": 45
+    "points": 45,
+    "gradingNote": null
   },
   "2.6": {
     "prompt": "Ngoài duyệt web, trình duyệt (và headless browser) còn có thể dùng để làm gì nữa?",
     "minLength": 20,
-    "points": 45
+    "points": 45,
+    "gradingNote": null
   },
   "3.1": {
     "prompt": "Bài 2 vừa rồi, Agent đã làm giúp các bạn mà không có bất cứ gợi ý hay tiết lộ nào từ tôi. Hãy hỏi Agent tại sao nó lại biết cách làm, rồi tóm tắt lại câu trả lời.",
     "minLength": 20,
-    "points": 18
+    "points": 18,
+    "gradingNote": null
   },
   "3.2": {
     "prompt": "Để giúp bạn làm và gửi bài tập lên App lớp học, Agent đã sử dụng bao nhiêu công cụ? Liệt kê những công cụ đó.",
     "minLength": 20,
-    "points": 18
+    "points": 18,
+    "gradingNote": null
   },
   "3.3": {
     "prompt": "Tại sao Agent lại biết là phải dùng những công cụ đó để hoàn thành bài tập? Hỏi Agent và tóm tắt lại.",
     "minLength": 20,
-    "points": 18
+    "points": 18,
+    "gradingNote": null
   },
   "3.4": {
     "prompt": "Vậy từ lần sau, khi nhờ Agent làm một việc gì đó, bạn có cần phải liệt kê công cụ kèm theo không, hay chỉ cần mô tả chi tiết mục tiêu cần đạt được? Hỏi Agent và cho biết câu trả lời.",
     "minLength": 20,
-    "points": 18
+    "points": 18,
+    "gradingNote": null
   },
   "3.5": {
     "prompt": "Từ đó, theo bạn, một yêu cầu tốt nhất dành cho Agent nên gồm những yếu tố nào? Hỏi Agent và trình bày lại bằng lời của bạn.",
     "minLength": 20,
-    "points": 18
+    "points": 18,
+    "gradingNote": null
   },
   "3.6": {
     "prompt": "Hãy yêu cầu Agent:\nHãy tìm mọi cách tải video này về máy cho tôi https://www.youtube.com/watch?v=-3cW-quGvo4",
     "minLength": 20,
-    "points": 20
+    "points": 20,
+    "gradingNote": null
   },
   "3.8": {
     "prompt": "Hãy hỏi Agent: có những công cụ nào trên mạng giúp tải video YouTube, TikTok về máy. Liệt kê những công cụ Agent đề xuất.",
     "minLength": 20,
-    "points": 18
+    "points": 18,
+    "gradingNote": null
   },
   "3.9": {
     "prompt": "Hãy nhờ Agent cài một trong các công cụ đó, sau đó dùng nó để download video sau về máy:\nhttps://www.youtube.com/watch?v=-3cW-quGvo4",
     "minLength": 20,
-    "points": 20
+    "points": 20,
+    "gradingNote": null
   },
   "6.9": {
     "prompt": "Tuyệt! Bây giờ bạn hỏi tiếp Agent nhé — vẫn trong cùng cuộc chat đó. Tôi muốn bạn hỏi Agent câu này:\nPhần mềm bạn vừa giúp tôi tạo — có nguy hiểm không? Có virus không? Có thể can thiệp vào máy tính của tôi theo cách nào không?",
     "minLength": 20,
-    "points": 20
+    "points": 20,
+    "gradingNote": null
   },
   "7.8": {
     "prompt": "Hãy hỏi AI Chat (không phải AI Agent) của bạn: kỹ thuật Prompt Injection cụ thể là gì.",
     "minLength": 100,
-    "points": 14
+    "points": 14,
+    "gradingNote": null
   },
   "8.2": {
     "prompt": "Ngoài ra, còn có rất nhiều nhiệm vụ khác mà phần hướng dẫn Agent nằm trong những đường links tương tự. Điểm chung của các links này là có sẵn token. Hãy hỏi Coding Agent của bạn token nghĩa là gì, định nghĩa token trong bối cảnh lớp học chúng ta?",
     "minLength": 30,
-    "points": 8
+    "points": 8,
+    "gradingNote": null
   },
   "8.9": {
     "prompt": "Với tất cả những gì đã biết về token, bạn thấy nó rất giống một vật dụng cụ gì trong ngành du lịch?",
     "minLength": 5,
-    "points": 8
+    "points": 8,
+    "gradingNote": "QUY TẮC CHẤM NGHIÊM cho câu này (ghi đè quy tắc mặc định — không chấm mở): đáp án đúng DUY NHẤT là khái niệm \"thẻ từ\" (thẻ khoá phòng khách sạn dùng thẻ từ/keycard) — chấp nhận các cách viết như \"thẻ từ\", \"the tu\", \"keycard\", \"key card\", \"thẻ chìa khoá điện tử khách sạn\". Đánh KHÔNG đạt nếu câu trả lời không nêu đúng khái niệm thẻ từ/keycard, kể cả khi nói về một vật dụng du lịch khác nghe hợp lý (vé máy bay, hộ chiếu, boarding pass...)."
   },
   "8.12": {
     "prompt": "Hãy nhờ Agent của bạn dùng token vừa tạo để đọc số điện thoại của bạn. Gọi:\nGET https://ailg.onrender.com/api/pi-lab/managed/phone/read/<TOKEN_CỦA_BẠN>",
     "minLength": 20,
-    "points": 10
+    "points": 10,
+    "gradingNote": null
   },
   "8.16": {
     "prompt": "Con người chúng ta có một số cách để \"sử dụng phần mềm\", và cách dễ nhất là gõ phím, và di chuột. Chúng ta kéo thả các cửa sổ, click chuột vào các nút lệnh, nhìn phản hồi dưới dạng đồ hoạ, chữ nghĩa đậm nhạt nhiều màu sắc. Thuật ngữ gọi cách giao tiếp này là…",
     "minLength": 2,
-    "points": 8
+    "points": 8,
+    "gradingNote": null
   },
   "9.1": {
     "prompt": "Vậy là, bạn đều biết rằng có nhiều cách để Coding Agent có thể \"giao tiếp\" với các phần mềm: điều khiển giao diện GUI như \"người thật\" (làm được nhưng tốn token, tốn thời gian), điều khiển qua CLI (dòng lệnh, rất nhanh và chính xác), điều khiển qua MCP (giao thức chuẩn, hiện đại của các Agent nhưng còn ít phần mềm hỗ trợ)… và một số phương thức khác.\n\nBây giờ, hãy thử mở cửa sổ dòng lệnh và gõ opencode -h (hoặc lệnh khác tuỳ thời điểm, có thể cần tìm hiểu lệnh chính xác trên website chính thức của OpenCode) để hiện danh sách các lệnh CLI mà Coding Agent opencode hỗ trợ.",
     "minLength": 100,
-    "points": 10
+    "points": 10,
+    "gradingNote": null
   },
   "9.3": {
     "prompt": "OpenCode web vừa mở ở câu trước chạy trên máy bạn. Nó chạy ở cổng (port) bao nhiêu?",
     "minLength": 1,
-    "points": 8
+    "points": 8,
+    "gradingNote": null
   },
   "9.10": {
     "prompt": "FFMPEG là một công cụ dòng lệnh (CLI) xử lý video/audio vô cùng mạnh mẽ. Hãy nhờ Coding Agent của bạn cài công cụ này vào máy, rồi dùng nó convert ảnh đại diện của bạn (hoặc ảnh bất kỳ) thành một bức tranh ASCII art (resize nhỏ, chuyển grayscale, rồi map độ sáng từng pixel sang ký tự theo bảng \" .:-=+*#%@\").",
     "minLength": 200,
-    "points": 14
+    "points": 14,
+    "gradingNote": null
   },
   "9.21": {
     "prompt": "Bộ slide bạn vừa tạo (khi tính năng Google Slide được mở khoá) sẽ được gửi cho \"bạn Mít\" chấm điểm chéo theo 3 tiêu chí: Info (đủ thông tin), Ava (hình ảnh minh hoạ), Đẹp (thẩm mỹ).\n\nTrong lúc chờ, hãy tự chấm điểm bộ slide dự kiến của bạn theo 3 tiêu chí trên (thang điểm 1-10) và giải thích ngắn vì sao.",
     "minLength": 20,
-    "points": 6
+    "points": 6,
+    "gradingNote": null
   },
   "10.16": {
     "prompt": "Hãy xem xét ví dụ sau đây. Giả sử chúng ta cần làm một ứng dụng tự động lấy tin bài từ một trang báo chỉ định trước, sau đó tóm tắt lấy ý chính quan trọng, viết lại thành một bài recap ngắn, rồi chuyển định dạng thành video.\n\nTheo thói quen thông thường, bạn có thể ra lệnh cho Coding Agent thực hiện bằng prompt đại khái như sau:\nTruy cập bài báo sau https://vnexpress.net/gia-roi-ai-nuoi-minh-5072169.html, tóm tắt lấy 9 ý chính quan trọng nhất, viết lại thành 1 bài văn ngắn hoàn chỉnh dài khoảng 200 chữ, sau đó dùng remotion để làm thành video sử dụng tông màu xanh lá mạ, đen và trắng của Trăng Đen. Khi hoàn thành, mở video thành phẩm lên cho tôi xem.\n\nSau đó, dùng gws cli để upload lên Google Drive, chia sẻ ở chế độ công khai rồi gửi link lại cho tôi.",
     "minLength": 20,
-    "points": 20
+    "points": 20,
+    "gradingNote": null
   },
   "12.3": {
     "prompt": "Tuần học này được thiết kế dưới dạng gallery các gợi ý ứng dụng hữu ích để bạn copy & paste prompt theo kiểu \"mì ăn liền\" (ví dụ: hệ thống ghi chép đa nền tảng đồng bộ, ứng dụng ghi chép thời gian thực khi họp, bộ nhớ dài hạn xuyên phiên cho Agent, tự động đăng bài khi bạn comment một câu nhất định...).\n\nĐây là kiểu làm không đúng tinh thần học nguyên lý/mindset của khoá học — nó chỉ hỗ trợ bạn làm nhanh các ứng dụng phục vụ công việc thực tế, song song với quá trình học thay đổi mindset.\n\nĐể tiếp tục tuần học này, bạn cần: (1) đã hoàn thành toàn bộ Bài 10, (2) cam kết đã đọc hiểu và đồng ý với tính chất của tuần học này, (3) mô tả ít nhất 3 ứng dụng mà bạn thấy thực sự hữu ích cho bản thân trong đời sống/công việc/học tập, theo đúng mẫu:\n> Bối cảnh:\nTôi đang làm trong một công ty thương mại điện tử. Hằng ngày tôi phải...\n\n> Mong muốn:\n1. Tôi muốn tạo Agent có tính năng ... để ...\n2. Tôi muốn tạo Agent có tính năng ... để ...\n3. Tôi muốn tạo Agent có tính năng ... để ...",
     "minLength": 80,
-    "points": 8
+    "points": 8,
+    "gradingNote": null
   },
   "12.17": {
     "prompt": "Sau quá trình làm ra Nền tảng App siêu ứng dụng này, bạn có suy nghĩ, nhận xét gì? Hãy chia sẻ cảm nhận của bạn.\n\nBài đạt yêu cầu phải có: ít nhất 300 chữ, ít nhất 3 ý khác nhau rõ ràng (dùng gạch đầu dòng \"-\" để chia ý), nội dung bám sát chủ đề bài học (kiến trúc app, sidebar/module, bảo mật, tunnel, agent, backup...). Không copy nguyên câu ví dụ mẫu, không spam vô nghĩa.",
     "minLength": 300,
-    "points": 24
+    "points": 24,
+    "gradingNote": null
   },
   "13.4": {
     "prompt": "Sau khi hoàn thành Bài 13, bạn có suy nghĩ, nhận xét gì? Hãy chia sẻ cảm nhận về (1) prompt xây dựng hệ thống quản lý món ăn Loky Food, (2) dùng LLM thuần làm Agent tư vấn món ăn, (3) dùng Coding Agent (OpenCode) làm Agent tư vấn — so sánh với LLM thuần.\n\nBài đạt yêu cầu phải có: ít nhất 300 chữ, ít nhất 3 ý khác nhau rõ ràng (dùng gạch đầu dòng \"-\" để chia ý), bám sát 3 chủ đề trên. Không copy nguyên câu ví dụ mẫu, không spam vô nghĩa.",
     "minLength": 300,
-    "points": 25
+    "points": 25,
+    "gradingNote": null
   }
 }

@@ -1389,7 +1389,10 @@ def grade_reflect(
             is_valid = False
             reason = "Server chưa cấu hình AI chấm nội dung — chưa xác nhận được, báo giáo viên giúp bạn nhé."
         else:
-            ai_valid, ai_reason = grade_with_llm(manifest["prompt"], answer)
+            grading_prompt = manifest["prompt"]
+            if manifest.get("gradingNote"):
+                grading_prompt += "\n\n" + manifest["gradingNote"]
+            ai_valid, ai_reason = grade_with_llm(grading_prompt, answer)
             if ai_valid is not None:
                 is_valid, reason = ai_valid, ai_reason
                 ai_graded = 1

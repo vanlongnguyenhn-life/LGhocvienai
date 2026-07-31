@@ -43,6 +43,10 @@ for (const lesson of LESSONS) {
         prompt: [q.prompt, q.copyPrompt].filter(Boolean).join("\n"),
         minLength: q.minLength || 20,
         points: q.points,
+        // Rubric riêng, chỉ đưa cho AI khi chấm — không hiện cho học viên — để chấm NGHIÊM hơn
+        // mức mặc định (mặc định chấp nhận mọi câu trả lời hợp lý đúng chủ đề, khá rộng) cho
+        // những câu có 1 khái niệm/từ khoá đúng cụ thể cần nêu ra.
+        gradingNote: q.gradingNote || null,
       };
     } else if (ANSWER_TYPES.has(q.type)) {
       // Các loại câu có đáp án cố định (trắc nghiệm/nối/sắp xếp/nhập mã/token scope/gate chưa
