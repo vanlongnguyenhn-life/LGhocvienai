@@ -942,7 +942,7 @@ function renderQuestionVideo(src) {
 
 // ===== TẠM KHOÁ theo mã câu: khoá mọi câu TỪ mã này trở đi (theo thứ tự khoá học). =====
 // Đặt "" hoặc null để MỞ HẾT trở lại.
-const LOCKED_FROM_CODE = "8.1";
+const LOCKED_FROM_CODE = "9.1";
 const ALL_CODES_ORDERED = [];
 const QUESTION_BY_CODE = {};
 (typeof LESSONS !== "undefined" ? LESSONS : []).forEach((l) =>
