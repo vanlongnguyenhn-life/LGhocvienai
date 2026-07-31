@@ -1375,7 +1375,7 @@ const LESSONS = [
         title: "Câu 8.18 - Tay và mắt của Agent",
         type: "single",
         prompt:
-          "Đây là một đoạn video rất ngắn tôi tự quay. Nếu có Claude Code bản trả phí, hoặc Antigravity trả phí, bạn cứ thử yêu cầu nó điều khiển trình duyệt xem sao nhé! (https://www.youtube.com/watch?v=LFYTBUMzYg0)\n\nNhư vậy, tôi hỏi lại thêm lần nữa. Theo bạn, thì AI Agent / Coding Agent có giao tiếp, sử dụng phần mềm qua GUI được hay không?",
+          "Nếu có Claude Code bản trả phí, hoặc Antigravity trả phí, bạn cứ thử yêu cầu nó điều khiển trình duyệt xem sao nhé — nó thực sự làm được: tự click chuột, gõ phím, đọc màn hình y hệt người dùng thật.\n\nNhư vậy, tôi hỏi lại thêm lần nữa. Theo bạn, thì AI Agent / Coding Agent có giao tiếp, sử dụng phần mềm qua GUI được hay không?",
         options: ["Hoàn toàn có thể", "Agent không thể, nó phải \"sử dụng\" qua cách khác"],
         correct: [0],
         points: 10,
