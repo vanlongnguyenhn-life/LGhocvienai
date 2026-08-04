@@ -151,6 +151,22 @@ def _vn_today_start_utc() -> str:
     return start_vn.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
 
 
+def _time_to_send(send_time_str, now, window_min: int = 90) -> str:
+    """Quyết định gửi theo giờ hẹn: 'wait' (chưa tới giờ) | 'send' (trong cửa sổ) | 'missed' (đã quá cửa sổ).
+    Tránh việc server khởi động muộn (sau giờ hẹn) rồi gửi luôn vào giờ linh tinh."""
+    try:
+        hh, mm = [int(x) for x in str(send_time_str).split(":")[:2]]
+    except Exception:
+        return "missed"
+    target = now.replace(hour=hh, minute=mm, second=0, microsecond=0)
+    delta_min = (now - target).total_seconds() / 60
+    if delta_min < 0:
+        return "wait"
+    if delta_min > window_min:
+        return "missed"
+    return "send"
+
+
 def _days_since_utc(ts: str | None) -> float:
     if not ts:
         return float("inf")
@@ -293,7 +309,11 @@ async def _tick():
     today = now.strftime("%Y-%m-%d")
     if cfg.get("last_sent_date") == today:
         return
-    if now.strftime("%H:%M") < str(cfg.get("send_time", "20:00")):
+    decision = _time_to_send(cfg.get("send_time", "20:00"), now)
+    if decision == "wait":
+        return
+    if decision == "missed":
+        save_config({"last_sent_date": today})  # lỡ cửa sổ → bỏ qua hôm nay, gửi đúng giờ ngày mai
         return
     try:
         result = await send_digest(cfg)
@@ -314,7 +334,12 @@ async def _tick_inactive():
     today = now.strftime("%Y-%m-%d")
     if cfg.get("last_sent_date") == today:
         return
-    if now.strftime("%H:%M") < str(cfg.get("send_time", "17:00")):
+    decision = _time_to_send(cfg.get("send_time", "17:00"), now)
+    if decision == "wait":
+        return
+    if decision == "missed":
+        save_inactive_config({"last_sent_date": today})  # lỡ cửa sổ → bỏ qua hôm nay, đúng giờ ngày mai
+        print(f"[inactive] {today}: quá cửa sổ gửi (server lên muộn), bỏ qua hôm nay.")
         return
     text = build_inactive_text(cfg)
     if not text:
