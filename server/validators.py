@@ -35,8 +35,14 @@ def sniff_image_format(data: bytes) -> str | None:
 # Ảnh chỉ dùng để giáo viên xem lại minh chứng, không cần giữ nguyên độ phân giải gốc.
 # Ổ đĩa của máy chủ dùng CHUNG cho ảnh và cơ sở dữ liệu — đĩa đầy là cả lớp mất khả năng
 # lưu bài, nên phải thu nhỏ trước khi lưu. Ảnh chụp màn hình 8MB thường co còn ~200-400KB.
-STORE_MAX_EDGE_PX = 1600
-STORE_JPEG_QUALITY = 82
+STORE_MAX_EDGE_PX = 2560
+STORE_JPEG_QUALITY = 85
+# Dưới ngưỡng này thì GIỮ NGUYÊN ảnh gốc, không đụng vào.
+# Ảnh chụp màn hình (nền phẳng, chữ sắc nét) nén PNG vốn đã rất gọn — một ảnh 4K đầy chữ
+# chỉ ~0.3MB. Thu nhỏ những ảnh này chỉ tiết kiệm vài trăm KB nhưng làm chữ nhỏ mờ đi, đúng
+# thứ giáo viên cần đọc rõ khi xem minh chứng. Chỉ những ảnh THẬT SỰ nặng (ảnh chụp máy ảnh,
+# nhiều chuyển màu — nguồn gây đầy đĩa) mới cần xử lý.
+SHRINK_THRESHOLD_BYTES = 1_500_000
 
 
 def shrink_image_for_storage(data: bytes) -> tuple[bytes, str]:
@@ -46,6 +52,8 @@ def shrink_image_for_storage(data: bytes) -> tuple[bytes, str]:
     luồng nộp bài của học viên. Chỉ dùng cho bản LƯU TRỮ — việc chấm AI vẫn dùng ảnh gốc.
     """
     fmt = sniff_image_format(data) or "png"
+    if len(data) <= SHRINK_THRESHOLD_BYTES:
+        return data, fmt
     try:
         import io
 
