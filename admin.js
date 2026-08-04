@@ -139,6 +139,9 @@ const QUESTION_INDEX = {};
 const ALL_QUESTIONS_ORDERED = [];
 let TOTAL_QUESTIONS = 0;
 let TOTAL_POINTS = 0;
+// Câu "gate" (nội dung thật chưa mở) không tính vào tiến độ/lỗ hổng — chúng không bao giờ
+// "done" được, nếu tính thì mọi học viên đều hiện cảnh báo lỗ hổng giả và không ai "hoàn thành".
+let NON_GATE_TOTAL = 0;
 (LESSONS || []).forEach((lesson) => {
   lesson.questions.forEach((q) => {
     QUESTION_INDEX[q.code] = {
@@ -153,6 +156,7 @@ let TOTAL_POINTS = 0;
     ALL_QUESTIONS_ORDERED.push(q.code);
     TOTAL_QUESTIONS += 1;
     TOTAL_POINTS += q.points;
+    if (q.type !== "gate") NON_GATE_TOTAL += 1;
   });
 });
 
@@ -161,21 +165,23 @@ function studentLearningState(s) {
   if (doneCodes.size === 0) {
     return { status: "not_started", currentCode: ALL_QUESTIONS_ORDERED[0] || null, furthestCode: null, gaps: 0, gapCodes: [] };
   }
-  if (doneCodes.size >= TOTAL_QUESTIONS) {
+  const isGate = (code) => QUESTION_INDEX[code] && QUESTION_INDEX[code].type === "gate";
+  const doneReal = ALL_QUESTIONS_ORDERED.filter((c) => !isGate(c) && doneCodes.has(c)).length;
+  if (doneReal >= NON_GATE_TOTAL) {
     return { status: "completed", currentCode: null, furthestCode: null, gaps: 0, gapCodes: [] };
   }
-  // "Đang ở câu" = câu chưa làm ĐẦU TIÊN — đúng nơi app khoá/cho học viên tiếp tục (khớp trải nghiệm thật).
-  const firstGapCode = ALL_QUESTIONS_ORDERED.find((code) => !doneCodes.has(code)) || null;
+  // "Đang ở câu" = câu chưa làm ĐẦU TIÊN (bỏ qua câu gate — chúng chưa mở nội dung).
+  const firstGapCode = ALL_QUESTIONS_ORDERED.find((code) => !isGate(code) && !doneCodes.has(code)) || null;
   const firstGapIdx = ALL_QUESTIONS_ORDERED.indexOf(firstGapCode);
   // Câu XA NHẤT đã chạm tới (để biết học viên từng đi tới đâu).
   let furthestIdx = -1;
   ALL_QUESTIONS_ORDERED.forEach((code, i) => {
     if (doneCodes.has(code)) furthestIdx = i;
   });
-  // Lỗ hổng = các câu chưa ghi nhận nằm TRƯỚC câu xa nhất (dấu hiệu tiến độ bị rớt trước đây).
+  // Lỗ hổng = các câu chưa ghi nhận nằm TRƯỚC câu xa nhất (bỏ qua gate — không phải lỗi lưu hụt).
   const gapCodes = [];
   for (let i = 0; i <= furthestIdx; i++) {
-    if (!doneCodes.has(ALL_QUESTIONS_ORDERED[i])) gapCodes.push(ALL_QUESTIONS_ORDERED[i]);
+    if (!isGate(ALL_QUESTIONS_ORDERED[i]) && !doneCodes.has(ALL_QUESTIONS_ORDERED[i])) gapCodes.push(ALL_QUESTIONS_ORDERED[i]);
   }
   const furthestCode = furthestIdx > firstGapIdx ? ALL_QUESTIONS_ORDERED[furthestIdx] : null;
   return { status: "in_progress", currentCode: firstGapCode, furthestCode, gaps: gapCodes.length, gapCodes };
@@ -724,7 +730,7 @@ function renderLogin() {
 }
 
 function studentProgressPct(s) {
-  return TOTAL_QUESTIONS ? Math.round((s.done_count / TOTAL_QUESTIONS) * 100) : 0;
+  return NON_GATE_TOTAL ? Math.min(100, Math.round((s.done_count / NON_GATE_TOTAL) * 100)) : 0;
 }
 
 function csvEscape(v) {

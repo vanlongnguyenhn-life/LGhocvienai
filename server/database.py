@@ -182,6 +182,14 @@ CREATE TABLE IF NOT EXISTS secret_code_attempts (
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+-- Mật thư học viên gửi "bạn Mít" (câu 9.24) — sent_at dùng để mô phỏng nhịp
+-- gửi → chờ → bạn Mít đọc (sau PI_LAB_LETTER_READ_DELAY_S giây).
+CREATE TABLE IF NOT EXISTS pi_lab_letters (
+    user_id INTEGER PRIMARY KEY,
+    sent_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 """
 
 

@@ -720,8 +720,12 @@
     "points": 8
   },
   "9.18": {
-    "type": "gate",
-    "points": 10
+    "type": "single",
+    "points": 10,
+    "correct": [
+      0
+    ],
+    "anyValid": false
   },
   "9.19": {
     "type": "gate",
@@ -738,11 +742,6 @@
   "9.23": {
     "type": "code",
     "points": 8,
-    "answer": "DUNG-CONG-CU-DUNG-LUC"
-  },
-  "9.24": {
-    "type": "code",
-    "points": 6,
     "answer": "DUNG-CONG-CU-DUNG-LUC"
   },
   "10.0": {

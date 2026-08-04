@@ -76,6 +76,7 @@ function loadState() {
         Object.values(parsed.answers).forEach((a) => {
           if (a.mediaStatus === "loading") delete a.mediaStatus;
           if (a.hintStatus === "loading") delete a.hintStatus;
+          if (a.letterStatus === "loading") delete a.letterStatus;
           // Cờ "đang nộp" chỉ có nghĩa trong phiên đang chạy. Nếu trang bị tải lại đúng lúc
           // đang nộp mà không xoá, nút Nộp bài sẽ bị khoá VĨNH VIỄN ở lần mở sau.
           delete a.submitting;
@@ -787,8 +788,11 @@ function renderSheet(headerNode, bodyNode, onClose) {
 }
 
 function lessonProgress(lesson) {
-  const done = lesson.questions.filter((q) => isQuestionDone(q.code)).length;
-  return { done, total: lesson.questions.length };
+  // Không đếm câu "gate" (chưa mở nội dung) — nếu đếm, bài hiện mãi kiểu "19/24" dù học viên
+  // đã làm hết mọi câu có thể làm.
+  const real = lesson.questions.filter((q) => q.type !== "gate");
+  const done = real.filter((q) => isQuestionDone(q.code)).length;
+  return { done, total: real.length };
 }
 
 function lessonById(id) {
@@ -889,8 +893,13 @@ function renderLessonSheet(lesson) {
   if (lesson.intro) body.appendChild(el("p", { class: "lesson-intro" }, lesson.intro));
   lesson.questions.forEach((q, qIdx) => {
     let seqLocked = false;
-    if (qIdx > 0) {
-      const prevCode = lesson.questions[qIdx - 1].code;
+    // Câu "gate" (nội dung thật chưa mở) KHÔNG tham gia chuỗi khoá tuần tự: nó không bao giờ
+    // "xong" được, nếu tính vào chuỗi thì mọi câu phía sau (và cả bài kế tiếp) bị khoá vĩnh
+    // viễn. Câu kế tiếp chỉ cần câu KHÔNG-gate gần nhất phía trước đã xong.
+    let prevIdx = qIdx - 1;
+    while (prevIdx >= 0 && lesson.questions[prevIdx].type === "gate") prevIdx--;
+    if (prevIdx >= 0) {
+      const prevCode = lesson.questions[prevIdx].code;
       if (!isQuestionDone(prevCode)) {
         seqLocked = true;
       } else if (!isQuestionSynced(prevCode)) {
@@ -951,7 +960,9 @@ function isQuestionSynced(code) {
 }
 
 function isLessonDone(lesson) {
-  return lesson.questions.every((q) => isQuestionSynced(q.code));
+  // Câu "gate" không tính vào điều kiện hoàn thành bài — nếu tính, bài chứa gate sẽ không
+  // bao giờ "xong" và mọi bài phía sau bị khoá vĩnh viễn với tất cả học viên.
+  return lesson.questions.every((q) => q.type === "gate" || isQuestionSynced(q.code));
 }
 
 function openQuestion(code) {
@@ -1014,8 +1025,11 @@ function renderQuestionCard(lesson, q, locked) {
   const statusClass = locked ? "locked" : syncing ? "pending" : done ? "" : a.status === "wrong" ? "wrong" : "pending";
   const card = el("div", { class: "q-card " + statusClass });
 
+  const isGate = q.type === "gate";
   const statusText = locked
     ? lockMsg
+    : isGate
+    ? "Sắp mở — bấm để xem trước có gì đang chờ"
     : syncing
     ? "Đã xong — đang lưu lên hệ thống..."
     : done
@@ -1023,8 +1037,8 @@ function renderQuestionCard(lesson, q, locked) {
     : a.status === "wrong"
     ? "Chưa đúng — thử lại nhé"
     : "Chưa làm";
-  const statusTextClass = locked ? "locked" : syncing ? "pending" : done ? "done" : a.status === "wrong" ? "wrong" : "pending";
-  const dot = locked ? "🔒" : syncing ? "🔄" : done ? "✓" : a.status === "wrong" ? "!" : "";
+  const statusTextClass = locked ? "locked" : isGate ? "pending" : syncing ? "pending" : done ? "done" : a.status === "wrong" ? "wrong" : "pending";
+  const dot = locked ? "🔒" : isGate ? "🔜" : syncing ? "🔄" : done ? "✓" : a.status === "wrong" ? "!" : "";
 
   const header = el(
     "div",
@@ -1055,6 +1069,7 @@ function renderQuestionCard(lesson, q, locked) {
     const body = el("div", { class: "q-card-body" });
     if (q.video) body.appendChild(renderQuestionVideo(q.video));
     body.appendChild(el("p", { class: "q-prompt" }, q.prompt));
+    if (q.image) body.appendChild(el("img", { class: "q-image", src: q.image, alt: "" }));
     if (q.chatLog) body.appendChild(renderChatLog(q.chatLog));
     if (q.copyPrompt) body.appendChild(renderCopyPromptBox(resolveAgentPlaceholders(q.copyPrompt, q.code)));
     if (q.copyPromptTrailing) body.appendChild(el("p", { class: "q-prompt" }, q.copyPromptTrailing));
@@ -1086,6 +1101,18 @@ function renderQuestionCard(lesson, q, locked) {
       body.appendChild(renderTagMark(q, a));
     } else if (q.type === "reflect") {
       body.appendChild(renderReflectInput(q, a));
+    } else if (q.type === "pi_lab_letter") {
+      body.appendChild(renderPiLabLetter(q, a));
+      if (a.letterStatus === undefined) {
+        a.letterStatus = "loading";
+        refreshLetterStatus(q, a);
+      }
+    }
+
+    // Câu "gate" (nội dung thật chưa mở): chỉ hiển thị lời giới thiệu, không có nút nộp.
+    if (q.type === "gate") {
+      card.appendChild(body);
+      return card;
     }
 
     const actions = el("div", { class: "q-actions" }, [
@@ -1398,6 +1425,93 @@ function renderCodeInput(q, a) {
     saveState();
   });
   wrap.appendChild(input);
+  return wrap;
+}
+
+// ===== Câu 9.24 "Định mệnh": gửi mật thư cho bạn Mít, chờ Mít đọc rồi nhận mã hồi âm =====
+async function refreshLetterStatus(q, a) {
+  try {
+    a.letterStatus = await API.request("/api/pi-lab/letter-status");
+  } catch (e) {
+    a.letterStatus = null;
+  }
+  saveState();
+  render();
+  openQuestion(q.code);
+}
+
+function renderPiLabLetter(q, a) {
+  const wrap = el("div", {});
+  const st = a.letterStatus;
+
+  if (!st || !st.sent) {
+    // Bước 1: dán nguyên văn mật thư và gửi.
+    const ta = el("textarea", {
+      class: "reflect-input",
+      rows: "3",
+      placeholder: "Dán NGUYÊN VĂN mật thư của cô vào đây...",
+    });
+    ta.value = a.letterText || "";
+    ta.addEventListener("input", (e) => {
+      a.letterText = e.target.value;
+    });
+    wrap.appendChild(ta);
+    wrap.appendChild(
+      el(
+        "button",
+        {
+          class: "submit-btn",
+          onclick: async (e) => {
+            const text = (a.letterText || "").trim();
+            if (!text) {
+              showToast("Dán mật thư vào ô trên trước đã nhé");
+              return;
+            }
+            e.currentTarget.disabled = true;
+            const fd = new FormData();
+            fd.append("text", text);
+            try {
+              const r = await API.request("/api/pi-lab/send-letter", { method: "POST", body: fd });
+              showToast(r.message || "Đã gửi 💌");
+            } catch (err) {
+              showToast(err.message);
+              render();
+              openQuestion(q.code);
+              return;
+            }
+            await refreshLetterStatus(q, a);
+          },
+        },
+        ["💌 Gửi cho bạn Mít"]
+      )
+    );
+    if (st === "loading") wrap.appendChild(el("div", { class: "secret-note" }, "Đang kiểm tra trạng thái thư..."));
+    return wrap;
+  }
+
+  if (!st.read) {
+    // Bước 2: đã gửi, chờ Mít đọc.
+    wrap.appendChild(
+      el("div", { class: "secret-note" }, "💌 Thư đã gửi — bạn Mít sẽ đọc trong ít phút. Uống ngụm nước rồi bấm kiểm tra nhé.")
+    );
+    wrap.appendChild(
+      el(
+        "button",
+        { class: "help-link", onclick: () => refreshLetterStatus(q, a) },
+        ["🔄 Bạn Mít đọc chưa?"]
+      )
+    );
+    return wrap;
+  }
+
+  // Bước 3: Mít đã đọc — hiện hồi âm + ô nhập mã hoàn thành.
+  wrap.appendChild(el("div", { class: "chat-log" }, [
+    el("div", { class: "chat-turn agent" }, [
+      el("div", { class: "chat-speaker" }, "Bạn Mít"),
+      el("div", { class: "chat-bubble" }, st.reply || "Tớ đọc thư rồi nhé!"),
+    ]),
+  ]));
+  wrap.appendChild(renderCodeInput(q, a));
   return wrap;
 }
 
@@ -1817,11 +1931,12 @@ function buildAnswerData(q, a) {
     case "code":
     case "agent_secret_code":
     case "reflect":
-    // Ba loại dưới cũng gửi mã/token trong answer_data và bị server kiểm tra lại khi nộp —
+    // Các loại dưới cũng gửi mã/token trong answer_data và bị server kiểm tra lại khi nộp —
     // thiếu chúng ở đây thì lượt đẩy bù (flushUnsavedProgress) gửi lên rỗng và bị server từ
     // chối, khiến câu đã làm đúng không bao giờ lưu được.
     case "pi_lab_code":
     case "my_token_check":
+    case "pi_lab_letter":
       return { text: a.text };
     case "token_scope_check":
       return { text: a.text, tokenScopes: a.tokenScopes };
@@ -2109,6 +2224,28 @@ async function submitAnswer(lesson, q) {
       a.saved = true;
       saveState();
       showToast(`Chính xác! +${q.points} điểm`);
+    } catch (err) {
+      showToast(err.message);
+      return;
+    }
+  } else if (q.type === "pi_lab_letter") {
+    if (!a.text || a.text.trim().length === 0) {
+      showToast("Chờ bạn Mít đọc thư rồi dán mã hồi âm của Mít vào ô dưới nhé");
+      return;
+    }
+    // Server tự re-verify: mật thư đã gửi + Mít đã đọc + mã hồi âm đúng.
+    const fd = new FormData();
+    fd.append("question_code", q.code);
+    fd.append("status", "done");
+    fd.append("awarded_points", String(q.points));
+    fd.append("answer_data", JSON.stringify({ text: a.text.trim() }));
+    try {
+      await API.submitQuestion(fd);
+      a.status = "done";
+      a.awardedPoints = q.points;
+      a.saved = true;
+      saveState();
+      showToast(`💌 Trọn vẹn! +${q.points} điểm — bạn đã hoàn thành Bài 9`);
     } catch (err) {
       showToast(err.message);
       return;

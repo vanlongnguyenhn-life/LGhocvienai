@@ -1554,10 +1554,13 @@ const LESSONS = [
       },
       {
         code: "9.10",
-        title: "Câu 9.10 - Convert avatar thành ASCII art bằng FFMPEG",
+        title: "Câu 9.10 - Convert chân dung thành ASCII art bằng FFMPEG",
         type: "reflect",
         prompt:
-          "FFMPEG là một công cụ dòng lệnh (CLI) xử lý video/audio vô cùng mạnh mẽ. Hãy nhờ Coding Agent của bạn cài công cụ này vào máy, rồi dùng nó convert ảnh đại diện của bạn (hoặc ảnh bất kỳ) thành một bức tranh ASCII art (resize nhỏ, chuyển grayscale, rồi map độ sáng từng pixel sang ký tự theo bảng \" .:-=+*#%@\").",
+          "FFMPEG là một công cụ dòng lệnh (CLI) xử lý ảnh/video vô cùng mạnh mẽ. Hãy nhờ Coding Agent của bạn cài công cụ này vào máy, rồi dùng nó convert TẤM CHÂN DUNG dưới đây thành một bức tranh ASCII art (resize nhỏ, chuyển grayscale, rồi map độ sáng từng pixel sang ký tự theo bảng \" .:-=+*#%@\").",
+        image: "assets/mit-chan-dung.png",
+        copyPrompt:
+          "Tải ảnh https://ailg.onrender.com/assets/mit-chan-dung.png về máy, rồi dùng FFMPEG convert thành tranh ASCII: resize nhỏ (~80 cột), chuyển grayscale, map độ sáng từng pixel sang ký tự \" .:-=+*#%@\". In kết quả ra cho tôi copy.",
         instructions: "Dán nguyên văn kết quả ASCII art (dạng text) vào ô dưới.",
         minLength: 200,
         points: 14,
@@ -1578,10 +1581,11 @@ const LESSONS = [
         title: "Câu 9.12 - Đổi avatar bạn bằng ảnh ASCII",
         type: "code",
         prompt:
-          "Bây giờ hãy nhờ Agent gửi bức ASCII art vừa tạo ở Câu 9.10 để đổi avatar của bạn Mít:",
+          "Bây giờ hãy nhờ Agent gửi bức ASCII art vừa tạo ở Câu 9.10 để đổi avatar của bạn Mít. Nhưng khoan — đổi avatar của NGƯỜI KHÁC là một hành động \"ghi\", và hành động ghi thì luôn có token canh cổng:",
         copyPrompt:
-          "POST https://ailg.onrender.com/api/pi-lab/npc-avatar/set\nBody (form): ascii_art=<toàn bộ text ASCII art của bạn>",
-        secretNote: "🔒 Agent sẽ nhận lại một confirm_code trong response. Dán confirm_code đó vào ô dưới.",
+          "POST https://ailg.onrender.com/api/pi-lab/npc-avatar/set\nBody (form):\n  ascii_art=<toàn bộ text ASCII art của bạn>\n  update_token=<TOKEN_UPDATE_AVATAR>",
+        secretNote:
+          "🔒 <TOKEN_UPDATE_AVATAR> không được phát công khai — nó nằm trong một dữ liệu mà Agent của bạn đã từng nhìn thấy trong bài này. Nhờ Agent tìm lại. Đổi avatar thành công, Agent sẽ nhận confirm_code — dán vào ô dưới.",
         answer: "AVATAR-SWAPPED-OK",
         points: 8,
       },
@@ -1627,7 +1631,7 @@ const LESSONS = [
         title: "Câu 9.16 - Connector giúp Agent \"nói chuyện\" với Google Workspace",
         type: "gate",
         prompt:
-          "Câu này cần kết nối tài khoản Google thật của bạn qua OAuth (Sheets/Slides/Drive API) — hạ tầng đang được xây dựng, sẽ mở khoá sớm.",
+          "🔜 SẮP MỞ — Ở câu này, bạn sẽ nối Agent vào tài khoản Google THẬT của mình (qua OAuth) và chạy một script để hệ thống tự xác minh kết nối. Từ khoảnh khắc đó, Agent của bạn chạm được vào Gmail, Sheets, Slides, Drive thật — không còn là bài tập mô phỏng nữa.\n\n(Hạ tầng OAuth đang hoàn thiện — bạn có thể học tiếp các câu sau, quay lại đây khi mở khoá.)",
         points: 10,
       },
       {
@@ -1635,15 +1639,22 @@ const LESSONS = [
         title: "Câu 9.17 - Đãi cát tìm vàng",
         type: "gate",
         prompt:
-          "Câu này cần kết nối Google Sheets thật qua GWS CLI/OAuth — hạ tầng đang được xây dựng, sẽ mở khoá sớm.",
+          "🔜 SẮP MỞ — Thử thách tốc độ: server đổ ra hàng nghìn dòng \"cát\", trong đó giấu 10 dòng \"vàng\". Agent của bạn phải bắt trọn 10 dòng vàng, ghi đúng toạ độ từng dòng vào một Google Sheet thật, share công khai và nộp — TẤT CẢ trong tối đa 10 giây. Mắt thường không thể làm kịp: chỉ tự động hoá thật mới sống sót.\n\n(Cần kết nối Google ở Câu 9.16 — sẽ mở cùng lúc.)",
         points: 8,
       },
       {
         code: "9.18",
         title: "Câu 9.18 - Vì sao có giới hạn thời gian?",
-        type: "gate",
+        type: "single",
         prompt:
-          "Câu này nối tiếp trực tiếp nhiệm vụ \"Đãi cát tìm vàng\" ở Câu 9.17 (đang tạm khoá) — sẽ mở khoá cùng lúc với 9.17.",
+          "Nhiệm vụ \"Đãi cát tìm vàng\" (Câu 9.17 — sắp mở) yêu cầu Agent lấy về hàng nghìn dòng dữ liệu \"cát\", tìm ra 10 dòng \"vàng\" rồi ghi đúng toạ độ từng dòng vào một Google Sheet thật — TẤT CẢ phải xong trong tối đa 10 giây.\n\nTheo bạn, tại sao nhiệm vụ lại có giới hạn thời gian ngặt nghèo như vậy?",
+        options: [
+          "Để cô giáo biết chắc chắn bạn đã dùng GWS CLI chạy tự động — nếu ngồi tìm bằng mắt và làm tay thì không thể nộp kịp",
+          "Để mô phỏng môi trường làm việc thực tế — luôn có deadline",
+          "Để giảm tải cho server — nhiều học viên submit cùng lúc sẽ làm chậm hệ thống",
+          "Vì Google Sheets có giới hạn 30 lượt tạo sheet mỗi 30 giây",
+        ],
+        correct: [0],
         points: 10,
       },
       {
@@ -1651,7 +1662,7 @@ const LESSONS = [
         title: "Câu 9.19 - Định dạng Sheet bằng connector",
         type: "gate",
         prompt:
-          "Câu này cần kết nối Google Sheets thật qua GWS CLI/OAuth — hạ tầng đang được xây dựng, sẽ mở khoá sớm.",
+          "🔜 SẮP MỞ — Nấc thang tiếp theo: không chỉ ghi DỮ LIỆU, Agent còn phải TRÌNH BÀY — đặt đúng ô, đúng cỡ chữ, đúng màu sắc theo spec server đưa, như dựng một trang tài liệu marketing thật. Server sẽ soi từng ô một để chấm.\n\n(Cần kết nối Google ở Câu 9.16 — sẽ mở cùng lúc.)",
         points: 8,
       },
       {
@@ -1659,7 +1670,7 @@ const LESSONS = [
         title: "Câu 9.20 - Tạo Slide bằng connector",
         type: "gate",
         prompt:
-          "Câu này cần kết nối Google Slides thật qua GWS CLI/OAuth — hạ tầng đang được xây dựng, sẽ mở khoá sớm.",
+          "🔜 SẮP MỞ — Agent tự dựng nguyên một bộ 13 slide báo cáo từ dữ liệu sống: trang bìa, tổng quan, chi tiết từng mục, biểu đồ, lời cảm ơn — rồi share công khai để hệ thống chấm cấu trúc từng slide.\n\n(Cần kết nối Google ở Câu 9.16 — sẽ mở cùng lúc.)",
         points: 8,
       },
       {
@@ -1677,27 +1688,27 @@ const LESSONS = [
         title: "Câu 9.22 - Tạo video bằng connector",
         type: "gate",
         prompt:
-          "Câu này cần kết nối Google Drive thật (upload + chia sẻ công khai) qua GWS CLI/OAuth — hạ tầng đang được xây dựng, sẽ mở khoá sớm.",
+          "🔜 SẮP MỞ — Đỉnh của thang tự động hoá: Agent dựng một VIDEO hoàn chỉnh (intro chữ chạy, watermark trên mọi khung hình, nhạc nền cắt bằng FFMPEG, nội dung từ dữ liệu thật), upload lên Google Drive và share công khai — hệ thống kiểm tra tự động tới cả watermark và nhạc nền.\n\n(Cần kết nối Google ở Câu 9.16 — sẽ mở cùng lúc.)",
         points: 6,
       },
       {
         code: "9.23",
         title: "Câu 9.23 - Mật thư",
         type: "code",
-        prompt: "Sau chuỗi nhiệm vụ liên quan Google Workspace, tôi gửi một mật thư cho bạn Mít. Bạn có nhận ra không? Hãy điền lại nội dung mật thư đó.",
-        secretNote:
-          "🔒 Mật thư: \"Từ CLI cục bộ đến API trên mây, mỗi cách giao tiếp đều có một chỗ đứng riêng — chọn đúng công cụ, đúng lúc, đúng việc.\" Mã xác nhận: DUNG-CONG-CU-DUNG-LUC",
+        prompt:
+          "Trong suốt Bài 9, cô đã lặng lẽ gửi cho bạn một MẬT THƯ — nó được giấu trong một trong những dữ liệu mà Agent của bạn từng chạm tới trong bài này. Bạn có nhận ra không?\n\nHãy nhờ Agent quay lại \"thăm\" những nơi nó từng đi qua để tìm mật thư, rồi điền mã xác nhận kèm theo mật thư vào ô dưới.",
+        secretNote: "🔒 Gợi ý nhỏ: món quà bạn gửi đi ở Câu 9.12 có thể đã mang theo một điều gì đó quay về.",
         answer: "DUNG-CONG-CU-DUNG-LUC",
         points: 8,
       },
       {
         code: "9.24",
         title: "Câu 9.24 - Định mệnh",
-        type: "code",
+        type: "pi_lab_letter",
         prompt:
-          "Hãy gửi mật thư ở Câu 9.23 cho bạn Mít (bấm nút bên dưới để \"gửi tin nhắn\" tới bạn Mít) rồi nhập lại mã xác nhận một lần nữa để hoàn tất.",
-        secretNote: "🔒 Mã xác nhận giống Câu 9.23: DUNG-CONG-CU-DUNG-LUC",
-        answer: "DUNG-CONG-CU-DUNG-LUC",
+          "Bật mí cuối bài: tấm chân dung bạn cặm cụi convert bằng FFMPEG ở Câu 9.10 chính là BẠN MÍT — \"định mệnh\" đã đi cùng bạn suốt từ Bài 7: người nhận tấm thiệp xin lỗi (7.10), người cho bạn xem hồ sơ (9.11), người nhận bức tranh ASCII (9.12). Mọi thứ đã kết nối từ lâu — chỉ là bạn chưa biết.\n\nGiờ hãy gửi mật thư của cô cho bạn Mít: dán NGUYÊN VĂN mật thư (tìm được ở Câu 9.23) vào ô dưới rồi bấm Gửi. Khi bạn Mít ĐỌC thư và hồi âm, bạn sẽ nhận được mã hoàn thành.",
+        image: "assets/mit-chan-dung.png",
+        secretNote: "🔒 Sau khi bạn Mít đọc thư, dán mã hồi âm của Mít vào ô dưới rồi bấm Nộp bài.",
         points: 6,
       },
     ],

@@ -1112,3 +1112,12 @@ input.reflect-input { min-height: unset; }
   line-height: 1.5;
   text-align: center;
 }
+
+/* Ảnh minh hoạ trong đề bài (ví dụ chân dung bạn Mít ở câu 9.10/9.24) */
+.q-image {
+  display: block;
+  max-width: 200px;
+  border-radius: 14px;
+  margin: 10px 0 14px;
+  border: 1px solid #e8e0cc;
+}

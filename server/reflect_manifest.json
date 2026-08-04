@@ -132,7 +132,7 @@
     "gradingNote": null
   },
   "9.10": {
-    "prompt": "FFMPEG là một công cụ dòng lệnh (CLI) xử lý video/audio vô cùng mạnh mẽ. Hãy nhờ Coding Agent của bạn cài công cụ này vào máy, rồi dùng nó convert ảnh đại diện của bạn (hoặc ảnh bất kỳ) thành một bức tranh ASCII art (resize nhỏ, chuyển grayscale, rồi map độ sáng từng pixel sang ký tự theo bảng \" .:-=+*#%@\").",
+    "prompt": "FFMPEG là một công cụ dòng lệnh (CLI) xử lý ảnh/video vô cùng mạnh mẽ. Hãy nhờ Coding Agent của bạn cài công cụ này vào máy, rồi dùng nó convert TẤM CHÂN DUNG dưới đây thành một bức tranh ASCII art (resize nhỏ, chuyển grayscale, rồi map độ sáng từng pixel sang ký tự theo bảng \" .:-=+*#%@\").\nTải ảnh https://ailg.onrender.com/assets/mit-chan-dung.png về máy, rồi dùng FFMPEG convert thành tranh ASCII: resize nhỏ (~80 cột), chuyển grayscale, map độ sáng từng pixel sang ký tự \" .:-=+*#%@\". In kết quả ra cho tôi copy.",
     "minLength": 200,
     "points": 14,
     "gradingNote": null
