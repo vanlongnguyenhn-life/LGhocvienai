@@ -249,6 +249,23 @@ MY_TOKEN_CHECK_MANIFEST = {
     "8.4": {"points": 8},
 }
 
+
+def _question_points(question_code: str) -> int:
+    """Điểm chuẩn của một câu, tra lần lượt qua mọi manifest (mỗi câu chỉ nằm ở đúng 1 manifest)."""
+    for m in (
+        ANSWER_MANIFEST,
+        ASSIGNMENT_MANIFEST,
+        REFLECT_MANIFEST,
+        MEDIA_SUBMIT_MANIFEST,
+        ELECTRON_SUBMIT_MANIFEST,
+        SECRET_CODE_MANIFEST,
+        PI_LAB_CODE_MANIFEST,
+        MY_TOKEN_CHECK_MANIFEST,
+    ):
+        if question_code in m:
+            return int(m[question_code].get("points") or 0)
+    return 0
+
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 # Nếu đặt, chỉ tổ chức Lark có tenant_key này mới được đăng nhập (để trống = cho mọi tổ chức của app).
 LARK_ALLOWED_TENANT_KEY = os.environ.get("LARK_ALLOWED_TENANT_KEY", "").strip()
@@ -1955,6 +1972,41 @@ def admin_reset_codes(request: Request, user_id: int, codes: str = Form(...)):
         d2 = conn.execute(f"DELETE FROM reflect_grades WHERE user_id = ? AND question_code IN ({ph})", args).rowcount
         d3 = conn.execute(f"DELETE FROM submissions WHERE user_id = ? AND question_code IN ({ph})", args).rowcount
     return {"ok": True, "deleted_status": d1, "deleted_reflect": d2, "deleted_submissions": d3}
+
+
+@app.post("/api/admin/students/{user_id}/grant-codes")
+def admin_grant_codes(request: Request, user_id: int, codes: str = Form(...)):
+    """Giáo viên chủ động công nhận một số câu là ĐÃ HOÀN THÀNH (dùng để vá lỗ hổng tiến độ do
+    lưu hụt trước đây). Bỏ qua mọi kiểm tra đáp án — đây là quyết định của giáo viên, không phải
+    học viên tự qua. Chỉ ghi cho câu CHƯA hoàn thành, không ghi đè câu đã có kết quả thật."""
+    current_admin(request)
+    code_list = [c.strip() for c in (codes or "").split(",") if c.strip()]
+    if not code_list:
+        raise HTTPException(status_code=400, detail="Chưa có câu nào để công nhận.")
+    granted = []
+    with get_db() as conn:
+        row = conn.execute("SELECT id FROM users WHERE id = ?", (user_id,)).fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Không tìm thấy học viên.")
+        for code in code_list:
+            existing = conn.execute(
+                "SELECT status FROM question_status WHERE user_id = ? AND question_code = ?",
+                (user_id, code),
+            ).fetchone()
+            if existing and existing["status"] in ("done", "correct"):
+                continue
+            conn.execute(
+                """
+                INSERT INTO question_status (user_id, question_code, status, awarded_points, answer_data)
+                VALUES (?, ?, 'done', ?, ?)
+                ON CONFLICT(user_id, question_code)
+                DO UPDATE SET status='done', awarded_points=excluded.awarded_points,
+                              answer_data=excluded.answer_data, updated_at=datetime('now')
+                """,
+                (user_id, code, _question_points(code), json.dumps({"grantedByAdmin": True})),
+            )
+            granted.append(code)
+    return {"ok": True, "granted": granted, "skipped": len(code_list) - len(granted)}
 
 
 @app.get("/api/admin/diag/ai")

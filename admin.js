@@ -50,6 +50,11 @@ const ADMIN_API = {
     fd.append("codes", codes.join(","));
     return this._send(`/api/admin/students/${id}/reset-codes`, { method: "POST", body: fd });
   },
+  grantCodes(id, codes) {
+    const fd = new FormData();
+    fd.append("codes", codes.join(","));
+    return this._send(`/api/admin/students/${id}/grant-codes`, { method: "POST", body: fd });
+  },
   larkChats() {
     return this._send("/api/admin/lark/chats");
   },
@@ -148,10 +153,10 @@ let TOTAL_POINTS = 0;
 function studentLearningState(s) {
   const doneCodes = new Set((s.done_codes || "").split(",").filter(Boolean));
   if (doneCodes.size === 0) {
-    return { status: "not_started", currentCode: ALL_QUESTIONS_ORDERED[0] || null, furthestCode: null, gaps: 0 };
+    return { status: "not_started", currentCode: ALL_QUESTIONS_ORDERED[0] || null, furthestCode: null, gaps: 0, gapCodes: [] };
   }
   if (doneCodes.size >= TOTAL_QUESTIONS) {
-    return { status: "completed", currentCode: null, furthestCode: null, gaps: 0 };
+    return { status: "completed", currentCode: null, furthestCode: null, gaps: 0, gapCodes: [] };
   }
   // "Đang ở câu" = câu chưa làm ĐẦU TIÊN — đúng nơi app khoá/cho học viên tiếp tục (khớp trải nghiệm thật).
   const firstGapCode = ALL_QUESTIONS_ORDERED.find((code) => !doneCodes.has(code)) || null;
@@ -161,11 +166,13 @@ function studentLearningState(s) {
   ALL_QUESTIONS_ORDERED.forEach((code, i) => {
     if (doneCodes.has(code)) furthestIdx = i;
   });
-  // Lỗ hổng = số câu chưa ghi nhận nằm TRƯỚC câu xa nhất (dấu hiệu tiến độ bị rớt trước đây).
-  let gaps = 0;
-  for (let i = 0; i <= furthestIdx; i++) if (!doneCodes.has(ALL_QUESTIONS_ORDERED[i])) gaps++;
+  // Lỗ hổng = các câu chưa ghi nhận nằm TRƯỚC câu xa nhất (dấu hiệu tiến độ bị rớt trước đây).
+  const gapCodes = [];
+  for (let i = 0; i <= furthestIdx; i++) {
+    if (!doneCodes.has(ALL_QUESTIONS_ORDERED[i])) gapCodes.push(ALL_QUESTIONS_ORDERED[i]);
+  }
   const furthestCode = furthestIdx > firstGapIdx ? ALL_QUESTIONS_ORDERED[furthestIdx] : null;
-  return { status: "in_progress", currentCode: firstGapCode, furthestCode, gaps };
+  return { status: "in_progress", currentCode: firstGapCode, furthestCode, gaps: gapCodes.length, gapCodes };
 }
 
 const STATUS_LABEL = {
@@ -572,6 +579,27 @@ async function handleTeacher(id, isTeacher) {
     alert(err.message || "Không cập nhật được quyền giáo viên.");
   }
   render();
+}
+
+async function handleGrantGaps(userId, displayName, gapCodes) {
+  if (!gapCodes || gapCodes.length === 0) return;
+  const preview = gapCodes.slice(0, 12).join(", ") + (gapCodes.length > 12 ? `, … (+${gapCodes.length - 12})` : "");
+  if (
+    !confirm(
+      `Công nhận ${gapCodes.length} câu bị hổng của ${displayName} là ĐÃ HOÀN THÀNH?\n\n${preview}\n\n` +
+        "Đây là các câu học viên đã học qua nhưng hệ thống lưu hụt. Điểm sẽ được cộng như làm đúng.\nKhông thể hoàn tác."
+    )
+  ) {
+    return;
+  }
+  try {
+    const r = await ADMIN_API.grantCodes(userId, gapCodes);
+    await loadStudents();
+    render();
+    alert(`Đã công nhận ${r.granted.length} câu` + (r.skipped ? ` (bỏ qua ${r.skipped} câu đã có kết quả thật).` : "."));
+  } catch (err) {
+    alert("Thất bại: " + (err.message || "lỗi không rõ"));
+  }
 }
 
 async function handleResetFromCode(userId) {
@@ -1044,6 +1072,13 @@ function renderDashboard() {
                 ? el("div", { class: "admin-current-q-gap" }, [
                     `⚠ đã tới câu ${QUESTION_INDEX[s.furthestCode].position} · còn ${s.gaps} câu chưa ghi nhận`,
                   ])
+                : null,
+              s.gaps > 0
+                ? el(
+                    "button",
+                    { class: "help-link", onclick: () => handleGrantGaps(s.id, s.display_name, s.gapCodes) },
+                    [`✓ Công nhận ${s.gaps} câu bị hổng`]
+                  )
                 : null,
             ])
           : "—",

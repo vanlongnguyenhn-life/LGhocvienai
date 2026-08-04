@@ -860,7 +860,17 @@ function renderLessonSheet(lesson) {
   body.appendChild(el("h3", { class: "sheet-body-title" }, lesson.title));
   if (lesson.intro) body.appendChild(el("p", { class: "lesson-intro" }, lesson.intro));
   lesson.questions.forEach((q, qIdx) => {
-    const seqLocked = qIdx > 0 && !isQuestionDone(lesson.questions[qIdx - 1].code);
+    let seqLocked = false;
+    if (qIdx > 0) {
+      const prevCode = lesson.questions[qIdx - 1].code;
+      if (!isQuestionDone(prevCode)) {
+        seqLocked = true;
+      } else if (!isQuestionSynced(prevCode)) {
+        // Câu trước đã trả lời đúng nhưng chưa lưu được lên server — chặn tạm thay vì cho qua
+        // rồi mất tiến độ âm thầm (đây chính là nguyên nhân gây lỗ hổng tiến độ trước đây).
+        seqLocked = "Câu trước đang được lưu lên hệ thống — chờ vài giây rồi thử lại nhé.";
+      }
+    }
     // Khoá tạm thời (admin) ưu tiên hiển thị thông báo riêng — giáo viên (is_teacher) luôn
     // được bỏ qua khoá tạm này để xem/kiểm tra nội dung không bị chặn.
     const isTeacher = !!(state.currentUser && state.currentUser.is_teacher);
@@ -905,8 +915,15 @@ function isQuestionDone(code) {
   return !!a && (a.status === "correct" || a.status === "done");
 }
 
+// Đã trả lời đúng NHƯNG server chưa xác nhận lưu (a.saved === false) — dùng để CHẶN đi tiếp,
+// tránh tạo lỗ hổng tiến độ vĩnh viễn nếu mất mạng/server redeploy đúng lúc học viên nộp bài.
+function isQuestionSynced(code) {
+  const a = state.answers[code];
+  return isQuestionDone(code) && a.saved !== false;
+}
+
 function isLessonDone(lesson) {
-  return lesson.questions.every((q) => isQuestionDone(q.code));
+  return lesson.questions.every((q) => isQuestionSynced(q.code));
 }
 
 function openQuestion(code) {
@@ -964,18 +981,22 @@ function renderQuestionCard(lesson, q, locked) {
   locked = !!locked;
   const a = getAnswer(q.code);
   const expanded = !locked && !!state.expandedQuestions[q.code];
-  const statusClass = locked ? "locked" : a.status === "correct" || a.status === "done" ? "" : a.status === "wrong" ? "wrong" : "pending";
+  const done = a.status === "correct" || a.status === "done";
+  const syncing = done && a.saved === false;
+  const statusClass = locked ? "locked" : syncing ? "pending" : done ? "" : a.status === "wrong" ? "wrong" : "pending";
   const card = el("div", { class: "q-card " + statusClass });
 
   const statusText = locked
     ? lockMsg
-    : a.status === "correct" || a.status === "done"
+    : syncing
+    ? "Đã xong — đang lưu lên hệ thống..."
+    : done
     ? "Đã xong — trả lời đúng"
     : a.status === "wrong"
     ? "Chưa đúng — thử lại nhé"
     : "Chưa làm";
-  const statusTextClass = locked ? "locked" : a.status === "correct" || a.status === "done" ? "done" : a.status === "wrong" ? "wrong" : "pending";
-  const dot = locked ? "🔒" : a.status === "correct" || a.status === "done" ? "✓" : a.status === "wrong" ? "!" : "";
+  const statusTextClass = locked ? "locked" : syncing ? "pending" : done ? "done" : a.status === "wrong" ? "wrong" : "pending";
+  const dot = locked ? "🔒" : syncing ? "🔄" : done ? "✓" : a.status === "wrong" ? "!" : "";
 
   const header = el(
     "div",
@@ -1068,9 +1089,31 @@ function renderQuestionCard(lesson, q, locked) {
     body.appendChild(actions);
 
     if (a.status === "correct" || a.status === "done") {
-      body.appendChild(
-        el("div", { class: "q-note" }, "Câu này đã hoàn thành. Nộp lại sẽ chấm theo logic hiện tại.")
-      );
+      if (syncing) {
+        body.appendChild(
+          el("div", { class: "q-note" }, [
+            "⚠️ Câu này chưa lưu được lên hệ thống (mất mạng hoặc server đang bận) — sẽ tự thử lại, hoặc bấm nút bên dưới để thử ngay.",
+          ])
+        );
+        body.appendChild(
+          el(
+            "button",
+            {
+              class: "help-link",
+              onclick: async () => {
+                await persistQuestionStatus(q, a);
+                render();
+                openQuestion(q.code);
+              },
+            },
+            ["🔄 Thử lưu lại ngay"]
+          )
+        );
+      } else {
+        body.appendChild(
+          el("div", { class: "q-note" }, "Câu này đã hoàn thành. Nộp lại sẽ chấm theo logic hiện tại.")
+        );
+      }
       body.appendChild(
         el("div", { class: "q-footer-xp" }, [el("span", { class: "trophy" }, `🏆 +${a.awardedPoints}`)])
       );
@@ -1758,12 +1801,16 @@ async function persistQuestionStatus(q, a) {
       await API.submitQuestion(fd);
       a.saved = true; // server đã xác nhận
       saveState();
+      render(); // mở khoá câu tiếp theo ngay khi vừa lưu xong (xem isQuestionSynced)
       return;
     } catch (err) {
       if (attempt === 4) {
         console.warn("Lưu tiến độ thất bại sau nhiều lần thử:", q.code, err);
         // KHÔNG mất: giữ cờ saved=false, flushUnsavedProgress() sẽ tự đẩy bù khi server sống lại.
-        showToast("⚠️ Mạng/hệ thống đang chập chờn — tiến độ câu này sẽ tự lưu lại khi ổn định, bạn cứ học tiếp nhé.");
+        // Không cho đi tiếp câu sau cho tới khi lưu xong (seqLocked kiểm tra a.saved) — tránh
+        // đúng nguyên nhân gây mất tiến độ trước đây (lưu hụt rồi vẫn cho học tiếp).
+        showToast("⚠️ Mạng/hệ thống đang chập chờn — câu này sẽ tự lưu lại khi ổn định, đừng tắt trang nhé.");
+        render();
         return;
       }
       await new Promise((r) => setTimeout(r, 800 * (attempt + 1)));
@@ -1790,6 +1837,7 @@ async function flushUnsavedProgress() {
       await API.submitQuestion(fd);
       a.saved = true;
       saveState();
+      render(); // mở khoá ngay các câu đang bị chặn chờ đồng bộ (xem isQuestionSynced)
     } catch (e) {
       /* để lần sau đẩy tiếp */
     }
