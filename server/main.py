@@ -618,7 +618,7 @@ async def submit_criterion(
     if value_type == "image":
         if not file:
             raise HTTPException(status_code=400, detail="Thiếu file ảnh.")
-        data = await file.read()
+        data = await _read_upload_capped(file)
         is_valid, reason = validators.validate_image(data)
         if is_valid:
             # Thu nhỏ bản lưu trữ để không làm đầy ổ đĩa (dùng chung với cơ sở dữ liệu).
@@ -885,7 +885,7 @@ async def media_upload(
     if question_code not in MEDIA_QUESTION_CODES:
         raise HTTPException(status_code=400, detail="Câu hỏi không hợp lệ cho luồng media_submit.")
 
-    data = await file.read()
+    data = await _read_upload_capped(file)
     is_valid, reason = validators.validate_image(data)
 
     ai_graded = 0
@@ -2070,6 +2070,27 @@ def admin_reset_codes(request: Request, user_id: int, codes: str = Form(...)):
         d2 = conn.execute(f"DELETE FROM reflect_grades WHERE user_id = ? AND question_code IN ({ph})", args).rowcount
         d3 = conn.execute(f"DELETE FROM submissions WHERE user_id = ? AND question_code IN ({ph})", args).rowcount
     return {"ok": True, "deleted_status": d1, "deleted_reflect": d2, "deleted_submissions": d3}
+
+
+async def _read_upload_capped(file: UploadFile) -> bytes:
+    """Đọc file tải lên nhưng DỪNG ngay khi vượt ngưỡng, thay vì nạp trọn vào bộ nhớ rồi mới
+    kiểm tra. Một file vài trăm MB (gửi nhầm hoặc cố ý) có thể làm hết RAM của máy chủ và
+    làm sập cả lớp học. Đọc theo từng khối nên bộ nhớ luôn có trần."""
+    limit = validators.MAX_IMAGE_BYTES
+    chunks = []
+    total = 0
+    while True:
+        chunk = await file.read(256 * 1024)
+        if not chunk:
+            break
+        total += len(chunk)
+        if total > limit:
+            raise HTTPException(
+                status_code=413,
+                detail=f"Ảnh vượt quá {limit // (1024 * 1024)}MB — hãy chụp lại hoặc nén nhỏ hơn rồi thử lại nhé.",
+            )
+        chunks.append(chunk)
+    return b"".join(chunks)
 
 
 def _storage_usage() -> dict:

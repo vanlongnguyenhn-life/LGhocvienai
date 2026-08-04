@@ -30,10 +30,21 @@ def validate_password(password: str) -> str | None:
     return None
 
 
+# Phiên đăng nhập hết hạn sau ngần này ngày — khớp với thời hạn của cookie phía trình duyệt.
+# Trước đây phiên sống vĩnh viễn: bảng phiên phình mãi không ai dọn, và nếu một token bị lộ
+# (máy dùng chung, sao lưu lọt ra ngoài) thì nó dùng được mãi mãi.
+SESSION_TTL_DAYS = 30
+
+
 def create_session(user_id: int) -> str:
     token = secrets.token_urlsafe(32)
     with get_db() as conn:
         conn.execute("INSERT INTO sessions (token, user_id) VALUES (?, ?)", (token, user_id))
+        # Dọn phiên quá hạn của chính người này (rẻ, và giữ cho bảng không phình vô hạn).
+        conn.execute(
+            f"DELETE FROM sessions WHERE user_id = ? AND created_at < datetime('now','-{SESSION_TTL_DAYS} days')",
+            (user_id,),
+        )
     return token
 
 
@@ -42,10 +53,10 @@ def get_user_by_session(token: str | None):
         return None
     with get_db() as conn:
         row = conn.execute(
-            """
+            f"""
             SELECT u.id, u.username, u.display_name, u.avatar_url, u.approved, u.is_teacher
             FROM sessions s JOIN users u ON u.id = s.user_id
-            WHERE s.token = ?
+            WHERE s.token = ? AND s.created_at > datetime('now','-{SESSION_TTL_DAYS} days')
             """,
             (token,),
         ).fetchone()
