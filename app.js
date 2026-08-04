@@ -76,6 +76,9 @@ function loadState() {
         Object.values(parsed.answers).forEach((a) => {
           if (a.mediaStatus === "loading") delete a.mediaStatus;
           if (a.hintStatus === "loading") delete a.hintStatus;
+          // Cờ "đang nộp" chỉ có nghĩa trong phiên đang chạy. Nếu trang bị tải lại đúng lúc
+          // đang nộp mà không xoá, nút Nộp bài sẽ bị khoá VĨNH VIỄN ở lần mở sau.
+          delete a.submitting;
         });
       }
       return parsed;
@@ -1090,9 +1093,21 @@ function renderQuestionCard(lesson, q, locked) {
         "button",
         {
           class: "submit-btn",
-          onclick: () => submitAnswer(lesson, q),
+          // Khoá ngay khi đang gửi: bấm 2 lần sẽ gửi 2 lượt — với câu tự luận là gọi AI chấm
+          // 2 lần (tốn tiền gấp đôi) và 2 kết quả có thể ghi đè lẫn nhau.
+          disabled: a.submitting ? "" : null,
+          onclick: (e) => {
+            if (a.submitting) return;
+            a.submitting = true;
+            e.currentTarget.disabled = true;
+            submitAnswer(lesson, q).finally(() => {
+              a.submitting = false;
+              render();
+              openQuestion(q.code);
+            });
+          },
         },
-        ["➤ ", a.status === "correct" || a.status === "done" ? "Nộp lại" : "Nộp bài"]
+        a.submitting ? ["⏳ Đang nộp..."] : ["➤ ", a.status === "correct" || a.status === "done" ? "Nộp lại" : "Nộp bài"]
       ),
       el(
         "button",
