@@ -190,6 +190,30 @@ CREATE TABLE IF NOT EXISTS pi_lab_letters (
     sent_at TEXT NOT NULL DEFAULT (datetime('now')),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+-- GWS Lab (câu 9.16-9.22): dữ liệu nhiệm vụ sinh riêng cho từng học viên (dòng "vàng" 9.17,
+-- danh sách bạn 9.20...) + started_at để chấm giới hạn thời gian.
+CREATE TABLE IF NOT EXISTS gws_tasks (
+    user_id INTEGER NOT NULL,
+    question_code TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    started_at TEXT NOT NULL DEFAULT (datetime('now')),
+    PRIMARY KEY (user_id, question_code),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Nhật ký các lần Agent nộp bài GWS — lần gần nhất ĐẠT là điều kiện để /api/submit-question
+-- công nhận câu, server không tin bất kỳ trạng thái nào client tự khai.
+CREATE TABLE IF NOT EXISTS gws_attempts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    question_code TEXT NOT NULL,
+    url TEXT,
+    ok INTEGER NOT NULL DEFAULT 0,
+    detail TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 """
 
 

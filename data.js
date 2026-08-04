@@ -1431,7 +1431,7 @@ const LESSONS = [
     title: "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)",
     points: 212,
     intro:
-      "Bài này bạn sẽ thực hành để Coding Agent \"nói chuyện\" với nhiều loại phần mềm khác nhau: qua CLI (OpenCode, Gemini CLI), qua API/token (Google Workspace) — và hiểu khi nào nên dùng cách nào.\n\nGhi chú: các câu liên quan tương tác bạn học (9.11, 9.12, 9.21, 9.23, 9.24) dùng một nhân vật giả lập \"bạn Mít\" (không phải người thật) để bạn vẫn có trải nghiệm sống thật mà không đụng vào dữ liệu của ai. Các câu cần kết nối Google Workspace thật (9.16, 9.17, 9.19, 9.20, 9.22) đang tạm khoá, sẽ mở khi hoàn tất tích hợp Google OAuth.",
+      "Bài này bạn sẽ thực hành để Coding Agent \"nói chuyện\" với nhiều loại phần mềm khác nhau: qua CLI (OpenCode, Gemini CLI), qua API/token (Google Workspace) — và hiểu khi nào nên dùng cách nào.\n\nGhi chú: các câu tương tác bạn học (9.11, 9.12, 9.23, 9.24) dùng một nhân vật giả lập \"bạn Mít\" (không phải người thật) để bạn có trải nghiệm sống thật mà không đụng vào dữ liệu của ai. Các câu 9.16-9.22 cần một tài khoản Google THẬT của bạn — sản phẩm (Sheet/Slide/video) được hệ thống chấm tự động qua link chia sẻ công khai.",
     questions: [
       {
         code: "9.1",
@@ -1629,17 +1629,21 @@ const LESSONS = [
       {
         code: "9.16",
         title: "Câu 9.16 - Connector giúp Agent \"nói chuyện\" với Google Workspace",
-        type: "gate",
+        type: "gws_task",
         prompt:
-          "🔜 SẮP MỞ — Ở câu này, bạn sẽ nối Agent vào tài khoản Google THẬT của mình (qua OAuth) và chạy một script để hệ thống tự xác minh kết nối. Từ khoảnh khắc đó, Agent của bạn chạm được vào Gmail, Sheets, Slides, Drive thật — không còn là bài tập mô phỏng nữa.\n\n(Hạ tầng OAuth đang hoàn thiện — bạn có thể học tiếp các câu sau, quay lại đây khi mở khoá.)",
+          "Đến lúc Agent của bạn chạm vào Google Workspace THẬT. Bạn cần một tài khoản Google — Agent có thể dùng GWS CLI, Google API hay Apps Script, tuỳ nó chọn.\n\nNhiệm vụ khởi động: nhờ Agent tạo một Google Sheet MỚI, ghi vào ô A1 đúng MÃ CÁ NHÂN của bạn, share \"Bất kỳ ai có đường liên kết đều xem được\", rồi nộp URL cho hệ thống chấm.",
+        copyPrompt:
+          "Tôi đang làm bài lớp AI Agent. Hãy giúp tôi:\n1- GET https://ailg.onrender.com/api/gws/task/9.16/start (kèm header X-User-Id: {{uid}} và X-Auth-Token: {{token}}) để lấy personal_code của tôi.\n2- Dùng tài khoản Google của tôi (GWS CLI / API / Apps Script — cách nào cũng được, hỏi tôi nếu cần đăng nhập) tạo 1 Google Sheet MỚI, ghi personal_code vào ô A1.\n3- Share sheet ở chế độ \"Anyone with the link can VIEW\".\n4- POST https://ailg.onrender.com/api/gws/task/9.16/submit (cùng 2 header trên) với body JSON {\"url\": \"<link sheet>\"} — in kết quả chấm từng tiêu chí ra cho tôi xem.",
         points: 10,
       },
       {
         code: "9.17",
         title: "Câu 9.17 - Đãi cát tìm vàng",
-        type: "gate",
+        type: "gws_task",
         prompt:
-          "🔜 SẮP MỞ — Thử thách tốc độ: server đổ ra hàng nghìn dòng \"cát\", trong đó giấu 10 dòng \"vàng\". Agent của bạn phải bắt trọn 10 dòng vàng, ghi đúng toạ độ từng dòng vào một Google Sheet thật, share công khai và nộp — TẤT CẢ trong tối đa 10 giây. Mắt thường không thể làm kịp: chỉ tự động hoá thật mới sống sót.\n\n(Cần kết nối Google ở Câu 9.16 — sẽ mở cùng lúc.)",
+          "Thử thách tốc độ — và cũng là bài kiểm tra xem bạn có THẬT SỰ tự động hoá không: server đổ ra hàng nghìn dòng \"cát\", trong đó giấu 10 dòng \"vàng\" dạng AGS-{Ô}-{mã} (ví dụ AGS-D3-a1b2c3d4 nghĩa là giá trị đó phải nằm ở ô D3). Chương trình của bạn phải bắt trọn 10 dòng vàng, ghi đúng toạ độ vào một Google Sheet mới, share công khai và nộp — TẤT CẢ trong 20 giây. Ngồi tìm bằng mắt thì không bao giờ kịp.",
+        copyPrompt:
+          "Tôi đang làm bài tập tốc độ \"Đãi cát tìm vàng\" của lớp AI Agent. Hãy viết 1 chương trình nhỏ (Python/Node/bash tuỳ bạn) chạy trên máy tôi, làm TẤT CẢ các bước sau trong ≤ 20 giây:\n\n1- GET https://ailg.onrender.com/api/gws/task/9.17/start (header X-User-Id: {{uid}}, X-Auth-Token: {{token}}). Server trả text thuần gồm hàng nghìn dòng \"cát\", trong đó có 10 dòng \"vàng\" bắt đầu bằng \"AGS-\" dạng AGS-{CộtDòng}-{mã} (cột A-J, dòng 1-10). LƯU Ý: đồng hồ 20 giây bắt đầu chạy từ lúc gọi /start.\n2- Lọc ra 10 dòng vàng. Với mỗi dòng, ghi NGUYÊN VĂN cả dòng vào đúng ô {CộtDòng} của một Google Sheet MỚI (dùng tài khoản Google của tôi — GWS CLI/API/Apps Script đều được, chuẩn bị sẵn xác thực TRƯỚC khi gọi /start).\n3- Share sheet \"Anyone with the link can VIEW\".\n4- POST https://ailg.onrender.com/api/gws/task/9.17/submit (cùng 2 header) body JSON {\"url\": \"<link sheet>\"} — in kết quả chấm ra terminal.\n\nNếu quá giờ hoặc sai: POST https://ailg.onrender.com/api/gws/task/9.17/reset (cùng 2 header) để nhận thử thách mới rồi chạy lại.",
         points: 8,
       },
       {
@@ -1660,17 +1664,21 @@ const LESSONS = [
       {
         code: "9.19",
         title: "Câu 9.19 - Định dạng Sheet bằng connector",
-        type: "gate",
+        type: "gws_task",
         prompt:
-          "🔜 SẮP MỞ — Nấc thang tiếp theo: không chỉ ghi DỮ LIỆU, Agent còn phải TRÌNH BÀY — đặt đúng ô, đúng cỡ chữ, đúng màu sắc theo spec server đưa, như dựng một trang tài liệu marketing thật. Server sẽ soi từng ô một để chấm.\n\n(Cần kết nối Google ở Câu 9.16 — sẽ mở cùng lúc.)",
+          "Nấc thang tiếp theo: không chỉ ghi DỮ LIỆU, Agent còn phải TRÌNH BÀY — đặt đúng ô, đúng cỡ chữ, đúng màu chữ theo spec server đưa, như dựng một trang giới thiệu khoá học thật. Server sẽ tải bản sheet của bạn về và soi từng ô một để chấm cả nội dung lẫn định dạng.",
+        copyPrompt:
+          "Tôi đang làm bài tập trình bày tài liệu của lớp AI Agent. Hãy giúp tôi:\n1- GET https://ailg.onrender.com/api/gws/task/9.19/start (header X-User-Id: {{uid}}, X-Auth-Token: {{token}}). Server trả JSON gồm personal_code + danh sách 9 field, mỗi field có {cell, value, size, color}.\n2- Tạo 1 Google Sheet MỚI (tài khoản Google của tôi):\n   - Ghi personal_code vào ô A1.\n   - Với từng field: ghi value vào đúng ô cell, đặt cỡ chữ đúng size (pt), màu chữ đúng mã hex color.\n3- Share \"Anyone with the link can VIEW\".\n4- POST https://ailg.onrender.com/api/gws/task/9.19/submit (cùng 2 header) body JSON {\"url\": \"<link sheet>\"} — in bảng chấm từng tiêu chí ra cho tôi.",
         points: 8,
       },
       {
         code: "9.20",
         title: "Câu 9.20 - Tạo Slide bằng connector",
-        type: "gate",
+        type: "gws_task",
         prompt:
-          "🔜 SẮP MỞ — Agent tự dựng nguyên một bộ 13 slide báo cáo từ dữ liệu sống: trang bìa, tổng quan, chi tiết từng mục, biểu đồ, lời cảm ơn — rồi share công khai để hệ thống chấm cấu trúc từng slide.\n\n(Cần kết nối Google ở Câu 9.16 — sẽ mở cùng lúc.)",
+          "Agent tự dựng nguyên một bộ slide báo cáo từ dữ liệu hệ thống cấp: trang bìa, tổng quan, một slide riêng cho từng người bạn trong lớp, lời cảm ơn — rồi share công khai để hệ thống tải về chấm cấu trúc.",
+        copyPrompt:
+          "Tôi đang làm bài tập tạo slide tự động của lớp AI Agent. Hãy giúp tôi:\n1- GET https://ailg.onrender.com/api/gws/task/9.20/start (header X-User-Id: {{uid}}, X-Auth-Token: {{token}}). Server trả JSON gồm personal_code + danh sách 9 người bạn (name, done_count, total_text).\n2- Dùng tài khoản Google của tôi tạo 1 Google Slides MỚI, tối thiểu 12 slide:\n   - Slide 1 (bìa): tiêu đề \"Báo cáo hành trình lớp ALG\", phụ đề chứa personal_code.\n   - Slide 2 (tổng quan): liệt kê 9 bạn kèm tổng thời gian học (total_text).\n   - Slide 3-11: mỗi bạn 1 slide — tên, số câu đã làm (done_count), tổng thời gian.\n   - Slide cuối: lời \"Cảm ơn\".\n3- Share \"Anyone with the link can VIEW\".\n4- POST https://ailg.onrender.com/api/gws/task/9.20/submit (cùng 2 header) body JSON {\"url\": \"<link slides>\"} — in kết quả chấm ra cho tôi.",
         points: 8,
       },
       {
@@ -1678,7 +1686,7 @@ const LESSONS = [
         title: "Câu 9.21 - Tình bạn diệu kỳ",
         type: "reflect",
         prompt:
-          "Bộ slide bạn vừa tạo (khi tính năng Google Slide được mở khoá) sẽ được gửi cho \"bạn Mít\" chấm điểm chéo theo 3 tiêu chí: Info (đủ thông tin), Ava (hình ảnh minh hoạ), Đẹp (thẩm mỹ).\n\nTrong lúc chờ, hãy tự chấm điểm bộ slide dự kiến của bạn theo 3 tiêu chí trên (thang điểm 1-10) và giải thích ngắn vì sao.",
+          "Bộ slide bạn vừa tạo ở Câu 9.20 kể về hành trình của 9 người bạn trong lớp. Giờ hãy nhìn lại nó bằng con mắt của người NHẬN: nếu bạn là một trong 9 bạn ấy và được xem slide này, bạn sẽ chấm nó mấy điểm?\n\nTự chấm bộ slide của mình theo 3 tiêu chí: Info (đủ thông tin), Trình bày (bố cục, dễ đọc), Đẹp (thẩm mỹ) — thang 1-10, kèm giải thích ngắn vì sao cho từng tiêu chí.",
         instructions: "Điền điểm 3 tiêu chí và lý do.",
         minLength: 20,
         points: 6,
@@ -1686,9 +1694,11 @@ const LESSONS = [
       {
         code: "9.22",
         title: "Câu 9.22 - Tạo video bằng connector",
-        type: "gate",
+        type: "gws_task",
         prompt:
-          "🔜 SẮP MỞ — Đỉnh của thang tự động hoá: Agent dựng một VIDEO hoàn chỉnh (intro chữ chạy, watermark trên mọi khung hình, nhạc nền cắt bằng FFMPEG, nội dung từ dữ liệu thật), upload lên Google Drive và share công khai — hệ thống kiểm tra tự động tới cả watermark và nhạc nền.\n\n(Cần kết nối Google ở Câu 9.16 — sẽ mở cùng lúc.)",
+          "Đỉnh của thang tự động hoá trong bài: Agent dựng một VIDEO ngắn hoàn chỉnh (dùng FFMPEG đã cài ở Câu 9.10, hoặc Remotion nếu bạn thích), upload lên Google Drive và share công khai. Gợi ý nội dung: intro chữ \"Học Viện AI Life Group\", vài khung hình về hành trình Bài 9 của bạn — hoặc chính bức ASCII bạn Mít chuyển động!",
+        copyPrompt:
+          "Tôi đang làm bài tập tạo video tự động của lớp AI Agent. Hãy giúp tôi:\n1- Dùng FFMPEG (hoặc Remotion) trên máy tôi dựng 1 video MP4 ngắn (≥5 giây): mở đầu có dòng chữ \"Học Viện AI Life Group\", phần thân tuỳ ý sáng tạo (gợi ý: cho bức tranh ASCII bạn Mít ở Câu 9.10 xuất hiện).\n2- Upload file MP4 lên Google Drive của tôi (GWS CLI/API đều được).\n3- Share \"Anyone with the link can VIEW\" và lấy link dạng https://drive.google.com/file/d/{ID}/view\n4- POST https://ailg.onrender.com/api/gws/task/9.22/submit (header X-User-Id: {{uid}}, X-Auth-Token: {{token}}) body JSON {\"url\": \"<link video>\"} — in kết quả chấm ra cho tôi.",
         points: 6,
       },
       {

@@ -711,14 +711,6 @@
     ],
     "anyValid": false
   },
-  "9.16": {
-    "type": "gate",
-    "points": 10
-  },
-  "9.17": {
-    "type": "gate",
-    "points": 8
-  },
   "9.18": {
     "type": "single",
     "points": 10,
@@ -726,18 +718,6 @@
       0
     ],
     "anyValid": false
-  },
-  "9.19": {
-    "type": "gate",
-    "points": 8
-  },
-  "9.20": {
-    "type": "gate",
-    "points": 8
-  },
-  "9.22": {
-    "type": "gate",
-    "points": 6
   },
   "9.23": {
     "type": "code",

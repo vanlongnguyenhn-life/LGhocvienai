@@ -77,6 +77,7 @@ function loadState() {
           if (a.mediaStatus === "loading") delete a.mediaStatus;
           if (a.hintStatus === "loading") delete a.hintStatus;
           if (a.letterStatus === "loading") delete a.letterStatus;
+          if (a.gwsStatus === "loading") delete a.gwsStatus;
           // Cờ "đang nộp" chỉ có nghĩa trong phiên đang chạy. Nếu trang bị tải lại đúng lúc
           // đang nộp mà không xoá, nút Nộp bài sẽ bị khoá VĨNH VIỄN ở lần mở sau.
           delete a.submitting;
@@ -1107,6 +1108,12 @@ function renderQuestionCard(lesson, q, locked) {
         a.letterStatus = "loading";
         refreshLetterStatus(q, a);
       }
+    } else if (q.type === "gws_task") {
+      body.appendChild(renderGwsTask(q, a));
+      if (a.gwsStatus === undefined) {
+        a.gwsStatus = "loading";
+        refreshGwsStatus(q, a);
+      }
     }
 
     // Câu "gate" (nội dung thật chưa mở): chỉ hiển thị lời giới thiệu, không có nút nộp.
@@ -1425,6 +1432,50 @@ function renderCodeInput(q, a) {
     saveState();
   });
   wrap.appendChild(input);
+  return wrap;
+}
+
+// ===== Câu GWS (9.16-9.22): Agent nộp URL sản phẩm Google, web hiển thị kết quả chấm =====
+async function refreshGwsStatus(q, a) {
+  try {
+    a.gwsStatus = await API.request(`/api/gws/task/${encodeURIComponent(q.code)}/status`);
+  } catch (e) {
+    a.gwsStatus = null;
+  }
+  saveState();
+  render();
+  openQuestion(q.code);
+}
+
+function renderGwsTask(q, a) {
+  const wrap = el("div", {});
+  const st = a.gwsStatus;
+  if (st === "loading" || st === undefined) {
+    wrap.appendChild(el("div", { class: "secret-note" }, "Đang tải kết quả chấm..."));
+  } else if (!st || !st.attempted) {
+    wrap.appendChild(
+      el("div", { class: "secret-note" },
+        "Chưa có lần nộp nào — copy đề bài phía trên cho Agent chạy. Khi chương trình nộp xong, quay lại đây bấm Kiểm tra.")
+    );
+  } else {
+    const list = el("div", { class: "gws-criteria" });
+    (st.criteria || []).forEach((c) => {
+      list.appendChild(
+        el("div", { class: "gws-criterion " + (c.ok ? "ok" : "fail") }, [
+          el("span", {}, (c.ok ? "✅ " : "❌ ") + c.label),
+          c.note ? el("div", { class: "gws-criterion-note" }, c.note) : null,
+        ])
+      );
+    });
+    wrap.appendChild(list);
+    wrap.appendChild(
+      el("div", { class: "secret-note" },
+        st.ok ? "🎉 Lần nộp gần nhất ĐẠT mọi tiêu chí — bấm Nộp bài để chốt điểm." : "Lần nộp gần nhất chưa đạt — sửa theo tiêu chí rớt rồi cho Agent nộp lại.")
+    );
+  }
+  wrap.appendChild(
+    el("button", { class: "help-link", onclick: () => refreshGwsStatus(q, a) }, ["🔄 Kiểm tra kết quả chấm"])
+  );
   return wrap;
 }
 
@@ -2246,6 +2297,27 @@ async function submitAnswer(lesson, q) {
       a.saved = true;
       saveState();
       showToast(`💌 Trọn vẹn! +${q.points} điểm — bạn đã hoàn thành Bài 9`);
+    } catch (err) {
+      showToast(err.message);
+      return;
+    }
+  } else if (q.type === "gws_task") {
+    if (!a.gwsStatus || a.gwsStatus === "loading" || !a.gwsStatus.ok) {
+      showToast("Chưa có lần nộp ĐẠT — cho Agent chạy chương trình nộp bài, đạt hết tiêu chí rồi bấm Kiểm tra + Nộp.");
+      return;
+    }
+    // Server tự re-verify từ nhật ký lần nộp gần nhất (không tin client).
+    const fd = new FormData();
+    fd.append("question_code", q.code);
+    fd.append("status", "done");
+    fd.append("awarded_points", String(q.points));
+    try {
+      await API.submitQuestion(fd);
+      a.status = "done";
+      a.awardedPoints = q.points;
+      a.saved = true;
+      saveState();
+      showToast(`Chính xác! +${q.points} điểm`);
     } catch (err) {
       showToast(err.message);
       return;

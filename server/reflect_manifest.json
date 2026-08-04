@@ -138,7 +138,7 @@
     "gradingNote": null
   },
   "9.21": {
-    "prompt": "Bộ slide bạn vừa tạo (khi tính năng Google Slide được mở khoá) sẽ được gửi cho \"bạn Mít\" chấm điểm chéo theo 3 tiêu chí: Info (đủ thông tin), Ava (hình ảnh minh hoạ), Đẹp (thẩm mỹ).\n\nTrong lúc chờ, hãy tự chấm điểm bộ slide dự kiến của bạn theo 3 tiêu chí trên (thang điểm 1-10) và giải thích ngắn vì sao.",
+    "prompt": "Bộ slide bạn vừa tạo ở Câu 9.20 kể về hành trình của 9 người bạn trong lớp. Giờ hãy nhìn lại nó bằng con mắt của người NHẬN: nếu bạn là một trong 9 bạn ấy và được xem slide này, bạn sẽ chấm nó mấy điểm?\n\nTự chấm bộ slide của mình theo 3 tiêu chí: Info (đủ thông tin), Trình bày (bố cục, dễ đọc), Đẹp (thẩm mỹ) — thang 1-10, kèm giải thích ngắn vì sao cho từng tiêu chí.",
     "minLength": 20,
     "points": 6,
     "gradingNote": null

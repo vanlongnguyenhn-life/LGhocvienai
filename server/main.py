@@ -4,6 +4,10 @@ import json
 import mimetypes
 import os
 import re
+import csv as csv_mod
+import hashlib
+import io
+import random
 import secrets
 import shutil
 from datetime import datetime, timezone
@@ -802,6 +806,13 @@ def _friendship_code_criterion(row, question_code: str):
     }]
 
 
+def _personal_code_from_token(token: str) -> str:
+    """Mã cá nhân NGẮN dùng để nhúng vào sản phẩm công khai (Sheet/Slide) làm dấu vân tay chống
+    copy bài nhau. Dẫn xuất một chiều từ api_token — KHÔNG dùng token thật vì sản phẩm share
+    công khai, lộ token là lộ quyền gọi API thay học viên."""
+    return "AGS-" + hashlib.sha1(f"{token}::ags-personal".encode()).hexdigest()[:8].upper()
+
+
 @app.get("/api/me/agent-token")
 def get_agent_token(request: Request):
     user = require_approved_user(request)
@@ -811,7 +822,7 @@ def get_agent_token(request: Request):
         if not token:
             token = secrets.token_urlsafe(32)
             conn.execute("UPDATE users SET api_token = ? WHERE id = ?", (token, user["id"]))
-    return {"uid": user["id"], "token": token}
+    return {"uid": user["id"], "token": token, "personal_code": _personal_code_from_token(token)}
 
 
 @app.get("/api/agent-task/{question_code}")
@@ -1637,6 +1648,17 @@ def submit_question(
             raise HTTPException(status_code=400, detail="Mã hồi âm chưa đúng — xem lại lời hồi âm của bạn Mít.")
         awarded_points = PI_LAB_LETTER_MANIFEST[question_code]["points"]
 
+    if question_code in GWS_TASK_MANIFEST and status == "done":
+        # Câu Google Workspace: chỉ tính khi lần nộp gần nhất của Agent đã ĐẠT mọi tiêu chí.
+        with get_db() as conn:
+            row = conn.execute(
+                "SELECT ok FROM gws_attempts WHERE user_id = ? AND question_code = ? ORDER BY id DESC LIMIT 1",
+                (user["id"], question_code),
+            ).fetchone()
+        if not row or not row["ok"]:
+            raise HTTPException(status_code=400, detail="Chưa có lần nộp ĐẠT cho câu này — chạy chương trình nộp bài trước, đạt hết tiêu chí rồi mới bấm Nộp.")
+        awarded_points = GWS_TASK_MANIFEST[question_code]["points"]
+
     with get_db() as conn:
         conn.execute(
             """
@@ -1984,6 +2006,347 @@ def pi_lab_letter_status(request: Request):
         out["reply"] = f"{PI_LAB_MIT_REPLY}\n\nMã hoàn thành cho cậu: {PI_LAB_LETTER_CONFIRM_CODE}"
         out["confirm_code"] = PI_LAB_LETTER_CONFIRM_CODE
     return out
+
+
+# ===================== GWS LAB (Câu 9.16 - 9.22): chấm bài Google Workspace THẬT =====================
+# Học viên dùng tài khoản Google thật của HỌ (GWS CLI / API / Apps Script — Agent tự chọn cách).
+# Server chấm SẢN PHẨM qua link share công khai: Sheet đọc bằng export CSV/XLSX, Slides bằng
+# export PPTX, Drive qua trang xem công khai — nên KHÔNG cần server tích hợp OAuth mà vẫn chấm
+# được bài thật. Chính việc share đúng quyền cũng là một tiêu chí chấm (như web tham khảo).
+# Chống copy bài nhau: mỗi bài phải nhúng personal_code (dấu vân tay dẫn xuất từ token cá nhân),
+# riêng 9.17 dữ liệu "vàng" sinh ngẫu nhiên theo từng học viên nên chia sẻ kết quả là vô nghĩa.
+GWS_TASK_MANIFEST = {
+    "9.16": {"points": 10},
+    "9.17": {"points": 8},
+    "9.19": {"points": 8},
+    "9.20": {"points": 8},
+    "9.22": {"points": 6},
+}
+GWS_FETCH_MAX_BYTES = 20 * 1024 * 1024
+GWS_CAU917_TIME_LIMIT_S = 20  # đủ ngặt để loại làm tay, đủ rộng cho mạng VN gọi API Google
+GWS_CAU917_SAND_LINES = 3000
+GWS_920_FRIENDS = [
+    "Nguyễn Thị Mít", "Trần Văn Ổi", "Lê Thị Xoài", "Phạm Thảo Na", "Hoàng Bơ",
+    "Đỗ Thị Cam", "Vũ Hồng Đào", "Bùi Thị Mận", "Ngô Sầu Riêng",
+]
+GWS_919_FIELDS = [
+    {"cell": "B2", "value": "Học Viện AI Life Group — Khoá ALG", "size": 32, "color": "C0392B"},
+    {"cell": "B3", "value": "Biến AI thành nhân sự THẬT", "size": 18, "color": "7F8C8D"},
+    {"cell": "B5", "value": "Đồng hành: Bé Ailai", "size": 16, "color": "27AE60"},
+    {"cell": "B6", "value": "Người bạn định mệnh: Nguyễn Thị Mít", "size": 16, "color": "E67E22"},
+    {"cell": "A8", "value": "Câu hỏi thường gặp", "size": 18, "color": "2C3E50"},
+    {"cell": "A10", "value": "Q: Cần biết lập trình trước không?", "size": 14, "color": "2C3E50"},
+    {"cell": "A11", "value": "A: KHÔNG — Agent lo phần code, bạn lo phần tư duy.", "size": 12, "color": "7F8C8D"},
+    {"cell": "A13", "value": "Q: Học xong làm được gì?", "size": 14, "color": "2C3E50"},
+    {"cell": "A14", "value": "A: Tự động hoá công việc thật với AI Agent.", "size": 12, "color": "7F8C8D"},
+]
+
+
+def _gws_http_get(url: str):
+    """Tải một URL công khai của Google. Trả (final_url, status_code, body_bytes, content_type).
+    Tách riêng để test có thể thay bằng bản giả lập (không gọi Google thật)."""
+    with httpx.Client(timeout=25.0, follow_redirects=True, headers={"User-Agent": "AILG-Grader/1.0"}) as client:
+        with client.stream("GET", url) as resp:
+            body = b""
+            for chunk in resp.iter_bytes():
+                body += chunk
+                if len(body) > GWS_FETCH_MAX_BYTES:
+                    raise HTTPException(status_code=400, detail="File quá lớn để chấm (giới hạn 20MB).")
+            return str(resp.url), resp.status_code, body, resp.headers.get("content-type", "")
+
+
+# Con trỏ hàm để test thay thế — sản phẩm thật luôn dùng _gws_http_get.
+_gws_fetch = _gws_http_get
+
+
+def _extract_gdoc_id(url: str, kind: str) -> str | None:
+    pat = {
+        "sheet": r"docs\.google\.com/spreadsheets/d/([\w-]{20,})",
+        "slide": r"docs\.google\.com/presentation/d/([\w-]{20,})",
+        "drive": r"drive\.google\.com/file/d/([\w-]{20,})",
+    }[kind]
+    m = re.search(pat, url or "")
+    return m.group(1) if m else None
+
+
+def _gws_public_or_none(final_url: str, status: int):
+    """Nhận diện file CHƯA share công khai: Google chuyển hướng sang trang đăng nhập."""
+    if "accounts.google.com" in final_url or status in (401, 403):
+        return "Chưa share công khai — cần bật \"Bất kỳ ai có đường liên kết đều xem được\"."
+    if status != 200:
+        return f"Không tải được (HTTP {status}) — kiểm tra lại link."
+    return None
+
+
+def _fetch_sheet_grid(sheet_id: str):
+    """Đọc sheet công khai thành lưới ô [[...]] qua export CSV."""
+    final_url, status, body, _ = _gws_fetch(f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv")
+    err = _gws_public_or_none(final_url, status)
+    if err:
+        return None, err
+    rows = list(csv_mod.reader(io.StringIO(body.decode("utf-8-sig", errors="replace"))))
+    return rows, None
+
+
+def _grid_cell(rows, cell: str) -> str:
+    m = re.match(r"^([A-Z])([0-9]+)$", cell)
+    col = ord(m.group(1)) - ord("A")
+    row = int(m.group(2)) - 1
+    if row < len(rows) and col < len(rows[row]):
+        return (rows[row][col] or "").strip()
+    return ""
+
+
+def _gws_user_personal_code(user_id: int) -> str | None:
+    with get_db() as conn:
+        row = conn.execute("SELECT api_token FROM users WHERE id = ?", (user_id,)).fetchone()
+    return _personal_code_from_token(row["api_token"]) if row and row["api_token"] else None
+
+
+def _gws_payload(conn, user_id: int, code: str):
+    row = conn.execute(
+        "SELECT payload, started_at FROM gws_tasks WHERE user_id = ? AND question_code = ?", (user_id, code)
+    ).fetchone()
+    return (json.loads(row["payload"]), row["started_at"]) if row else (None, None)
+
+
+def _gws_save_payload(conn, user_id: int, code: str, payload: dict):
+    conn.execute(
+        """INSERT INTO gws_tasks (user_id, question_code, payload, started_at)
+           VALUES (?, ?, ?, datetime('now'))
+           ON CONFLICT(user_id, question_code)
+           DO UPDATE SET payload=excluded.payload, started_at=datetime('now')""",
+        (user_id, code, json.dumps(payload, ensure_ascii=False)),
+    )
+
+
+# ---------- Các hàm chấm: trả (ok, criteria[]) với criteria = {label, ok, note} ----------
+
+def _check_916(user_id: int, url: str):
+    sheet_id = _extract_gdoc_id(url, "sheet")
+    crit = [{"label": "Link Google Sheet hợp lệ", "ok": bool(sheet_id), "note": "" if sheet_id else "URL không phải link Google Sheet."}]
+    if not sheet_id:
+        return False, crit
+    rows, err = _fetch_sheet_grid(sheet_id)
+    crit.append({"label": "Share công khai, đọc được", "ok": rows is not None, "note": err or ""})
+    if rows is None:
+        return False, crit
+    expected = _gws_user_personal_code(user_id) or "?"
+    a1 = _grid_cell(rows, "A1")
+    ok = a1 == expected
+    crit.append({
+        "label": "Ô A1 chứa đúng mã cá nhân của bạn", "ok": ok,
+        "note": "" if ok else f"A1 đang là \"{a1[:30]}\" — cần đúng mã cá nhân (Agent xem trong /api/me/agent-token).",
+    })
+    return all(c["ok"] for c in crit), crit
+
+
+def _check_917(user_id: int, url: str):
+    with get_db() as conn:
+        payload, started_at = _gws_payload(conn, user_id, "9.17")
+        elapsed_row = conn.execute(
+            "SELECT (julianday('now') - julianday(?)) * 86400.0 AS s", (started_at,)
+        ).fetchone() if started_at else None
+    if not payload:
+        return False, [{"label": "Đã gọi /start để nhận dữ liệu", "ok": False, "note": "Chưa gọi /start — chương trình phải gọi /start trước."}]
+    elapsed = elapsed_row["s"] if elapsed_row else 999999
+    crit = [{
+        "label": f"Nộp trong {GWS_CAU917_TIME_LIMIT_S} giây kể từ /start", "ok": elapsed <= GWS_CAU917_TIME_LIMIT_S,
+        "note": f"Mất {elapsed:.1f}s" + ("" if elapsed <= GWS_CAU917_TIME_LIMIT_S else " — quá giờ! Gọi /reset để nhận thử thách mới rồi chạy lại."),
+    }]
+    sheet_id = _extract_gdoc_id(url, "sheet")
+    crit.append({"label": "Link Google Sheet hợp lệ", "ok": bool(sheet_id), "note": ""})
+    if not sheet_id:
+        return False, crit
+    rows, err = _fetch_sheet_grid(sheet_id)
+    crit.append({"label": "Share công khai, đọc được", "ok": rows is not None, "note": err or ""})
+    if rows is None:
+        return False, crit
+    golds = payload["golds"]
+    hit = sum(1 for cell, val in golds.items() if _grid_cell(rows, cell) == val)
+    crit.append({
+        "label": "Đủ 10 dòng vàng, đúng toạ độ từng ô", "ok": hit == len(golds),
+        "note": f"Đúng {hit}/{len(golds)} ô.",
+    })
+    return all(c["ok"] for c in crit), crit
+
+
+def _check_919(user_id: int, url: str):
+    sheet_id = _extract_gdoc_id(url, "sheet")
+    crit = [{"label": "Link Google Sheet hợp lệ", "ok": bool(sheet_id), "note": ""}]
+    if not sheet_id:
+        return False, crit
+    final_url, status, body, _ = _gws_fetch(f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=xlsx")
+    err = _gws_public_or_none(final_url, status)
+    crit.append({"label": "Share công khai, đọc được", "ok": err is None, "note": err or ""})
+    if err:
+        return False, crit
+    try:
+        import openpyxl
+
+        wb = openpyxl.load_workbook(io.BytesIO(body), data_only=True)
+        ws = wb.worksheets[0]
+    except Exception as e:
+        crit.append({"label": "File đọc được dạng bảng tính", "ok": False, "note": f"Không đọc được: {e}"})
+        return False, crit
+    value_ok = fmt_ok = 0
+    bad = []
+    for f in GWS_919_FIELDS:
+        c = ws[f["cell"]]
+        v_ok = (str(c.value or "").strip() == f["value"])
+        size = float(c.font.size or 0) if c.font else 0
+        rgb = str(c.font.color.rgb)[-6:].upper() if c.font and c.font.color and c.font.color.rgb else ""
+        f_ok = abs(size - f["size"]) < 0.6 and rgb == f["color"]
+        value_ok += v_ok
+        fmt_ok += f_ok
+        if not (v_ok and f_ok):
+            bad.append(f["cell"])
+    expected = _gws_user_personal_code(user_id) or "?"
+    a1_ok = str(ws["A1"].value or "").strip() == expected
+    crit.append({"label": f"Nội dung đúng 9/9 ô", "ok": value_ok == 9, "note": f"Đúng {value_ok}/9" + (f" — sai: {', '.join(bad[:5])}" if bad else "")})
+    crit.append({"label": f"Định dạng (cỡ chữ + màu) đúng 9/9 ô", "ok": fmt_ok == 9, "note": f"Đúng {fmt_ok}/9"})
+    crit.append({"label": "Ô A1 chứa mã cá nhân", "ok": a1_ok, "note": "" if a1_ok else "Thiếu mã cá nhân ở A1."})
+    return all(c["ok"] for c in crit), crit
+
+
+def _check_920(user_id: int, url: str):
+    with get_db() as conn:
+        payload, _ = _gws_payload(conn, user_id, "9.20")
+    if not payload:
+        return False, [{"label": "Đã gọi /start để nhận dữ liệu", "ok": False, "note": "Chưa gọi /start."}]
+    slide_id = _extract_gdoc_id(url, "slide")
+    crit = [{"label": "Link Google Slides hợp lệ", "ok": bool(slide_id), "note": ""}]
+    if not slide_id:
+        return False, crit
+    final_url, status, body, _ = _gws_fetch(f"https://docs.google.com/presentation/d/{slide_id}/export/pptx")
+    err = _gws_public_or_none(final_url, status)
+    crit.append({"label": "Share công khai, đọc được", "ok": err is None, "note": err or ""})
+    if err:
+        return False, crit
+    try:
+        from pptx import Presentation
+
+        prs = Presentation(io.BytesIO(body))
+        texts = []
+        for slide in prs.slides:
+            for shape in slide.shapes:
+                if shape.has_text_frame:
+                    texts.append(shape.text_frame.text)
+        all_text = "\n".join(texts)
+        n_slides = len(prs.slides)
+    except Exception as e:
+        crit.append({"label": "File đọc được dạng trình chiếu", "ok": False, "note": f"Không đọc được: {e}"})
+        return False, crit
+    names = [f["name"] for f in payload["friends"]]
+    missing = [n for n in names if n not in all_text]
+    expected = _gws_user_personal_code(user_id) or "?"
+    low = all_text.lower()
+    crit.append({"label": "Đủ tối thiểu 12 slide (bìa + tổng quan + 9 bạn + cảm ơn)", "ok": n_slides >= 12, "note": f"Hiện có {n_slides} slide."})
+    crit.append({"label": "Nhắc tên đủ 9 người bạn", "ok": not missing, "note": "" if not missing else f"Thiếu: {', '.join(missing[:4])}"})
+    crit.append({"label": "Slide cảm ơn", "ok": "cảm ơn" in low or "cam on" in low, "note": ""})
+    crit.append({"label": "Có mã cá nhân trong bộ slide (trang bìa)", "ok": expected in all_text, "note": "" if expected in all_text else "Thiếu mã cá nhân."})
+    return all(c["ok"] for c in crit), crit
+
+
+def _check_922(user_id: int, url: str):
+    file_id = _extract_gdoc_id(url, "drive")
+    crit = [{"label": "Link Google Drive hợp lệ (dạng /file/d/...)", "ok": bool(file_id), "note": ""}]
+    if not file_id:
+        return False, crit
+    final_url, status, body, ctype = _gws_fetch(f"https://drive.google.com/file/d/{file_id}/view")
+    err = _gws_public_or_none(final_url, status)
+    crit.append({"label": "Share công khai, mở được", "ok": err is None, "note": err or ""})
+    if err:
+        return False, crit
+    html = body.decode("utf-8", errors="replace")
+    is_video = ('og:type" content="video' in html) or ("video/mp4" in html) or ('"video"' in html[:20000])
+    crit.append({"label": "File là video", "ok": is_video, "note": "" if is_video else "Trang xem không nhận diện được video — kiểm tra file MP4."})
+    return all(c["ok"] for c in crit), crit
+
+
+_GWS_CHECKERS = {"9.16": _check_916, "9.17": _check_917, "9.19": _check_919, "9.20": _check_920, "9.22": _check_922}
+
+
+@app.get("/api/gws/task/{code}/start")
+def gws_task_start(request: Request, code: str):
+    """Agent gọi để nhận dữ liệu/spec của nhiệm vụ. 9.17 trả text thuần (cát + vàng), các câu
+    khác trả JSON. Idempotent: gọi lại trả đúng dữ liệu cũ — muốn làm lại 9.17 thì gọi /reset."""
+    user = require_agent_user(request)
+    if code not in GWS_TASK_MANIFEST:
+        raise HTTPException(status_code=404, detail="Nhiệm vụ không tồn tại.")
+    personal_code = _gws_user_personal_code(user["id"])
+    if code == "9.17":
+        with get_db() as conn:
+            payload, _ = _gws_payload(conn, user["id"], code)
+            if not payload:
+                cells = random.sample([f"{c}{r}" for c in "ABCDEFGHIJ" for r in range(1, 11)], 10)
+                golds = {cell: f"AGS-{cell}-{secrets.token_hex(4)}" for cell in cells}
+                payload = {"golds": golds}
+                _gws_save_payload(conn, user["id"], code, payload)
+        lines = [secrets.token_hex(9) for _ in range(GWS_CAU917_SAND_LINES)] + list(payload["golds"].values())
+        random.shuffle(lines)
+        return Response("\n".join(lines), media_type="text/plain; charset=utf-8")
+    if code == "9.19":
+        return {"personal_code_cell": "A1", "personal_code": personal_code, "fields": GWS_919_FIELDS}
+    if code == "9.20":
+        with get_db() as conn:
+            payload, _ = _gws_payload(conn, user["id"], code)
+            if not payload:
+                friends = [
+                    {"name": n, "done_count": random.randint(8, 26), "total_text": f"{random.randint(1, 4)} ngày, {random.randint(0, 23)} giờ, {random.randint(0, 59)} phút"}
+                    for n in GWS_920_FRIENDS
+                ]
+                payload = {"friends": friends}
+                _gws_save_payload(conn, user["id"], code, payload)
+        return {"personal_code": personal_code, "friends": payload["friends"], "yeu_cau_slide_toi_thieu": 12}
+    # 9.16 / 9.22: không có dữ liệu riêng, chỉ nhắc mã cá nhân.
+    return {"personal_code": personal_code}
+
+
+@app.post("/api/gws/task/{code}/reset")
+def gws_task_reset(request: Request, code: str):
+    user = require_agent_user(request)
+    with get_db() as conn:
+        conn.execute("DELETE FROM gws_tasks WHERE user_id = ? AND question_code = ?", (user["id"], code))
+    return {"ok": True, "message": "Đã reset — gọi /start để nhận dữ liệu mới."}
+
+
+@app.post("/api/gws/task/{code}/submit")
+async def gws_task_submit(request: Request, code: str):
+    """Agent nộp URL sản phẩm. Server tải về qua link công khai và chấm từng tiêu chí."""
+    user = require_agent_user(request)
+    if code not in _GWS_CHECKERS:
+        raise HTTPException(status_code=404, detail="Nhiệm vụ không tồn tại.")
+    try:
+        data = await request.json()
+    except Exception:
+        raise HTTPException(status_code=400, detail='Body phải là JSON, ví dụ {"url": "https://docs.google.com/..."}')
+    url = str(data.get("url") or data.get("sheet_url") or data.get("slide_url") or data.get("drive_url") or "")
+    ok, criteria = await asyncio.to_thread(_GWS_CHECKERS[code], user["id"], url)
+    with get_db() as conn:
+        conn.execute(
+            "INSERT INTO gws_attempts (user_id, question_code, url, ok, detail) VALUES (?, ?, ?, ?, ?)",
+            (user["id"], code, url[:500], int(ok), json.dumps(criteria, ensure_ascii=False)),
+        )
+    return {
+        "ket_qua": "ĐẠT ✅" if ok else "Chưa đạt ❌",
+        "tieu_chi": criteria,
+        "ghi_chu": "Quay lại trang lớp học, bấm Kiểm tra rồi Nộp bài để chốt điểm." if ok else "Sửa theo tiêu chí rớt rồi nộp lại.",
+    }
+
+
+@app.get("/api/gws/task/{code}/status")
+def gws_task_status(request: Request, code: str):
+    """Trang lớp học đọc kết quả lần nộp gần nhất để hiển thị."""
+    user = require_approved_user(request)
+    with get_db() as conn:
+        row = conn.execute(
+            "SELECT ok, detail, url, created_at FROM gws_attempts WHERE user_id = ? AND question_code = ? ORDER BY id DESC LIMIT 1",
+            (user["id"], code),
+        ).fetchone()
+    if not row:
+        return {"attempted": False, "ok": False}
+    return {"attempted": True, "ok": bool(row["ok"]), "criteria": json.loads(row["detail"]), "checked_at": row["created_at"]}
 
 
 # ===================== TOKEN SCOPE LAB (Câu 8.11 - 8.15) =====================
