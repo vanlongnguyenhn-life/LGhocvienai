@@ -35,6 +35,9 @@ const ADMIN_API = {
   activityTimeline() {
     return this._send("/api/admin/activity-timeline");
   },
+  storage() {
+    return this._send("/api/admin/diag/storage");
+  },
   setApproved(id, approved) {
     const fd = new FormData();
     fd.append("approved", approved ? "1" : "0");
@@ -211,6 +214,7 @@ const state = {
   regradeMsg: "",
   flagged: null,
   flaggedLoading: false,
+  storage: null,
 };
 
 function fmtDate(s) {
@@ -249,6 +253,33 @@ async function boot() {
 
 async function loadStudents() {
   state.students = await ADMIN_API.students();
+  // Ổ đĩa dùng chung cho CSDL và ảnh minh chứng — đầy là cả lớp mất khả năng lưu bài.
+  try {
+    state.storage = await ADMIN_API.storage();
+  } catch (e) {
+    state.storage = null;
+  }
+}
+
+function renderStoragePanel() {
+  const s = state.storage;
+  if (!s || s.level === "ok") return null;
+  const critical = s.level === "critical";
+  const box = el("div", { class: "admin-broadcast-panel" }, [
+    el("h3", {}, [
+      critical ? "🔴 Ổ đĩa máy chủ sắp đầy — CẦN XỬ LÝ NGAY" : "🟠 Ổ đĩa máy chủ đang đầy dần",
+    ]),
+    el("p", {}, [
+      `Đã dùng ${s.used_mb}MB / ${s.total_mb}MB (${s.used_pct}%). Còn trống ${s.free_mb}MB. ` +
+        `Trong đó ảnh minh chứng ${s.uploads_mb ?? "?"}MB, cơ sở dữ liệu ${s.db_mb ?? "?"}MB.`,
+    ]),
+    el("p", {}, [
+      critical
+        ? "Khi đĩa đầy, hệ thống KHÔNG ghi được tiến độ nữa và toàn bộ học viên sẽ mất bài. Hãy nâng dung lượng đĩa trên Render ngay."
+        : "Nên nâng dung lượng đĩa trên Render trước khi đầy — lúc đầy thì học viên mất khả năng lưu bài.",
+    ]),
+  ]);
+  return box;
 }
 
 async function loadTimeline() {
@@ -957,6 +988,8 @@ function renderDashboard() {
   wrap.appendChild(topbar);
   wrap.appendChild(renderBroadcastPanel());
   wrap.appendChild(renderDigestPanel());
+  const storagePanel = renderStoragePanel();
+  if (storagePanel) wrap.appendChild(storagePanel);
   wrap.appendChild(renderGradingPanel());
   wrap.appendChild(renderFlaggedPanel());
 

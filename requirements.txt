@@ -4,3 +4,4 @@ httpx==0.28.1
 python-dotenv==1.2.2
 bcrypt==5.0.0
 python-multipart==0.0.32
+Pillow==11.3.0

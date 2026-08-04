@@ -5,6 +5,7 @@ import mimetypes
 import os
 import re
 import secrets
+import shutil
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -595,11 +596,13 @@ async def submit_criterion(
         data = await file.read()
         is_valid, reason = validators.validate_image(data)
         if is_valid:
-            ext = mimetypes.guess_extension(file.content_type or "") or ".bin"
+            # Thu nhỏ bản lưu trữ để không làm đầy ổ đĩa (dùng chung với cơ sở dữ liệu).
+            # Việc chấm AI phía dưới vẫn dùng ảnh gốc trong biến `data`.
+            store_bytes, store_ext = validators.shrink_image_for_storage(data)
             dest_dir = UPLOADS_DIR / str(user["id"])
             dest_dir.mkdir(exist_ok=True)
-            dest = dest_dir / f"{question_code}_{criterion_key}{ext}"
-            dest.write_bytes(data)
+            dest = dest_dir / f"{question_code}_{criterion_key}.{store_ext}"
+            dest.write_bytes(store_bytes)
             file_path_rel = str(dest.relative_to(UPLOADS_DIR))
         value_text = file.filename
     elif value_type == "url":
@@ -891,12 +894,14 @@ async def media_upload(
             is_valid = False
             reason = "Server chưa cấu hình AI chấm ảnh."
 
-    ext = mimetypes.guess_extension(file.content_type or "") or ".png"
-    stored_name = f"{_media_filename_prefix(user['id'], question_code)}{ext.lstrip('.')}"
+    # Chấm AI ở trên dùng ảnh GỐC; bản lưu xuống đĩa thì thu nhỏ lại để không làm đầy ổ đĩa
+    # (ổ đĩa này dùng chung với cơ sở dữ liệu — đầy là cả lớp mất khả năng lưu bài).
+    store_bytes, store_ext = validators.shrink_image_for_storage(data) if is_valid else (data, "png")
+    stored_name = f"{_media_filename_prefix(user['id'], question_code)}{store_ext}"
     if is_valid:
         dest_dir = UPLOADS_DIR / str(user["id"])
         dest_dir.mkdir(exist_ok=True)
-        (dest_dir / stored_name).write_bytes(data)
+        (dest_dir / stored_name).write_bytes(store_bytes)
 
     with get_db() as conn:
         cur = conn.execute(
@@ -2038,6 +2043,41 @@ def admin_reset_codes(request: Request, user_id: int, codes: str = Form(...)):
         d2 = conn.execute(f"DELETE FROM reflect_grades WHERE user_id = ? AND question_code IN ({ph})", args).rowcount
         d3 = conn.execute(f"DELETE FROM submissions WHERE user_id = ? AND question_code IN ({ph})", args).rowcount
     return {"ok": True, "deleted_status": d1, "deleted_reflect": d2, "deleted_submissions": d3}
+
+
+def _storage_usage() -> dict:
+    """Tình trạng ổ đĩa lưu dữ liệu. Ổ này chứa CHUNG cơ sở dữ liệu và ảnh minh chứng —
+    khi đầy thì SQLite không ghi được nữa và cả lớp mất khả năng lưu bài."""
+    out = {}
+    try:
+        usage = shutil.disk_usage(DATA_DIR)
+        out["total_mb"] = round(usage.total / 1048576, 1)
+        out["used_mb"] = round((usage.total - usage.free) / 1048576, 1)
+        out["free_mb"] = round(usage.free / 1048576, 1)
+        out["used_pct"] = round((usage.total - usage.free) / usage.total * 100, 1) if usage.total else 0
+    except Exception as e:
+        out["error"] = str(e)
+    try:
+        out["uploads_mb"] = round(
+            sum(f.stat().st_size for f in UPLOADS_DIR.rglob("*") if f.is_file()) / 1048576, 1
+        )
+    except Exception:
+        out["uploads_mb"] = None
+    try:
+        out["db_mb"] = round(sum((DATA_DIR / n).stat().st_size for n in
+                                 ("agentsee.db", "agentsee.db-wal", "agentsee.db-shm")
+                                 if (DATA_DIR / n).exists()) / 1048576, 1)
+    except Exception:
+        out["db_mb"] = None
+    pct = out.get("used_pct") or 0
+    out["level"] = "critical" if pct >= 90 else "warning" if pct >= 75 else "ok"
+    return out
+
+
+@app.get("/api/admin/diag/storage")
+def admin_diag_storage(request: Request):
+    current_admin(request)
+    return _storage_usage()
 
 
 @app.post("/api/admin/students/{user_id}/grant-codes")
