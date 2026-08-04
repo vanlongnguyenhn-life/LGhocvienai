@@ -2262,6 +2262,54 @@ async def admin_digest_send_now(request: Request, chat_id: str = Form(None)):
     return {"ok": True}
 
 
+# ---- Nhắc học viên không hoạt động (17h hằng ngày) ----
+_INACTIVE_KEYS = {"enabled", "send_time", "chat_id", "lookback_hours", "intro_message"}
+
+
+@app.get("/api/admin/inactive-reminder")
+def admin_inactive_get(request: Request):
+    current_admin(request)
+    return digest.get_inactive_config()
+
+
+@app.post("/api/admin/inactive-reminder")
+async def admin_inactive_save(request: Request):
+    current_admin(request)
+    body = await request.json()
+    patch = {k: v for k, v in (body or {}).items() if k in _INACTIVE_KEYS}
+    return digest.save_inactive_config(patch)
+
+
+@app.get("/api/admin/inactive-reminder/preview")
+def admin_inactive_preview(request: Request):
+    current_admin(request)
+    cfg = digest.get_inactive_config()
+    students = digest.get_inactive_students(int(cfg.get("lookback_hours") or 24))
+    text = digest.build_inactive_text(cfg)
+    return {
+        "text": text or "(Hiện không có ai cần nhắc — cả lớp đều có hoạt động trong khoảng thời gian này.)",
+        "count": len(students),
+        "names": [s["display_name"] for s in students],
+    }
+
+
+@app.post("/api/admin/inactive-reminder/send-now")
+async def admin_inactive_send_now(request: Request, chat_id: str = Form(None)):
+    current_admin(request)
+    cfg = digest.get_inactive_config()
+    target = (chat_id or cfg.get("chat_id") or "").strip() or lark_bot.get_group_chat_id()
+    if not target:
+        raise HTTPException(status_code=400, detail="Chưa xác định nhóm (Bé chưa được @ trong nhóm để ghi nhớ).")
+    text = digest.build_inactive_text(cfg)
+    if not text:
+        return {"ok": True, "sent": False, "note": "Không có ai cần nhắc."}
+    result = await lark_bot.send_text(target, text)
+    if not isinstance(result, dict) or result.get("code") != 0:
+        msg = result.get("msg", "gửi thất bại") if isinstance(result, dict) else "gửi thất bại"
+        raise HTTPException(status_code=400, detail=f"Lark báo lỗi: {msg}")
+    return {"ok": True, "sent": True}
+
+
 @app.post("/api/admin/students/{user_id}/notify")
 async def admin_notify_student(request: Request, user_id: int, text: str = Form(...)):
     """Gửi tin nhắn Lark riêng (DM) tới đúng học viên này — dùng khi cần báo yêu cầu làm lại

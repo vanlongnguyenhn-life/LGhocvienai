@@ -37,6 +37,81 @@ DEFAULT_CONFIG = {
     "last_sent_date": "",       # ngày VN gần nhất đã gửi (chống gửi trùng)
 }
 
+# ===================== NHẮC HỌC VIÊN KHÔNG HOẠT ĐỘNG (17h hằng ngày) =====================
+INACTIVE_KEY = "inactive_reminder"
+DEFAULT_INACTIVE = {
+    "enabled": True,           # bật sẵn theo yêu cầu (nhắc cố định mỗi ngày)
+    "send_time": "17:00",      # giờ VN
+    "chat_id": "",             # để trống = tự dùng nhóm Bé đã ghi nhớ
+    "lookback_hours": 24,      # không học/làm bài trong bao nhiêu giờ qua thì bị nhắc
+    "intro_message": "",       # để trống = dùng lời mặc định của Bé
+    "last_sent_date": "",
+}
+
+
+def get_inactive_config() -> dict:
+    with get_db() as conn:
+        row = conn.execute("SELECT value FROM app_settings WHERE key = ?", (INACTIVE_KEY,)).fetchone()
+    cfg = dict(DEFAULT_INACTIVE)
+    if row:
+        try:
+            cfg.update(json.loads(row["value"]))
+        except Exception:
+            pass
+    return cfg
+
+
+def save_inactive_config(patch: dict) -> dict:
+    cfg = get_inactive_config()
+    cfg.update(patch or {})
+    with get_db() as conn:
+        conn.execute(
+            "INSERT INTO app_settings (key, value, updated_at) VALUES (?, ?, datetime('now')) "
+            "ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = datetime('now')",
+            (INACTIVE_KEY, json.dumps(cfg, ensure_ascii=False)),
+        )
+    return cfg
+
+
+def _cutoff_utc(hours: int) -> str:
+    return (datetime.now(timezone.utc) - timedelta(hours=hours)).strftime("%Y-%m-%d %H:%M:%S")
+
+
+def get_inactive_students(lookback_hours: int) -> list[dict]:
+    """Học viên (đã đăng ký, không phải giáo viên) KHÔNG có thao tác nộp câu nào trong N giờ qua.
+    Lưu ý: câu SAI vẫn được tính là 'có làm' (question_status ghi cả status='wrong')."""
+    cutoff = _cutoff_utc(lookback_hours)
+    with get_db() as conn:
+        rows = conn.execute(
+            """
+            SELECT u.id, u.display_name, u.lark_open_id, MAX(qs.updated_at) AS last_act
+            FROM users u
+            LEFT JOIN question_status qs ON qs.user_id = u.id
+            WHERE u.approved = 1 AND u.lark_open_id IS NOT NULL
+              AND COALESCE(u.is_teacher, 0) = 0 AND u.created_at < ?
+            GROUP BY u.id
+            HAVING last_act IS NULL OR last_act < ?
+            """,
+            (cutoff, cutoff),
+        ).fetchall()
+    return [dict(r) for r in rows]
+
+
+def build_inactive_text(cfg: dict):
+    """Trả nội dung tin nhắc (kèm tag các bạn không hoạt động), hoặc None nếu không có ai cần nhắc."""
+    hours = int(cfg.get("lookback_hours") or 24)
+    students = get_inactive_students(hours)
+    if not students:
+        return None
+    mentions = "".join(f'<at user_id="{s["lark_open_id"]}"></at> ' for s in students if s["lark_open_id"])
+    intro = (cfg.get("intro_message") or "").strip()
+    body = intro or (
+        f"Bé Ailai điểm danh cuối ngày ạ. Các bạn được nhắc tên phía trên trong {hours} giờ qua chưa "
+        "vào học/làm bài. Cả nhà tranh thủ vào làm vài câu nhé — mỗi ngày một chút là tiến bộ rất nhanh! "
+        f"Vào học tại: {lark_bot.SITE_URL}"
+    )
+    return (mentions + "\n" + body).strip()
+
 
 # ===================== CẤU HÌNH =====================
 
@@ -228,6 +303,32 @@ async def _tick():
         print(f"[digest send error] {e!r}")
 
 
+async def _tick_inactive():
+    cfg = get_inactive_config()
+    if not cfg.get("enabled"):
+        return
+    chat_id = (cfg.get("chat_id") or "").strip() or lark_bot.get_group_chat_id()
+    if not chat_id:
+        return
+    now = vn_now()
+    today = now.strftime("%Y-%m-%d")
+    if cfg.get("last_sent_date") == today:
+        return
+    if now.strftime("%H:%M") < str(cfg.get("send_time", "17:00")):
+        return
+    text = build_inactive_text(cfg)
+    if not text:
+        save_inactive_config({"last_sent_date": today})  # cả lớp đều học → bỏ qua, không gửi
+        print(f"[inactive] {today}: cả lớp đều có hoạt động, không cần nhắc.")
+        return
+    try:
+        result = await lark_bot.send_text(chat_id, text)
+        save_inactive_config({"last_sent_date": today})
+        print(f"[inactive] sent reminder {today} to {chat_id}: {result}")
+    except Exception as e:
+        print(f"[inactive send error] {e!r}")
+
+
 async def scheduler_loop():
     """Vòng lặp nền: mỗi phút kiểm tra đã tới giờ gửi trong ngày chưa."""
     print("[digest] scheduler started")
@@ -236,6 +337,10 @@ async def scheduler_loop():
             await _tick()
         except Exception as e:
             print(f"[digest scheduler error] {e!r}")
+        try:
+            await _tick_inactive()
+        except Exception as e:
+            print(f"[inactive scheduler error] {e!r}")
         try:
             await lark_bot.send_due_scheduled()  # gửi các tin giáo viên đã hẹn giờ
         except Exception as e:
