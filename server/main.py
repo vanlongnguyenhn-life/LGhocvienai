@@ -1602,9 +1602,75 @@ def submit_question(
     return {"ok": True}
 
 
+def _autoheal_progress(user_id: int) -> list:
+    """Bù các câu mà SERVER ĐÃ CÓ bằng chứng hoàn thành nhưng thiếu dòng ghi nhận.
+
+    Nguyên nhân mất tiến độ: nhiều loại câu chấm theo 2 bước tách rời — bước 1 lưu bằng chứng
+    (chấm tự luận, ảnh minh chứng, kết quả Agent nộp), bước 2 mới ghi nhận hoàn thành. Nếu bước
+    2 hụt (mất mạng, server đang redeploy), bằng chứng vẫn nằm nguyên trên server nhưng câu bị
+    coi như chưa làm — học viên bị chặn lại và phải làm lại dù đã làm đúng.
+
+    Hàm này đọc lại chính bằng chứng đó và ghi nhận bù. Chạy mỗi lần tải tiến độ nên vừa vá
+    được các trường hợp đã lỡ xảy ra, vừa khiến lỗi này không tái diễn được nữa.
+    """
+    healed = []
+    with get_db() as conn:
+        done = {
+            r["question_code"]
+            for r in conn.execute(
+                "SELECT question_code FROM question_status WHERE user_id = ? AND status IN ('done','correct')",
+                (user_id,),
+            )
+        }
+        # Câu tự luận: AI đã chấm ĐẠT.
+        reflect_ok = [
+            r["question_code"]
+            for r in conn.execute(
+                "SELECT question_code FROM reflect_grades WHERE user_id = ? AND is_valid = 1", (user_id,)
+            )
+        ]
+        # Câu Agent nộp qua API: đã có lần nộp hợp lệ.
+        media_ok = [
+            r["question_code"]
+            for r in conn.execute(
+                "SELECT DISTINCT question_code FROM media_submissions WHERE user_id = ? AND attempt_ok = 1",
+                (user_id,),
+            )
+        ]
+
+    candidates = []
+    candidates += [(c, REFLECT_MANIFEST[c]["points"]) for c in reflect_ok if c in REFLECT_MANIFEST]
+    candidates += [(c, MEDIA_SUBMIT_MANIFEST[c]["points"]) for c in media_ok if c in MEDIA_SUBMIT_MANIFEST]
+    # Câu bài tập nộp minh chứng: đủ mọi tiêu chí bắt buộc đã hợp lệ.
+    for code in ASSIGNMENT_MANIFEST:
+        if code not in done and _assignment_all_valid(user_id, code):
+            candidates.append((code, ASSIGNMENT_MANIFEST[code]["points"]))
+
+    for code, points in candidates:
+        if code in done:
+            continue
+        with get_db() as conn:
+            conn.execute(
+                """
+                INSERT INTO question_status (user_id, question_code, status, awarded_points, answer_data)
+                VALUES (?, ?, 'done', ?, ?)
+                ON CONFLICT(user_id, question_code)
+                DO UPDATE SET status='done', awarded_points=excluded.awarded_points,
+                              updated_at=datetime('now')
+                """,
+                (user_id, code, points, json.dumps({"healedFromServerProof": True})),
+            )
+        done.add(code)
+        healed.append(code)
+    return healed
+
+
 @app.get("/api/progress")
 def progress(request: Request):
     user = require_approved_user(request)
+    healed = _autoheal_progress(user["id"])
+    if healed:
+        print(f"[autoheal] user={user['id']} bù {len(healed)} câu: {', '.join(sorted(healed))}", flush=True)
     with get_db() as conn:
         statuses = conn.execute(
             "SELECT question_code, status, awarded_points, answer_data FROM question_status WHERE user_id = ?",
@@ -1984,6 +2050,8 @@ def admin_grant_codes(request: Request, user_id: int, codes: str = Form(...)):
     if not code_list:
         raise HTTPException(status_code=400, detail="Chưa có câu nào để công nhận.")
     granted = []
+    skipped_done = []
+    skipped_answered_wrong = []
     with get_db() as conn:
         row = conn.execute("SELECT id FROM users WHERE id = ?", (user_id,)).fetchone()
         if not row:
@@ -1994,6 +2062,12 @@ def admin_grant_codes(request: Request, user_id: int, codes: str = Form(...)):
                 (user_id, code),
             ).fetchone()
             if existing and existing["status"] in ("done", "correct"):
+                skipped_done.append(code)
+                continue
+            if existing:
+                # Học viên ĐÃ trả lời câu này và bị sai — đây không phải lỗ hổng do lưu hụt,
+                # nên không công nhận thay; để học viên tự làm lại cho đúng.
+                skipped_answered_wrong.append(code)
                 continue
             conn.execute(
                 """
@@ -2006,7 +2080,13 @@ def admin_grant_codes(request: Request, user_id: int, codes: str = Form(...)):
                 (user_id, code, _question_points(code), json.dumps({"grantedByAdmin": True})),
             )
             granted.append(code)
-    return {"ok": True, "granted": granted, "skipped": len(code_list) - len(granted)}
+    return {
+        "ok": True,
+        "granted": granted,
+        "skipped": len(code_list) - len(granted),
+        "skipped_done": skipped_done,
+        "skipped_answered_wrong": skipped_answered_wrong,
+    }
 
 
 @app.get("/api/admin/diag/ai")

@@ -92,7 +92,14 @@ let state = loadState();
 function saveState() {
   // strip large image dataUrls before persisting (avoid localStorage quota issues)
   const replacer = (key, value) => (key === "dataUrl" ? undefined : value);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state, replacer));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state, replacer));
+  } catch (e) {
+    // Hết quota / trình duyệt chặn localStorage (chế độ riêng tư, webview trong app chat...).
+    // KHÔNG để lỗi ném ra ngoài: saveState() nằm ngay đầu persistQuestionStatus(), nếu ném thì
+    // lệnh gửi tiến độ lên server phía sau sẽ không bao giờ chạy — mất bài mà không ai biết.
+    console.warn("Không ghi được tiến độ xuống localStorage:", e);
+  }
 }
 
 // ===== Chiều rộng trang học (kéo để tăng/giảm) =====
@@ -1786,6 +1793,19 @@ function buildAnswerData(q, a) {
 }
 
 async function persistQuestionStatus(q, a) {
+  // Hầu hết chỗ gọi hàm này đều không await/bắt lỗi, nên nó TUYỆT ĐỐI không được ném ra ngoài:
+  // một lỗi ngầm ở đây sẽ nuốt mất lệnh gửi tiến độ mà không hiện gì cho học viên.
+  try {
+    return await persistQuestionStatusInner(q, a);
+  } catch (err) {
+    console.warn("Lỗi ngoài dự kiến khi lưu tiến độ:", q.code, err);
+    a.saved = false;
+    showToast("⚠️ Chưa lưu được câu này — hệ thống sẽ tự thử lại, đừng tắt trang nhé.");
+    render();
+  }
+}
+
+async function persistQuestionStatusInner(q, a) {
   // Đánh dấu "chưa xác nhận lưu" — nếu tải lại giữa chừng, hydrateProgress sẽ đẩy bù thay vì xoá.
   a.saved = false;
   saveState();
@@ -1848,6 +1868,30 @@ async function flushUnsavedProgress() {
 setInterval(() => {
   if (state.loggedIn) flushUnsavedProgress();
 }, 20000);
+
+function hasUnsavedProgress() {
+  return Object.keys(state.answers).some((code) => {
+    const a = state.answers[code];
+    return (a.status === "done" || a.status === "correct") && a.saved === false && QUESTION_BY_CODE[code];
+  });
+}
+
+// Đẩy bù ngay khi máy có mạng lại / khi học viên quay lại tab — không phải đợi hết 20 giây.
+window.addEventListener("online", () => {
+  if (state.loggedIn) flushUnsavedProgress();
+});
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && state.loggedIn) flushUnsavedProgress();
+});
+
+// Cảnh báo trước khi đóng tab nếu còn bài chưa lưu được — nếu học viên đóng rồi mở lại bằng
+// máy/trình duyệt khác, phần chưa lưu sẽ không còn cơ hội đẩy bù.
+window.addEventListener("beforeunload", (e) => {
+  if (state.loggedIn && hasUnsavedProgress()) {
+    e.preventDefault();
+    e.returnValue = "";
+  }
+});
 
 async function submitAnswer(lesson, q) {
   const a = getAnswer(q.code);

@@ -586,8 +586,9 @@ async function handleGrantGaps(userId, displayName, gapCodes) {
   const preview = gapCodes.slice(0, 12).join(", ") + (gapCodes.length > 12 ? `, … (+${gapCodes.length - 12})` : "");
   if (
     !confirm(
-      `Công nhận ${gapCodes.length} câu bị hổng của ${displayName} là ĐÃ HOÀN THÀNH?\n\n${preview}\n\n` +
-        "Đây là các câu học viên đã học qua nhưng hệ thống lưu hụt. Điểm sẽ được cộng như làm đúng.\nKhông thể hoàn tác."
+      `Công nhận các câu bị hổng của ${displayName} là ĐÃ HOÀN THÀNH?\n\nĐang xét: ${preview}\n\n` +
+        "Chỉ công nhận những câu CHƯA TỪNG được ghi nhận (do hệ thống lưu hụt). Câu nào học viên " +
+        "đã trả lời và bị sai sẽ được giữ nguyên để học viên tự làm lại.\nKhông thể hoàn tác."
     )
   ) {
     return;
@@ -596,7 +597,14 @@ async function handleGrantGaps(userId, displayName, gapCodes) {
     const r = await ADMIN_API.grantCodes(userId, gapCodes);
     await loadStudents();
     render();
-    alert(`Đã công nhận ${r.granted.length} câu` + (r.skipped ? ` (bỏ qua ${r.skipped} câu đã có kết quả thật).` : "."));
+    let msg = `Đã công nhận ${r.granted.length} câu bị lưu hụt.`;
+    if ((r.skipped_answered_wrong || []).length) {
+      msg +=
+        `\n\nGiữ nguyên ${r.skipped_answered_wrong.length} câu vì học viên ĐÃ trả lời và bị sai ` +
+        `(không phải lỗi lưu hụt) — để học viên tự làm lại:\n${r.skipped_answered_wrong.join(", ")}`;
+    }
+    if ((r.skipped_done || []).length) msg += `\n\nBỏ qua ${r.skipped_done.length} câu đã đạt sẵn.`;
+    alert(msg);
   } catch (err) {
     alert("Thất bại: " + (err.message || "lỗi không rõ"));
   }
