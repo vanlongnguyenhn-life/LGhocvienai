@@ -185,10 +185,22 @@ CREATE TABLE IF NOT EXISTS secret_code_attempts (
 """
 
 
+# Thời gian tối đa chờ khi CSDL đang bị khoá bởi request khác, trước khi báo lỗi.
+# Mặc định của Python chỉ 5 giây — quá ngắn: khi nhiều học viên nộp bài cùng lúc (nhất là trên
+# đĩa mạng chậm của Render), request nộp bài bị bung lỗi 500 sau đúng ~5 giây và học viên MẤT
+# BÀI. Nới rộng để chờ tới lượt thay vì bỏ cuộc.
+DB_TIMEOUT_S = 30
+
+
 @contextmanager
 def get_db():
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=DB_TIMEOUT_S)
     conn.row_factory = sqlite3.Row
+    # busy_timeout phải đặt lại ở mức SQLite (tham số timeout ở trên không phủ hết mọi trường hợp).
+    conn.execute(f"PRAGMA busy_timeout = {DB_TIMEOUT_S * 1000}")
+    # Với WAL, ghi không cần fsync mỗi lần commit vẫn an toàn trước sự cố tiến trình — nhanh hơn
+    # nhiều lần trên đĩa mạng, giảm hẳn thời gian giữ khoá.
+    conn.execute("PRAGMA synchronous = NORMAL")
     conn.execute("PRAGMA foreign_keys = ON")
     try:
         yield conn
@@ -199,6 +211,15 @@ def get_db():
 
 def init_db():
     with get_db() as conn:
+        # WAL: người đọc và người ghi KHÔNG chặn nhau nữa. Ở chế độ mặc định (delete), mỗi lượt
+        # tải tiến độ đều chặn lượt nộp bài đang chạy và ngược lại — đây là nguyên nhân chính gây
+        # lỗi lưu ngắt quãng khi đông người học. Chỉ cần đặt 1 lần, SQLite ghi vào header của file.
+        mode = conn.execute("PRAGMA journal_mode = WAL").fetchone()[0]
+        # In ra log khởi động để kiểm chứng được trên máy chủ thật: nếu vì lý do nào đó ổ đĩa
+        # không hỗ trợ WAL, SQLite âm thầm giữ nguyên chế độ cũ và lỗi khoá sẽ quay lại.
+        print(f"[db] journal_mode = {mode} | busy_timeout = {DB_TIMEOUT_S}s | path = {DB_PATH}", flush=True)
+        if mode.lower() != "wal":
+            print("[db] CANH BAO: khong bat duoc WAL — se de bi loi khoa khi dong nguoi nop bai.", flush=True)
         conn.executescript(SCHEMA)
         cols = [r["name"] for r in conn.execute("PRAGMA table_info(question_status)")]
         if "answer_data" not in cols:

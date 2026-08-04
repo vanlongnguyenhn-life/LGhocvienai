@@ -1784,6 +1784,11 @@ function buildAnswerData(q, a) {
     case "code":
     case "agent_secret_code":
     case "reflect":
+    // Ba loại dưới cũng gửi mã/token trong answer_data và bị server kiểm tra lại khi nộp —
+    // thiếu chúng ở đây thì lượt đẩy bù (flushUnsavedProgress) gửi lên rỗng và bị server từ
+    // chối, khiến câu đã làm đúng không bao giờ lưu được.
+    case "pi_lab_code":
+    case "my_token_check":
       return { text: a.text };
     case "token_scope_check":
       return { text: a.text, tokenScopes: a.tokenScopes };
@@ -1930,6 +1935,10 @@ async function submitAnswer(lesson, q) {
       await API.submitQuestion(fd);
       a.status = "done";
       a.awardedPoints = q.points;
+      // Server đã xác nhận -> đánh dấu đã đồng bộ. Thiếu dòng này thì hydrateProgress() coi câu
+      // như "từng lưu mà server không còn" và đưa về chưa làm, gây mất bài oan.
+      a.saved = true;
+      saveState();
       showToast(`Bài tập đã được chấm Đạt! +${q.points} điểm`);
     } catch (err) {
       showToast(err.message);
@@ -1972,6 +1981,10 @@ async function submitAnswer(lesson, q) {
       await API.submitQuestion(fd2);
       a.status = "done";
       a.awardedPoints = q.points;
+      // Server đã xác nhận -> đánh dấu đã đồng bộ. Thiếu dòng này thì hydrateProgress() coi câu
+      // như "từng lưu mà server không còn" và đưa về chưa làm, gây mất bài oan.
+      a.saved = true;
+      saveState();
       showToast(`Chính xác! +${q.points} điểm`);
     } catch (err) {
       showToast(err.message);
@@ -2018,6 +2031,10 @@ async function submitAnswer(lesson, q) {
       await API.submitQuestion(fd2);
       a.status = "done";
       a.awardedPoints = q.points;
+      // Server đã xác nhận -> đánh dấu đã đồng bộ. Thiếu dòng này thì hydrateProgress() coi câu
+      // như "từng lưu mà server không còn" và đưa về chưa làm, gây mất bài oan.
+      a.saved = true;
+      saveState();
       showToast(`Chính xác! +${q.points} điểm`);
     } catch (err) {
       showToast(err.message);
@@ -2054,6 +2071,10 @@ async function submitAnswer(lesson, q) {
       await API.submitQuestion(fd2);
       a.status = "done";
       a.awardedPoints = q.points;
+      // Server đã xác nhận -> đánh dấu đã đồng bộ. Thiếu dòng này thì hydrateProgress() coi câu
+      // như "từng lưu mà server không còn" và đưa về chưa làm, gây mất bài oan.
+      a.saved = true;
+      saveState();
       showToast(`Chính xác! +${q.points} điểm`);
     } catch (err) {
       showToast(err.message);
@@ -2073,6 +2094,10 @@ async function submitAnswer(lesson, q) {
       await API.submitQuestion(fd);
       a.status = "done";
       a.awardedPoints = q.points;
+      // Server đã xác nhận -> đánh dấu đã đồng bộ. Thiếu dòng này thì hydrateProgress() coi câu
+      // như "từng lưu mà server không còn" và đưa về chưa làm, gây mất bài oan.
+      a.saved = true;
+      saveState();
       showToast(`Chính xác! +${q.points} điểm`);
     } catch (err) {
       showToast(err.message);
