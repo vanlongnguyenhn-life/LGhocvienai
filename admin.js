@@ -38,6 +38,9 @@ const ADMIN_API = {
   storage() {
     return this._send("/api/admin/diag/storage");
   },
+  aiHealth() {
+    return this._send("/api/admin/diag/ai-health");
+  },
   setApproved(id, approved) {
     const fd = new FormData();
     fd.append("approved", approved ? "1" : "0");
@@ -215,6 +218,7 @@ const state = {
   flagged: null,
   flaggedLoading: false,
   storage: null,
+  aiHealth: null,
 };
 
 function fmtDate(s) {
@@ -259,6 +263,26 @@ async function loadStudents() {
   } catch (e) {
     state.storage = null;
   }
+  // AI hong = MOI cau tu luan deu khong the qua -> hoc vien bi chan cung, phai bao ngay.
+  try {
+    state.aiHealth = await ADMIN_API.aiHealth();
+  } catch (e) {
+    state.aiHealth = null;
+  }
+}
+
+function renderAiHealthPanel() {
+  const h = state.aiHealth;
+  if (!h || h.level === "ok") return null;
+  const critical = h.level === "critical";
+  return el("div", { class: "admin-broadcast-panel" }, [
+    el("h3", {}, [critical ? "🔴 AI chấm bài đang hỏng — học viên bị chặn" : "🟠 AI chấm bài có trục trặc"]),
+    el("p", {}, [h.message || ""]),
+    el("p", {}, [
+      `24h qua: ${h.cham_duoc_24h} lượt chấm được, ${h.chua_cham_duoc_24h} lượt KHÔNG chấm được.` +
+        (h.key_present ? "" : " Server chưa có API key."),
+    ]),
+  ]);
 }
 
 function renderStoragePanel() {
@@ -1012,6 +1036,8 @@ function renderDashboard() {
   wrap.appendChild(renderBackupPanel());
   const storagePanel = renderStoragePanel();
   if (storagePanel) wrap.appendChild(storagePanel);
+  const aiPanel = renderAiHealthPanel();
+  if (aiPanel) wrap.appendChild(aiPanel);
   wrap.appendChild(renderGradingPanel());
   wrap.appendChild(renderFlaggedPanel());
 

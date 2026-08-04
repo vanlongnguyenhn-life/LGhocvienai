@@ -286,6 +286,30 @@ GRADER_SYSTEM_PROMPT = (
 )
 
 
+# Chặn gọi AI chấm bài quá dày từ một học viên. Mỗi lượt chấm đều tốn tiền thật, nên nếu
+# ai đó bấm nộp liên tục (hoặc script tự động) thì có thể đốt hết ngân sách và làm CẢ LỚP
+# không chấm được bài. Giới hạn rộng rãi, học viên làm bài bình thường không bao giờ chạm tới.
+AI_GRADE_MAX_PER_WINDOW = 12
+AI_GRADE_WINDOW_S = 300
+_ai_grade_calls: dict[int, list] = {}
+
+
+def _check_ai_grade_quota(user_id: int):
+    import time as _time
+
+    now = _time.time()
+    calls = [t for t in _ai_grade_calls.get(user_id, []) if now - t < AI_GRADE_WINDOW_S]
+    if len(calls) >= AI_GRADE_MAX_PER_WINDOW:
+        wait_s = int(AI_GRADE_WINDOW_S - (now - calls[0])) + 1
+        raise HTTPException(
+            status_code=429,
+            detail=f"Bạn đang nộp quá nhanh. Chờ khoảng {wait_s} giây rồi thử lại nhé — "
+            "hãy dành thời gian đọc kỹ nhận xét của lần chấm trước.",
+        )
+    calls.append(now)
+    _ai_grade_calls[user_id] = calls
+
+
 def grade_with_llm(question_prompt: str, answer: str):
     """Gọi Claude để chấm nội dung câu trả lời tự luận. Thử lại 1 lần.
 
@@ -1403,6 +1427,8 @@ def grade_reflect(
     if not manifest:
         raise HTTPException(status_code=400, detail="Câu hỏi không hợp lệ.")
 
+    _check_ai_grade_quota(user["id"])
+
     is_valid, reason = validators.validate_text(answer, min_length=manifest["minLength"])
     ai_graded = 0
     if is_valid:
@@ -2079,6 +2105,40 @@ def _storage_usage() -> dict:
 def admin_diag_storage(request: Request):
     current_admin(request)
     return _storage_usage()
+
+
+@app.get("/api/admin/diag/ai-health")
+def admin_diag_ai_health(request: Request):
+    """Phát hiện sớm việc AI chấm bài hỏng (hết hạn mức, sai API key, Anthropic lỗi).
+
+    Khi AI hỏng, MỌI câu tự luận đều không thể qua và học viên bị chặn cứng — nhưng trước đây
+    giáo viên không hề được báo, chỉ học viên thấy thông báo lỗi rồi tự bỏ cuộc.
+    """
+    current_admin(request)
+    with get_db() as conn:
+        recent_fail = conn.execute(
+            "SELECT COUNT(*) c FROM reflect_grades WHERE ai_graded = 0 AND created_at > datetime('now','-1 day')"
+        ).fetchone()["c"]
+        recent_ok = conn.execute(
+            "SELECT COUNT(*) c FROM reflect_grades WHERE ai_graded = 1 AND created_at > datetime('now','-1 day')"
+        ).fetchone()["c"]
+    out = {"chua_cham_duoc_24h": recent_fail, "cham_duoc_24h": recent_ok, "key_present": bool(ANTHROPIC_API_KEY)}
+    if not ANTHROPIC_API_KEY:
+        out["level"] = "critical"
+        out["message"] = "Server chưa có API key chấm AI — mọi câu tự luận đều KHÔNG thể qua."
+    elif recent_fail >= 3 and recent_fail > recent_ok:
+        out["level"] = "critical"
+        out["message"] = (
+            f"AI chấm bài đang hỏng: {recent_fail} lượt không chấm được trong 24h qua "
+            f"(chỉ {recent_ok} lượt thành công). Học viên đang bị chặn ở các câu tự luận. "
+            "Kiểm tra hạn mức/thanh toán của API key."
+        )
+    elif recent_fail >= 3:
+        out["level"] = "warning"
+        out["message"] = f"Có {recent_fail} lượt chấm AI thất bại trong 24h qua — nên kiểm tra lại."
+    else:
+        out["level"] = "ok"
+    return out
 
 
 @app.get("/api/admin/backup")
