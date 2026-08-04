@@ -829,6 +829,27 @@ function sortableTh(label, key) {
   return el("th", { class: "admin-th-sort", onclick: () => toggleSort(key) }, [label + arrow]);
 }
 
+function renderBackupPanel() {
+  const box = el("div", { class: "admin-broadcast" });
+  box.appendChild(el("div", { class: "admin-broadcast-title" }, ["Sao lưu tiến độ học viên"]));
+  box.appendChild(
+    el("div", { class: "admin-broadcast-hint" }, [
+      "Toàn bộ tiến độ cả lớp nằm trên đúng một ổ đĩa của máy chủ. Nếu ổ đó hỏng thì không có ",
+      "cách nào lấy lại. Hãy bấm nút dưới mỗi tuần và lưu file về máy bạn (hoặc Google Drive) — ",
+      "đó mới là bản sao thật sự an toàn vì nó nằm ở nơi khác.",
+    ])
+  );
+  box.appendChild(
+    el("a", { class: "admin-broadcast-send", href: "/api/admin/backup", download: "" }, ["⬇ Tải bản sao lưu ngay"])
+  );
+  box.appendChild(
+    el("div", { class: "admin-broadcast-hint" }, [
+      "⚠️ File này chứa dữ liệu cá nhân của học viên — giữ riêng tư, đừng chia sẻ công khai.",
+    ])
+  );
+  return box;
+}
+
 function renderBroadcastPanel() {
   const box = el("div", { class: "admin-broadcast" });
   box.appendChild(el("div", { class: "admin-broadcast-title" }, ["Gửi thông báo qua Bé Ailai"]));
@@ -988,6 +1009,7 @@ function renderDashboard() {
   wrap.appendChild(topbar);
   wrap.appendChild(renderBroadcastPanel());
   wrap.appendChild(renderDigestPanel());
+  wrap.appendChild(renderBackupPanel());
   const storagePanel = renderStoragePanel();
   if (storagePanel) wrap.appendChild(storagePanel);
   wrap.appendChild(renderGradingPanel());

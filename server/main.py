@@ -25,6 +25,7 @@ for _stream in (_sys.stdout, _sys.stderr):
 
 from fastapi import FastAPI, Request, Response, UploadFile, Form, File, HTTPException
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
+from starlette.background import BackgroundTask
 from fastapi.staticfiles import StaticFiles
 
 from .database import get_db, init_db, DATA_DIR
@@ -2078,6 +2079,47 @@ def _storage_usage() -> dict:
 def admin_diag_storage(request: Request):
     current_admin(request)
     return _storage_usage()
+
+
+@app.get("/api/admin/backup")
+def admin_backup(request: Request):
+    """Tải về một bản sao lưu nhất quán của toàn bộ tiến độ học viên.
+
+    Bắt buộc dùng backup API của SQLite chứ KHÔNG copy file: ở chế độ WAL, phần dữ liệu vừa
+    ghi còn nằm trong file -wal, copy tay sẽ ra bản thiếu hoặc hỏng. Backup API chạy được ngay
+    cả khi học viên đang nộp bài, không cần dừng máy chủ.
+
+    Bảng phiên đăng nhập bị xoá khỏi bản sao lưu: không cần cho việc khôi phục (học viên đăng
+    nhập lại là có), mà nếu file lọt ra ngoài thì token còn sống sẽ bị dùng để mạo danh.
+    """
+    current_admin(request)
+    import sqlite3
+    import tempfile
+
+    from .database import DB_PATH
+
+    tmp = Path(tempfile.gettempdir()) / f"ags-backup-{secrets.token_hex(6)}.db"
+    src = sqlite3.connect(DB_PATH)
+    try:
+        dst = sqlite3.connect(tmp)
+        try:
+            src.backup(dst)  # bản chụp nhất quán, an toàn khi đang có người ghi
+            dst.execute("DELETE FROM sessions")
+            dst.execute("DELETE FROM admin_sessions")
+            dst.commit()
+            dst.execute("VACUUM")
+        finally:
+            dst.close()
+    finally:
+        src.close()
+
+    stamp = datetime.now(timezone.utc).astimezone().strftime("%Y%m%d-%H%M")
+    return FileResponse(
+        tmp,
+        media_type="application/octet-stream",
+        filename=f"agentsee-backup-{stamp}.db",
+        background=BackgroundTask(lambda: tmp.unlink(missing_ok=True)),
+    )
 
 
 @app.post("/api/admin/students/{user_id}/grant-codes")
