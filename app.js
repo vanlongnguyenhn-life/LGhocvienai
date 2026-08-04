@@ -4,13 +4,23 @@ const STORAGE_KEY = "ags_course_state_v1";
 
 const API = {
   async request(path, options = {}) {
-    const res = await fetch(path, { credentials: "include", ...options });
+    let res;
+    try {
+      res = await fetch(path, { credentials: "include", ...options });
+    } catch (netErr) {
+      // Mất mạng / máy chủ đang khởi động lại: KHÔNG được nhầm với "chưa đăng nhập".
+      const err = new Error("Không kết nối được máy chủ — kiểm tra mạng giúp mình nhé.");
+      err.isNetwork = true;
+      throw err;
+    }
     let data = null;
     try {
       data = await res.json();
     } catch (e) {}
     if (!res.ok) {
-      throw new Error((data && data.detail) || "Có lỗi xảy ra, thử lại nhé");
+      const err = new Error((data && data.detail) || "Có lỗi xảy ra, thử lại nhé");
+      err.status = res.status; // để nơi gọi phân biệt 401 (hết phiên) với 5xx (server trục trặc)
+      throw err;
     }
     return data;
   },
@@ -298,6 +308,14 @@ function render() {
 
   const root = document.getElementById("app");
   root.innerHTML = "";
+  if (state.connectionLost) {
+    root.appendChild(
+      el("div", { class: "conn-lost-banner" }, [
+        "⚠️ Đang mất kết nối tới hệ thống. Bài bạn đã làm KHÔNG mất — hệ thống đang tự kết nối lại. " +
+          "Bạn cứ để trang này mở nhé.",
+      ])
+    );
+  }
   try {
     if (!state.loggedIn || state.view === "login") {
       root.appendChild(renderLogin());
@@ -2194,6 +2212,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const user = await API.me();
     state.currentUser = user;
     state.loggedIn = true;
+    state.connectionLost = false;
     if (state.view === "login") state.view = "home";
     await hydrateProgress();
     try {
@@ -2202,9 +2221,49 @@ document.addEventListener("DOMContentLoaded", async () => {
       agentTokenInfo = null;
     }
   } catch (e) {
-    state.currentUser = null;
-    state.loggedIn = false;
-    state.view = "login";
+    if (e.status === 401 || e.status === 403) {
+      // Thật sự chưa đăng nhập / hết phiên → đưa về màn hình đăng nhập.
+      state.currentUser = null;
+      state.loggedIn = false;
+      state.view = "login";
+    } else {
+      // Mạng chớp hoặc máy chủ đang khởi động lại. TUYỆT ĐỐI không đá học viên về màn hình
+      // đăng nhập: họ sẽ tưởng mất sạch bài dù dữ liệu vẫn nguyên trên máy chủ. Giữ nguyên
+      // phiên đã lưu, chỉ báo mất kết nối và tự thử lại.
+      state.connectionLost = true;
+      scheduleReconnect();
+    }
   }
   render();
 });
+
+// Tự kết nối lại khi máy chủ sống lại, rồi nạp lại tiến độ và gỡ banner.
+let reconnectTimer = null;
+function scheduleReconnect() {
+  if (reconnectTimer) return;
+  reconnectTimer = setInterval(async () => {
+    try {
+      const user = await API.me();
+      state.currentUser = user;
+      state.loggedIn = true;
+      state.connectionLost = false;
+      if (state.view === "login") state.view = "home";
+      clearInterval(reconnectTimer);
+      reconnectTimer = null;
+      await hydrateProgress();
+      flushUnsavedProgress();
+      render();
+      showToast("Đã kết nối lại — tiến độ của bạn vẫn nguyên vẹn.");
+    } catch (e) {
+      if (e.status === 401 || e.status === 403) {
+        clearInterval(reconnectTimer);
+        reconnectTimer = null;
+        state.connectionLost = false;
+        state.currentUser = null;
+        state.loggedIn = false;
+        state.view = "login";
+        render();
+      }
+    }
+  }, 5000);
+}

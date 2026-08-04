@@ -1097,3 +1097,18 @@ input.reflect-input { min-height: unset; }
   .opt-grid { grid-template-columns: 1fr 1fr; }
   .login-title { font-size: 20px; }
 }
+
+/* Banner báo mất kết nối máy chủ — trấn an học viên là bài không mất, tránh việc họ
+   tưởng mất tiến độ rồi thoát ra làm lại từ đầu. */
+.conn-lost-banner {
+  background: #fff4e5;
+  color: #7a4100;
+  border: 1px solid #ffc48a;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin: 0 auto 12px;
+  max-width: 100%;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
+}
