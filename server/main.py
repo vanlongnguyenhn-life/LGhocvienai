@@ -2798,21 +2798,28 @@ async def gws_cli_verify(request: Request):
 
     has_cli = bool(evidence)
     emails = sorted(set(re.findall(r"[\w.+-]+@[\w-]+\.[\w.]+", blob)))
-    with get_db() as conn:
-        row = conn.execute("SELECT email FROM users WHERE id = ?", (user["id"],)).fetchone()
-    my_email = (row["email"] or "").strip().lower() if row and row["email"] else ""
 
-    crit = [{"label": "Đã cài Google Workspace CLI trên máy", "ok": has_cli,
-             "note": "" if has_cli else "Không thấy lệnh gws."}]
-    if my_email:
-        matched = my_email in [e.lower() for e in emails]
-        crit.append({"label": f"Đã cấu hình đúng tài khoản {my_email}", "ok": matched,
-                     "note": "" if matched else ("Đang thấy: " + ", ".join(emails) if emails else "Chưa đăng nhập tài khoản nào.")})
-    else:
-        crit.append({"label": "Đã đăng nhập một tài khoản Google", "ok": bool(emails),
-                     "note": ("Tài khoản: " + ", ".join(emails)) if emails else "Chưa thấy tài khoản nào."})
+    # KHÔNG bắt trùng email đăng nhập lớp học. Email đó do công ty cấp (Lark), còn tài khoản
+    # Google học viên dùng để làm bài thường là Gmail cá nhân — ép trùng là cả lớp trượt oan.
+    # Chỉ cần đã đăng nhập MỘT tài khoản Google; ghi lại tài khoản đó để giáo viên đối chiếu.
+    crit = [
+        {"label": "Đã cài Google Workspace CLI trên máy", "ok": has_cli,
+         "note": "" if has_cli else "Không thấy lệnh gws."},
+        {"label": "Đã đăng nhập một tài khoản Google", "ok": bool(emails),
+         "note": ("Tài khoản đang dùng: " + ", ".join(emails)) if emails
+                 else "Chưa đăng nhập tài khoản Google nào trong GWS CLI."},
+    ]
 
     ok = all(c["ok"] for c in crit)
+    if emails:
+        # Ghi nhớ tài khoản Google học viên dùng cho cả Bài 9 (chỉ để giáo viên xem, không chấm).
+        with get_db() as conn:
+            conn.execute(
+                """INSERT INTO gws_tasks (user_id, question_code, payload) VALUES (?, '9.16.account', ?)
+                   ON CONFLICT(user_id, question_code) DO UPDATE SET payload=excluded.payload,
+                                                                     started_at=datetime('now')""",
+                (user["id"], json.dumps({"google_accounts": emails}, ensure_ascii=False)),
+            )
     with get_db() as conn:
         conn.execute(
             "INSERT INTO gws_attempts (user_id, question_code, url, ok, detail) VALUES (?, '9.16', ?, ?, ?)",
