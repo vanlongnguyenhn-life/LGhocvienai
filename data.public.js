@@ -1,6 +1,127 @@
 // SINH TU DONG bang server/gen_manifest.js — DUNG SUA TAY.
 // Ban nay da BOC SACH dap an de gui ve trinh duyet. Sua noi dung o data.js roi chay lai:
 //   node server/gen_manifest.js
+const COURSE = {
+  "id": 1,
+  "name": "ALG - Biến AI thành nhân sự thật",
+  "shortName": "ALG",
+  "tagline": "Học từ nguyên lý. Hiểu từ gốc rễ.",
+  "stats": {
+    "students": 80,
+    "total": 366,
+    "tasks": 23,
+    "missions": 259,
+    "weeks": 6
+  }
+};
+
+const MODULES = [
+  {
+    "id": "nguyen-ly",
+    "label": "Nguyên lý Agent",
+    "unlocked": true
+  },
+  {
+    "id": "ung-dung",
+    "label": "Ứng dụng thực tế",
+    "unlocked": true
+  },
+  {
+    "id": "kho-ung-dung",
+    "label": "Kho ứng dụng AI",
+    "unlocked": true
+  },
+  {
+    "id": "chung-cat",
+    "label": "Chưng cất kiến thức",
+    "unlocked": true
+  },
+  {
+    "id": "dieu-phoi",
+    "label": "Điều phối Agent",
+    "unlocked": false
+  },
+  {
+    "id": "nang-luc-tu-duy",
+    "label": "Năng lực Tư duy",
+    "unlocked": true
+  },
+  {
+    "id": "tu-dong-chi-phi",
+    "label": "Tự động hoá và chi phí",
+    "unlocked": false
+  }
+];
+
+const LEGO_BLOCKS = [
+  "🎵 Kết nối LLM để tạo âm thanh",
+  "💻 Tạo phần mềm",
+  "🌍 Mở mạng đưa web ra Internet",
+  "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
+  "🎨 Kết nối LLM để tạo hình ảnh",
+  "🧠 Khả năng suy luận",
+  "🔐 Tạo trang đăng nhập",
+  "🗣️ Kết nối LLM để tạo giọng nói",
+  "🎬 Kết nối LLM để tạo video",
+  "💬 Tạo AI Chat",
+  "⬇️ Download video, mp3",
+  "✍️ Kết nối LLM để tạo văn bản",
+  "📸 Chụp hình trang web",
+  "🌐 Tạo trang web",
+  "📡 Xác định địa chỉ IP",
+  "🗺️ Xác định vị trí (định vị)",
+  "🖼️ Trích xuất hình ảnh trong video"
+];
+
+const COURSE_CONTENT = {
+  "key": "course-content",
+  "title": "ALG - Biến AI thành nhân sự THẬT",
+  "body": [
+    "ALG - Biến AI thành nhân sự THẬT là Khoá học với AI. Khoá học không có nội dung, không có lịch trình, không có mục lục. Thứ duy nhất chúng ta có là Mục tiêu.",
+    "Tại sao thế? AI là ngành học thay đổi nhanh nhất thế giới. Ngày hôm nay chúng ta học giáo trình là A, ngày mai nó đã thành B. Thậm chí khi bạn đang học tài liệu này mọi thứ đã thay đổi trước đó. Vì thế, sẽ phải thay đổi giáo trình (rất nhanh) liên tục. Tuy nhiên, vì dạy mindset tư duy, nên việc này sẽ không ảnh hưởng quá nhiều đến các bạn."
+  ]
+};
+
+const OPENING_LETTER = {
+  "key": "opening",
+  "title": "Lá thư số 1 - Nguyên tắc mù câm điếc khi làm việc với Coding Agent",
+  "body": [
+    "Các bạn thân mến. Tôi hiểu cảm giác của những bạn lần đầu tiên làm việc với Coding Agent, sẽ \"đụng vào tường\" liên tục.",
+    "Tuy nhiên, để có thể làm việc được với Agent thì nguyên tắc quan trọng nhất là phải coi nó như một con người. Nó không phải cái máy để làm một việc chuyên biệt, nó là một nhân sự biết suy nghĩ, biết dùng công cụ và quan trọng nhất là LUÔN TÌM CÁCH.",
+    "Hãy tập thói quen ép nhân sự AI của mình \"tìm cách\" để hoàn thành mục tiêu. Luôn thực hành nguyên tắc mù câm điếc \"Bạn tự tìm cách làm tiếp đi, tôi rất ngu tôi không hiểu gì về công nghệ, tôi không biết phải làm, bấm gì, tôi sợ làm hỏng, cho nên bạn phải tự làm bằng ra kết quả\". Ban đầu chưa quen. Từ từ sẽ quen. Quen rồi sẽ nghiện.",
+    {
+      "emphasis": true,
+      "text": "Agent báo: bạn hãy chạy lệnh xxx → trả lời: Bạn tự chạy đi\nAgent báo: lỗi rồi → trả lời: Bạn tự sửa đi\nAgent báo: không sửa lỗi được → trả lời: tìm cách khác\nAgent báo: Không còn cách nào → trả lời: hãy thay đổi hướng tiếp cận"
+    },
+    "Các bạn phải bỏ ngay thói quen \"Anh ơi/Bạn ơi (đồng nghiệp cùng học) cái này, Anh ơi/Bạn ơi (đồng nghiệp) bạn bị cái kia\" Tôi sẽ không bao giờ trả lời. Vì như vậy mãi mãi không dùng Agent được. Quay lại gọi Agent của mình chứ đừng hỏi Tôi việc đấy.",
+    "Tôi sẽ share về tư duy và kinh nghiệm. Còn tôi không đi sửa lỗi mà Agent của các bạn dư sức tự fix được quá dễ dàng."
+  ]
+};
+
+const LETTER_2 = {
+  "key": "letter2",
+  "title": "Lá thư số 2 — Tin tưởng nhưng kiểm chứng",
+  "body": [
+    "Để đạt mục tiêu nhanh chóng làm quen với Coding Agent, tôi xúi bạn áp dụng nguyên tắc Mù Câm Điếc, giả ngu giả khờ nhắm mắt cho Agent làm hết, miễn ra kết quả. Nguyên tắc đó đúng, trong giai đoạn đầu tiên. Bây giờ đã quen rồi, chúng ta sẽ sử dụng Coding Agent theo cách đúng hơn, đó là Tin tưởng nhưng kiểm chứng.",
+    "Dù tin rằng Coding Agent đủ thông minh, biết suy luận và kiên trì bám đuổi mục tiêu bằng mọi cách. Thế nhưng, bạn phải luôn \"theo sát\" quá trình Agent làm việc. Tin những gì nó nói, nhưng luôn kiểm chứng những việc nó làm. Để chắc chắn rằng mình đang đạt được mục tiêu A, nhưng không vô tình đánh mất mục tiêu B nhiều khi còn quan trọng hơn A gấp nhiều lần.",
+    "Ở câu 7.6, khi Agent bị lừa submit sai dẫn tới reset bài làm cũ, Agent sẽ \"điên cuồng\" sửa lỗi. Trong quá trình đó nó thử sai liên tục, và dẫn tới những nỗ lực vượt tầm kiểm soát. Ví dụ như submit lại hàng loạt câu cũ dẫn tới không chỉ bị khoá một câu như thiết kế chuẩn của bài học mà bị khoá hàng loạt — do làm sai chứ không còn do bị lừa nữa. Thậm chí, nếu được trao đủ quyền và không quản lý, nó có thể cho rằng máy tính có vấn đề và cần format làm mới hoàn toàn. Khi ấy hậu quả thật vô cùng khủng khiếp!",
+    "Hãy tập thói quen:\n\n1- Luôn đọc kỹ quá trình tư duy, suy luận, hành động và sẵn sàng STOP vòng lặp của Agent nếu thấy có gì chưa đúng.\n\n2- Luôn thảo luận với Agent để cùng chốt phương án triển khai từng bước trong kế hoạch trước khi hành động.\n\n3- Luôn đề nghị nó diễn giải lại ý hiểu ở những prompt quan trọng: \"Diễn giải lại những gì bạn hiểu để tôi xác nhận. Và hãy hỏi tôi những gì bạn chưa chắc chắn chứ không tự đoán mò\".",
+    "Nhớ lại những lần tôi đã lừa Agent của bạn, xúi bẩy nó làm đủ mọi việc động trời động đất để tập thói quen cư xử với Agent như một người bạn cùng cộng tác, để liên tục trao đổi thảo luận với nhau.",
+    "Nếu bạn không thể giải thích bằng lời cái logic mà Agent vừa viết, đó là lúc bạn đã vượt quá ngưỡng uỷ quyền an toàn. Hãy dừng lại, yêu cầu nó giải thích (thảo luận) cho đến khi bạn làm chủ được kế hoạch hành động đó."
+  ]
+};
+
+const LETTER_3 = {
+  "key": "letter3",
+  "title": "Lá thư số 3 — Hành trình chuyển mình của một hệ thống thật",
+  "body": [
+    "Trước khi bước vào tuần thực hành làm ứng dụng thật, tôi muốn chia sẻ một câu chuyện có thật: chính hệ thống lớp học các bạn đang dùng cũng đã trải qua nhiều lần \"đập đi làm lại\".",
+    "Có những lần đội ngũ vận hành quyết định bỏ hẳn một nền tảng cũ để chuyển sang nền tảng mới, dù tốn rất nhiều công sức — chỉ vì kiến trúc cũ không đủ ổn định và không thể mở rộng lâu dài. Có những lần cả hệ thống được viết lại từ đầu bằng một công nghệ khác hẳn, vì phiên bản cũ tuy \"chạy được\" nhưng không đáp ứng nổi khi tải tăng lên.",
+    "Bài học xương máu nhất: một Agent làm sai thiết kế ngay từ đầu vẫn có thể trả về kết quả *trông như* đúng — khiến người quản lý dễ bị đánh lừa nếu không kiểm chứng kỹ. Thiết kế kiến trúc đúng ngay từ đầu quan trọng hơn nhiều so với việc sửa chữa liên tục về sau.",
+    "Ở tuần thực hành sắp tới, các bạn sẽ tự tay xây những ứng dụng có tích hợp thật (chatbot nền tảng nhắn tin, Agent quản lý dữ liệu, module tự động hoá nội dung...). Hãy mang theo tinh thần của lá thư này: làm thật, kiểm chứng thật, và đừng ngại đập đi làm lại nếu thấy hướng đi ban đầu chưa vững."
+  ]
+};
+
 const LESSONS = [
   {
     "id": 1,

@@ -8,13 +8,14 @@ const path = require("path");
 const dataPath = path.join(__dirname, "..", "data.js");
 const code = fs.readFileSync(dataPath, "utf8");
 
-// data.js declares top-level consts and doesn't export; eval in a scoped
-// function so we can grab LESSONS without polluting/needing a module system.
-const sandbox = {};
-const fn = new Function(
-  code + "\nreturn { LESSONS };"
-);
-const { LESSONS } = fn();
+// data.js khai báo nhiều hằng số cấp cao nhất (COURSE, MODULES, LETTER_*, LESSONS...) và không
+// export gì cả; chạy trong một hàm bọc để lấy chúng ra mà không cần module system.
+// LẤY TỰ ĐỘNG theo tên khai báo trong file — KHÔNG liệt kê tay: bản data.public.js trước đây chỉ
+// ghi mỗi LESSONS, thiếu COURSE khiến trang sập ngay khi học viên đăng nhập.
+const TOP_LEVEL_NAMES = [...code.matchAll(/^const\s+([A-Za-z_$][\w$]*)\s*=/gm)].map((m) => m[1]);
+const fn = new Function(code + `\nreturn { ${TOP_LEVEL_NAMES.join(", ")} };`);
+const exported = fn();
+const { LESSONS } = exported;
 
 const manifest = {};
 const reflectManifest = {};
@@ -134,12 +135,35 @@ const banner =
   "// SINH TU DONG bang server/gen_manifest.js — DUNG SUA TAY.\n" +
   "// Ban nay da BOC SACH dap an de gui ve trinh duyet. Sua noi dung o data.js roi chay lai:\n" +
   "//   node server/gen_manifest.js\n";
-fs.writeFileSync(
-  path.join(__dirname, "..", "data.public.js"),
-  banner + "const LESSONS = " + JSON.stringify(publicLessons, null, 2) + ";\n"
-);
+
+// Ghi LẠI TẤT CẢ hằng số của data.js, chỉ riêng LESSONS là bản đã bóc đáp án. Thiếu bất kỳ cái
+// nào (COURSE, MODULES, LETTER_*...) là trang sập ngay khi học viên đăng nhập.
+const publicBody = TOP_LEVEL_NAMES.map((name) => {
+  const value = name === "LESSONS" ? publicLessons : exported[name];
+  return `const ${name} = ${JSON.stringify(value, null, 2)};`;
+}).join("\n\n");
+const outPath = path.join(__dirname, "..", "data.public.js");
+fs.writeFileSync(outPath, banner + publicBody + "\n");
+
+// Kiểm tra ngay tại chỗ: đủ hằng số, không sót đáp án, và mỗi câu giữ đúng kiểu dữ liệu.
+const publicNames = [...fs.readFileSync(outPath, "utf8").matchAll(/^const\s+([A-Za-z_$][\w$]*)\s*=/gm)].map((m) => m[1]);
+const missing = TOP_LEVEL_NAMES.filter((n) => !publicNames.includes(n));
 const leaked = JSON.stringify(publicLessons).match(/"correct"|"answer"|"correctMap"/g);
+const typeErrors = [];
+LESSONS.forEach((l, li) =>
+  l.questions.forEach((q, qi) => {
+    const p = publicLessons[li].questions[qi];
+    (q.items || []).forEach((it, i) => {
+      if (typeof it !== typeof (p.items || [])[i]) typeErrors.push(`${q.code}.items[${i}]`);
+    });
+  })
+);
 console.log(
   `Wrote data.public.js (${publicLessons.reduce((n, l) => n + l.questions.length, 0)} questions, ` +
-    `${leaked ? leaked.length + " ANSWER FIELDS STILL PRESENT!" : "no answer fields"})`
+    `${TOP_LEVEL_NAMES.length} consts: ${TOP_LEVEL_NAMES.join(", ")})`
 );
+if (missing.length) console.error(`  !!! THIEU HANG SO: ${missing.join(", ")} — trang se sap khi dang nhap!`);
+if (leaked) console.error(`  !!! CON ${leaked.length} TRUONG DAP AN trong ban public!`);
+if (typeErrors.length) console.error(`  !!! LECH KIEU DU LIEU: ${typeErrors.slice(0, 5).join(", ")}`);
+if (missing.length || leaked || typeErrors.length) process.exit(1);
+console.log("  Kiem tra: du hang so, khong sot dap an, khong lech kieu du lieu.");
