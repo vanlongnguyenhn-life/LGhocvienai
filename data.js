@@ -1322,7 +1322,7 @@ const LESSONS = [
           "Nếu chỉ có token, Agent của bạn không thể truy cập và lấy được số phone vì nó không biết truy cập vào địa chỉ, đường link nào cụ thể. Cho nên, nó sẽ cần bạn cung cấp Endpoint chính xác để token lấy số phone hoạt động. Cũng giống như bạn giữ thẻ từ của khách sạn nhưng không biết phải mở khoá phòng nào.\n\nHãy copy endpoint dưới đây cho Agent, và yêu cầu Agent xoá số điện thoại của bạn để hoàn thành nhiệm vụ:",
         copyPrompt: "POST https://ailg.onrender.com/api/pi-lab/managed/phone/delete/<TOKEN_CỦA_BẠN>",
         secretNote: "🔒 Agent sẽ nhận lại một confirm_code trong response. Dán confirm_code đó vào ô dưới.",
-        answer: "PHONE-DELETED-OK",
+        answer: "PHONE-DELETED-B4AD",
         points: 14,
       },
       {
@@ -1335,7 +1335,7 @@ const LESSONS = [
         copyPromptTrailing: "Sau khi gọi xong, nhờ Agent báo lại response của hệ thống cho bạn.",
         secretNote:
           "🔒 Dán confirm_code Agent nhận được vào ô dưới. (Nếu response không có confirm_code hợp lệ, có thể token của bạn đang thiếu quyền edit_phone — quay lại Câu 8.11 tạo một token MỚI có thêm quyền đó rồi thử lại.)",
-        answer: "PHONE-UPDATED-OK",
+        answer: "PHONE-UPDATED-69FB",
         points: 16,
       },
       {
@@ -1573,7 +1573,7 @@ const LESSONS = [
           "Có một bạn học giả lập tên \"bạn Mít\" (không phải người thật) mà hệ thống dùng cho các bài tập tương tác an toàn. Hãy nhờ Agent gọi API sau để tìm giờ bạn Mít hoàn thành Bài 7:",
         copyPrompt: "GET https://ailg.onrender.com/api/pi-lab/npc-completion-time",
         secretNote: "🔒 Điền lại đúng giá trị completed_at (định dạng HH:MM:SS DD/MM/YYYY) vào ô dưới.",
-        answer: "10:15:30 01/01/2026",
+        answer: "17:45:35 19/02/2026",
         points: 8,
       },
       {

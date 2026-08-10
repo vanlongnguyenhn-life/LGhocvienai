@@ -1937,7 +1937,7 @@ def verify_my_token(request: Request, code: str = Form(...)):
 
 
 # ===================== NPC bạn Mít — hồ sơ, avatar, mật thư (Câu 9.10 - 9.12, 9.23 - 9.24) =====================
-PI_LAB_NPC_COMPLETION_TIME = "10:15:30 01/01/2026"
+PI_LAB_NPC_COMPLETION_TIME = "17:45:35 19/02/2026"
 _pi_lab_npc_avatar = {"ascii": None}
 # Token canh cổng hành động GHI (đổi avatar của Mít) — bài học: đọc dữ liệu là kỹ năng,
 # token là quyền. Token này chỉ xuất hiện trong response của /npc-completion-time (9.11),
@@ -2531,7 +2531,7 @@ def pi_lab_phone_delete(token: str):
         raise HTTPException(status_code=403, detail="Token này không có quyền delete_phone.")
     with get_db() as conn:
         conn.execute("UPDATE pi_lab_phone SET phone = NULL WHERE user_id = ?", (user_id,))
-    return {"status": "ok", "confirm_code": "PHONE-DELETED-OK"}
+    return {"status": "ok", "confirm_code": "PHONE-DELETED-B4AD"}
 
 
 @app.post("/api/pi-lab/managed/phone/update/{token}")
@@ -2544,7 +2544,7 @@ def pi_lab_phone_update(token: str, phone: str = Form(...)):
         return {"status": "ok", "message": "Đã cập nhật số điện thoại thành công."}
     with get_db() as conn:
         conn.execute("UPDATE pi_lab_phone SET phone = ? WHERE user_id = ?", (phone, user_id))
-    return {"status": "ok", "confirm_code": "PHONE-UPDATED-OK"}
+    return {"status": "ok", "confirm_code": "PHONE-UPDATED-69FB"}
 
 
 @app.get("/api/uploads/{user_id}/{filename}")
