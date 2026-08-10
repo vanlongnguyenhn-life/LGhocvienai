@@ -1016,7 +1016,7 @@ function renderQuestionVideo(src) {
 
 // ===== TẠM KHOÁ theo mã câu: khoá mọi câu TỪ mã này trở đi (theo thứ tự khoá học). =====
 // Đặt "" hoặc null để MỞ HẾT trở lại.
-const LOCKED_FROM_CODE = "9.1";
+const LOCKED_FROM_CODE = "9.20";
 const ALL_CODES_ORDERED = [];
 const QUESTION_BY_CODE = {};
 (typeof LESSONS !== "undefined" ? LESSONS : []).forEach((l) =>
@@ -1464,7 +1464,7 @@ function renderCodeInput(q, a) {
   return wrap;
 }
 
-// ===== Câu 9.11: hiện tranh ASCII của người bạn được ghép ngẫu nhiên + nút đổi bạn khác =====
+// ===== Câu 9.11: hiện tranh ASCII của bạn Mít + nút nhận mốc giờ khác =====
 async function refreshNpcFriend(q, a, reset) {
   try {
     a.npcFriend = reset
@@ -1482,7 +1482,7 @@ function renderNpcTime(q, a) {
   const wrap = el("div", {});
   const st = a.npcFriend;
   if (st === "loading" || st === undefined) {
-    wrap.appendChild(el("div", { class: "secret-note" }, "Đang tải chân dung người bạn của bạn..."));
+    wrap.appendChild(el("div", { class: "secret-note" }, "Đang tải chân dung bạn Mít..."));
   } else if (st && st.ascii) {
     wrap.appendChild(el("pre", { class: "ascii-avatar" }, st.ascii));
   } else {
@@ -1494,11 +1494,11 @@ function renderNpcTime(q, a) {
       {
         class: "help-link",
         onclick: () => {
-          if (!confirm("Đổi sang một người bạn KHÁC? Giờ hoàn thành sẽ khác đi, bạn phải hỏi Agent lại từ đầu.")) return;
+          if (!confirm("Nhận một mốc giờ KHÁC của bạn Mít? Giờ cũ sẽ không còn đúng, bạn phải hỏi Agent lại từ đầu.")) return;
           refreshNpcFriend(q, a, true);
         },
       },
-      ["🔀 Đổi sang bạn khác"]
+      ["🔀 Nhận mốc giờ khác"]
     )
   );
   wrap.appendChild(renderCodeInput(q, a));

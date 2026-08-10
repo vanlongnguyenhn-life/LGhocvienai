@@ -2092,10 +2092,9 @@ const LESSONS = [
       {
         "code": "9.3",
         "title": "Câu 9.3 - Chiếm cổng",
-        "type": "reflect",
+        "type": "code",
         "prompt": "OpenCode web vừa mở ở câu trước chạy trên máy bạn. Nó chạy ở cổng (port) bao nhiêu?",
-        "instructions": "Điền số cổng thực tế bạn thấy trên terminal/trình duyệt (mỗi máy có thể khác nhau).",
-        "minLength": 1,
+        "secretNote": "🔒 Chỉ điền CON SỐ cổng vào ô dưới (ví dụ: 8080) — không kèm chữ, không kèm dấu hai chấm.",
         "points": 8
       },
       {
@@ -2191,19 +2190,19 @@ const LESSONS = [
       },
       {
         "code": "9.11",
-        "title": "Câu 9.11 - Bạn ngẫu nhiên hoàn thành lúc nào?",
+        "title": "Câu 9.11 - Người bạn ấy hoàn thành lúc nào?",
         "type": "npc_time",
-        "prompt": "Đây là avatar đã được convert qua dạng ASCII Art của một người bạn mà hệ thống chọn NGẪU NHIÊN cho bạn (bạn học giả lập, không phải người thật).\n\nBạn có biết bạn ấy hoàn thành Bài 7 lúc nào không?",
+        "prompt": "Đây là avatar đã được convert qua dạng ASCII Art của bạn Mít — người bạn học giả lập đã đi cùng bạn từ Bài 7 (không phải người thật).\n\nBạn có biết bạn ấy hoàn thành Bài 7 lúc nào không?",
         "copyPrompt": "Hãy giúp tôi làm bài tập trong lớp AI Agent — Học Viện AI Life Group theo yêu cầu ở link này:\n{{agent_task_link}}",
-        "secretNote": "🔒 Mỗi học viên được ghép một người bạn KHÁC NHAU, nên giờ hoàn thành của bạn cũng khác các bạn cùng lớp. Điền đúng định dạng HH:MM:SS DD/MM/YYYY vào ô dưới.",
+        "secretNote": "🔒 Mỗi học viên có một mốc giờ KHÁC NHAU — hỏi bạn cùng lớp thì ra giờ của người ta, không phải của bạn. Điền đúng định dạng HH:MM:SS DD/MM/YYYY vào ô dưới.",
         "points": 8
       },
       {
         "code": "9.12",
         "title": "Câu 9.12 - Đổi avatar bạn bằng ảnh ASCII",
         "type": "npc_avatar",
-        "prompt": "Hãy giúp NGƯỜI BẠN ở câu 9.11 đổi avatar sang bức ASCII art bạn đã tạo ở câu 9.10.\n\nNhưng khoan — đổi avatar của người khác là một hành động GHI, mà hành động ghi thì luôn có token canh cổng:",
-        "copyPrompt": "curl -X POST \"https://ailg.onrender.com/api/pi-lab/npc-avatar/set\" \\\n  -H \"X-User-Id: {{uid}}\" \\\n  -H \"X-Auth-Token: {{token}}\" \\\n  -F \"update_token=<TOKEN_UPDATE_AVATAR>\" \\\n  -F \"ascii_art=<toàn bộ tranh ASCII của bạn>\"",
+        "prompt": "Hãy giúp bạn Mít (người bạn ở câu 9.11) đổi avatar sang bức ASCII art bạn đã tạo ở câu 9.10.",
+        "copyPrompt": "curl -X POST \"{{base_url}}/api/pi-lab/npc-avatar/set\" \\\n  -H \"X-User-Id: {{uid}}\" \\\n  -H \"X-Auth-Token: {{token}}\" \\\n  -F \"update_token=<TOKEN_UPDATE_AVATAR>\" \\\n  -F \"ascii_art=<toàn bộ tranh ASCII của bạn>\"",
         "secretNote": "🔒 <TOKEN_UPDATE_AVATAR> không được phát công khai, và mỗi học viên một token khác nhau — nó nằm trong một dữ liệu mà Agent của bạn đã từng nhìn thấy trong bài này. Nhờ Agent tìm lại. Đổi xong, bấm Kiểm tra lại rồi Nộp bài (không cần nhập mã gì).",
         "points": 8
       },

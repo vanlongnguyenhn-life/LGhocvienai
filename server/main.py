@@ -1714,6 +1714,19 @@ def _verify_answer_manifest_entry(entry: dict, ad: dict) -> bool:
     return False
 
 
+def _verified_manifests():
+    """Mọi bảng câu hỏi mà SERVER tự kiểm chứng được.
+
+    Gọi trong hàm chứ không dựng sẵn hằng số: vài bảng được khai báo phía dưới trong file,
+    lúc định nghĩa hàm này chúng chưa tồn tại.
+    """
+    return (
+        ASSIGNMENT_MANIFEST, REFLECT_MANIFEST, MEDIA_SUBMIT_MANIFEST, ELECTRON_SUBMIT_MANIFEST,
+        SECRET_CODE_MANIFEST, PI_LAB_CODE_MANIFEST, MY_TOKEN_CHECK_MANIFEST,
+        NPC_AVATAR_MANIFEST, NPC_TIME_MANIFEST, PI_LAB_LETTER_MANIFEST, GWS_TASK_MANIFEST,
+    )
+
+
 @app.post("/api/submit-question")
 def submit_question(
     request: Request,
@@ -1723,6 +1736,14 @@ def submit_question(
     answer_data: str = Form(None),
 ):
     user = require_approved_user(request)
+
+    # Client CHỈ được phép nói "tôi nộp câu này", KHÔNG được nói đúng/sai hay bao nhiêu điểm.
+    # Mọi nhánh kiểm chứng bên dưới đều đứng sau điều kiện `status == "done"`, nên chỉ cần gửi
+    # status="correct" kèm awarded_points tuỳ ý là bỏ qua sạch phần chấm và tự cộng điểm — mở
+    # devtools gõ một dòng fetch là qua được cả bài. Ép lại status ở đây để guard luôn chạy.
+    if question_code not in ANSWER_MANIFEST and any(question_code in m for m in _verified_manifests()):
+        status = "done"
+        awarded_points = 0
 
     if question_code in ANSWER_MANIFEST:
         # Câu có đáp án cố định (trắc nghiệm/nối/sắp xếp/nhập mã/token scope/gate) — server tự
@@ -2157,8 +2178,9 @@ PI_LAB_MAT_THU_CODE = "DUNG-CU-DUNG-LUC-FCD1"
 # Danh sách "bạn học giả lập" — mỗi học viên được ghép NGẪU NHIÊN một bạn, giống hệt cách web
 # tham khảo bốc ngẫu nhiên một bạn cùng lớp. Nhờ vậy giờ hoàn thành của mỗi người MỘT KHÁC, mách
 # nhau đáp án là vô nghĩa (trước đây đáp án là hằng số chung cho cả lớp).
+NPC_MIT_NAME = "Nguyễn Thị Mít"
 NPC_FRIENDS = [
-    "Nguyễn Thị Mít", "Trần Văn Ổi", "Lê Thị Xoài", "Phạm Thảo Na", "Hoàng Văn Bơ",
+    NPC_MIT_NAME, "Trần Văn Ổi", "Lê Thị Xoài", "Phạm Thảo Na", "Hoàng Văn Bơ",
     "Đỗ Thị Cam", "Vũ Hồng Đào", "Bùi Thị Mận", "Ngô Sầu Riêng",
 ]
 NPC_TIME_MANIFEST = {"9.11": {"points": 8}}
@@ -2176,7 +2198,11 @@ def _npc_assignment(conn, user_id: int) -> dict:
     rnd = random.Random(seed)
     data = {
         "seed": seed,
-        "name": rnd.choice(NPC_FRIENDS),
+        # LUÔN là bạn Mít, không bốc ngẫu nhiên trong NPC_FRIENDS: cả mạch Bài 7 → 9.10 → 9.12
+        # → 9.24 đều kể về Mít ("người cho bạn xem hồ sơ ở 9.11"). Bốc tên khác thì học viên
+        # xem hồ sơ của Mít ở /npc-profile nhưng lại hỏi giờ của một người lạ, và câu 9.24 bịa.
+        # Cái cần khác nhau giữa các học viên là GIỜ HOÀN THÀNH, và nó vẫn riêng từng người.
+        "name": NPC_MIT_NAME,
         "completed_at": "%02d:%02d:%02d %02d/%02d/2026"
         % (rnd.randint(7, 22), rnd.randint(0, 59), rnd.randint(0, 59), rnd.randint(1, 28), rnd.randint(1, 7)),
     }

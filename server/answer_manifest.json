@@ -1584,6 +1584,11 @@
       0
     ]
   },
+  "9.3": {
+    "type": "code",
+    "points": 8,
+    "answer": "4096"
+  },
   "9.4": {
     "type": "single",
     "points": 10,

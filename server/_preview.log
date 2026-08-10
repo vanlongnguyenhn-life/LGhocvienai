@@ -51,3 +51,13 @@ INFO:     127.0.0.1:58031 - "GET /api/auth/lark/status HTTP/1.1" 200 OK
 INFO:     127.0.0.1:58031 - "GET /api/me HTTP/1.1" 200 OK
 INFO:     127.0.0.1:58031 - "GET /api/progress HTTP/1.1" 200 OK
 INFO:     127.0.0.1:58031 - "GET /api/me/agent-token HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65405 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65405 - "GET /styles.css?v=43 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61273 - "GET /data.public.js?v=73 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65405 - "GET /app.js?v=87 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65405 - "GET /api/auth/lark/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65405 - "GET /api/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65405 - "GET /api/progress HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65405 - "GET /api/me/agent-token HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51308 - "GET /api/gws/task/9.20/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61159 - "POST /api/submit-question HTTP/1.1" 200 OK

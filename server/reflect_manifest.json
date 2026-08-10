@@ -125,12 +125,6 @@
     "points": 10,
     "gradingNote": null
   },
-  "9.3": {
-    "prompt": "OpenCode web vừa mở ở câu trước chạy trên máy bạn. Nó chạy ở cổng (port) bao nhiêu?",
-    "minLength": 1,
-    "points": 8,
-    "gradingNote": null
-  },
   "9.10": {
     "prompt": "FFMPEG là một công cụ dòng lệnh (CLI) xử lý ảnh/video vô cùng mạnh mẽ. Hãy nhờ Coding Agent của bạn CÀI CÔNG CỤ NÀY vào máy.\n\nSau đó dùng nó convert hình này thành bức tranh ASCII rồi nộp bài:\nHãy giúp tôi làm bài tập trong lớp AI Agent — Học Viện AI Life Group theo yêu cầu ở link này:\n{{agent_task_link}}",
     "minLength": 200,
