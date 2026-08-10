@@ -1035,11 +1035,6 @@
       0
     ]
   },
-  "9.12": {
-    "type": "code",
-    "points": 8,
-    "answer": "AVATAR-SWAPPED-OK"
-  },
   "9.13": {
     "type": "match",
     "points": 10,

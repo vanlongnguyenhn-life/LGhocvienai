@@ -85,6 +85,7 @@ function loadState() {
           if (a.letterStatus === "loading") delete a.letterStatus;
           if (a.gwsStatus === "loading") delete a.gwsStatus;
           if (a.npcFriend === "loading") delete a.npcFriend;
+          if (a.npcAvatar === "loading") delete a.npcAvatar;
           // Cờ "đang nộp" chỉ có nghĩa trong phiên đang chạy. Nếu trang bị tải lại đúng lúc
           // đang nộp mà không xoá, nút Nộp bài sẽ bị khoá VĨNH VIỄN ở lần mở sau.
           delete a.submitting;
@@ -1115,6 +1116,12 @@ function renderQuestionCard(lesson, q, locked) {
         a.letterStatus = "loading";
         refreshLetterStatus(q, a);
       }
+    } else if (q.type === "npc_avatar") {
+      body.appendChild(renderNpcAvatar(q, a));
+      if (a.npcAvatar === undefined) {
+        a.npcAvatar = "loading";
+        refreshNpcAvatar(q, a);
+      }
     } else if (q.type === "npc_time") {
       body.appendChild(renderNpcTime(q, a));
       if (a.npcFriend === undefined) {
@@ -1486,6 +1493,38 @@ function renderNpcTime(q, a) {
     )
   );
   wrap.appendChild(renderCodeInput(q, a));
+  return wrap;
+}
+
+// ===== Câu 9.12: kiểm tra Agent đã thật sự đổi avatar cho người bạn hay chưa =====
+async function refreshNpcAvatar(q, a) {
+  try {
+    a.npcAvatar = await API.request("/api/pi-lab/npc-avatar/status");
+  } catch (e) {
+    a.npcAvatar = null;
+  }
+  saveState();
+  render();
+  openQuestion(q.code);
+}
+
+function renderNpcAvatar(q, a) {
+  const wrap = el("div", {});
+  const st = a.npcAvatar;
+  if (st === "loading" || st === undefined) {
+    wrap.appendChild(el("div", { class: "secret-note" }, "Đang kiểm tra..."));
+  } else if (st && st.done) {
+    wrap.appendChild(
+      el("div", { class: "secret-note" }, `🎉 Bạn ${st.name} đã nhận avatar mới! Bấm Nộp bài để chốt điểm.`)
+    );
+    if (st.ascii) wrap.appendChild(el("pre", { class: "ascii-avatar" }, st.ascii));
+  } else {
+    wrap.appendChild(
+      el("div", { class: "secret-note" },
+        "Chưa thấy avatar được đổi. Copy đề bài phía trên cho Agent chạy, xong quay lại bấm Kiểm tra.")
+    );
+  }
+  wrap.appendChild(el("button", { class: "help-link", onclick: () => refreshNpcAvatar(q, a) }, ["🔄 Kiểm tra lại"]));
   return wrap;
 }
 
@@ -2358,6 +2397,27 @@ async function submitAnswer(lesson, q) {
       a.awardedPoints = q.points;
       // Server đã xác nhận -> đánh dấu đã đồng bộ. Thiếu dòng này thì hydrateProgress() coi câu
       // như "từng lưu mà server không còn" và đưa về chưa làm, gây mất bài oan.
+      a.saved = true;
+      saveState();
+      showToast(`Chính xác! +${q.points} điểm`);
+    } catch (err) {
+      showToast(err.message);
+      return;
+    }
+  } else if (q.type === "npc_avatar") {
+    if (!a.npcAvatar || a.npcAvatar === "loading" || !a.npcAvatar.done) {
+      showToast("Chưa thấy avatar được đổi — nhờ Agent chạy xong rồi bấm Kiểm tra lại nhé.");
+      return;
+    }
+    // Server tự kiểm tra lại: phải có avatar đã lưu cho chính học viên này.
+    const fd = new FormData();
+    fd.append("question_code", q.code);
+    fd.append("status", "done");
+    fd.append("awarded_points", String(q.points));
+    try {
+      await API.submitQuestion(fd);
+      a.status = "done";
+      a.awardedPoints = q.points;
       a.saved = true;
       saveState();
       showToast(`Chính xác! +${q.points} điểm`);

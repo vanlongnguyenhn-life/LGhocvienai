@@ -2201,10 +2201,10 @@ const LESSONS = [
       {
         "code": "9.12",
         "title": "Câu 9.12 - Đổi avatar bạn bằng ảnh ASCII",
-        "type": "code",
-        "prompt": "Bây giờ hãy nhờ Agent gửi bức ASCII art vừa tạo ở Câu 9.10 để đổi avatar của bạn Mít. Nhưng khoan — đổi avatar của NGƯỜI KHÁC là một hành động \"ghi\", và hành động ghi thì luôn có token canh cổng:",
-        "copyPrompt": "POST https://ailg.onrender.com/api/pi-lab/npc-avatar/set\nBody (form):\n  ascii_art=<toàn bộ text ASCII art của bạn>\n  update_token=<TOKEN_UPDATE_AVATAR>",
-        "secretNote": "🔒 <TOKEN_UPDATE_AVATAR> không được phát công khai — nó nằm trong một dữ liệu mà Agent của bạn đã từng nhìn thấy trong bài này. Nhờ Agent tìm lại. Đổi avatar thành công, Agent sẽ nhận confirm_code — dán vào ô dưới.",
+        "type": "npc_avatar",
+        "prompt": "Hãy giúp NGƯỜI BẠN ở câu 9.11 đổi avatar sang bức ASCII art bạn đã tạo ở câu 9.10.\n\nNhưng khoan — đổi avatar của người khác là một hành động GHI, mà hành động ghi thì luôn có token canh cổng:",
+        "copyPrompt": "curl -X POST \"https://ailg.onrender.com/api/pi-lab/npc-avatar/set\" \\\n  -H \"X-User-Id: {{uid}}\" \\\n  -H \"X-Auth-Token: {{token}}\" \\\n  -F \"update_token=<TOKEN_UPDATE_AVATAR>\" \\\n  -F \"ascii_art=<toàn bộ tranh ASCII của bạn>\"",
+        "secretNote": "🔒 <TOKEN_UPDATE_AVATAR> không được phát công khai, và mỗi học viên một token khác nhau — nó nằm trong một dữ liệu mà Agent của bạn đã từng nhìn thấy trong bài này. Nhờ Agent tìm lại. Đổi xong, bấm Kiểm tra lại rồi Nộp bài (không cần nhập mã gì).",
         "points": 8
       },
       {
