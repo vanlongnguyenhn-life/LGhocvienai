@@ -259,6 +259,9 @@ def init_db():
         user_cols = [r["name"] for r in conn.execute("PRAGMA table_info(users)")]
         if "avatar_url" not in user_cols:
             conn.execute("ALTER TABLE users ADD COLUMN avatar_url TEXT")
+        if "email" not in user_cols:
+            # Email tài khoản Lark — câu 9.16 yêu cầu cấu hình GWS CLI đúng tài khoản này.
+            conn.execute("ALTER TABLE users ADD COLUMN email TEXT")
         if "approved" not in user_cols:
             conn.execute("ALTER TABLE users ADD COLUMN approved INTEGER NOT NULL DEFAULT 0")
             # Học viên đã tồn tại trước khi bật tính năng duyệt → tự động duyệt để không khóa oan.

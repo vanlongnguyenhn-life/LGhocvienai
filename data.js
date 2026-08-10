@@ -1636,9 +1636,9 @@ const LESSONS = [
         title: "Câu 9.16 - Connector giúp Agent \"nói chuyện\" với Google Workspace",
         type: "gws_task",
         prompt:
-          "Đến lúc Agent của bạn chạm vào Google Workspace THẬT. Bạn cần một tài khoản Google — Agent có thể dùng GWS CLI, Google API hay Apps Script, tuỳ nó chọn.\n\nNhiệm vụ khởi động: nhờ Agent tạo một Google Sheet MỚI, ghi vào ô A1 đúng MÃ CÁ NHÂN của bạn, share \"Bất kỳ ai có đường liên kết đều xem được\", rồi nộp URL cho hệ thống chấm.",
+          "Nhờ Coding Agent CÀI GOOGLE WORKSPACE CLI (github.com/googleworkspace/cli) và cấu hình với Google Account của bạn.\n\n⚠️ Lưu ý: bạn phải cấu hình GWS CLI với ĐÚNG tài khoản của mình thì mới hoàn thành được các nhiệm vụ tiếp theo.\n\nSau đó mở Terminal, chạy lệnh sau để lớp học xác minh CLI đã cài:",
         copyPrompt:
-          "Tôi đang làm bài lớp AI Agent. Hãy giúp tôi:\n1- GET https://ailg.onrender.com/api/gws/task/9.16/start (kèm header X-User-Id: {{uid}} và X-Auth-Token: {{token}}) để lấy personal_code của tôi.\n2- Dùng tài khoản Google của tôi (GWS CLI / API / Apps Script — cách nào cũng được, hỏi tôi nếu cần đăng nhập) tạo 1 Google Sheet MỚI, ghi personal_code vào ô A1.\n3- Share sheet ở chế độ \"Anyone with the link can VIEW\".\n4- POST https://ailg.onrender.com/api/gws/task/9.16/submit (cùng 2 header trên) với body JSON {\"url\": \"<link sheet>\"} — in kết quả chấm từng tiêu chí ra cho tôi xem.",
+          "curl -O {{base_url}}/agentsee-verify.py && python3 agentsee-verify.py {{uid}} {{token}}",
         points: 10,
       },
       {

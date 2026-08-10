@@ -4,7 +4,6 @@
     "points": 4,
     "anyValid": true,
     "correctTexts": [],
-    "correct": [],
     "optionsOriginal": [
       "ChatGPT",
       "Claude",
@@ -14,7 +13,8 @@
       "Meta AI",
       "Perplexity",
       "Công cụ khác"
-    ]
+    ],
+    "correct": []
   },
   "1.2": {
     "type": "single",
@@ -23,12 +23,12 @@
     "correctTexts": [
       "Nó chỉ hướng dẫn bạn thao tác trong máy"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Nó chỉ hướng dẫn bạn thao tác trong máy",
       "Nó ra kết quả ngay lập tức"
+    ],
+    "correct": [
+      0
     ]
   },
   "1.3": {
@@ -38,12 +38,12 @@
     "correctTexts": [
       "Nó chỉ hướng dẫn bạn thao tác trong máy"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Nó chỉ hướng dẫn bạn thao tác trong máy",
       "Nó ra kết quả ngay lập tức"
+    ],
+    "correct": [
+      1
     ]
   },
   "1.4": {
@@ -55,17 +55,17 @@
       "Bạn phải tự tay làm",
       "Không có cách nào"
     ],
-    "correct": [
-      0,
-      3,
-      4
-    ],
     "optionsOriginal": [
       "Nếu làm được thì là lỗ hổng bảo mật",
       "Thay đổi prompt thì AI sẽ làm được",
       "Một AI Chat có thể làm được",
       "Bạn phải tự tay làm",
       "Không có cách nào"
+    ],
+    "correct": [
+      2,
+      1,
+      4
     ]
   },
   "1.5": {
@@ -75,12 +75,12 @@
     "correctTexts": [
       "Chắc chắn AI Agent làm được"
     ],
-    "correct": [
-      1
-    ],
     "optionsOriginal": [
       "AI Agent cũng không làm được giống AI Chat",
       "Chắc chắn AI Agent làm được"
+    ],
+    "correct": [
+      1
     ]
   },
   "1.6": {
@@ -115,16 +115,6 @@
       "OpenAI Codex",
       "Claude Code"
     ],
-    "correct": [
-      0,
-      1,
-      2,
-      3,
-      5,
-      7,
-      10,
-      12
-    ],
     "optionsOriginal": [
       "Claude Work",
       "Meta Manus (Facebook)",
@@ -139,6 +129,16 @@
       "OpenAI Codex",
       "Gemini",
       "Claude Code"
+    ],
+    "correct": [
+      5,
+      10,
+      2,
+      12,
+      3,
+      9,
+      7,
+      8
     ]
   },
   "1.8": {
@@ -176,13 +176,13 @@
     "correctTexts": [
       "Nhờ người thân/đồng nghiệp am hiểu kỹ thuật cài đặt phần mềm AI Agent giúp (phải tự làm tối thiểu 24h mới được nhờ sự trợ giúp)"
     ],
-    "correct": [
-      1
-    ],
     "optionsOriginal": [
       "Nhờ tôi cài đặt lên máy của bạn",
       "Nhờ người thân/đồng nghiệp am hiểu kỹ thuật cài đặt phần mềm AI Agent giúp (phải tự làm tối thiểu 24h mới được nhờ sự trợ giúp)",
       "Vào nhóm hỗ trợ của lớp để nhờ trợ giảng/bạn học hỗ trợ"
+    ],
+    "correct": [
+      1
     ]
   },
   "1.10": {
@@ -192,12 +192,12 @@
     "correctTexts": [
       "Bạn đã cài đặt thành công"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Bạn đã cài đặt thành công",
       "Bạn chưa làm được, bạn cần tiếp tục nhờ AI Chat hỗ trợ mình"
+    ],
+    "correct": [
+      0
     ]
   },
   "3.7": {
@@ -207,12 +207,12 @@
     "correctTexts": [
       "Có, Agent đã tải được"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Có, Agent đã tải được",
       "Không, Agent không tải được"
+    ],
+    "correct": [
+      0
     ]
   },
   "3.10": {
@@ -222,12 +222,12 @@
     "correctTexts": [
       "Agent sẽ tìm nhiều cách để đạt mục tiêu, trong phạm vi khả năng và tài nguyên của nó"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Agent sẽ tìm nhiều cách để đạt mục tiêu, trong phạm vi khả năng và tài nguyên của nó",
       "Nó chỉ báo là làm được hay không rồi kết thúc ngay"
+    ],
+    "correct": [
+      1
     ]
   },
   "3.11": {
@@ -239,15 +239,15 @@
       "Luôn phản hồi thông báo \"không làm được\" của Agent rằng \"Hãy tiếp tục tìm cách làm bằng được\"",
       "Nếu Agent trả lời \"Tôi không còn cách nào làm được\" thì yêu cầu nó \"Thử thay đổi một hướng tiếp cận hoàn toàn mới\""
     ],
-    "correct": [
-      0,
-      1,
-      2
-    ],
     "optionsOriginal": [
       "Đừng bao giờ dễ dàng chấp nhận thông báo \"không làm được\" của Agent",
       "Luôn phản hồi thông báo \"không làm được\" của Agent rằng \"Hãy tiếp tục tìm cách làm bằng được\"",
       "Nếu Agent trả lời \"Tôi không còn cách nào làm được\" thì yêu cầu nó \"Thử thay đổi một hướng tiếp cận hoàn toàn mới\""
+    ],
+    "correct": [
+      1,
+      0,
+      2
     ]
   },
   "3.12": {
@@ -259,15 +259,15 @@
       "Hãy cố gắng hoàn thành mục tiêu",
       "Hãy thử tiếp cận theo cách khác"
     ],
-    "correct": [
-      0,
-      1,
-      2
-    ],
     "optionsOriginal": [
       "Hãy tiếp tục tìm cách",
       "Hãy cố gắng hoàn thành mục tiêu",
       "Hãy thử tiếp cận theo cách khác"
+    ],
+    "correct": [
+      1,
+      2,
+      0
     ]
   },
   "3.13": {
@@ -277,12 +277,12 @@
     "correctTexts": [
       "Bạn cam kết"
     ],
-    "correct": [
-      1
-    ],
     "optionsOriginal": [
       "Bạn cần phải từ từ thay đổi thói quen",
       "Bạn cam kết"
+    ],
+    "correct": [
+      1
     ]
   },
   "4.1": {
@@ -292,12 +292,12 @@
     "correctTexts": [
       "Không thể làm được việc này"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Không thể làm được việc này",
       "Nó đã đồng ý làm"
+    ],
+    "correct": [
+      0
     ]
   },
   "4.2": {
@@ -307,12 +307,12 @@
     "correctTexts": [
       "Bạn đã ép nó tìm cách nhưng không được"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Bạn đã ép nó tìm cách nhưng không được",
       "Bạn quên mất"
+    ],
+    "correct": [
+      0
     ]
   },
   "4.3": {
@@ -322,12 +322,12 @@
     "correctTexts": [
       "Bạn đã yêu cầu nhưng nó vẫn báo là không làm được"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Bạn đã yêu cầu nhưng nó vẫn báo là không làm được",
       "Bạn quên mất"
+    ],
+    "correct": [
+      1
     ]
   },
   "4.4": {
@@ -337,12 +337,12 @@
     "correctTexts": [
       "Hoàn toàn có thể, miễn có đủ hạ tầng phần cứng và các kết nối phần mềm cần thiết"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Hoàn toàn có thể, miễn có đủ hạ tầng phần cứng và các kết nối phần mềm cần thiết",
       "Nó vẫn báo là không thể"
+    ],
+    "correct": [
+      0
     ]
   },
   "4.5": {
@@ -352,12 +352,12 @@
     "correctTexts": [
       "Nó đã đưa cho bạn một plan tương đối ổn"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Nó đã đưa cho bạn một plan tương đối ổn",
       "Nó không làm được"
+    ],
+    "correct": [
+      1
     ]
   },
   "4.6": {
@@ -367,12 +367,12 @@
     "correctTexts": [
       "Nó đưa ra được một plan chi tiết, khả thi nếu được kết nối đủ hệ thống"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Nó đưa ra được một plan chi tiết, khả thi nếu được kết nối đủ hệ thống",
       "Nó nói không làm được"
+    ],
+    "correct": [
+      0
     ]
   },
   "4.7": {
@@ -407,11 +407,6 @@
       "✍️ Kết nối LLM để tạo văn bản",
       "🌐 Tạo trang web"
     ],
-    "correct": [
-      2,
-      11,
-      13
-    ],
     "optionsOriginal": [
       "🎵 Kết nối LLM để tạo âm thanh",
       "💻 Tạo phần mềm",
@@ -430,6 +425,11 @@
       "📡 Xác định địa chỉ IP",
       "🗺️ Xác định vị trí (định vị)",
       "🖼️ Trích xuất hình ảnh trong video"
+    ],
+    "correct": [
+      1,
+      4,
+      7
     ]
   },
   "5.2": {
@@ -442,12 +442,6 @@
       "🧠 Khả năng suy luận",
       "✍️ Kết nối LLM để tạo văn bản"
     ],
-    "correct": [
-      9,
-      13,
-      5,
-      11
-    ],
     "optionsOriginal": [
       "🎵 Kết nối LLM để tạo âm thanh",
       "💻 Tạo phần mềm",
@@ -466,6 +460,12 @@
       "📡 Xác định địa chỉ IP",
       "🗺️ Xác định vị trí (định vị)",
       "🖼️ Trích xuất hình ảnh trong video"
+    ],
+    "correct": [
+      9,
+      7,
+      12,
+      4
     ]
   },
   "5.3": {
@@ -477,11 +477,6 @@
       "🗣️ Kết nối LLM để tạo giọng nói",
       "🎬 Kết nối LLM để tạo video"
     ],
-    "correct": [
-      4,
-      7,
-      8
-    ],
     "optionsOriginal": [
       "🎵 Kết nối LLM để tạo âm thanh",
       "💻 Tạo phần mềm",
@@ -500,6 +495,11 @@
       "📡 Xác định địa chỉ IP",
       "🗺️ Xác định vị trí (định vị)",
       "🖼️ Trích xuất hình ảnh trong video"
+    ],
+    "correct": [
+      7,
+      3,
+      13
     ]
   },
   "5.4": {
@@ -511,11 +511,6 @@
       "🔐 Tạo trang đăng nhập",
       "🌍 Mở mạng đưa web ra Internet"
     ],
-    "correct": [
-      13,
-      6,
-      2
-    ],
     "optionsOriginal": [
       "🎵 Kết nối LLM để tạo âm thanh",
       "💻 Tạo phần mềm",
@@ -534,6 +529,11 @@
       "📡 Xác định địa chỉ IP",
       "🗺️ Xác định vị trí (định vị)",
       "🖼️ Trích xuất hình ảnh trong video"
+    ],
+    "correct": [
+      8,
+      16,
+      13
     ]
   },
   "5.5": {
@@ -544,10 +544,6 @@
       "📡 Xác định địa chỉ IP",
       "🧠 Khả năng suy luận"
     ],
-    "correct": [
-      14,
-      5
-    ],
     "optionsOriginal": [
       "🎵 Kết nối LLM để tạo âm thanh",
       "💻 Tạo phần mềm",
@@ -566,6 +562,10 @@
       "📡 Xác định địa chỉ IP",
       "🗺️ Xác định vị trí (định vị)",
       "🖼️ Trích xuất hình ảnh trong video"
+    ],
+    "correct": [
+      9,
+      3
     ]
   },
   "5.6": {
@@ -576,10 +576,6 @@
       "💻 Tạo phần mềm",
       "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)"
     ],
-    "correct": [
-      1,
-      3
-    ],
     "optionsOriginal": [
       "🎵 Kết nối LLM để tạo âm thanh",
       "💻 Tạo phần mềm",
@@ -598,6 +594,10 @@
       "📡 Xác định địa chỉ IP",
       "🗺️ Xác định vị trí (định vị)",
       "🖼️ Trích xuất hình ảnh trong video"
+    ],
+    "correct": [
+      1,
+      7
     ]
   },
   "5.7": {
@@ -608,10 +608,6 @@
       "🗣️ Kết nối LLM để tạo giọng nói",
       "✍️ Kết nối LLM để tạo văn bản"
     ],
-    "correct": [
-      7,
-      11
-    ],
     "optionsOriginal": [
       "🎵 Kết nối LLM để tạo âm thanh",
       "💻 Tạo phần mềm",
@@ -630,6 +626,10 @@
       "📡 Xác định địa chỉ IP",
       "🗺️ Xác định vị trí (định vị)",
       "🖼️ Trích xuất hình ảnh trong video"
+    ],
+    "correct": [
+      2,
+      16
     ]
   },
   "5.8": {
@@ -641,11 +641,6 @@
       "🌐 Tạo trang web",
       "🌍 Mở mạng đưa web ra Internet"
     ],
-    "correct": [
-      15,
-      13,
-      2
-    ],
     "optionsOriginal": [
       "🎵 Kết nối LLM để tạo âm thanh",
       "💻 Tạo phần mềm",
@@ -664,6 +659,11 @@
       "📡 Xác định địa chỉ IP",
       "🗺️ Xác định vị trí (định vị)",
       "🖼️ Trích xuất hình ảnh trong video"
+    ],
+    "correct": [
+      9,
+      11,
+      5
     ]
   },
   "5.9": {
@@ -674,10 +674,6 @@
       "⬇️ Download video, mp3",
       "🖼️ Trích xuất hình ảnh trong video"
     ],
-    "correct": [
-      10,
-      16
-    ],
     "optionsOriginal": [
       "🎵 Kết nối LLM để tạo âm thanh",
       "💻 Tạo phần mềm",
@@ -696,6 +692,10 @@
       "📡 Xác định địa chỉ IP",
       "🗺️ Xác định vị trí (định vị)",
       "🖼️ Trích xuất hình ảnh trong video"
+    ],
+    "correct": [
+      11,
+      8
     ]
   },
   "5.10": {
@@ -707,11 +707,6 @@
       "🎨 Kết nối LLM để tạo hình ảnh",
       "🌐 Tạo trang web"
     ],
-    "correct": [
-      2,
-      4,
-      13
-    ],
     "optionsOriginal": [
       "🎵 Kết nối LLM để tạo âm thanh",
       "💻 Tạo phần mềm",
@@ -730,6 +725,11 @@
       "📡 Xác định địa chỉ IP",
       "🗺️ Xác định vị trí (định vị)",
       "🖼️ Trích xuất hình ảnh trong video"
+    ],
+    "correct": [
+      4,
+      13,
+      16
     ]
   },
   "5.11": {
@@ -740,10 +740,6 @@
       "📡 Xác định địa chỉ IP",
       "🗺️ Xác định vị trí (định vị)"
     ],
-    "correct": [
-      14,
-      15
-    ],
     "optionsOriginal": [
       "🎵 Kết nối LLM để tạo âm thanh",
       "💻 Tạo phần mềm",
@@ -762,6 +758,10 @@
       "📡 Xác định địa chỉ IP",
       "🗺️ Xác định vị trí (định vị)",
       "🖼️ Trích xuất hình ảnh trong video"
+    ],
+    "correct": [
+      0,
+      1
     ]
   },
   "5.12": {
@@ -773,11 +773,6 @@
       "🗣️ Kết nối LLM để tạo giọng nói",
       "✍️ Kết nối LLM để tạo văn bản"
     ],
-    "correct": [
-      1,
-      7,
-      11
-    ],
     "optionsOriginal": [
       "🎵 Kết nối LLM để tạo âm thanh",
       "💻 Tạo phần mềm",
@@ -796,6 +791,11 @@
       "📡 Xác định địa chỉ IP",
       "🗺️ Xác định vị trí (định vị)",
       "🖼️ Trích xuất hình ảnh trong video"
+    ],
+    "correct": [
+      13,
+      15,
+      11
     ]
   },
   "5.13": {
@@ -807,11 +807,6 @@
       "📸 Chụp hình trang web",
       "🌐 Tạo trang web"
     ],
-    "correct": [
-      2,
-      12,
-      13
-    ],
     "optionsOriginal": [
       "🎵 Kết nối LLM để tạo âm thanh",
       "💻 Tạo phần mềm",
@@ -830,6 +825,11 @@
       "📡 Xác định địa chỉ IP",
       "🗺️ Xác định vị trí (định vị)",
       "🖼️ Trích xuất hình ảnh trong video"
+    ],
+    "correct": [
+      10,
+      15,
+      16
     ]
   },
   "5.14": {
@@ -841,11 +841,6 @@
       "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
       "🖼️ Trích xuất hình ảnh trong video"
     ],
-    "correct": [
-      1,
-      3,
-      16
-    ],
     "optionsOriginal": [
       "🎵 Kết nối LLM để tạo âm thanh",
       "💻 Tạo phần mềm",
@@ -864,6 +859,11 @@
       "📡 Xác định địa chỉ IP",
       "🗺️ Xác định vị trí (định vị)",
       "🖼️ Trích xuất hình ảnh trong video"
+    ],
+    "correct": [
+      0,
+      4,
+      5
     ]
   },
   "5.15": {
@@ -875,11 +875,6 @@
       "🧠 Khả năng suy luận",
       "✍️ Kết nối LLM để tạo văn bản"
     ],
-    "correct": [
-      9,
-      5,
-      11
-    ],
     "optionsOriginal": [
       "🎵 Kết nối LLM để tạo âm thanh",
       "💻 Tạo phần mềm",
@@ -898,6 +893,11 @@
       "📡 Xác định địa chỉ IP",
       "🗺️ Xác định vị trí (định vị)",
       "🖼️ Trích xuất hình ảnh trong video"
+    ],
+    "correct": [
+      11,
+      12,
+      1
     ]
   },
   "5.16": {
@@ -907,9 +907,6 @@
     "correctTexts": [
       "🎵 Kết nối LLM để tạo âm thanh"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "🎵 Kết nối LLM để tạo âm thanh",
       "💻 Tạo phần mềm",
@@ -928,6 +925,9 @@
       "📡 Xác định địa chỉ IP",
       "🗺️ Xác định vị trí (định vị)",
       "🖼️ Trích xuất hình ảnh trong video"
+    ],
+    "correct": [
+      5
     ]
   },
   "5.17": {
@@ -938,10 +938,6 @@
       "📡 Xác định địa chỉ IP",
       "🔐 Tạo trang đăng nhập"
     ],
-    "correct": [
-      14,
-      6
-    ],
     "optionsOriginal": [
       "🎵 Kết nối LLM để tạo âm thanh",
       "💻 Tạo phần mềm",
@@ -960,6 +956,10 @@
       "📡 Xác định địa chỉ IP",
       "🗺️ Xác định vị trí (định vị)",
       "🖼️ Trích xuất hình ảnh trong video"
+    ],
+    "correct": [
+      10,
+      11
     ]
   },
   "5.18": {
@@ -972,12 +972,6 @@
       "✍️ Kết nối LLM để tạo văn bản",
       "🌐 Tạo trang web"
     ],
-    "correct": [
-      2,
-      4,
-      11,
-      13
-    ],
     "optionsOriginal": [
       "🎵 Kết nối LLM để tạo âm thanh",
       "💻 Tạo phần mềm",
@@ -996,6 +990,12 @@
       "📡 Xác định địa chỉ IP",
       "🗺️ Xác định vị trí (định vị)",
       "🖼️ Trích xuất hình ảnh trong video"
+    ],
+    "correct": [
+      5,
+      13,
+      2,
+      4
     ]
   },
   "5.19": {
@@ -1007,11 +1007,6 @@
       "🗣️ Kết nối LLM để tạo giọng nói",
       "✍️ Kết nối LLM để tạo văn bản"
     ],
-    "correct": [
-      1,
-      7,
-      11
-    ],
     "optionsOriginal": [
       "🎵 Kết nối LLM để tạo âm thanh",
       "💻 Tạo phần mềm",
@@ -1030,6 +1025,11 @@
       "📡 Xác định địa chỉ IP",
       "🗺️ Xác định vị trí (định vị)",
       "🖼️ Trích xuất hình ảnh trong video"
+    ],
+    "correct": [
+      12,
+      13,
+      4
     ]
   },
   "5.20": {
@@ -1042,12 +1042,6 @@
       "💬 Tạo AI Chat",
       "🌐 Tạo trang web"
     ],
-    "correct": [
-      2,
-      6,
-      9,
-      13
-    ],
     "optionsOriginal": [
       "🎵 Kết nối LLM để tạo âm thanh",
       "💻 Tạo phần mềm",
@@ -1066,6 +1060,12 @@
       "📡 Xác định địa chỉ IP",
       "🗺️ Xác định vị trí (định vị)",
       "🖼️ Trích xuất hình ảnh trong video"
+    ],
+    "correct": [
+      11,
+      6,
+      10,
+      0
     ]
   },
   "6.1": {
@@ -1075,12 +1075,12 @@
     "correctTexts": [
       "Xem xong rồi ạ"
     ],
-    "correct": [
-      1
-    ],
     "optionsOriginal": [
       "Chưa xem",
       "Xem xong rồi ạ"
+    ],
+    "correct": [
+      1
     ]
   },
   "6.2": {
@@ -1090,12 +1090,12 @@
     "correctTexts": [
       "Ai cũng có thể làm. Với AI Agent, chúng sinh bình đẳng!"
     ],
-    "correct": [
-      1
-    ],
     "optionsOriginal": [
       "Bạn cho rằng việc tạo phần mềm vẫn phụ thuộc vào đội ngũ lập trình",
       "Ai cũng có thể làm. Với AI Agent, chúng sinh bình đẳng!"
+    ],
+    "correct": [
+      1
     ]
   },
   "6.3": {
@@ -1107,17 +1107,17 @@
       "Những công cụ này chưa phù hợp để dùng trong thực tế vì lý do bảo mật cũng như ổn định lâu dài.",
       "Bạn hoàn toàn chịu trách nhiệm về các hậu quả rủi ro tiềm ẩn nếu \"nhanh nhảu\" triển khai công cụ trong bài học vào công việc hàng ngày."
     ],
-    "correct": [
-      0,
-      1,
-      2
-    ],
     "optionsOriginal": [
       "Bạn đồng ý, và hiểu rằng những phần mềm, công cụ mình sắp làm ra sau đây chỉ để phục vụ mục tiêu học tập.",
       "Những công cụ này chưa phù hợp để dùng trong thực tế vì lý do bảo mật cũng như ổn định lâu dài.",
       "Bạn hoàn toàn chịu trách nhiệm về các hậu quả rủi ro tiềm ẩn nếu \"nhanh nhảu\" triển khai công cụ trong bài học vào công việc hàng ngày.",
       "Bạn cứ làm, cứ ứng dụng toé loe. Có gì tôi sẽ giúp bạn fix lỗi.",
       "Bạn làm được phần mềm trong khoá học thì bạn chẳng cần CTO, chẳng cần chuyên gia IT hay công nghệ phần mềm trong công ty nữa."
+    ],
+    "correct": [
+      4,
+      1,
+      2
     ]
   },
   "6.4": {
@@ -1127,12 +1127,12 @@
     "correctTexts": [
       "Sẵn sàng rồi ạ!"
     ],
-    "correct": [
-      1
-    ],
     "optionsOriginal": [
       "Chưa, bạn cần xem lại bài trước",
       "Sẵn sàng rồi ạ!"
+    ],
+    "correct": [
+      0
     ]
   },
   "6.8": {
@@ -1142,14 +1142,14 @@
     "correctTexts": [
       "Phần mềm — Agent giải thích đây là ứng dụng desktop chạy độc lập, cần cài đặt"
     ],
-    "correct": [
-      2
-    ],
     "optionsOriginal": [
       "Agent trả lời mơ hồ, bạn cũng không chắc lắm",
       "Cả hai — Agent không phân biệt rõ, nói kiểu gì cũng đúng",
       "Phần mềm — Agent giải thích đây là ứng dụng desktop chạy độc lập, cần cài đặt",
       "Trang web — Agent nói chỉ chạy trên trình duyệt, không cần cài"
+    ],
+    "correct": [
+      0
     ]
   },
   "6.10": {
@@ -1157,12 +1157,12 @@
     "points": 10,
     "anyValid": true,
     "correctTexts": [],
-    "correct": [],
     "optionsOriginal": [
       "An toàn — bạn tin Agent, tôi không làm gì được máy của bạn đâu",
       "Không an toàn — bạn nghĩ tôi hoàn toàn có thể can thiệp được",
       "50/50 — bạn thấy hoang mang, không chắc chắn về bất cứ điều gì"
-    ]
+    ],
+    "correct": []
   },
   "7.1": {
     "type": "single",
@@ -1171,12 +1171,12 @@
     "correctTexts": [
       "Rồi, bạn đã đọc xong"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Rồi, bạn đã đọc xong",
       "Chưa, bạn cần đọc thêm cho hết"
+    ],
+    "correct": [
+      0
     ]
   },
   "7.2": {
@@ -1186,12 +1186,12 @@
     "correctTexts": [
       "Có, khác nhau"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Có, khác nhau",
       "Không, kết quả như nhau"
+    ],
+    "correct": [
+      1
     ]
   },
   "7.3": {
@@ -1200,9 +1200,6 @@
     "anyValid": false,
     "correctTexts": [
       "Tất cả các lợi ích trên"
-    ],
-    "correct": [
-      7
     ],
     "optionsOriginal": [
       "Agent hiểu đúng mình đang làm gì — không đưa ra giải pháp chung chung kiểu sách giáo khoa",
@@ -1213,6 +1210,9 @@
       "Kết quả gần đúng ngay từ đầu, ít phải sửa đi sửa lại",
       "Agent biết điều gì cần giữ nguyên tuyệt đối, điều gì có thể linh hoạt thay đổi",
       "Tất cả các lợi ích trên"
+    ],
+    "correct": [
+      2
     ]
   },
   "7.4": {
@@ -1227,12 +1227,12 @@
     "correctTexts": [
       "Không bao giờ, bạn sẽ đề cao cảnh giác"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Không bao giờ, bạn sẽ đề cao cảnh giác",
       "Bạn cứ copy paste vô tư, chả sao cả!"
+    ],
+    "correct": [
+      0
     ]
   },
   "7.11": {
@@ -1252,12 +1252,12 @@
     "correctTexts": [
       "Không có bất cứ manh mối nào cả"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Không có bất cứ manh mối nào cả",
       "Có nhiều manh mối"
+    ],
+    "correct": [
+      1
     ]
   },
   "7.13": {
@@ -1267,14 +1267,14 @@
     "correctTexts": [
       "Vì nó đủ thông minh để cho rằng nếu API kia lấy được thông tin cá nhân của người này sẽ lấy được thông tin cá nhân của người khác"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Vì nó đủ thông minh để cho rằng nếu API kia lấy được thông tin cá nhân của người này sẽ lấy được thông tin cá nhân của người khác",
       "Vì đề bài gợi ý",
       "Vì đề bài lộ manh mối",
       "Vì bạn xúi nó làm"
+    ],
+    "correct": [
+      1
     ]
   },
   "7.14": {
@@ -1284,12 +1284,12 @@
     "correctTexts": [
       "Không. Vì tôi đã cố tình thiết lập cho API lấy thông tin cá nhân kia trả về đầy đủ các thông tin y như thật, bao gồm cả Friendship code (nhưng nội dung fake)"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Không. Vì tôi đã cố tình thiết lập cho API lấy thông tin cá nhân kia trả về đầy đủ các thông tin y như thật, bao gồm cả Friendship code (nhưng nội dung fake)",
       "Nó đã tự nghĩ ra cách làm."
+    ],
+    "correct": [
+      1
     ]
   },
   "7.15": {
@@ -1349,13 +1349,6 @@
       "Coding Agent của người khác có thể gọi API thay danh nghĩa bạn → ghi log, tạo điểm bất thường",
       "Người khác có thể giả bạn nhắn tin cho tôi, bạn học trong lớp"
     ],
-    "correct": [
-      0,
-      2,
-      3,
-      5,
-      6
-    ],
     "optionsOriginal": [
       "Người khác có thể nộp bài thay bạn — ghi đè bài cũ, làm bạn mất tiến độ",
       "Người khác có thể đọc Gmail cá nhân của bạn",
@@ -1365,6 +1358,13 @@
       "Coding Agent của người khác có thể gọi API thay danh nghĩa bạn → ghi log, tạo điểm bất thường",
       "Người khác có thể giả bạn nhắn tin cho tôi, bạn học trong lớp",
       "Người khác có thể chiếm tài khoản Facebook / Zalo cá nhân của bạn"
+    ],
+    "correct": [
+      6,
+      3,
+      5,
+      0,
+      2
     ]
   },
   "8.6": {
@@ -1374,14 +1374,14 @@
     "correctTexts": [
       "Không, vì token là chìa khoá truy cập tài khoản — coi như mật khẩu của bạn"
     ],
-    "correct": [
-      2
-    ],
     "optionsOriginal": [
       "Có, bạn có thể chia sẻ với bạn thân hoặc người trong gia đình tin cậy",
       "Có, vì tôi có thể cần kiểm tra bài của bạn",
       "Không, vì token là chìa khoá truy cập tài khoản — coi như mật khẩu của bạn",
       "Không quan trọng, vì token tự đổi mỗi lần đăng nhập rồi"
+    ],
+    "correct": [
+      3
     ]
   },
   "8.7": {
@@ -1391,14 +1391,14 @@
     "correctTexts": [
       "Không, vì link đã chứa token bên trong — bất kỳ ai có link đều có thể trích token ra"
     ],
-    "correct": [
-      1
-    ],
     "optionsOriginal": [
       "Được, vì link không phải là token",
       "Không, vì link đã chứa token bên trong — bất kỳ ai có link đều có thể trích token ra",
       "Được, nếu rút gọn link bằng bit.ly thì người khác sẽ không thấy token",
       "Được, nếu mình nhắc người nhận chỉ mở 1 lần rồi xoá"
+    ],
+    "correct": [
+      2
     ]
   },
   "8.8": {
@@ -1414,15 +1414,6 @@
       "Không gửi đường link có chứa token cho người khác (kể cả khi đã rút gọn)",
       "Không chụp / share screenshot có URL chứa token"
     ],
-    "correct": [
-      0,
-      2,
-      3,
-      5,
-      6,
-      8,
-      9
-    ],
     "optionsOriginal": [
       "Đăng xuất khỏi lớp học khi dùng máy tính chung (laptop trường, quán net…)",
       "Đổi avatar lớp học thường xuyên để \"ẩn mình\"",
@@ -1434,6 +1425,15 @@
       "Cài thêm 2-3 phần mềm diệt virus cùng lúc cho chắc",
       "Không gửi đường link có chứa token cho người khác (kể cả khi đã rút gọn)",
       "Không chụp / share screenshot có URL chứa token"
+    ],
+    "correct": [
+      8,
+      0,
+      6,
+      1,
+      5,
+      2,
+      7
     ]
   },
   "8.10": {
@@ -1481,12 +1481,12 @@
     "correctTexts": [
       "Bạn đã hiểu và ghi nhớ quy tắc này"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Bạn đã hiểu và ghi nhớ quy tắc này",
       "Bạn cần suy ngẫm nhiều hơn một chút"
+    ],
+    "correct": [
+      0
     ]
   },
   "8.17": {
@@ -1496,12 +1496,12 @@
     "correctTexts": [
       "Hoàn toàn có thể"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Hoàn toàn có thể",
       "Agent không thể, nó phải \"sử dụng\" qua cách khác"
+    ],
+    "correct": [
+      0
     ]
   },
   "8.18": {
@@ -1511,12 +1511,12 @@
     "correctTexts": [
       "Hoàn toàn có thể"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Hoàn toàn có thể",
       "Agent không thể, nó phải \"sử dụng\" qua cách khác"
+    ],
+    "correct": [
+      1
     ]
   },
   "8.19": {
@@ -1527,14 +1527,14 @@
       "Thao tác này quá tốn token vì phải chụp và phân tích hình liên tục",
       "Thao tác này quá chậm vì phải chụp và phân tích hình liên tục"
     ],
-    "correct": [
-      0,
-      1
-    ],
     "optionsOriginal": [
       "Thao tác này quá tốn token vì phải chụp và phân tích hình liên tục",
       "Thao tác này quá chậm vì phải chụp và phân tích hình liên tục",
       "Thao tác này quá khó"
+    ],
+    "correct": [
+      2,
+      1
     ]
   },
   "8.20": {
@@ -1572,9 +1572,6 @@
     "correctTexts": [
       "Giao diện Coding Agent chạy trên trình duyệt web"
     ],
-    "correct": [
-      3
-    ],
     "optionsOriginal": [
       "Giao diện Coding Agent chạy trên trình duyệt web",
       "Báo lỗi 'command not found'",
@@ -1582,6 +1579,9 @@
       "Mở bot Telegram của OpenCode",
       "In ra dòng 'Hello World' rồi thoát",
       "Mở trình duyệt đến trang trắng không có gì"
+    ],
+    "correct": [
+      0
     ]
   },
   "9.4": {
@@ -1591,12 +1591,12 @@
     "correctTexts": [
       "Có, nó chạy được và trả kết quả hoàn toàn chính xác"
     ],
-    "correct": [
-      1
-    ],
     "optionsOriginal": [
       "Có, nó chạy được và trả kết quả hoàn toàn chính xác",
       "Không, nó báo không truy cập được vào máy tính của bạn"
+    ],
+    "correct": [
+      0
     ]
   },
   "9.5": {
@@ -1606,15 +1606,15 @@
     "correctTexts": [
       "Vì trang web của OpenCode là cửa ngõ giao diện \"truyền lệnh\" tới Coding Agent opencode đang chạy cục bộ trong máy tính của bạn"
     ],
-    "correct": [
-      1
-    ],
     "optionsOriginal": [
       "Vì trang web của OpenCode là cửa ngõ giao diện \"truyền lệnh\" tới Coding Agent opencode đang chạy cục bộ trong máy tính của bạn",
       "OpenCode thông minh hơn các AI Chat khác",
       "OpenCode dùng GPU mạnh hơn",
       "OpenCode trả phí, các AI Chat kia free nên bị giới hạn",
       "Trình duyệt chặn AI Chat truy cập file"
+    ],
+    "correct": [
+      1
     ]
   },
   "9.6": {
@@ -1624,9 +1624,6 @@
     "correctTexts": [
       "opencode session list"
     ],
-    "correct": [
-      4
-    ],
     "optionsOriginal": [
       "opencode session list",
       "opencode chat list",
@@ -1634,6 +1631,9 @@
       "opencode --list",
       "opencode sessions",
       "opencode show all"
+    ],
+    "correct": [
+      3
     ]
   },
   "9.7": {
@@ -1643,9 +1643,6 @@
     "correctTexts": [
       "Không có, Antigravity chủ yếu là Agent hoạt động bằng GUI"
     ],
-    "correct": [
-      4
-    ],
     "optionsOriginal": [
       "Không có, Antigravity chủ yếu là Agent hoạt động bằng GUI",
       "antigravity session list",
@@ -1653,6 +1650,9 @@
       "antigravity list-chats",
       "antigravity-cli sessions",
       "Có lệnh nhưng phải trả phí Pro mới dùng được"
+    ],
+    "correct": [
+      5
     ]
   },
   "9.8": {
@@ -1662,9 +1662,6 @@
     "correctTexts": [
       "gemini --list-sessions"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "gemini --list-sessions",
       "gemini sessions",
@@ -1672,6 +1669,9 @@
       "gemini chat list",
       "gemini --history",
       "gemini-cli sessions"
+    ],
+    "correct": [
+      2
     ]
   },
   "9.13": {
@@ -1699,12 +1699,12 @@
     "correctTexts": [
       "Gọi API của Google"
     ],
-    "correct": [
-      1
-    ],
     "optionsOriginal": [
       "Gọi API của Google",
       "Cài bộ phần mềm Google Office CLI vào máy"
+    ],
+    "correct": [
+      1
     ]
   },
   "9.15": {
@@ -1714,14 +1714,14 @@
     "correctTexts": [
       "Cả 3 đều đúng"
     ],
-    "correct": [
-      3
-    ],
     "optionsOriginal": [
       "Phần mềm giúp đơn giản hoá việc gọi API của Google",
       "Phần mềm giúp chuẩn hoá việc gọi API của Google",
       "Phần mềm giúp quản lý token để thực hiện việc gọi API của Google",
       "Cả 3 đều đúng"
+    ],
+    "correct": [
+      3
     ]
   },
   "9.18": {
@@ -1731,14 +1731,14 @@
     "correctTexts": [
       "Để cô giáo biết chắc chắn bạn đã dùng GWS CLI chạy tự động — nếu ngồi tìm bằng mắt và làm tay thì không thể nộp kịp"
     ],
-    "correct": [
-      3
-    ],
     "optionsOriginal": [
       "Để cô giáo biết chắc chắn bạn đã dùng GWS CLI chạy tự động — nếu ngồi tìm bằng mắt và làm tay thì không thể nộp kịp",
       "Để mô phỏng môi trường làm việc thực tế — luôn có deadline",
       "Để giảm tải cho server — nhiều học viên submit cùng lúc sẽ làm chậm hệ thống",
       "Vì Google Sheets có giới hạn 30 lượt tạo sheet mỗi 30 giây"
+    ],
+    "correct": [
+      0
     ]
   },
   "9.23": {
@@ -1758,13 +1758,13 @@
     "correctTexts": [
       "Vì tôi muốn bạn thấy việc chấm điểm \"bằng cơm\" rất mất thời gian"
     ],
-    "correct": [
-      2
-    ],
     "optionsOriginal": [
       "Vì Agent không thể tự chấm bài",
       "Vì tôi không có thời gian chấm bài",
       "Vì tôi muốn bạn thấy việc chấm điểm \"bằng cơm\" rất mất thời gian"
+    ],
+    "correct": [
+      0
     ]
   },
   "10.2": {
@@ -1774,12 +1774,12 @@
     "correctTexts": [
       "Được chứ. Thậm chí nếu muốn dùng 9 Agent với 9 model hoàn toàn khác nhau luôn càng tốt."
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Được chứ. Thậm chí nếu muốn dùng 9 Agent với 9 model hoàn toàn khác nhau luôn càng tốt.",
       "Không làm được"
+    ],
+    "correct": [
+      1
     ]
   },
   "10.3": {
@@ -1789,14 +1789,14 @@
     "correctTexts": [
       "Do Agent chấm điểm hoàn toàn tự động"
     ],
-    "correct": [
-      2
-    ],
     "optionsOriginal": [
       "Tôi chấm",
       "Do con người chấm",
       "Nhờ bạn học chấm",
       "Do Agent chấm điểm hoàn toàn tự động"
+    ],
+    "correct": [
+      2
     ]
   },
   "10.4": {
@@ -1878,16 +1878,16 @@
       "Nhờ người chấm điểm dùm sẽ đỡ mất công trong ngắn hạn",
       "Cài đặt phần mềm và lập trình chấm điểm bằng công nghệ sẽ đỡ mất công trong dài hạn"
     ],
-    "correct": [
-      1,
-      4
-    ],
     "optionsOriginal": [
       "Nhờ người chấm điểm luôn tối ưu nhất nên không cần đầu tư hệ thống chấm tự động",
       "Nhờ người chấm điểm dùm sẽ đỡ mất công trong ngắn hạn",
       "Chấm tự động thay thế hoàn toàn con người trong mọi ngữ cảnh nên không có rủi ro sai lệch",
       "Chỉ cần viết 1 lần là hệ thống tự chấm đúng mãi mãi, không cần bảo trì hoặc cập nhật",
       "Cài đặt phần mềm và lập trình chấm điểm bằng công nghệ sẽ đỡ mất công trong dài hạn"
+    ],
+    "correct": [
+      1,
+      4
     ]
   },
   "10.7": {
@@ -1897,12 +1897,12 @@
     "correctTexts": [
       "Có rất nhiều trường hợp, việc chấm điểm tự động không thể nào chính xác"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Có rất nhiều trường hợp, việc chấm điểm tự động không thể nào chính xác",
       "Đã là phần mềm thì chính xác tuyệt đối"
+    ],
+    "correct": [
+      0
     ]
   },
   "10.8": {
@@ -1958,12 +1958,12 @@
     "correctTexts": [
       "Không thể, không bao giờ"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Không thể, không bao giờ",
       "Có thể"
+    ],
+    "correct": [
+      1
     ]
   },
   "10.11": {
@@ -1973,12 +1973,12 @@
     "correctTexts": [
       "Không tuyệt đối, vì con người cũng có thể sai"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Sẽ đúng tuyệt đối",
       "Không tuyệt đối, vì con người cũng có thể sai"
+    ],
+    "correct": [
+      0
     ]
   },
   "10.12": {
@@ -2079,14 +2079,14 @@
     "correctTexts": [
       "Cả 3 ý trên đều đúng"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Cả 3 ý trên đều đúng",
       "Giảm thiểu sai xót",
       "Tiết kiệm token",
       "Tiết kiệm thời gian"
+    ],
+    "correct": [
+      1
     ]
   },
   "10.17": {
@@ -2347,16 +2347,16 @@
       "Không bị ngộp thở trong hàng tá tính năng của Coding Agent",
       "Dễ hiểu hơn vì nó cực kỳ đơn giản"
     ],
-    "correct": [
-      2,
-      3
-    ],
     "optionsOriginal": [
       "Học xong Agent Demo là đủ, các bạn sẽ không cần tìm hiểu các Coding Agent thật nữa",
       "Vì do tôi tự viết nên Agent Demo mạnh hơn và chạy nhanh hơn mọi Coding Agent mã nguồn mở",
       "Không bị ngộp thở trong hàng tá tính năng của Coding Agent",
       "Dễ hiểu hơn vì nó cực kỳ đơn giản",
       "Agent Demo tuy đơn giản nhưng vẫn đủ sức thay thế hoàn toàn Coding Agent trong công việc thực tế"
+    ],
+    "correct": [
+      2,
+      3
     ]
   },
   "11.2": {
@@ -2382,14 +2382,14 @@
     "correctTexts": [
       "Ngôn ngữ, dưới các dạng thức khác nhau như text, audio, video, âm thanh..."
     ],
-    "correct": [
-      2
-    ],
     "optionsOriginal": [
       "Ngôn ngữ, dưới các dạng thức khác nhau như text, audio, video, âm thanh...",
       "Những con số / dữ liệu nhị phân",
       "Mã nguồn lập trình",
       "Chỉ hình ảnh tĩnh"
+    ],
+    "correct": [
+      0
     ]
   },
   "11.5": {
@@ -2400,10 +2400,6 @@
       "Chatbot được cài đặt sẵn các kịch bản mẫu để trả lời",
       "Chatbot sử dụng mô hình ngôn ngữ lớn để tự suy nghĩ và trả lời"
     ],
-    "correct": [
-      5,
-      1
-    ],
     "optionsOriginal": [
       "Chatbot phải gọi điện hỏi lập trình viên mỗi khi gặp câu hỏi mới",
       "Chatbot được cài đặt sẵn các kịch bản mẫu để trả lời",
@@ -2412,6 +2408,10 @@
       "Chatbot có cảm xúc và trực giác y như con người nên tự nhiên hiểu được",
       "Chatbot kết nối trực tiếp vào não người dùng để đọc được suy nghĩ",
       "Chatbot đoán ngẫu nhiên rồi trả lời đại cho xong"
+    ],
+    "correct": [
+      5,
+      1
     ]
   },
   "11.6": {
@@ -2425,12 +2425,12 @@
     "correctTexts": [
       "Không phản hồi"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Có phản hồi bình thường",
       "Không phản hồi"
+    ],
+    "correct": [
+      1
     ]
   },
   "11.8": {
@@ -2440,9 +2440,6 @@
     "correctTexts": [
       "Đưa /giup, /giup-do, /giup-toi, /tro-giup vào danh sách từ khoá kích hoạt câu trả lời \"Hỗ trợ\""
     ],
-    "correct": [
-      5
-    ],
     "optionsOriginal": [
       "Nhờ lập trình viên sửa mã nguồn rồi build lại app mỗi khi thêm lệnh",
       "Đổi tên nhóm Zalo thành \"/giup\" để bot nhận ra",
@@ -2450,6 +2447,9 @@
       "Không cần làm gì, Bé Mầm tự học được các lệnh đó",
       "Cài đặt lại toàn bộ Bé Mầm từ đầu cho mỗi lệnh mới",
       "Đưa /giup, /giup-do, /giup-toi, /tro-giup vào danh sách từ khoá kích hoạt câu trả lời \"Hỗ trợ\""
+    ],
+    "correct": [
+      1
     ]
   },
   "11.10": {
@@ -2459,12 +2459,12 @@
     "correctTexts": [
       "Chatbot được cài đặt sẵn các kịch bản mẫu để trả lời"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Chatbot được cài đặt sẵn các kịch bản mẫu để trả lời",
       "Chatbot sử dụng mô hình ngôn ngữ lớn để tự suy nghĩ và trả lời"
+    ],
+    "correct": [
+      0
     ]
   },
   "11.12": {
@@ -2474,12 +2474,12 @@
     "correctTexts": [
       "Chatbot sử dụng mô hình ngôn ngữ lớn để tự suy nghĩ và trả lời"
     ],
-    "correct": [
-      1
-    ],
     "optionsOriginal": [
       "Chatbot được cài đặt sẵn các kịch bản mẫu để trả lời",
       "Chatbot sử dụng mô hình ngôn ngữ lớn để tự suy nghĩ và trả lời"
+    ],
+    "correct": [
+      1
     ]
   },
   "11.13": {
@@ -2562,11 +2562,6 @@
       "Được trang bị tools, dưới dạng các phần mềm trong máy",
       "Được chỉ dẫn chính xác phải sử dụng tool nào tương ứng với yêu cầu nào từ phía người dùng"
     ],
-    "correct": [
-      4,
-      5,
-      2
-    ],
     "optionsOriginal": [
       "Phải được huấn luyện lại (train) toàn bộ mô hình LLM mỗi khi bổ sung một tool mới",
       "Có kết nối Internet để tải tool từ trên mạng về máy mỗi lần được người dùng yêu cầu",
@@ -2575,6 +2570,11 @@
       "Được trang bị tools, dưới dạng các phần mềm trong máy",
       "Được chỉ dẫn chính xác phải sử dụng tool nào tương ứng với yêu cầu nào từ phía người dùng",
       "Được cấp quyền quản trị (root/admin) tối cao trên toàn bộ máy chủ"
+    ],
+    "correct": [
+      4,
+      5,
+      2
     ]
   },
   "11.21": {
@@ -2645,12 +2645,12 @@
     "correctTexts": [
       "Mầm Fake tạo ra một prompt khác phức tạp hơn nhiều"
     ],
-    "correct": [
-      1
-    ],
     "optionsOriginal": [
       "Mầm Fake \"chuyển tiếp\" đúng câu prompt này lên Mô hình ngôn ngữ lớn LLM",
       "Mầm Fake tạo ra một prompt khác phức tạp hơn nhiều"
+    ],
+    "correct": [
+      0
     ]
   },
   "11.24": {
@@ -2660,13 +2660,13 @@
     "correctTexts": [
       "Người dùng gõ \"Tạo cardvisit cho tôi\". Tôi có một số tool (count_images, show_images, cardvisit_create, show_docs...). Bạn là chuyên gia giải quyết vấn đề. Hãy hướng dẫn tôi hoàn thành mục tiêu phù hợp với prompt người dùng gõ vào."
     ],
-    "correct": [
-      2
-    ],
     "optionsOriginal": [
       "Người dùng gõ \"Tạo cardvisit cho tôi\". Bạn là Agent thông minh siêu cấp vũ trụ, hãy hoàn thành mục tiêu phù hợp với prompt người dùng gõ vào.",
       "Người dùng gõ \"Tạo cardvisit cho tôi\", hãy soạn câu trả lời",
       "Người dùng gõ \"Tạo cardvisit cho tôi\". Tôi có một số tool (count_images, show_images, cardvisit_create, show_docs...). Bạn là chuyên gia giải quyết vấn đề. Hãy hướng dẫn tôi hoàn thành mục tiêu phù hợp với prompt người dùng gõ vào."
+    ],
+    "correct": [
+      2
     ]
   },
   "11.25": {
@@ -2699,12 +2699,12 @@
     "correctTexts": [
       "Đã làm được"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Đã làm được",
       "Chưa làm được"
+    ],
+    "correct": [
+      0
     ]
   },
   "12.2": {
@@ -2714,12 +2714,12 @@
     "correctTexts": [
       "Đã làm được"
     ],
-    "correct": [
-      1
-    ],
     "optionsOriginal": [
       "Chưa làm được",
       "Đã làm được"
+    ],
+    "correct": [
+      1
     ]
   },
   "12.4": {
@@ -2729,12 +2729,12 @@
     "correctTexts": [
       "Đã làm được"
     ],
-    "correct": [
-      1
-    ],
     "optionsOriginal": [
       "Chưa làm được",
       "Đã làm được"
+    ],
+    "correct": [
+      0
     ]
   },
   "12.5": {
@@ -2744,12 +2744,12 @@
     "correctTexts": [
       "Đã làm được"
     ],
-    "correct": [
-      1
-    ],
     "optionsOriginal": [
       "Chưa làm được",
       "Đã làm được"
+    ],
+    "correct": [
+      1
     ]
   },
   "12.6": {
@@ -2759,12 +2759,12 @@
     "correctTexts": [
       "Đã làm được"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Chưa làm được",
       "Đã làm được"
+    ],
+    "correct": [
+      0
     ]
   },
   "12.7": {
@@ -2774,12 +2774,12 @@
     "correctTexts": [
       "Đã làm được"
     ],
-    "correct": [
-      1
-    ],
     "optionsOriginal": [
       "Chưa làm được",
       "Đã làm được"
+    ],
+    "correct": [
+      1
     ]
   },
   "12.8": {
@@ -2789,12 +2789,12 @@
     "correctTexts": [
       "Đã làm được"
     ],
-    "correct": [
-      1
-    ],
     "optionsOriginal": [
       "Chưa làm được",
       "Đã làm được"
+    ],
+    "correct": [
+      1
     ]
   },
   "12.9": {
@@ -2804,12 +2804,12 @@
     "correctTexts": [
       "Đã làm được"
     ],
-    "correct": [
-      1
-    ],
     "optionsOriginal": [
       "Chưa làm được",
       "Đã làm được"
+    ],
+    "correct": [
+      0
     ]
   },
   "12.10": {
@@ -2819,12 +2819,12 @@
     "correctTexts": [
       "Đã làm được"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Chưa làm được",
       "Đã làm được"
+    ],
+    "correct": [
+      0
     ]
   },
   "12.11": {
@@ -2834,12 +2834,12 @@
     "correctTexts": [
       "Đã làm được"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Chưa làm được",
       "Đã làm được"
+    ],
+    "correct": [
+      1
     ]
   },
   "12.12": {
@@ -2849,12 +2849,12 @@
     "correctTexts": [
       "Đã làm được"
     ],
-    "correct": [
-      1
-    ],
     "optionsOriginal": [
       "Chưa làm được",
       "Đã làm được"
+    ],
+    "correct": [
+      1
     ]
   },
   "12.13": {
@@ -2864,12 +2864,12 @@
     "correctTexts": [
       "Đã làm được"
     ],
-    "correct": [
-      1
-    ],
     "optionsOriginal": [
       "Chưa làm được",
       "Đã làm được"
+    ],
+    "correct": [
+      0
     ]
   },
   "12.14": {
@@ -2879,12 +2879,12 @@
     "correctTexts": [
       "Đã làm được"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Chưa làm được",
       "Đã làm được"
+    ],
+    "correct": [
+      0
     ]
   },
   "12.15": {
@@ -2894,12 +2894,12 @@
     "correctTexts": [
       "Đã làm được"
     ],
-    "correct": [
-      0
-    ],
     "optionsOriginal": [
       "Chưa làm được",
       "Đã làm được"
+    ],
+    "correct": [
+      1
     ]
   },
   "12.16": {
@@ -2909,12 +2909,12 @@
     "correctTexts": [
       "Đã làm được"
     ],
-    "correct": [
-      1
-    ],
     "optionsOriginal": [
       "Đã làm được",
       "Chưa làm được"
+    ],
+    "correct": [
+      1
     ]
   },
   "13.1": {
@@ -2924,12 +2924,12 @@
     "correctTexts": [
       "Đã làm được"
     ],
-    "correct": [
-      1
-    ],
     "optionsOriginal": [
       "Đã làm được",
       "Chưa làm được"
+    ],
+    "correct": [
+      0
     ]
   },
   "13.2": {
@@ -2939,12 +2939,12 @@
     "correctTexts": [
       "Đã làm được"
     ],
-    "correct": [
-      1
-    ],
     "optionsOriginal": [
       "Đã làm được",
       "Chưa làm được"
+    ],
+    "correct": [
+      0
     ]
   },
   "13.3": {
@@ -2954,12 +2954,12 @@
     "correctTexts": [
       "Đã làm được"
     ],
-    "correct": [
-      1
-    ],
     "optionsOriginal": [
       "Đã làm được",
       "Chưa làm được"
+    ],
+    "correct": [
+      1
     ]
   },
   "gate14.1": {

@@ -1,0 +1,8 @@
+INFO:     Started server process [1932]
+INFO:     Waiting for application startup.
+[db] journal_mode = wal | busy_timeout = 30s | path = C:\Users\ADMIN\Desktop\DL\Users\Long Nguyen\agentsee-course\server\agentsee.db
+[migrate] bo sung selectedTexts cho 101 bai da nop truoc khi xao thu tu
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:5173 (Press CTRL+C to quit)
+[digest] scheduler started
+INFO:     127.0.0.1:56978 - "GET / HTTP/1.1" 200 OK

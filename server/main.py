@@ -682,16 +682,16 @@ async def lark_callback(request: Request, code: str = None, state: str = None, e
         if row:
             user_id = row["id"]
             conn.execute(
-                "UPDATE users SET display_name = ?, avatar_url = ?, tenant_key = ? WHERE id = ?",
-                (profile["name"], profile.get("avatar_url"), tenant_key, user_id),
+                "UPDATE users SET display_name = ?, avatar_url = ?, tenant_key = ?, email = ? WHERE id = ?",
+                (profile["name"], profile.get("avatar_url"), tenant_key, profile.get("email"), user_id),
             )
         else:
             username = f"lark_{open_id[-12:]}"
             # Tạm ẩn duyệt: đăng nhập bằng Lark của tổ chức là đủ -> tự động duyệt (approved = 1).
             # Muốn bật lại cơ chế duyệt: đổi approved về 0.
             cur = conn.execute(
-                "INSERT INTO users (username, display_name, password_hash, lark_open_id, avatar_url, tenant_key, approved) VALUES (?, ?, NULL, ?, ?, ?, 1)",
-                (username, profile["name"], open_id, profile.get("avatar_url"), tenant_key),
+                "INSERT INTO users (username, display_name, password_hash, lark_open_id, avatar_url, tenant_key, email, approved) VALUES (?, ?, NULL, ?, ?, ?, ?, 1)",
+                (username, profile["name"], open_id, profile.get("avatar_url"), tenant_key, profile.get("email")),
             )
             user_id = cur.lastrowid
 
@@ -2703,7 +2703,126 @@ def _check_922(user_id: int, url: str):
     return all(c["ok"] for c in crit), crit
 
 
-_GWS_CHECKERS = {"9.16": _check_916, "9.17": _check_917, "9.19": _check_919, "9.20": _check_920, "9.22": _check_922}
+# 9.16 KHONG nam o day: no khong nop link san pham ma duoc xac minh bang script chay tai may
+# hoc vien (/api/gws/cli-verify) — giong het co che agentsee-verify.py cua web tham khao.
+_GWS_CHECKERS = {"9.17": _check_917, "9.19": _check_919, "9.20": _check_920, "9.22": _check_922}
+
+
+# ---------- Câu 9.16: script tải về chạy tại máy để xác minh đã cài GWS CLI ----------
+# Mô phỏng đúng cơ chế "agentsee-verify.py" của web tham khảo: học viên chạy 1 lệnh trên Terminal,
+# script tự dò CLI trên MÁY HỌ rồi báo kết quả về LMS. Server không thể tự biết máy học viên có
+# cài gì, nên bằng chứng phải do script gửi lên.
+GWS_VERIFY_SCRIPT = r'''#!/usr/bin/env python3
+"""Xac minh Google Workspace CLI da duoc cai va cau hinh tren may hoc vien.
+Cach dung:  python3 agentsee-verify.py <uid> <token>"""
+import json, shutil, subprocess, sys, urllib.request
+
+BASE = "__BASE_URL__"
+CANDIDATES = [
+    ["gws", "--version"], ["gws", "version"],
+    ["gws", "auth", "list"], ["gws", "accounts", "list"], ["gws", "config", "list"],
+    ["gwscli", "--version"],
+]
+
+def run(cmd):
+    # shutil.which ton trong PATHEXT tren Windows -> tim duoc ca gws.cmd / gws.bat, khong chi .exe.
+    # Nhieu CLI (nhat la loai viet bang Node) cai tren Windows duoi dang .cmd; goi thang ten lenh
+    # se KHONG tim thay va bao nham la "chua cai".
+    exe = shutil.which(cmd[0])
+    if not exe:
+        return "__ERR__ khong tim thay %s" % cmd[0]
+    try:
+        p = subprocess.run([exe] + cmd[1:], capture_output=True, text=True, timeout=45)
+        return (p.stdout or "") + (p.stderr or "")
+    except Exception as e:
+        return "__ERR__ %s" % e
+
+def main():
+    if len(sys.argv) < 3:
+        print("Thieu tham so. Dung: python3 agentsee-verify.py <uid> <token>"); return 1
+    uid, token = sys.argv[1], sys.argv[2]
+    print("Dang kiem tra Google Workspace CLI tren may nay...")
+    evidence = {}
+    for cmd in CANDIDATES:
+        out = run(cmd)
+        if not out.startswith("__ERR__"):
+            evidence[" ".join(cmd)] = out.strip()[:2000]
+    if not evidence:
+        print("")
+        print("KHONG tim thay lenh 'gws' tren may.")
+        print("Hay nho Coding Agent cai Google Workspace CLI: https://github.com/googleworkspace/cli")
+        print("Cai xong, chay lai lenh nay.")
+        return 1
+    body = json.dumps({"uid": uid, "token": token, "evidence": evidence}).encode()
+    req = urllib.request.Request(BASE + "/api/gws/cli-verify", data=body,
+                                 headers={"Content-Type": "application/json"}, method="POST")
+    try:
+        res = json.loads(urllib.request.urlopen(req, timeout=60).read().decode())
+    except Exception as e:
+        print("Khong gui duoc ket qua ve lop hoc:", e); return 1
+    print()
+    for c in res.get("tieu_chi", []):
+        print(("  [x] " if c["ok"] else "  [ ] ") + c["label"] + (" - " + c["note"] if c.get("note") else ""))
+    print()
+    print(res.get("ket_qua", ""))
+    print(res.get("ghi_chu", ""))
+    return 0 if res.get("ok") else 1
+
+sys.exit(main())
+'''
+
+
+@app.get("/agentsee-verify.py")
+def gws_verify_script(request: Request):
+    body = GWS_VERIFY_SCRIPT.replace("__BASE_URL__", str(request.base_url).rstrip("/"))
+    return Response(content=body, media_type="text/x-python; charset=utf-8")
+
+
+@app.post("/api/gws/cli-verify")
+async def gws_cli_verify(request: Request):
+    """Nhận bằng chứng do script gửi từ máy học viên và ghi nhận kết quả cho câu 9.16."""
+    try:
+        data = await request.json()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Body phải là JSON.")
+    try:
+        uid = int(data.get("uid"))
+    except (TypeError, ValueError):
+        raise HTTPException(status_code=401, detail="uid không hợp lệ.")
+    user = _user_by_agent_token(uid, str(data.get("token") or ""))
+    evidence = data.get("evidence") or {}
+    if isinstance(evidence, dict):
+        blob = "\n".join("$ %s\n%s" % (k, v) for k, v in evidence.items())
+    else:
+        blob = str(evidence)
+
+    has_cli = bool(evidence)
+    emails = sorted(set(re.findall(r"[\w.+-]+@[\w-]+\.[\w.]+", blob)))
+    with get_db() as conn:
+        row = conn.execute("SELECT email FROM users WHERE id = ?", (user["id"],)).fetchone()
+    my_email = (row["email"] or "").strip().lower() if row and row["email"] else ""
+
+    crit = [{"label": "Đã cài Google Workspace CLI trên máy", "ok": has_cli,
+             "note": "" if has_cli else "Không thấy lệnh gws."}]
+    if my_email:
+        matched = my_email in [e.lower() for e in emails]
+        crit.append({"label": f"Đã cấu hình đúng tài khoản {my_email}", "ok": matched,
+                     "note": "" if matched else ("Đang thấy: " + ", ".join(emails) if emails else "Chưa đăng nhập tài khoản nào.")})
+    else:
+        crit.append({"label": "Đã đăng nhập một tài khoản Google", "ok": bool(emails),
+                     "note": ("Tài khoản: " + ", ".join(emails)) if emails else "Chưa thấy tài khoản nào."})
+
+    ok = all(c["ok"] for c in crit)
+    with get_db() as conn:
+        conn.execute(
+            "INSERT INTO gws_attempts (user_id, question_code, url, ok, detail) VALUES (?, '9.16', ?, ?, ?)",
+            (user["id"], "agentsee-verify.py", int(ok), json.dumps(crit, ensure_ascii=False)),
+        )
+    return {
+        "ok": ok, "tieu_chi": crit,
+        "ket_qua": "ĐẠT — quay lại trang lớp học bấm Kiểm tra rồi Nộp bài." if ok else "Chưa đạt.",
+        "ghi_chu": "" if ok else "Sửa theo tiêu chí chưa đạt ở trên rồi chạy lại lệnh này.",
+    }
 
 
 @app.get("/api/gws/task/{code}/start")

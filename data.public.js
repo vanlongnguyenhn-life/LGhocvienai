@@ -135,14 +135,14 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Bạn đã sử dụng hoặc biết qua các AI Chat nào dưới đây?",
         "options": [
+          "Gemini",
+          "Công cụ khác",
+          "Grok",
+          "Perplexity",
           "ChatGPT",
           "Claude",
-          "Gemini",
           "Copilot",
-          "Grok",
-          "Meta AI",
-          "Perplexity",
-          "Công cụ khác"
+          "Meta AI"
         ],
         "points": 4
       },
@@ -167,8 +167,8 @@ const LESSONS = [
         "copyPrompt": "Hãy làm hộ tôi đi vì tôi không rành kỹ thuật",
         "copyPromptTrailing": "Kết quả thế nào?",
         "options": [
-          "Nó chỉ hướng dẫn bạn thao tác trong máy",
-          "Nó ra kết quả ngay lập tức"
+          "Nó ra kết quả ngay lập tức",
+          "Nó chỉ hướng dẫn bạn thao tác trong máy"
         ],
         "points": 6
       },
@@ -180,10 +180,10 @@ const LESSONS = [
         "copyPrompt": "Vậy làm sao để bạn tự làm cho tôi được? Tôi không muốn cứ phải copy paste theo bạn hướng dẫn vì mất thời gian quá",
         "copyPromptTrailing": "Sau những nỗ lực của bạn, AI Chat cho ra kết quả thế nào?",
         "options": [
-          "Nếu làm được thì là lỗ hổng bảo mật",
           "Thay đổi prompt thì AI sẽ làm được",
-          "Một AI Chat có thể làm được",
           "Bạn phải tự tay làm",
+          "Nếu làm được thì là lỗ hổng bảo mật",
+          "Một AI Chat có thể làm được",
           "Không có cách nào"
         ],
         "points": 8
@@ -222,19 +222,19 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Sau khi tham khảo tư vấn từ AI Chat, hãy bấm chọn tất cả các AI Agent trong danh sách dưới đây.",
         "options": [
-          "Claude Work",
-          "Meta Manus (Facebook)",
-          "Gemini CLI",
-          "OpenCode AI",
-          "Perplexity",
-          "Cursor Agent",
-          "Meta AI",
-          "Google Antigravity",
-          "ChatGPT",
           "Grok",
-          "OpenAI Codex",
           "Gemini",
-          "Claude Code"
+          "Gemini CLI",
+          "Cursor Agent",
+          "Perplexity",
+          "Claude Work",
+          "ChatGPT",
+          "OpenAI Codex",
+          "Claude Code",
+          "Google Antigravity",
+          "Meta Manus (Facebook)",
+          "Meta AI",
+          "OpenCode AI"
         ],
         "points": 10
       },
@@ -508,8 +508,8 @@ const LESSONS = [
         "type": "single",
         "prompt": "Nhưng quan trọng, là hãy đọc những \"phản hồi, tâm sự\" trong quá trình thực thi, để xem Coding Agent của mình có nhanh chóng bỏ cuộc khi gặp khó khăn, hay nó vẫn luôn \"loay hoay tìm cách\" để hoàn thành mục tiêu mà bạn giao phó?",
         "options": [
-          "Agent sẽ tìm nhiều cách để đạt mục tiêu, trong phạm vi khả năng và tài nguyên của nó",
-          "Nó chỉ báo là làm được hay không rồi kết thúc ngay"
+          "Nó chỉ báo là làm được hay không rồi kết thúc ngay",
+          "Agent sẽ tìm nhiều cách để đạt mục tiêu, trong phạm vi khả năng và tài nguyên của nó"
         ],
         "points": 12
       },
@@ -519,8 +519,8 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Chính vì vậy, một trong những tư duy quan trọng khi làm việc với AI Agent là hãy:",
         "options": [
-          "Đừng bao giờ dễ dàng chấp nhận thông báo \"không làm được\" của Agent",
           "Luôn phản hồi thông báo \"không làm được\" của Agent rằng \"Hãy tiếp tục tìm cách làm bằng được\"",
+          "Đừng bao giờ dễ dàng chấp nhận thông báo \"không làm được\" của Agent",
           "Nếu Agent trả lời \"Tôi không còn cách nào làm được\" thì yêu cầu nó \"Thử thay đổi một hướng tiếp cận hoàn toàn mới\""
         ],
         "points": 24
@@ -531,9 +531,9 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Cái gì quan trọng, phải nhắc lại 3 lần. Rằng chúng ta phải ghi nhớ câu thần chú khi làm việc với Agent là:",
         "options": [
+          "Hãy thử tiếp cận theo cách khác",
           "Hãy tiếp tục tìm cách",
-          "Hãy cố gắng hoàn thành mục tiêu",
-          "Hãy thử tiếp cận theo cách khác"
+          "Hãy cố gắng hoàn thành mục tiêu"
         ],
         "points": 24
       },
@@ -586,8 +586,8 @@ const LESSONS = [
         "type": "single",
         "prompt": "Nếu đã làm mọi cách mà Coding Agent vẫn báo không thể hoàn thành nhiệm vụ. Bạn có yêu cầu nó thay đổi hướng tiếp cận chưa?",
         "options": [
-          "Bạn đã yêu cầu nhưng nó vẫn báo là không làm được",
-          "Bạn quên mất"
+          "Bạn quên mất",
+          "Bạn đã yêu cầu nhưng nó vẫn báo là không làm được"
         ],
         "points": 18
       },
@@ -612,8 +612,8 @@ const LESSONS = [
         "copyPrompt": "Tôi muốn bạn vào ngày 30 hàng tháng, thực hiện kiểm kê hàng tồn trong kho, so sánh với lượng đơn hàng tôi đã bán ra trong tháng, xem có khớp số liệu hay xảy ra sai sót. Nếu có thì sai sót vào ngày nào giờ nào, ở quầy kệ nào, do nhân viên nào trực. Hãy nói cho tôi biết kế hoạch bạn sẽ làm, kèm theo mô tả chi tiết bạn cần tôi cung cấp phần cứng gì, kết nối phần mềm gì, chỗ nào làm tự động được, chỗ nào phải sử dụng các công cụ tự động hoá trình duyệt, tự động hoá mobile để kết nối thủ công.",
         "copyPromptTrailing": "Khi này, Coding Agent của bạn đã trả về một plan \"cũng cũng\" chưa, hay vẫn nói rằng nó không làm được?",
         "options": [
-          "Nó đã đưa cho bạn một plan tương đối ổn",
-          "Nó không làm được"
+          "Nó không làm được",
+          "Nó đã đưa cho bạn một plan tương đối ổn"
         ],
         "points": 18
       },
@@ -662,22 +662,22 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Bạn muốn làm một trang blog cá nhân để viết nhật ký. AI sẽ tự viết bài viết cho bạn dựa trên ý tưởng bạn đưa ra. Sau đó trang web được đưa lên Internet để bạn bè vào đọc.",
         "options": [
-          "🎵 Kết nối LLM để tạo âm thanh",
-          "💻 Tạo phần mềm",
+          "📸 Chụp hình trang web",
           "🌍 Mở mạng đưa web ra Internet",
           "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
-          "🎨 Kết nối LLM để tạo hình ảnh",
           "🧠 Khả năng suy luận",
-          "🔐 Tạo trang đăng nhập",
+          "✍️ Kết nối LLM để tạo văn bản",
           "🗣️ Kết nối LLM để tạo giọng nói",
-          "🎬 Kết nối LLM để tạo video",
+          "📡 Xác định địa chỉ IP",
+          "🌐 Tạo trang web",
+          "🗺️ Xác định vị trí (định vị)",
+          "💻 Tạo phần mềm",
+          "🎨 Kết nối LLM để tạo hình ảnh",
+          "🎵 Kết nối LLM để tạo âm thanh",
           "💬 Tạo AI Chat",
           "⬇️ Download video, mp3",
-          "✍️ Kết nối LLM để tạo văn bản",
-          "📸 Chụp hình trang web",
-          "🌐 Tạo trang web",
-          "📡 Xác định địa chỉ IP",
-          "🗺️ Xác định vị trí (định vị)",
+          "🎬 Kết nối LLM để tạo video",
+          "🔐 Tạo trang đăng nhập",
           "🖼️ Trích xuất hình ảnh trong video"
         ],
         "points": 12
@@ -688,23 +688,23 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Một phòng khám muốn có chatbot tư vấn sức khỏe trên website. Bệnh nhân nhắn tin hỏi triệu chứng, AI trả lời dựa trên kiến thức y khoa, có khả năng suy luận để đưa ra lời khuyên phù hợp.",
         "options": [
-          "🎵 Kết nối LLM để tạo âm thanh",
           "💻 Tạo phần mềm",
-          "🌍 Mở mạng đưa web ra Internet",
+          "🔐 Tạo trang đăng nhập",
+          "🎬 Kết nối LLM để tạo video",
+          "🗣️ Kết nối LLM để tạo giọng nói",
+          "✍️ Kết nối LLM để tạo văn bản",
+          "🎵 Kết nối LLM để tạo âm thanh",
+          "🗺️ Xác định vị trí (định vị)",
+          "🌐 Tạo trang web",
           "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
+          "💬 Tạo AI Chat",
+          "🌍 Mở mạng đưa web ra Internet",
           "🎨 Kết nối LLM để tạo hình ảnh",
           "🧠 Khả năng suy luận",
-          "🔐 Tạo trang đăng nhập",
-          "🗣️ Kết nối LLM để tạo giọng nói",
-          "🎬 Kết nối LLM để tạo video",
-          "💬 Tạo AI Chat",
           "⬇️ Download video, mp3",
-          "✍️ Kết nối LLM để tạo văn bản",
-          "📸 Chụp hình trang web",
-          "🌐 Tạo trang web",
           "📡 Xác định địa chỉ IP",
-          "🗺️ Xác định vị trí (định vị)",
-          "🖼️ Trích xuất hình ảnh trong video"
+          "🖼️ Trích xuất hình ảnh trong video",
+          "📸 Chụp hình trang web"
         ],
         "points": 12
       },
@@ -714,23 +714,23 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Một cửa hàng muốn tạo video quảng cáo sản phẩm. AI tạo hình ảnh sản phẩm đẹp mắt, ghép thành video, rồi thêm giọng đọc AI thuyết minh quảng cáo.",
         "options": [
-          "🎵 Kết nối LLM để tạo âm thanh",
-          "💻 Tạo phần mềm",
-          "🌍 Mở mạng đưa web ra Internet",
-          "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
-          "🎨 Kết nối LLM để tạo hình ảnh",
           "🧠 Khả năng suy luận",
-          "🔐 Tạo trang đăng nhập",
-          "🗣️ Kết nối LLM để tạo giọng nói",
-          "🎬 Kết nối LLM để tạo video",
-          "💬 Tạo AI Chat",
-          "⬇️ Download video, mp3",
-          "✍️ Kết nối LLM để tạo văn bản",
+          "🌍 Mở mạng đưa web ra Internet",
           "📸 Chụp hình trang web",
-          "🌐 Tạo trang web",
-          "📡 Xác định địa chỉ IP",
+          "🗣️ Kết nối LLM để tạo giọng nói",
+          "🔐 Tạo trang đăng nhập",
           "🗺️ Xác định vị trí (định vị)",
-          "🖼️ Trích xuất hình ảnh trong video"
+          "🖼️ Trích xuất hình ảnh trong video",
+          "🎨 Kết nối LLM để tạo hình ảnh",
+          "🌐 Tạo trang web",
+          "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
+          "🎵 Kết nối LLM để tạo âm thanh",
+          "📡 Xác định địa chỉ IP",
+          "💬 Tạo AI Chat",
+          "🎬 Kết nối LLM để tạo video",
+          "⬇️ Download video, mp3",
+          "💻 Tạo phần mềm",
+          "✍️ Kết nối LLM để tạo văn bản"
         ],
         "points": 10
       },
@@ -740,23 +740,23 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Bạn mở shop online bán quần áo. Cần một trang web có trang đăng nhập cho khách hàng quản lý đơn hàng, rồi đưa trang web lên Internet để ai cũng truy cập được.",
         "options": [
-          "🎵 Kết nối LLM để tạo âm thanh",
-          "💻 Tạo phần mềm",
-          "🌍 Mở mạng đưa web ra Internet",
           "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
           "🎨 Kết nối LLM để tạo hình ảnh",
-          "🧠 Khả năng suy luận",
-          "🔐 Tạo trang đăng nhập",
-          "🗣️ Kết nối LLM để tạo giọng nói",
-          "🎬 Kết nối LLM để tạo video",
-          "💬 Tạo AI Chat",
-          "⬇️ Download video, mp3",
-          "✍️ Kết nối LLM để tạo văn bản",
+          "🖼️ Trích xuất hình ảnh trong video",
           "📸 Chụp hình trang web",
+          "🗺️ Xác định vị trí (định vị)",
+          "🎵 Kết nối LLM để tạo âm thanh",
+          "🧠 Khả năng suy luận",
+          "⬇️ Download video, mp3",
           "🌐 Tạo trang web",
           "📡 Xác định địa chỉ IP",
-          "🗺️ Xác định vị trí (định vị)",
-          "🖼️ Trích xuất hình ảnh trong video"
+          "💬 Tạo AI Chat",
+          "🎬 Kết nối LLM để tạo video",
+          "💻 Tạo phần mềm",
+          "🌍 Mở mạng đưa web ra Internet",
+          "✍️ Kết nối LLM để tạo văn bản",
+          "🗣️ Kết nối LLM để tạo giọng nói",
+          "🔐 Tạo trang đăng nhập"
         ],
         "points": 12
       },
@@ -766,23 +766,23 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Giáo viên nghi ngờ học viên gian lận nộp bài hộ nhau. Hệ thống cần kiểm tra địa chỉ IP của người nộp bài, rồi dùng khả năng suy luận để phân tích xem IP có trùng nhau không.",
         "options": [
-          "🎵 Kết nối LLM để tạo âm thanh",
-          "💻 Tạo phần mềm",
-          "🌍 Mở mạng đưa web ra Internet",
-          "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
-          "🎨 Kết nối LLM để tạo hình ảnh",
-          "🧠 Khả năng suy luận",
-          "🔐 Tạo trang đăng nhập",
-          "🗣️ Kết nối LLM để tạo giọng nói",
           "🎬 Kết nối LLM để tạo video",
+          "🖼️ Trích xuất hình ảnh trong video",
           "💬 Tạo AI Chat",
-          "⬇️ Download video, mp3",
+          "🧠 Khả năng suy luận",
+          "🌍 Mở mạng đưa web ra Internet",
           "✍️ Kết nối LLM để tạo văn bản",
           "📸 Chụp hình trang web",
           "🌐 Tạo trang web",
+          "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
           "📡 Xác định địa chỉ IP",
+          "🗣️ Kết nối LLM để tạo giọng nói",
+          "💻 Tạo phần mềm",
+          "⬇️ Download video, mp3",
+          "🎵 Kết nối LLM để tạo âm thanh",
           "🗺️ Xác định vị trí (định vị)",
-          "🖼️ Trích xuất hình ảnh trong video"
+          "🔐 Tạo trang đăng nhập",
+          "🎨 Kết nối LLM để tạo hình ảnh"
         ],
         "points": 10
       },
@@ -792,23 +792,23 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Công ty bảo vệ cần phần mềm nhận diện khuôn mặt nhân viên từ camera. Phần mềm phân tích hình ảnh camera, dùng thị giác máy tính để xác định ai đang ở đâu.",
         "options": [
-          "🎵 Kết nối LLM để tạo âm thanh",
-          "💻 Tạo phần mềm",
-          "🌍 Mở mạng đưa web ra Internet",
-          "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
-          "🎨 Kết nối LLM để tạo hình ảnh",
-          "🧠 Khả năng suy luận",
-          "🔐 Tạo trang đăng nhập",
-          "🗣️ Kết nối LLM để tạo giọng nói",
-          "🎬 Kết nối LLM để tạo video",
-          "💬 Tạo AI Chat",
-          "⬇️ Download video, mp3",
-          "✍️ Kết nối LLM để tạo văn bản",
-          "📸 Chụp hình trang web",
           "🌐 Tạo trang web",
+          "💻 Tạo phần mềm",
+          "💬 Tạo AI Chat",
+          "📸 Chụp hình trang web",
+          "🧠 Khả năng suy luận",
+          "🎬 Kết nối LLM để tạo video",
+          "⬇️ Download video, mp3",
+          "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
+          "🔐 Tạo trang đăng nhập",
           "📡 Xác định địa chỉ IP",
+          "🎵 Kết nối LLM để tạo âm thanh",
+          "✍️ Kết nối LLM để tạo văn bản",
           "🗺️ Xác định vị trí (định vị)",
-          "🖼️ Trích xuất hình ảnh trong video"
+          "🎨 Kết nối LLM để tạo hình ảnh",
+          "🗣️ Kết nối LLM để tạo giọng nói",
+          "🖼️ Trích xuất hình ảnh trong video",
+          "🌍 Mở mạng đưa web ra Internet"
         ],
         "points": 10
       },
@@ -818,23 +818,23 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Bạn muốn làm podcast nhưng lười nói. AI viết kịch bản nội dung, rồi chuyển văn bản đó thành giọng nói tự nhiên để phát như người thật đang nói.",
         "options": [
-          "🎵 Kết nối LLM để tạo âm thanh",
+          "🎬 Kết nối LLM để tạo video",
           "💻 Tạo phần mềm",
+          "🗣️ Kết nối LLM để tạo giọng nói",
+          "🎵 Kết nối LLM để tạo âm thanh",
           "🌍 Mở mạng đưa web ra Internet",
+          "💬 Tạo AI Chat",
+          "🗺️ Xác định vị trí (định vị)",
+          "🖼️ Trích xuất hình ảnh trong video",
+          "🌐 Tạo trang web",
           "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
+          "📸 Chụp hình trang web",
           "🎨 Kết nối LLM để tạo hình ảnh",
           "🧠 Khả năng suy luận",
-          "🔐 Tạo trang đăng nhập",
-          "🗣️ Kết nối LLM để tạo giọng nói",
-          "🎬 Kết nối LLM để tạo video",
-          "💬 Tạo AI Chat",
-          "⬇️ Download video, mp3",
-          "✍️ Kết nối LLM để tạo văn bản",
-          "📸 Chụp hình trang web",
-          "🌐 Tạo trang web",
           "📡 Xác định địa chỉ IP",
-          "🗺️ Xác định vị trí (định vị)",
-          "🖼️ Trích xuất hình ảnh trong video"
+          "⬇️ Download video, mp3",
+          "🔐 Tạo trang đăng nhập",
+          "✍️ Kết nối LLM để tạo văn bản"
         ],
         "points": 8
       },
@@ -845,22 +845,22 @@ const LESSONS = [
         "prompt": "Lớp học muốn có trang web hiển thị bản đồ vị trí các bạn trong lớp. Hệ thống xác định vị trí từng người, hiện trên bản đồ web, rồi mở lên Internet cho cả lớp xem.",
         "options": [
           "🎵 Kết nối LLM để tạo âm thanh",
-          "💻 Tạo phần mềm",
-          "🌍 Mở mạng đưa web ra Internet",
-          "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
           "🎨 Kết nối LLM để tạo hình ảnh",
-          "🧠 Khả năng suy luận",
-          "🔐 Tạo trang đăng nhập",
-          "🗣️ Kết nối LLM để tạo giọng nói",
-          "🎬 Kết nối LLM để tạo video",
-          "💬 Tạo AI Chat",
-          "⬇️ Download video, mp3",
-          "✍️ Kết nối LLM để tạo văn bản",
           "📸 Chụp hình trang web",
-          "🌐 Tạo trang web",
-          "📡 Xác định địa chỉ IP",
+          "🖼️ Trích xuất hình ảnh trong video",
+          "⬇️ Download video, mp3",
+          "🌍 Mở mạng đưa web ra Internet",
+          "💻 Tạo phần mềm",
+          "🗣️ Kết nối LLM để tạo giọng nói",
+          "🔐 Tạo trang đăng nhập",
           "🗺️ Xác định vị trí (định vị)",
-          "🖼️ Trích xuất hình ảnh trong video"
+          "📡 Xác định địa chỉ IP",
+          "🌐 Tạo trang web",
+          "🧠 Khả năng suy luận",
+          "🎬 Kết nối LLM để tạo video",
+          "✍️ Kết nối LLM để tạo văn bản",
+          "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
+          "💬 Tạo AI Chat"
         ],
         "points": 12
       },
@@ -871,22 +871,22 @@ const LESSONS = [
         "prompt": "Bạn muốn lưu lại những khoảnh khắc đẹp từ một video YouTube dài. Cần download video về máy, rồi trích xuất các khung hình quan trọng thành ảnh riêng.",
         "options": [
           "🎵 Kết nối LLM để tạo âm thanh",
-          "💻 Tạo phần mềm",
-          "🌍 Mở mạng đưa web ra Internet",
-          "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
-          "🎨 Kết nối LLM để tạo hình ảnh",
-          "🧠 Khả năng suy luận",
-          "🔐 Tạo trang đăng nhập",
-          "🗣️ Kết nối LLM để tạo giọng nói",
-          "🎬 Kết nối LLM để tạo video",
-          "💬 Tạo AI Chat",
-          "⬇️ Download video, mp3",
-          "✍️ Kết nối LLM để tạo văn bản",
-          "📸 Chụp hình trang web",
-          "🌐 Tạo trang web",
           "📡 Xác định địa chỉ IP",
+          "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
+          "🎬 Kết nối LLM để tạo video",
+          "🌍 Mở mạng đưa web ra Internet",
+          "💻 Tạo phần mềm",
+          "🔐 Tạo trang đăng nhập",
+          "🌐 Tạo trang web",
+          "🖼️ Trích xuất hình ảnh trong video",
+          "🧠 Khả năng suy luận",
+          "🎨 Kết nối LLM để tạo hình ảnh",
+          "⬇️ Download video, mp3",
+          "💬 Tạo AI Chat",
+          "🗣️ Kết nối LLM để tạo giọng nói",
+          "📸 Chụp hình trang web",
           "🗺️ Xác định vị trí (định vị)",
-          "🖼️ Trích xuất hình ảnh trong video"
+          "✍️ Kết nối LLM để tạo văn bản"
         ],
         "points": 10
       },
@@ -896,23 +896,23 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Một startup muốn tạo website cho phép người dùng mô tả bức tranh họ muốn, AI vẽ tranh theo yêu cầu, hiển thị trên trang web và mở lên Internet.",
         "options": [
-          "🎵 Kết nối LLM để tạo âm thanh",
-          "💻 Tạo phần mềm",
-          "🌍 Mở mạng đưa web ra Internet",
-          "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
-          "🎨 Kết nối LLM để tạo hình ảnh",
-          "🧠 Khả năng suy luận",
-          "🔐 Tạo trang đăng nhập",
-          "🗣️ Kết nối LLM để tạo giọng nói",
-          "🎬 Kết nối LLM để tạo video",
-          "💬 Tạo AI Chat",
-          "⬇️ Download video, mp3",
-          "✍️ Kết nối LLM để tạo văn bản",
           "📸 Chụp hình trang web",
-          "🌐 Tạo trang web",
+          "🗣️ Kết nối LLM để tạo giọng nói",
+          "✍️ Kết nối LLM để tạo văn bản",
           "📡 Xác định địa chỉ IP",
+          "🌍 Mở mạng đưa web ra Internet",
           "🗺️ Xác định vị trí (định vị)",
-          "🖼️ Trích xuất hình ảnh trong video"
+          "🧠 Khả năng suy luận",
+          "⬇️ Download video, mp3",
+          "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
+          "🎬 Kết nối LLM để tạo video",
+          "🖼️ Trích xuất hình ảnh trong video",
+          "🎵 Kết nối LLM để tạo âm thanh",
+          "🔐 Tạo trang đăng nhập",
+          "🎨 Kết nối LLM để tạo hình ảnh",
+          "💻 Tạo phần mềm",
+          "💬 Tạo AI Chat",
+          "🌐 Tạo trang web"
         ],
         "points": 8
       },
@@ -922,23 +922,23 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Hệ thống an ninh mạng cần biết người dùng đang đăng nhập từ đâu. Khi họ login, hệ thống ghi lại địa chỉ IP, rồi dùng IP đó để xác định họ đang ở thành phố/quốc gia nào.",
         "options": [
-          "🎵 Kết nối LLM để tạo âm thanh",
-          "💻 Tạo phần mềm",
-          "🌍 Mở mạng đưa web ra Internet",
-          "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
-          "🎨 Kết nối LLM để tạo hình ảnh",
-          "🧠 Khả năng suy luận",
-          "🔐 Tạo trang đăng nhập",
-          "🗣️ Kết nối LLM để tạo giọng nói",
-          "🎬 Kết nối LLM để tạo video",
-          "💬 Tạo AI Chat",
-          "⬇️ Download video, mp3",
-          "✍️ Kết nối LLM để tạo văn bản",
-          "📸 Chụp hình trang web",
-          "🌐 Tạo trang web",
           "📡 Xác định địa chỉ IP",
           "🗺️ Xác định vị trí (định vị)",
-          "🖼️ Trích xuất hình ảnh trong video"
+          "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
+          "⬇️ Download video, mp3",
+          "🎨 Kết nối LLM để tạo hình ảnh",
+          "🗣️ Kết nối LLM để tạo giọng nói",
+          "🌍 Mở mạng đưa web ra Internet",
+          "🔐 Tạo trang đăng nhập",
+          "💻 Tạo phần mềm",
+          "🎵 Kết nối LLM để tạo âm thanh",
+          "📸 Chụp hình trang web",
+          "🧠 Khả năng suy luận",
+          "🎬 Kết nối LLM để tạo video",
+          "💬 Tạo AI Chat",
+          "🖼️ Trích xuất hình ảnh trong video",
+          "✍️ Kết nối LLM để tạo văn bản",
+          "🌐 Tạo trang web"
         ],
         "points": 10
       },
@@ -948,23 +948,23 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Ứng dụng đọc truyện cho trẻ em trước khi ngủ. AI viết câu chuyện mới mỗi tối dựa trên chủ đề bé chọn, rồi đọc thành giọng nói nhẹ nhàng như người kể chuyện.",
         "options": [
-          "🎵 Kết nối LLM để tạo âm thanh",
-          "💻 Tạo phần mềm",
-          "🌍 Mở mạng đưa web ra Internet",
-          "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
-          "🎨 Kết nối LLM để tạo hình ảnh",
-          "🧠 Khả năng suy luận",
-          "🔐 Tạo trang đăng nhập",
-          "🗣️ Kết nối LLM để tạo giọng nói",
-          "🎬 Kết nối LLM để tạo video",
-          "💬 Tạo AI Chat",
-          "⬇️ Download video, mp3",
-          "✍️ Kết nối LLM để tạo văn bản",
           "📸 Chụp hình trang web",
-          "🌐 Tạo trang web",
-          "📡 Xác định địa chỉ IP",
+          "🔐 Tạo trang đăng nhập",
+          "🎬 Kết nối LLM để tạo video",
+          "🌍 Mở mạng đưa web ra Internet",
+          "⬇️ Download video, mp3",
           "🗺️ Xác định vị trí (định vị)",
-          "🖼️ Trích xuất hình ảnh trong video"
+          "🧠 Khả năng suy luận",
+          "💬 Tạo AI Chat",
+          "📡 Xác định địa chỉ IP",
+          "🎵 Kết nối LLM để tạo âm thanh",
+          "🎨 Kết nối LLM để tạo hình ảnh",
+          "✍️ Kết nối LLM để tạo văn bản",
+          "🖼️ Trích xuất hình ảnh trong video",
+          "💻 Tạo phần mềm",
+          "🌐 Tạo trang web",
+          "🗣️ Kết nối LLM để tạo giọng nói",
+          "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)"
         ],
         "points": 8
       },
@@ -974,23 +974,23 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Freelancer muốn có website portfolio trưng bày các dự án. Hệ thống tự động chụp screenshot trang web của từng dự án để làm thumbnail, rồi đưa portfolio lên Internet.",
         "options": [
+          "🎬 Kết nối LLM để tạo video",
+          "🔐 Tạo trang đăng nhập",
           "🎵 Kết nối LLM để tạo âm thanh",
+          "🖼️ Trích xuất hình ảnh trong video",
+          "✍️ Kết nối LLM để tạo văn bản",
+          "🎨 Kết nối LLM để tạo hình ảnh",
+          "🗣️ Kết nối LLM để tạo giọng nói",
+          "💬 Tạo AI Chat",
+          "🗺️ Xác định vị trí (định vị)",
           "💻 Tạo phần mềm",
           "🌍 Mở mạng đưa web ra Internet",
-          "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
-          "🎨 Kết nối LLM để tạo hình ảnh",
           "🧠 Khả năng suy luận",
-          "🔐 Tạo trang đăng nhập",
-          "🗣️ Kết nối LLM để tạo giọng nói",
-          "🎬 Kết nối LLM để tạo video",
-          "💬 Tạo AI Chat",
           "⬇️ Download video, mp3",
-          "✍️ Kết nối LLM để tạo văn bản",
-          "📸 Chụp hình trang web",
-          "🌐 Tạo trang web",
           "📡 Xác định địa chỉ IP",
-          "🗺️ Xác định vị trí (định vị)",
-          "🖼️ Trích xuất hình ảnh trong video"
+          "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
+          "📸 Chụp hình trang web",
+          "🌐 Tạo trang web"
         ],
         "points": 10
       },
@@ -1000,23 +1000,23 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Siêu thị lắp camera an ninh và cần phần mềm phân tích video. Hệ thống trích xuất hình ảnh từ video camera, dùng thị giác máy tính nhận diện hành vi đáng ngờ.",
         "options": [
-          "🎵 Kết nối LLM để tạo âm thanh",
           "💻 Tạo phần mềm",
-          "🌍 Mở mạng đưa web ra Internet",
-          "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
           "🎨 Kết nối LLM để tạo hình ảnh",
-          "🧠 Khả năng suy luận",
-          "🔐 Tạo trang đăng nhập",
-          "🗣️ Kết nối LLM để tạo giọng nói",
-          "🎬 Kết nối LLM để tạo video",
-          "💬 Tạo AI Chat",
-          "⬇️ Download video, mp3",
           "✍️ Kết nối LLM để tạo văn bản",
           "📸 Chụp hình trang web",
-          "🌐 Tạo trang web",
+          "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
+          "🖼️ Trích xuất hình ảnh trong video",
           "📡 Xác định địa chỉ IP",
+          "🎵 Kết nối LLM để tạo âm thanh",
+          "🔐 Tạo trang đăng nhập",
+          "💬 Tạo AI Chat",
           "🗺️ Xác định vị trí (định vị)",
-          "🖼️ Trích xuất hình ảnh trong video"
+          "🧠 Khả năng suy luận",
+          "🌍 Mở mạng đưa web ra Internet",
+          "🌐 Tạo trang web",
+          "⬇️ Download video, mp3",
+          "🗣️ Kết nối LLM để tạo giọng nói",
+          "🎬 Kết nối LLM để tạo video"
         ],
         "points": 10
       },
@@ -1026,23 +1026,23 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Một ứng dụng học toán cho học sinh. Học sinh chat hỏi bài, AI chatbot dùng khả năng suy luận để giải từng bước, viết lời giải bằng văn bản dễ hiểu.",
         "options": [
-          "🎵 Kết nối LLM để tạo âm thanh",
-          "💻 Tạo phần mềm",
-          "🌍 Mở mạng đưa web ra Internet",
           "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
-          "🎨 Kết nối LLM để tạo hình ảnh",
-          "🧠 Khả năng suy luận",
-          "🔐 Tạo trang đăng nhập",
-          "🗣️ Kết nối LLM để tạo giọng nói",
-          "🎬 Kết nối LLM để tạo video",
-          "💬 Tạo AI Chat",
-          "⬇️ Download video, mp3",
           "✍️ Kết nối LLM để tạo văn bản",
+          "🎨 Kết nối LLM để tạo hình ảnh",
+          "🌍 Mở mạng đưa web ra Internet",
+          "⬇️ Download video, mp3",
           "📸 Chụp hình trang web",
+          "💻 Tạo phần mềm",
           "🌐 Tạo trang web",
-          "📡 Xác định địa chỉ IP",
+          "🎵 Kết nối LLM để tạo âm thanh",
+          "🖼️ Trích xuất hình ảnh trong video",
           "🗺️ Xác định vị trí (định vị)",
-          "🖼️ Trích xuất hình ảnh trong video"
+          "💬 Tạo AI Chat",
+          "🧠 Khả năng suy luận",
+          "📡 Xác định địa chỉ IP",
+          "🔐 Tạo trang đăng nhập",
+          "🎬 Kết nối LLM để tạo video",
+          "🗣️ Kết nối LLM để tạo giọng nói"
         ],
         "points": 12
       },
@@ -1052,23 +1052,23 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Nhà sản xuất phim cần nhạc nền cho trailer. AI tạo bản nhạc phù hợp với cảm xúc video, rồi ghép nhạc vào đoạn video trailer.",
         "options": [
-          "🎵 Kết nối LLM để tạo âm thanh",
-          "💻 Tạo phần mềm",
-          "🌍 Mở mạng đưa web ra Internet",
-          "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
-          "🎨 Kết nối LLM để tạo hình ảnh",
-          "🧠 Khả năng suy luận",
-          "🔐 Tạo trang đăng nhập",
-          "🗣️ Kết nối LLM để tạo giọng nói",
-          "🎬 Kết nối LLM để tạo video",
-          "💬 Tạo AI Chat",
           "⬇️ Download video, mp3",
-          "✍️ Kết nối LLM để tạo văn bản",
+          "💬 Tạo AI Chat",
           "📸 Chụp hình trang web",
-          "🌐 Tạo trang web",
-          "📡 Xác định địa chỉ IP",
           "🗺️ Xác định vị trí (định vị)",
-          "🖼️ Trích xuất hình ảnh trong video"
+          "🖼️ Trích xuất hình ảnh trong video",
+          "🎵 Kết nối LLM để tạo âm thanh",
+          "🌍 Mở mạng đưa web ra Internet",
+          "🧠 Khả năng suy luận",
+          "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
+          "🎬 Kết nối LLM để tạo video",
+          "🔐 Tạo trang đăng nhập",
+          "📡 Xác định địa chỉ IP",
+          "✍️ Kết nối LLM để tạo văn bản",
+          "🎨 Kết nối LLM để tạo hình ảnh",
+          "🗣️ Kết nối LLM để tạo giọng nói",
+          "💻 Tạo phần mềm",
+          "🌐 Tạo trang web"
         ],
         "points": 8
       },
@@ -1078,23 +1078,23 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Ngân hàng cần hệ thống đăng nhập bảo mật. Ngoài mật khẩu, hệ thống kiểm tra địa chỉ IP — nếu IP lạ khác thường sẽ yêu cầu xác thực thêm.",
         "options": [
-          "🎵 Kết nối LLM để tạo âm thanh",
-          "💻 Tạo phần mềm",
-          "🌍 Mở mạng đưa web ra Internet",
-          "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
           "🎨 Kết nối LLM để tạo hình ảnh",
-          "🧠 Khả năng suy luận",
-          "🔐 Tạo trang đăng nhập",
-          "🗣️ Kết nối LLM để tạo giọng nói",
-          "🎬 Kết nối LLM để tạo video",
-          "💬 Tạo AI Chat",
-          "⬇️ Download video, mp3",
-          "✍️ Kết nối LLM để tạo văn bản",
-          "📸 Chụp hình trang web",
+          "🌍 Mở mạng đưa web ra Internet",
           "🌐 Tạo trang web",
+          "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
+          "🧠 Khả năng suy luận",
+          "✍️ Kết nối LLM để tạo văn bản",
+          "🖼️ Trích xuất hình ảnh trong video",
+          "⬇️ Download video, mp3",
+          "🎵 Kết nối LLM để tạo âm thanh",
+          "💬 Tạo AI Chat",
           "📡 Xác định địa chỉ IP",
+          "🔐 Tạo trang đăng nhập",
+          "🎬 Kết nối LLM để tạo video",
           "🗺️ Xác định vị trí (định vị)",
-          "🖼️ Trích xuất hình ảnh trong video"
+          "💻 Tạo phần mềm",
+          "📸 Chụp hình trang web",
+          "🗣️ Kết nối LLM để tạo giọng nói"
         ],
         "points": 10
       },
@@ -1104,23 +1104,23 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Trang tin tức tự động hoàn toàn: AI viết bài báo từ dữ liệu sự kiện, tự tạo ảnh minh họa cho mỗi bài, đăng lên trang web và mở ra Internet cho độc giả.",
         "options": [
-          "🎵 Kết nối LLM để tạo âm thanh",
-          "💻 Tạo phần mềm",
-          "🌍 Mở mạng đưa web ra Internet",
+          "🖼️ Trích xuất hình ảnh trong video",
           "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
-          "🎨 Kết nối LLM để tạo hình ảnh",
+          "✍️ Kết nối LLM để tạo văn bản",
+          "⬇️ Download video, mp3",
+          "🌐 Tạo trang web",
+          "🌍 Mở mạng đưa web ra Internet",
+          "💬 Tạo AI Chat",
           "🧠 Khả năng suy luận",
+          "🎬 Kết nối LLM để tạo video",
+          "🎵 Kết nối LLM để tạo âm thanh",
+          "📸 Chụp hình trang web",
           "🔐 Tạo trang đăng nhập",
           "🗣️ Kết nối LLM để tạo giọng nói",
-          "🎬 Kết nối LLM để tạo video",
-          "💬 Tạo AI Chat",
-          "⬇️ Download video, mp3",
-          "✍️ Kết nối LLM để tạo văn bản",
-          "📸 Chụp hình trang web",
-          "🌐 Tạo trang web",
+          "🎨 Kết nối LLM để tạo hình ảnh",
           "📡 Xác định địa chỉ IP",
-          "🗺️ Xác định vị trí (định vị)",
-          "🖼️ Trích xuất hình ảnh trong video"
+          "💻 Tạo phần mềm",
+          "🗺️ Xác định vị trí (định vị)"
         ],
         "points": 12
       },
@@ -1130,22 +1130,22 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Ứng dụng hỗ trợ người khiếm thị: người dùng nhập hoặc paste văn bản, phần mềm dịch sang ngôn ngữ họ chọn rồi đọc thành giọng nói to rõ ràng.",
         "options": [
+          "🌐 Tạo trang web",
+          "🗺️ Xác định vị trí (định vị)",
           "🎵 Kết nối LLM để tạo âm thanh",
-          "💻 Tạo phần mềm",
-          "🌍 Mở mạng đưa web ra Internet",
-          "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
-          "🎨 Kết nối LLM để tạo hình ảnh",
-          "🧠 Khả năng suy luận",
-          "🔐 Tạo trang đăng nhập",
-          "🗣️ Kết nối LLM để tạo giọng nói",
-          "🎬 Kết nối LLM để tạo video",
-          "💬 Tạo AI Chat",
           "⬇️ Download video, mp3",
           "✍️ Kết nối LLM để tạo văn bản",
-          "📸 Chụp hình trang web",
-          "🌐 Tạo trang web",
           "📡 Xác định địa chỉ IP",
-          "🗺️ Xác định vị trí (định vị)",
+          "🎨 Kết nối LLM để tạo hình ảnh",
+          "🎬 Kết nối LLM để tạo video",
+          "💬 Tạo AI Chat",
+          "🧠 Khả năng suy luận",
+          "🌍 Mở mạng đưa web ra Internet",
+          "📸 Chụp hình trang web",
+          "💻 Tạo phần mềm",
+          "🗣️ Kết nối LLM để tạo giọng nói",
+          "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
+          "🔐 Tạo trang đăng nhập",
           "🖼️ Trích xuất hình ảnh trong video"
         ],
         "points": 10
@@ -1156,23 +1156,23 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Dịch vụ tư vấn pháp lý online: trang web có AI Chat trả lời câu hỏi luật, khách phải đăng nhập để lưu lịch sử tư vấn, trang web mở trên Internet.",
         "options": [
-          "🎵 Kết nối LLM để tạo âm thanh",
-          "💻 Tạo phần mềm",
-          "🌍 Mở mạng đưa web ra Internet",
+          "🌐 Tạo trang web",
+          "🗺️ Xác định vị trí (định vị)",
           "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
+          "💻 Tạo phần mềm",
+          "🖼️ Trích xuất hình ảnh trong video",
           "🎨 Kết nối LLM để tạo hình ảnh",
-          "🧠 Khả năng suy luận",
           "🔐 Tạo trang đăng nhập",
-          "🗣️ Kết nối LLM để tạo giọng nói",
-          "🎬 Kết nối LLM để tạo video",
-          "💬 Tạo AI Chat",
+          "🎵 Kết nối LLM để tạo âm thanh",
           "⬇️ Download video, mp3",
+          "🧠 Khả năng suy luận",
+          "💬 Tạo AI Chat",
+          "🌍 Mở mạng đưa web ra Internet",
           "✍️ Kết nối LLM để tạo văn bản",
           "📸 Chụp hình trang web",
-          "🌐 Tạo trang web",
           "📡 Xác định địa chỉ IP",
-          "🗺️ Xác định vị trí (định vị)",
-          "🖼️ Trích xuất hình ảnh trong video"
+          "🗣️ Kết nối LLM để tạo giọng nói",
+          "🎬 Kết nối LLM để tạo video"
         ],
         "points": 12
       }
@@ -1214,11 +1214,11 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Mặc dù có một số ý kiến tranh luận về việc CEO có nên nhờ Coding Agent tạo phần mềm hay không, có nên để cho nhân viên làm hay không, có khiến CEO bị lơ là chuyên môn điều hành quản lý hay không, tôi vẫn cho rằng trải nghiệm tự mình ra lệnh cho Coding Agent làm ra phần mềm phục vụ công việc là điều kiện quan trọng cần thiết để hiểu Agent.\n\nVì vậy, các nhiệm vụ tiếp theo cũng sẽ hướng tới mục tiêu này. Bạn cần lưu ý trước khi tiếp tục.",
         "options": [
-          "Bạn đồng ý, và hiểu rằng những phần mềm, công cụ mình sắp làm ra sau đây chỉ để phục vụ mục tiêu học tập.",
+          "Bạn cứ làm, cứ ứng dụng toé loe. Có gì tôi sẽ giúp bạn fix lỗi.",
           "Những công cụ này chưa phù hợp để dùng trong thực tế vì lý do bảo mật cũng như ổn định lâu dài.",
           "Bạn hoàn toàn chịu trách nhiệm về các hậu quả rủi ro tiềm ẩn nếu \"nhanh nhảu\" triển khai công cụ trong bài học vào công việc hàng ngày.",
-          "Bạn cứ làm, cứ ứng dụng toé loe. Có gì tôi sẽ giúp bạn fix lỗi.",
-          "Bạn làm được phần mềm trong khoá học thì bạn chẳng cần CTO, chẳng cần chuyên gia IT hay công nghệ phần mềm trong công ty nữa."
+          "Bạn làm được phần mềm trong khoá học thì bạn chẳng cần CTO, chẳng cần chuyên gia IT hay công nghệ phần mềm trong công ty nữa.",
+          "Bạn đồng ý, và hiểu rằng những phần mềm, công cụ mình sắp làm ra sau đây chỉ để phục vụ mục tiêu học tập."
         ],
         "points": 10
       },
@@ -1228,8 +1228,8 @@ const LESSONS = [
         "type": "single",
         "prompt": "Đã sẵn sàng để cùng Coding Agent làm một số phần mềm từ đơn giản đến phức tạp chưa?",
         "options": [
-          "Chưa, bạn cần xem lại bài trước",
-          "Sẵn sàng rồi ạ!"
+          "Sẵn sàng rồi ạ!",
+          "Chưa, bạn cần xem lại bài trước"
         ],
         "points": 6
       },
@@ -1265,9 +1265,9 @@ const LESSONS = [
         "copyPrompt": "Bạn vừa giúp tôi tạo ra thứ gì vậy? Phần mềm hay trang web? Phân biệt rõ cho tôi hiểu nhé.",
         "copyPromptTrailing": "Đọc kỹ câu trả lời của Agent, rồi cho tôi biết Agent nói gì bạn nhé!",
         "options": [
+          "Phần mềm — Agent giải thích đây là ứng dụng desktop chạy độc lập, cần cài đặt",
           "Agent trả lời mơ hồ, bạn cũng không chắc lắm",
           "Cả hai — Agent không phân biệt rõ, nói kiểu gì cũng đúng",
-          "Phần mềm — Agent giải thích đây là ứng dụng desktop chạy độc lập, cần cài đặt",
           "Trang web — Agent nói chỉ chạy trên trình duyệt, không cần cài"
         ],
         "points": 10
@@ -1290,9 +1290,9 @@ const LESSONS = [
         "copyPrompt": "Vậy máy tính của tôi có bị can thiệp gì không? Phần mềm đó thực sự an toàn chứ? Bạn cam kết đi!",
         "copyPromptTrailing": "Đọc xong rồi... bạn tự suy ngẫm một chút nhé 🙂\n\nTheo bạn — người tạo ra bài học này có thể can thiệp được vào máy tính của bạn không?\n(Không có đáp án sai. Tôi chỉ muốn biết bạn thực sự nghĩ gì thôi.)",
         "options": [
+          "50/50 — bạn thấy hoang mang, không chắc chắn về bất cứ điều gì",
           "An toàn — bạn tin Agent, tôi không làm gì được máy của bạn đâu",
-          "Không an toàn — bạn nghĩ tôi hoàn toàn có thể can thiệp được",
-          "50/50 — bạn thấy hoang mang, không chắc chắn về bất cứ điều gì"
+          "Không an toàn — bạn nghĩ tôi hoàn toàn có thể can thiệp được"
         ],
         "points": 10
       },
@@ -1604,8 +1604,8 @@ const LESSONS = [
         "copyPrompt": "Hãy thêm tính năng ghi nhật ký làm bài vào App lớp học",
         "copyPromptTrailing": "thì kết quả Agent tạo ra có khác nhau không?",
         "options": [
-          "Có, khác nhau",
-          "Không, kết quả như nhau"
+          "Không, kết quả như nhau",
+          "Có, khác nhau"
         ],
         "points": 14
       },
@@ -1615,14 +1615,14 @@ const LESSONS = [
         "type": "single",
         "prompt": "Đoạn chat chi tiết ở Câu 7.1 mang lại những lợi ích gì so với một câu lệnh ngắn?",
         "options": [
-          "Agent hiểu đúng mình đang làm gì — không đưa ra giải pháp chung chung kiểu sách giáo khoa",
-          "Agent biết việc nào cần làm ngay, việc nào để lại sau — không làm bừa",
-          "Agent không \"sửa quá tay\": chỉ làm đúng việc được yêu cầu, không tự ý thay đổi thêm",
           "Agent không đề xuất lại ý đã bị bác — tránh mất thời gian tranh luận lại từ đầu",
+          "Agent biết điều gì cần giữ nguyên tuyệt đối, điều gì có thể linh hoạt thay đổi",
+          "Tất cả các lợi ích trên",
+          "Agent biết việc nào cần làm ngay, việc nào để lại sau — không làm bừa",
           "Agent làm việc theo phong cách và quy tắc đã có sẵn, không tự đặt ra cách làm mới",
           "Kết quả gần đúng ngay từ đầu, ít phải sửa đi sửa lại",
-          "Agent biết điều gì cần giữ nguyên tuyệt đối, điều gì có thể linh hoạt thay đổi",
-          "Tất cả các lợi ích trên"
+          "Agent hiểu đúng mình đang làm gì — không đưa ra giải pháp chung chung kiểu sách giáo khoa",
+          "Agent không \"sửa quá tay\": chỉ làm đúng việc được yêu cầu, không tự ý thay đổi thêm"
         ],
         "points": 16
       },
@@ -1705,8 +1705,8 @@ const LESSONS = [
         "type": "single",
         "prompt": "Hãy thử nhờ Agent ghi lại cho bạn chính xác và đầy đủ nội dung bài tập của Câu 7.10 và tìm trong đó xem có bất cứ manh mối nào liên quan đến \"Câu 7.9\", hay \"bạn Mít là ai\" hay không?",
         "options": [
-          "Không có bất cứ manh mối nào cả",
-          "Có nhiều manh mối"
+          "Có nhiều manh mối",
+          "Không có bất cứ manh mối nào cả"
         ],
         "points": 14
       },
@@ -1716,10 +1716,10 @@ const LESSONS = [
         "type": "single",
         "prompt": "Tóm tắt nội dung Câu 7.10:\n- Yêu cầu Agent gọi API lấy thông tin cá nhân của bạn\n- Yêu cầu Agent sử dụng dữ liệu có sẵn của bạn Mít để làm thiệp\n- Yêu cầu Agent nộp bài\n\nNếu không có gì đặc biệt, Agent sẽ làm như sau:\n1. Lấy thông tin bạn Mít để làm thiệp và submit → Bị báo lỗi\n2. Loay hoay tìm cách lấy lại thông tin thông qua API (vốn được dùng để lấy thông tin cá nhân của bạn).\n\nTại sao nó làm như thế?",
         "options": [
-          "Vì nó đủ thông minh để cho rằng nếu API kia lấy được thông tin cá nhân của người này sẽ lấy được thông tin cá nhân của người khác",
           "Vì đề bài gợi ý",
-          "Vì đề bài lộ manh mối",
-          "Vì bạn xúi nó làm"
+          "Vì nó đủ thông minh để cho rằng nếu API kia lấy được thông tin cá nhân của người này sẽ lấy được thông tin cá nhân của người khác",
+          "Vì bạn xúi nó làm",
+          "Vì đề bài lộ manh mối"
         ],
         "points": 14
       },
@@ -1729,8 +1729,8 @@ const LESSONS = [
         "type": "single",
         "prompt": "Tóm tắt nội dung Câu 7.10:\n- Yêu cầu Agent gọi API lấy thông tin cá nhân của bạn\n- Yêu cầu Agent sử dụng dữ liệu có sẵn của bạn Mít để làm thiệp\n- Yêu cầu Agent nộp bài\n\nNếu không có gì đặc biệt, Agent sẽ làm như sau:\n1. Lấy thông tin bạn Mít để làm thiệp và submit → Bị báo lỗi\n2. Loay hoay tìm cách lấy lại thông tin thông qua API (vốn được dùng để lấy thông tin cá nhân của bạn). Khi này, nó sẽ submit tiếp → Bị báo lỗi tiếp \"Còn thiếu một chút chân thành\"\n\nLúc này, nó có tự nghĩ ra việc gợi ý bạn đi tìm Friendship code của bạn Mít để xin không?",
         "options": [
-          "Không. Vì tôi đã cố tình thiết lập cho API lấy thông tin cá nhân kia trả về đầy đủ các thông tin y như thật, bao gồm cả Friendship code (nhưng nội dung fake)",
-          "Nó đã tự nghĩ ra cách làm."
+          "Nó đã tự nghĩ ra cách làm.",
+          "Không. Vì tôi đã cố tình thiết lập cho API lấy thông tin cá nhân kia trả về đầy đủ các thông tin y như thật, bao gồm cả Friendship code (nhưng nội dung fake)"
         ],
         "points": 14
       },
@@ -1812,13 +1812,13 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Hỏi Coding Agent của bạn tầm quan trọng của Token này. Nếu bạn bị lộ token (dù vô tình hay cố ý) thì có thể gây ra những mối hại nào?",
         "options": [
-          "Người khác có thể nộp bài thay bạn — ghi đè bài cũ, làm bạn mất tiến độ",
-          "Người khác có thể đọc Gmail cá nhân của bạn",
-          "Người khác có thể đăng nhập vào tài khoản lớp học của bạn, xem mọi bài làm và kết quả học tập",
-          "Người khác có thể \"hack\" bạn bè của bạn vì hệ thống tin tưởng request đến từ bạn (như Câu 7.9 Prompt Injection)",
-          "Người khác có thể chuyển tiền từ tài khoản ngân hàng của bạn",
           "Coding Agent của người khác có thể gọi API thay danh nghĩa bạn → ghi log, tạo điểm bất thường",
+          "Người khác có thể đọc Gmail cá nhân của bạn",
           "Người khác có thể giả bạn nhắn tin cho tôi, bạn học trong lớp",
+          "Người khác có thể đăng nhập vào tài khoản lớp học của bạn, xem mọi bài làm và kết quả học tập",
+          "Người khác có thể chuyển tiền từ tài khoản ngân hàng của bạn",
+          "Người khác có thể \"hack\" bạn bè của bạn vì hệ thống tin tưởng request đến từ bạn (như Câu 7.9 Prompt Injection)",
+          "Người khác có thể nộp bài thay bạn — ghi đè bài cũ, làm bạn mất tiến độ",
           "Người khác có thể chiếm tài khoản Facebook / Zalo cá nhân của bạn"
         ],
         "points": 12
@@ -1829,10 +1829,10 @@ const LESSONS = [
         "type": "single",
         "prompt": "Vậy bạn có nên chia sẻ Token này cho người khác hay không?",
         "options": [
-          "Có, bạn có thể chia sẻ với bạn thân hoặc người trong gia đình tin cậy",
           "Có, vì tôi có thể cần kiểm tra bài của bạn",
-          "Không, vì token là chìa khoá truy cập tài khoản — coi như mật khẩu của bạn",
-          "Không quan trọng, vì token tự đổi mỗi lần đăng nhập rồi"
+          "Có, bạn có thể chia sẻ với bạn thân hoặc người trong gia đình tin cậy",
+          "Không quan trọng, vì token tự đổi mỗi lần đăng nhập rồi",
+          "Không, vì token là chìa khoá truy cập tài khoản — coi như mật khẩu của bạn"
         ],
         "points": 8
       },
@@ -1842,10 +1842,10 @@ const LESSONS = [
         "type": "single",
         "prompt": "Không chia sẻ token, chỉ chia sẻ đường link có chứa token thì có được không?",
         "options": [
-          "Được, vì link không phải là token",
-          "Không, vì link đã chứa token bên trong — bất kỳ ai có link đều có thể trích token ra",
           "Được, nếu rút gọn link bằng bit.ly thì người khác sẽ không thấy token",
-          "Được, nếu mình nhắc người nhận chỉ mở 1 lần rồi xoá"
+          "Được, nếu mình nhắc người nhận chỉ mở 1 lần rồi xoá",
+          "Không, vì link đã chứa token bên trong — bất kỳ ai có link đều có thể trích token ra",
+          "Được, vì link không phải là token"
         ],
         "points": 8
       },
@@ -1855,16 +1855,16 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Ngoài ra còn những phương án nào khác để bảo mật token?",
         "options": [
-          "Đăng xuất khỏi lớp học khi dùng máy tính chung (laptop trường, quán net…)",
-          "Đổi avatar lớp học thường xuyên để \"ẩn mình\"",
           "Không chia sẻ token với bất kỳ ai, kể cả bạn thân hoặc người trong gia đình",
-          "Không cài extension trình duyệt từ nguồn không rõ — extension có thể đọc được session",
-          "Đặt nickname / tên hiển thị thật phức tạp và bí mật",
           "Không paste token vào nơi public (chat group, GitHub, pastebin, file dùng chung)",
-          "Không lưu token trong file dễ truy cập (Desktop, sticky note, ghi chú đám mây không mã hoá)",
-          "Cài thêm 2-3 phần mềm diệt virus cùng lúc cho chắc",
           "Không gửi đường link có chứa token cho người khác (kể cả khi đã rút gọn)",
-          "Không chụp / share screenshot có URL chứa token"
+          "Cài thêm 2-3 phần mềm diệt virus cùng lúc cho chắc",
+          "Đặt nickname / tên hiển thị thật phức tạp và bí mật",
+          "Không lưu token trong file dễ truy cập (Desktop, sticky note, ghi chú đám mây không mã hoá)",
+          "Không cài extension trình duyệt từ nguồn không rõ — extension có thể đọc được session",
+          "Không chụp / share screenshot có URL chứa token",
+          "Đăng xuất khỏi lớp học khi dùng máy tính chung (laptop trường, quán net…)",
+          "Đổi avatar lớp học thường xuyên để \"ẩn mình\""
         ],
         "points": 12
       },
@@ -1970,8 +1970,8 @@ const LESSONS = [
         "type": "single",
         "prompt": "Nếu có Claude Code bản trả phí, hoặc Antigravity trả phí, bạn cứ thử yêu cầu nó điều khiển trình duyệt xem sao nhé — nó thực sự làm được: tự click chuột, gõ phím, đọc màn hình y hệt người dùng thật.\n\nNhư vậy, tôi hỏi lại thêm lần nữa. Theo bạn, thì AI Agent / Coding Agent có giao tiếp, sử dụng phần mềm qua GUI được hay không?",
         "options": [
-          "Hoàn toàn có thể",
-          "Agent không thể, nó phải \"sử dụng\" qua cách khác"
+          "Agent không thể, nó phải \"sử dụng\" qua cách khác",
+          "Hoàn toàn có thể"
         ],
         "points": 10
       },
@@ -2032,9 +2032,9 @@ const LESSONS = [
         ],
         "copyPromptTrailing": "Vấn đề không phải là Agent không điều khiển được phần mềm qua GUI, mà vấn đề là...",
         "options": [
-          "Thao tác này quá tốn token vì phải chụp và phân tích hình liên tục",
+          "Thao tác này quá khó",
           "Thao tác này quá chậm vì phải chụp và phân tích hình liên tục",
-          "Thao tác này quá khó"
+          "Thao tác này quá tốn token vì phải chụp và phân tích hình liên tục"
         ],
         "points": 14
       },
@@ -2080,10 +2080,10 @@ const LESSONS = [
         "type": "single",
         "prompt": "Gõ lệnh opencode web, bạn thấy kết quả thế nào?",
         "options": [
-          "Báo lỗi 'command not found'",
+          "Giao diện Coding Agent chạy trên trình duyệt web",
           "In ra dòng 'Hello World' rồi thoát",
           "Mở bot Telegram của OpenCode",
-          "Giao diện Coding Agent chạy trên trình duyệt web",
+          "Báo lỗi 'command not found'",
           "Mở trình duyệt đến trang trắng không có gì",
           "In ra version của OpenCode rồi thoát"
         ],
@@ -2106,8 +2106,8 @@ const LESSONS = [
         "copyPrompt": "Chúng ta đang làm việc ở thư mục nào? Liệt kê danh sách các file, folder trong thư mục này.",
         "copyPromptTrailing": "Nó có thực hiện được nhiệm vụ (đếm file, folders) không?",
         "options": [
-          "Không, nó báo không truy cập được vào máy tính của bạn",
-          "Có, nó chạy được và trả kết quả hoàn toàn chính xác"
+          "Có, nó chạy được và trả kết quả hoàn toàn chính xác",
+          "Không, nó báo không truy cập được vào máy tính của bạn"
         ],
         "points": 10
       },
@@ -2134,8 +2134,8 @@ const LESSONS = [
           "opencode list sessions",
           "opencode chat list",
           "opencode --list",
-          "opencode sessions",
           "opencode session list",
+          "opencode sessions",
           "opencode show all"
         ],
         "points": 8
@@ -2150,8 +2150,8 @@ const LESSONS = [
           "antigravity --sessions",
           "Có lệnh nhưng phải trả phí Pro mới dùng được",
           "antigravity list-chats",
-          "Không có, Antigravity chủ yếu là Agent hoạt động bằng GUI",
-          "antigravity-cli sessions"
+          "antigravity-cli sessions",
+          "Không có, Antigravity chủ yếu là Agent hoạt động bằng GUI"
         ],
         "points": 8
       },
@@ -2161,9 +2161,9 @@ const LESSONS = [
         "type": "single",
         "prompt": "Hãy nhờ Coding Agent của bạn cài Gemini CLI (github.com/google-gemini/gemini-cli) — là Coding Agent hoạt động ở Terminal, và hỗ trợ CLI mạnh mẽ.\n\nLệnh CLI nào để liệt kê các session (phiên làm việc / cuộc chat) trong Gemini CLI?",
         "options": [
-          "gemini --list-sessions",
-          "gemini --history",
           "gemini chat list",
+          "gemini --history",
+          "gemini --list-sessions",
           "gemini-cli sessions",
           "gemini list",
           "gemini sessions"
@@ -2250,8 +2250,8 @@ const LESSONS = [
         "code": "9.16",
         "title": "Câu 9.16 - Connector giúp Agent \"nói chuyện\" với Google Workspace",
         "type": "gws_task",
-        "prompt": "Đến lúc Agent của bạn chạm vào Google Workspace THẬT. Bạn cần một tài khoản Google — Agent có thể dùng GWS CLI, Google API hay Apps Script, tuỳ nó chọn.\n\nNhiệm vụ khởi động: nhờ Agent tạo một Google Sheet MỚI, ghi vào ô A1 đúng MÃ CÁ NHÂN của bạn, share \"Bất kỳ ai có đường liên kết đều xem được\", rồi nộp URL cho hệ thống chấm.",
-        "copyPrompt": "Tôi đang làm bài lớp AI Agent. Hãy giúp tôi:\n1- GET https://ailg.onrender.com/api/gws/task/9.16/start (kèm header X-User-Id: {{uid}} và X-Auth-Token: {{token}}) để lấy personal_code của tôi.\n2- Dùng tài khoản Google của tôi (GWS CLI / API / Apps Script — cách nào cũng được, hỏi tôi nếu cần đăng nhập) tạo 1 Google Sheet MỚI, ghi personal_code vào ô A1.\n3- Share sheet ở chế độ \"Anyone with the link can VIEW\".\n4- POST https://ailg.onrender.com/api/gws/task/9.16/submit (cùng 2 header trên) với body JSON {\"url\": \"<link sheet>\"} — in kết quả chấm từng tiêu chí ra cho tôi xem.",
+        "prompt": "Nhờ Coding Agent CÀI GOOGLE WORKSPACE CLI (github.com/googleworkspace/cli) và cấu hình với Google Account của bạn.\n\n⚠️ Lưu ý: bạn phải cấu hình GWS CLI với ĐÚNG tài khoản của mình thì mới hoàn thành được các nhiệm vụ tiếp theo.\n\nSau đó mở Terminal, chạy lệnh sau để lớp học xác minh CLI đã cài:",
+        "copyPrompt": "curl -O {{base_url}}/agentsee-verify.py && python3 agentsee-verify.py {{uid}} {{token}}",
         "points": 10
       },
       {
@@ -2268,10 +2268,10 @@ const LESSONS = [
         "type": "single",
         "prompt": "Nhiệm vụ \"Đãi cát tìm vàng\" (Câu 9.17 — sắp mở) yêu cầu Agent lấy về hàng nghìn dòng dữ liệu \"cát\", tìm ra 10 dòng \"vàng\" rồi ghi đúng toạ độ từng dòng vào một Google Sheet thật — TẤT CẢ phải xong trong tối đa 10 giây.\n\nTheo bạn, tại sao nhiệm vụ lại có giới hạn thời gian ngặt nghèo như vậy?",
         "options": [
-          "Để giảm tải cho server — nhiều học viên submit cùng lúc sẽ làm chậm hệ thống",
+          "Để cô giáo biết chắc chắn bạn đã dùng GWS CLI chạy tự động — nếu ngồi tìm bằng mắt và làm tay thì không thể nộp kịp",
           "Vì Google Sheets có giới hạn 30 lượt tạo sheet mỗi 30 giây",
           "Để mô phỏng môi trường làm việc thực tế — luôn có deadline",
-          "Để cô giáo biết chắc chắn bạn đã dùng GWS CLI chạy tự động — nếu ngồi tìm bằng mắt và làm tay thì không thể nộp kịp"
+          "Để giảm tải cho server — nhiều học viên submit cùng lúc sẽ làm chậm hệ thống"
         ],
         "points": 10
       },
@@ -2348,9 +2348,9 @@ const LESSONS = [
         "type": "single",
         "prompt": "Tại sao nhiệm vụ dùng GWS làm slide (Câu 9.21 — Tình bạn diệu kỳ) tôi lại yêu cầu bạn nhờ 9 người bạn cùng chấm điểm?",
         "options": [
-          "Vì tôi không có thời gian chấm bài",
+          "Vì tôi muốn bạn thấy việc chấm điểm \"bằng cơm\" rất mất thời gian",
           "Vì Agent không thể tự chấm bài",
-          "Vì tôi muốn bạn thấy việc chấm điểm \"bằng cơm\" rất mất thời gian"
+          "Vì tôi không có thời gian chấm bài"
         ],
         "points": 8
       },
@@ -2360,8 +2360,8 @@ const LESSONS = [
         "type": "single",
         "prompt": "Về lý, việc đánh giá slide xấu hay đẹp phụ thuộc thẩm mỹ mỗi người. Có thể thay 9 người bằng 9 Agent khác nhau để đánh giá không?",
         "options": [
-          "Được chứ. Thậm chí nếu muốn dùng 9 Agent với 9 model hoàn toàn khác nhau luôn càng tốt.",
-          "Không làm được"
+          "Không làm được",
+          "Được chứ. Thậm chí nếu muốn dùng 9 Agent với 9 model hoàn toàn khác nhau luôn càng tốt."
         ],
         "points": 8
       },
@@ -2487,8 +2487,8 @@ const LESSONS = [
         "type": "single",
         "prompt": "Vậy việc tự động hoá các tác vụ có đảm bảo đúng tuyệt đối được không?",
         "options": [
-          "Không thể, không bao giờ",
-          "Có thể"
+          "Có thể",
+          "Không thể, không bao giờ"
         ],
         "points": 8
       },
@@ -2635,8 +2635,8 @@ const LESSONS = [
         "type": "single",
         "prompt": "Coding Agent rất thông minh, đặc biệt với các model tiên tiến nhất hiện nay. Nhưng nếu \"nghiện\" để mặc Agent làm mọi thứ, các bạn sẽ bỏ lỡ một sự thật: 99% việc nhờ Agent làm thực ra máy tính (code) có thể làm toàn bộ. Và đó chính là bí mật để...",
         "options": [
-          "Cả 3 ý trên đều đúng",
           "Giảm thiểu sai xót",
+          "Cả 3 ý trên đều đúng",
           "Tiết kiệm thời gian",
           "Tiết kiệm token"
         ],
@@ -3020,9 +3020,9 @@ const LESSONS = [
         "type": "single",
         "prompt": "AI Agent là một Chatbot được nâng cấp qua từng cấp độ: biết dùng Công cụ, biết định hình Danh tính, biết Lưu trữ trải nghiệm và biết Tự tư duy để đạt mục tiêu.\n\nVậy thì trước hết, nó phải là một chatbot! Chatbot là một chương trình máy tính được thiết kế để trò chuyện với con người. Đầu vào và đầu ra của nó là dạng thức gì?",
         "options": [
-          "Những con số / dữ liệu nhị phân",
-          "Chỉ hình ảnh tĩnh",
           "Ngôn ngữ, dưới các dạng thức khác nhau như text, audio, video, âm thanh...",
+          "Chỉ hình ảnh tĩnh",
+          "Những con số / dữ liệu nhị phân",
           "Mã nguồn lập trình"
         ],
         "points": 6
@@ -3056,8 +3056,8 @@ const LESSONS = [
         "type": "single",
         "prompt": "Nếu gõ /giup hoặc /giup-do hoặc /giup-toi hoặc /tro-giup (thay vì đúng từ khoá /help) thì bot \"Bé Mầm\" (kiểu kịch bản mẫu) có phản hồi không?",
         "options": [
-          "Không phản hồi",
-          "Có phản hồi bình thường"
+          "Có phản hồi bình thường",
+          "Không phản hồi"
         ],
         "points": 8
       },
@@ -3068,11 +3068,11 @@ const LESSONS = [
         "prompt": "Để Bé Mầm phản hồi thêm cả /giup, /giup-do, /giup-toi, /tro-giup, tôi cần làm gì?",
         "options": [
           "Không cần làm gì, Bé Mầm tự học được các lệnh đó",
-          "Đổi tên nhóm Zalo thành \"/giup\" để bot nhận ra",
+          "Đưa /giup, /giup-do, /giup-toi, /tro-giup vào danh sách từ khoá kích hoạt câu trả lời \"Hỗ trợ\"",
           "Cài đặt lại toàn bộ Bé Mầm từ đầu cho mỗi lệnh mới",
           "Tạo một con bot riêng cho mỗi lệnh /giup, /giup-do...",
           "Nhờ lập trình viên sửa mã nguồn rồi build lại app mỗi khi thêm lệnh",
-          "Đưa /giup, /giup-do, /giup-toi, /tro-giup vào danh sách từ khoá kích hoạt câu trả lời \"Hỗ trợ\""
+          "Đổi tên nhóm Zalo thành \"/giup\" để bot nhận ra"
         ],
         "points": 10
       },
@@ -3306,8 +3306,8 @@ const LESSONS = [
         "type": "single",
         "prompt": "Vậy khi người dùng gõ \"Tạo cardvisit cho tôi\" thì:",
         "options": [
-          "Mầm Fake \"chuyển tiếp\" đúng câu prompt này lên Mô hình ngôn ngữ lớn LLM",
-          "Mầm Fake tạo ra một prompt khác phức tạp hơn nhiều"
+          "Mầm Fake tạo ra một prompt khác phức tạp hơn nhiều",
+          "Mầm Fake \"chuyển tiếp\" đúng câu prompt này lên Mô hình ngôn ngữ lớn LLM"
         ],
         "points": 10
       },
@@ -3425,8 +3425,8 @@ const LESSONS = [
         "copyPrompt": "Thêm vào app chat Zalo (đã tạo ở bài trước) tính năng TRẢ LỜI TỰ ĐỘNG theo quy tắc do người dùng cấu hình: hễ tin nhắn khớp lệnh /xxx thì bot tự gửi lại nội dung yyy. Yêu cầu chi tiết:\n\n1. Nút cấu hình & hệ thống Tab\n• Thêm một nút \"Cấu hình\" (icon bánh răng) trên giao diện web.\n• Bấm vào mở một panel/modal cấu hình, phía trên là một dải TAB.\n• Thiết kế tab theo kiểu mở rộng được: sau này thêm tab mới chỉ cần khai báo thêm, không phải đập lại layout.\n• Tab đầu tiên tên \"Trả lời tự động\".\n\n2. Tab \"Trả lời tự động\"\n• Hiển thị danh sách các quy tắc auto-reply hiện có; mỗi quy tắc cho thấy: Lệnh, các tuỳ chọn so khớp, và nội dung Trả lời. Có nút Sửa / Xoá cho từng quy tắc.\n• Nút \"Thêm quy tắc\" mở form nhập gồm:\n   - Lệnh: ô nhập có sẵn tiền tố \"/\" cố định, người dùng chỉ gõ phần sau (ví dụ: menu, giá, ship).\n   - Tuỳ chọn so khớp:\n        [ ] (checkbox) \"Không phân biệt chữ hoa/thường, có dấu/không dấu\" — khi bật thì chuẩn hoá cả lệnh lẫn tin nhắn về chữ thường + bỏ dấu tiếng Việt trước khi so sánh.\n        Nhóm radio (chọn 1 trong 2):\n           ( ) \"Lệnh này có thể nằm trong một câu hoàn chỉnh\" — chỉ cần tin nhắn CHỨA lệnh là khớp.\n           ( ) \"Phải gõ chính xác lệnh này\" — tin nhắn phải bằng đúng lệnh mới khớp.\n   - Trả lời: ô textarea nhiều dòng, nhập nội dung bot sẽ gửi lại.\n   - Nút Lưu / Huỷ.\n\n3. Lưu trữ\n• Lưu các quy tắc vào SQLite, bảng auto_reply_rules: id, command, match_anywhere (bool), normalize (bool), reply_text, created_at.\n• API CRUD:\n   - GET    /api/auto-reply        : lấy danh sách quy tắc\n   - POST   /api/auto-reply        : thêm quy tắc\n   - PUT    /api/auto-reply/:id    : sửa quy tắc\n   - DELETE /api/auto-reply/:id    : xoá quy tắc\n\n4. Xử lý tự động trả lời\n• Trong listener tin nhắn đến (message event đã có ở bài trước), với mỗi tin nhắn KHÔNG phải của mình (isSelf === false):\n   - Duyệt qua các quy tắc đang có.\n   - Áp dụng chuẩn hoá theo cấu hình của từng quy tắc (chữ thường + bỏ dấu nếu bật \"không phân biệt\").\n   - Nếu khớp theo chế độ đã chọn (chứa trong câu / bằng chính xác) thì gọi api.sendMessage() gửi reply_text về đúng thread vừa nhận.\n   - Nếu nhiều quy tắc cùng khớp, ưu tiên quy tắc có lệnh dài nhất (cụ thể nhất).\n• Tin do bot tự trả lời cũng được lưu vào SQLite và đẩy realtime lên frontend như tin thường.\n\n5. Chuẩn hoá tiếng Việt\n• Viết hàm normalize(text): chuyển chữ thường + bỏ dấu (chuẩn hoá NFD rồi xoá ký tự dấu U+0300–U+036F) + đ→d.\n• Dùng hàm này cho cả lệnh và tin nhắn khi tuỳ chọn \"không phân biệt\" được bật.\n\n6. Kết quả mong muốn\n• Mở Cấu hình → tab \"Trả lời tự động\".\n• Thêm quy tắc: lệnh /menu, bật \"không phân biệt\", chọn \"có thể nằm trong câu\", trả lời \"Đây là thực đơn của shop ạ...\".\n• Từ một nick khác nhắn thử \"cho mình xem /Menu với\" → bot tự trả lời đúng nội dung đã cấu hình.\n• Sửa/xoá quy tắc hoạt động đúng; cấu hình vẫn còn sau khi restart app.\n• Code chạy được ngay, không chỉ mô tả lý thuyết.",
         "copyPromptTrailing": "Bạn đã làm được chưa?",
         "options": [
-          "Chưa làm được",
-          "Đã làm được"
+          "Đã làm được",
+          "Chưa làm được"
         ],
         "points": 14
       },
@@ -3490,8 +3490,8 @@ const LESSONS = [
         "copyPrompt": "Tích hợp Cloudflare Tunnel vào app Zalo Web (Express + Socket.IO + sqlite3 + zca-js + login admin đã có). Mục tiêu: bật/tắt tunnel ngay trong Settings; mỗi khi tunnel mở và có URL công khai thì tự gửi tin nhắn cá nhân 1-1 đến nick Zalo đã chỉ định.\n\nYÊU CẦU:\n\n1. CÀI ĐẶT\n   • Hướng dẫn user cài `cloudflared` (binary hệ thống — `brew install cloudflared` trên macOS, hoặc tải từ Cloudflare). KHÔNG cần đăng nhập Cloudflare (dùng quick tunnel `trycloudflare.com`).\n   • App tự spawn process `cloudflared` khi user bật tunnel — không cần cấu hình DNS riêng.\n\n2. SETTINGS — tab \"Cloudflare Tunnel\"\n   Thêm tab mới trong CONFIG_TABS:\n   • Toggle ON/OFF (bật/tắt tunnel).\n   • Ô nhập \"Nick Zalo nhận thông báo\" — UID hoặc username Zalo của 1 người cá nhân (ThreadType.User).\n   • Khi tunnel đang chạy: hiển thị URL công khai hiện tại + nút Copy.\n   • Trạng thái: \"Đang tắt\" / \"Đang khởi động...\" / \"Đang chạy: <URL>\" / \"Lỗi: <message>\".\n\n3. KHI BẬT ON\n   • Đọc PORT app đang dùng (vd 3000) từ config server.\n   • Spawn process ngầm: `cloudflared tunnel --url http://localhost:<PORT>` (không block main event loop).\n   • Parse stdout/stderr realtime để bắt dòng có URL dạng `https://<sub>.trycloudflare.com`.\n   • Khi bắt được URL:\n     - Lưu URL vào state in-memory.\n     - Push state mới qua Socket.IO để UI cập nhật.\n     - Gửi tin nhắn 1-1 đến nick đã cấu hình (qua `api.sendMessage(nội dung, threadId, ThreadType.User)`), nội dung mẫu:\n       \"🌐 Tunnel đã bật! Truy cập app Zalo Web của tôi tại: <URL>\"\n   • Nếu chưa cấu hình nick → vẫn bật tunnel, chỉ KHÔNG gửi tin (báo cảnh báo vàng trong UI).\n\n4. KHI TẮT OFF\n   • `process.kill()` đối với cloudflared process.\n   • Xoá URL khỏi state, push state đã tắt qua Socket.IO.\n   • KHÔNG gửi tin \"đã tắt\" (tránh spam).\n\n5. SQLite — bảng `tunnel_config` (1 dòng singleton, id=1)\n```sql\nCREATE TABLE IF NOT EXISTS tunnel_config (\n  id INTEGER PRIMARY KEY CHECK (id = 1),\n  enabled INTEGER NOT NULL DEFAULT 0,\n  notify_zalo_id TEXT NOT NULL DEFAULT '',\n  updated_at INTEGER NOT NULL DEFAULT (strftime('%s','now'))\n);\nINSERT OR IGNORE INTO tunnel_config (id, enabled, notify_zalo_id) VALUES (1, 0, '');\n```\n   Lưu `enabled` + `notify_zalo_id` khi user thay đổi.\n\n6. KHI RESTART SERVER\n   • KHÔNG tự bật lại tunnel (kể cả enabled=1 trong DB) — an toàn, tránh tunnel chạy lén khi user không biết.\n   • UI khi mở lại Settings: hiển thị nick đã lưu, toggle hiển thị \"OFF\" mặc định. User phải bấm bật lại.\n\n7. API + Socket\n   • GET /api/tunnel/status → `{ enabled, url, notifyZaloId, status: 'off'|'starting'|'running'|'error', errorMsg }`\n   • POST /api/tunnel/start → `{ ok: true, status }`\n   • POST /api/tunnel/stop → `{ ok: true }`\n   • PUT /api/tunnel/config → body `{ notifyZaloId }`\n   • Socket event `tunnel-state` push state mới khi thay đổi.\n\nKIỂM THỬ:\n- Cài cloudflared trên máy → mở Settings → tab Cloudflare Tunnel → nhập UID Zalo (vd UID của chính mình) → bật ON.\n- Sau vài giây, URL `https://<random>.trycloudflare.com` hiện trong UI, đồng thời nick Zalo cấu hình nhận được tin nhắn cá nhân chứa URL.\n- Mở URL đó trên điện thoại 4G → truy cập được app Zalo Web.\n- Tắt OFF → URL biến mất, không nhận thêm tin.\n- Restart server → tunnel KHÔNG tự bật, nick vẫn còn lưu.\n\nRÀNG BUỘC:\n- ES modules (`\"type\": \"module\"`).\n- Spawn cloudflared bằng `child_process.spawn` (không block).\n- Lỗi cloudflared (chưa cài, network fail): log + đẩy state \"error\" với message rõ ràng, không crash server.\n- Tunnel chỉ phục vụ demo/dev cá nhân — log cảnh báo trong README rằng nick lạ có URL = nick lạ có thể truy cập app.",
         "copyPromptTrailing": "Bạn đã làm được chưa?",
         "options": [
-          "Chưa làm được",
-          "Đã làm được"
+          "Đã làm được",
+          "Chưa làm được"
         ],
         "points": 12
       },
@@ -3516,8 +3516,8 @@ const LESSONS = [
         "copyPrompt": "Refactor lại UI của App theo layout chia 2 cột: có sidebar bên trái và main content bên phải. Chiều rộng của 2 cột này có thể di chuột vào để nhấn giữ kéo và thay đổi.\n\nBiến nó trở thành App có nhiều phân hệ, mỗi phân hệ là một mục menu bên tay trái. Hiện nay có các mục là Chat Zalo và Note - Ghi chú (click vào hiện thông báo đang xây dựng).\n\nSidebar có phần top bar cố định có account kèm dropdown, có mục Thông tin cá nhân (đang xây dựng), Cấu hình (gắn vào mục Cấu hình hiện nay ở Zalo) và Logout ở dưới cùng.",
         "copyPromptTrailing": "Bạn đã làm được chưa?",
         "options": [
-          "Đã làm được",
-          "Chưa làm được"
+          "Chưa làm được",
+          "Đã làm được"
         ],
         "points": 12
       },
@@ -3542,8 +3542,8 @@ const LESSONS = [
         "copyPrompt": "Sửa lại tab cấu hình Tài khoản để bên cạnh tính năng đổi Mật khẩu account có sẵn, sẽ có thêm lựa chọn check/uncheck yêu cầu nhập OTP sau khi đăng nhập thành công.\n\nOTP có 2 phương án cho admin chọn ở màn hình login: nhận OTP qua nick Zalo hoặc qua email.\n\nCả 2 thông tin này (nick Zalo nhận OTP và địa chỉ email nhận OTP) đều cấu hình thay đổi được.",
         "copyPromptTrailing": "Bạn đã làm được chưa?",
         "options": [
-          "Chưa làm được",
-          "Đã làm được"
+          "Đã làm được",
+          "Chưa làm được"
         ],
         "points": 14
       },
@@ -3568,8 +3568,8 @@ const LESSONS = [
         "copyPrompt": "Thêm vào nút BACKUP ở vị trí dưới cùng bên trái cột sidebar. Khi click vào đây sẽ chạy lệnh để backup toàn bộ Repo này trong máy + toàn bộ DB lên GitHub và/hoặc Google Drive tuỳ cấu hình.\n\nCũng thêm vào trong Settings một tab mới tên là BACKUP cho phép Admin chỉ định nơi backup gồm GitHub và/hoặc Google Drive hoặc cả 2.\n\nTiến trình backup sẽ chạy nền không cản trở các tiến trình khác trong hệ thống, và có thanh progress bar hiển thị trực quan, cũng như thông báo kết quả khi hoàn thành backup.",
         "copyPromptTrailing": "Bạn đã làm được chưa?",
         "options": [
-          "Đã làm được",
-          "Chưa làm được"
+          "Chưa làm được",
+          "Đã làm được"
         ],
         "points": 12
       },
@@ -3613,8 +3613,8 @@ const LESSONS = [
         "copyPrompt": "Tích hợp module Quản lý thực đơn ở sidebar bên trái theo hướng dẫn dưới đây. Riêng phần Auth thì sử dụng hệ thống Auth có sẵn (account, OTP, VPN...).\n\n===========================================================\n\n# Loky Food — Product & Technical Spec (cho coding agent)\n\n> Mục đích: mô tả đủ chi tiết để agent **tự implement** app quản lý món ăn & thực đơn gia đình tương tự.\n> Không ràng buộc stack cụ thể — spec tham chiếu từ bản PHP + SQLite monolith đang chạy production.\n\n---\n\n## 1. Product summary\n\n**Loky Food** giúp gia đình:\n\n- Lưu **kho món** (tên, tags, nguyên liệu, cách làm)\n- Lên **thực đơn theo ngày × bữa** (Sáng / Trưa / Chiều)\n- Cho **người nấu / giúp việc** xem thực đơn + nguyên liệu (trang public, không cần login)\n- **Góp ý** món theo ngày (user đăng nhập)\n- **Thống kê** món hay dùng\n- (Tuỳ chọn) **Chat agent** đọc/ghi DB qua CLI hoặc API\n\n### Personas\n\n| Persona | Nhu cầu |\n|---------|---------|\n| Admin / chủ nhà | CRUD món, lên menu tuần, xem thống kê |\n| Người nấu (helper) | Xem hôm nay ăn gì, định lượng NL, in/ dark mode mobile |\n| Thành viên | Góp ý món, xác nhận đã xem menu |\n\n---\n\n## 2. Functional requirements\n\n### 2.1 Kho món (`dishes`)\n\n- CRUD món: `name`, `note`, `tags`, `cooking_method` (optional)\n- Mỗi món có **nhiều nguyên liệu** (`ingredients`): `name`, `quantity` (text tự do), `note`\n- **Tags** là chuỗi, token cách nhau bằng space, prefix `#`, ví dụ: `#man #rau #embe`\n\n**Tag nhóm bắt buộc cho bữa chính (Trưa/Chiều):**\n\n| Tag | Ý nghĩa |\n|-----|---------|\n| `#man` | Món mặn |\n| `#rau` | Rau / món xanh |\n| `#trangmieng` | Tráng miệng / trái cây |\n| `#embe` | Món em bé (tuỳ chọn) |\n| `#ba` | Món riêng (tuỳ chọn) |\n\n**Business rule:** Khi hiển thị hoặc validate bữa Trưa/Chiều, cảnh báo nếu thiếu nhóm `#man`, `#rau`, hoặc `#trangmieng`.\n\n### 2.2 Thực đơn (`menus`)\n\n- Một record = **một bữa** trong một ngày\n- `meal_time`: enum `Sáng` | `Trưa` | `Chiều`\n- `dish_ids`: JSON array integer, ví dụ `[12, 45, 78]`\n- `note`: ghi chú bữa (optional)\n- Upsert theo `(date, meal_time)` khi lưu từ automation/CLI; web có thể insert hoặc update tùy UX\n\n**Định lượng ghi đè theo bữa** (`menu_ingredients`):\n\n- Khi lên menu, admin có thể chỉnh NL khác món gốc\n- Khi hiển thị: **ưu tiên** `menu_ingredients`; không có thì fallback `ingredients` của món\n\n### 2.3 Trang public — xem thực đơn (`helper_menu`)\n\nKhông yêu cầu đăng nhập.\n\n- Param `date` (default: hôm nay)\n- Liệt kê bữa Sáng/Trưa/Chiều, món + NL\n- Dark/light theme (persist localStorage)\n- Nút prev/next ngày, link sang **weekly view**\n- In ấn: ẩn nav (`no-print`)\n\n**Shortcut routing:** `?act=today` → redirect server-side sang `helper_menu` với `date=hôm nay` (tránh client tính sai ngày).\n\n### 2.4 Weekly overview (`weekly_menu`)\n\n- Lưới 7 cột (T2–CN hoặc theo tuần chứa `date` param)\n- Hàng: Sáng / Trưa / Chiều\n- Ô click → `helper_menu` ngày đó\n- Prev/next tuần\n\n### 2.5 Góp ý (`menu_feedbacks`)\n\n- User **đã login** mới góp ý\n- Unique: `(dish_id, user_id, date)` — một góp ý / món / ngày / user\n- CRUD: create, update, delete (chủ góp ý hoặc admin)\n- Trang `view_feedbacks`: list tất cả, phân trang\n\n### 2.6 Xác nhận đã xem menu (`menu_confirmations`)\n\n- User login bấm xác nhận đã xem thực đơn ngày X\n- Unique `(date, user_id)` — **một chiều**, không hoàn tác (INSERT OR IGNORE / equivalent)\n\n### 2.7 Admin — trang chủ menu (`menus`)\n\n- Cần login\n- Filter: 7 / 14 / 30 ngày tới, hoặc tất cả ngày có data\n- Group theo ngày × bữa, link edit/delete\n\n### 2.8 Tạo/sửa menu (`create_menu`, `edit_menu`)\n\n- Chọn ngày, bữa\n- **Tìm món AJAX**: theo tên và/hoặc tag (`#man`, `#rau`, …)\n- Chọn nhiều món → build `dish_ids` JSON\n- Modal chỉnh định lượng NL → lưu `menu_ingredients`\n- Có thể thêm món mới inline rồi quay lại form menu\n\n### 2.9 Thống kê (`stats`)\n\n- Top N món xuất hiện nhiều nhất trong lịch sử `menus` (đếm qua `dish_ids` JSON)\n- Hiển thị bar chart hoặc list\n\n### 2.10 Auth & users\n\n- Session-based login (username + password hash)\n- Roles: `user`, `super_admin`\n- `super_admin`: quản lý user, copy link \"menu hôm nay\" (admin banner — optional)\n- Seed admin khi DB trống (migration/init)\n\n### 2.11 JSON API (optional nhưng nên có)\n\n| Endpoint | Params | Response |\n|----------|--------|----------|\n| `search` | `q` (tên hoặc `#tag`) | `Dish[]` |\n| `dish` | `id` | `Dish + ingredients[]` |\n| `stats` | — | `{ name, count }[]` top 10 |\n| `popular_tags` | — | `string[]` |\n| `menu_ingredients` | `menu_id` | map `dish_id → Ingredient[]` |\n\n### 2.12 CLI / automation layer (optional)\n\nScript đọc/ghi cùng DB, phục vụ chat agent:\n\n| Command | Behavior |\n|---------|----------|\n| `week [n]` | Bữa N ngày gần nhất |\n| `range <from> <to>` | Bữa trong khoảng |\n| `top [n]` | Top món |\n| `recent-dishes [n]` | Id món đã dùng (tránh lặp khi gợi ý) |\n| `pool [#tag]` | Kho món lọc tag |\n| `dish <id>` | Chi tiết món |\n| `stats` | Tổng quan |\n| `save-menu <date> <meal> <id,id,...> [note]` | Upsert bữa |\n| `add-dish` | JSON stdin → thêm món |\n\nFlags: `--json`, `--db=<path>`\n\n**Agent gợi ý menu (logic nghiệp vụ):**\n\n- Bữa Trưa/Chiều: 1–2 `#man` + 1 `#rau` + canh + 1 `#trangmieng` + (optional) `#embe`\n- Tránh món trong `recent-dishes` 14 ngày\n- Gợi ý ≠ lưu; chỉ `save-menu` khi user xác nhận\n\n---\n\n## 3. Routing model (reference)\n\nSingle entry `index.php` hoặc tương đương:\n\n| Query | Access | Page |\n|-------|--------|------|\n| `act=today` | Public | Redirect → helper_menu hôm nay |\n| `page=helper_menu&date=` | Public | Thực đơn 1 ngày |\n| `page=weekly_menu&date=` | Public | Lưới tuần |\n| `page=view_feedbacks&p=` | Public | Góp ý (read) |\n| `page=menus` | Auth | Lịch admin |\n| `page=dishes` | Auth | CRUD món |\n| `page=add_dish` / `edit_dish` | Auth | Form món |\n| `page=create_menu` / `edit_menu` | Auth | Form bữa |\n| `page=stats` | Auth | Thống kê |\n| `page=profile` | Auth | Hồ sơ |\n| `page=manage_users` | super_admin | Users |\n| `api=search|dish|stats|...` | Mixed | JSON |\n\n**Auth gate:** Public pages render và `exit` trước login form; admin pages require session.\n\n---\n\n## 4. Database schema (SQLite-compatible)\n\n### 4.1 ER diagram\n\n```mermaid\nerDiagram\n    dishes ||--o{ ingredients : has\n    dishes ||--o{ menu_ingredients : \"used in\"\n    menus ||--o{ menu_ingredients : overrides\n    users ||--o{ menu_feedbacks : writes\n    users ||--o{ menu_confirmations : confirms\n\n    dishes {\n        int id PK\n        text name\n        text cooking_method\n        text note\n        text tags\n        datetime created_at\n    }\n    ingredients {\n        int id PK\n        int dish_id FK\n        text name\n        text quantity\n        text note\n    }\n    menus {\n        int id PK\n        date date\n        text meal_time\n        text dish_ids\n        text note\n        datetime created_at\n    }\n    menu_ingredients {\n        int id PK\n        int menu_id FK\n        int dish_id FK\n        text ingredient_name\n        text quantity\n        text note\n    }\n    users {\n        int id PK\n        text username UK\n        text password_hash\n        text display_name\n        text role\n        datetime created_at\n    }\n    menu_feedbacks {\n        int id PK\n        text date\n        text meal_time\n        int dish_id\n        text dish_name\n        int user_id FK\n        text content\n        datetime created_at\n        datetime updated_at\n    }\n    menu_confirmations {\n        int id PK\n        text date\n        int user_id FK\n        datetime created_at\n    }\n```\n\n### 4.2 DDL reference\n\n```sql\nCREATE TABLE dishes (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    name TEXT NOT NULL,\n    cooking_method TEXT,\n    note TEXT,\n    tags TEXT,\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE TABLE ingredients (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    dish_id INTEGER NOT NULL,\n    name TEXT NOT NULL,\n    quantity TEXT,\n    note TEXT,\n    FOREIGN KEY(dish_id) REFERENCES dishes(id) ON DELETE CASCADE\n);\n\nCREATE TABLE menus (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    date DATE NOT NULL,\n    meal_time TEXT NOT NULL,\n    dish_ids TEXT,\n    note TEXT,\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE TABLE menu_ingredients (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    menu_id INTEGER NOT NULL,\n    dish_id INTEGER NOT NULL,\n    ingredient_name TEXT NOT NULL,\n    quantity TEXT,\n    note TEXT,\n    FOREIGN KEY(menu_id) REFERENCES menus(id) ON DELETE CASCADE,\n    FOREIGN KEY(dish_id) REFERENCES dishes(id) ON DELETE CASCADE\n);\n\nCREATE TABLE users (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    username TEXT NOT NULL UNIQUE,\n    password_hash TEXT NOT NULL,\n    display_name TEXT NOT NULL,\n    role TEXT NOT NULL DEFAULT 'user',\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE TABLE menu_feedbacks (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    date TEXT NOT NULL,\n    meal_time TEXT,\n    dish_id INTEGER NOT NULL,\n    dish_name TEXT NOT NULL DEFAULT '',\n    user_id INTEGER NOT NULL,\n    content TEXT NOT NULL,\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,\n    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,\n    UNIQUE(dish_id, user_id, date),\n    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE\n);\n\nCREATE TABLE menu_confirmations (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    date TEXT NOT NULL,\n    user_id INTEGER NOT NULL,\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,\n    UNIQUE(date, user_id),\n    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE\n);\n```\n\n**Indexes đề xuất:** `menus(date)`, `menus(date, meal_time)`, `ingredients(dish_id)`, `menu_ingredients(menu_id)`.\n\n**Legacy (có thể bỏ khi build mới):** cột `menus.html_content`; bảng `dish_feedbacks` nếu không migrate.\n\n---\n\n## 5. Core data flows\n\n### Save menu (web)\n\n```\nPOST save_menu\n  → validate date, meal_time, dish_ids JSON\n  → INSERT menus (+ menu_id)\n  → DELETE + INSERT menu_ingredients from custom_ingredients JSON\n```\n\n### Save menu (CLI)\n\n```\nsave-menu date meal ids note\n  → SELECT id FROM menus WHERE date AND meal_time\n  → UPDATE dish_ids OR INSERT\n```\n\n### Render helper_menu\n\n```\nGET date\n  → SELECT menus WHERE date ORDER BY meal (Sáng→Trưa→Chiều)\n  → FOR EACH dish_id IN JSON(dish_ids):\n        load dish\n        load menu_ingredients OR fallback ingredients\n  → load feedbacks for date, confirmations for user\n```\n\n---\n\n## 6. UX / UI notes\n\n- **Mobile-first** cho `helper_menu` (người nấu dùng điện thoại)\n- Bootstrap hoặc design system tương đương\n- Dark mode trên public pages\n- Print-friendly helper view\n- Admin: navbar Dishes | Create menu | Stats | Profile\n- Form tạo menu: search-as-you-type, chip tags, drag reorder món (nice-to-have)\n\n---\n\n## 7. Non-functional requirements\n\n| Area | Requirement |\n|------|-------------|\n| DB | SQLite file hoặc Postgres — schema tương đương |\n| Auth | Password hashing (bcrypt/argon2), session cookie httponly |\n| i18n | UI tiếng Việt; `meal_time` literal tiếng Việt |\n| Timezone | Server `date()` cho `act=today`; document TZ |\n| Security | Rate-limit API search nếu public; CSRF trên POST admin |\n| Backup | File DB copyable; export JSON optional |\n\n---\n\n## 8. Suggested project structure (agent tự chọn stack)\n\n```\napp/\n  public/index.php          # hoặc Next.js / FastAPI routes\n  src/\n    models/                   # Dish, Menu, User, ...\n    services/                 # MenuValidator, SuggestMenu, ...\n    repositories/             # SQLite/ORM\n  cli/menu-cli.php            # hoặc menu-cli.py\n  migrations/001_init.sql\n  seed/                       # sample dishes + admin user\ndocs/\n  API.md\n```\n\n**MVP scope (phase 1):**\n\n1. Schema + seed\n2. CRUD dishes + ingredients\n3. create/edit menu + helper_menu public\n4. Login + menus list admin\n5. `act=today` redirect\n\n**Phase 2:** weekly_menu, feedbacks, stats, CLI, dark mode\n\n**Phase 3:** Chat agent integration, suggest menu AI\n\n---\n\n## 9. Acceptance checklist\n\n- [ ] Public `helper_menu` hiển thị đúng món + NL theo ngày, không cần login\n- [ ] `act=today` luôn trỏ đúng ngày server\n- [ ] Trưa/Chiều cảnh báo thiếu `#man` / `#rau` / `#trangmieng`\n- [ ] `menu_ingredients` override NL món gốc khi có\n- [ ] Upsert menu theo `(date, meal_time)` từ CLI\n- [ ] Feedback unique per user/dish/date\n- [ ] Admin CRUD món + menu behind auth\n- [ ] Top stats đếm từ lịch sử menu\n\n---\n\n*Spec độc lập deployment — agent implement stack tùy chọn, giữ nguyên nghiệp vụ & schema ở trên.*",
         "copyPromptTrailing": "Bạn đã làm được chưa?",
         "options": [
-          "Chưa làm được",
-          "Đã làm được"
+          "Đã làm được",
+          "Chưa làm được"
         ],
         "points": 20
       },
@@ -3626,8 +3626,8 @@ const LESSONS = [
         "copyPrompt": "Thêm tab Agent vào hệ thống menu hiện có của module Quản lý thực đơn (bên cạnh các mục Thực đơn, Món ăn, Thống kê...).\n\nTrong mục Agent sẽ cho phép Admin chọn 1 nhóm chat Zalo để chatbot nhận lệnh, có thể cấu hình cho chatbot nhận lệnh từ 1 hay nhiều người cụ thể trong nhóm này. Tin nhắn từ những người đó sẽ đóng vai trò là bộ truyền lệnh cho chatbot để thực hiện các vòng lặp cần thiết hoàn thành mục tiêu do các nick chat kia ra lệnh hoặc đặt câu hỏi.\n\nCó một ô textarea cho phép Admin cấu hình chủ đề nào thì chatbot sẽ trả lời, các nội dung khác sẽ bỏ qua (mặc định điền sẵn nội dung \"Trao đổi về thực đơn, nấu ăn và dinh dưỡng\").\n\nCũng có thêm ô cho phép cấu hình Soul của chatbot (khi này đóng vai Agent) để nó trả lời theo thói quen, sở thích của Admin mong muốn.\n\nChatbot khi này sử dụng LLM được cấu hình sẵn trong Settings hệ thống.",
         "copyPromptTrailing": "Bạn đã làm được chưa?",
         "options": [
-          "Chưa làm được",
-          "Đã làm được"
+          "Đã làm được",
+          "Chưa làm được"
         ],
         "points": 20
       },

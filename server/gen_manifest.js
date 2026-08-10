@@ -21,10 +21,28 @@ const manifest = {};
 const reflectManifest = {};
 const answerManifest = {};
 
-// CHỈ xáo thứ tự lựa chọn từ bài này trở đi. Các bài trước đó học viên đã làm xong rồi — lựa
-// chọn cũ của họ lưu theo CHỈ SỐ ô, xáo lại là mở bài cũ ra thấy tô sáng nhầm ô.
-const SHUFFLE_FROM_LESSON_ID = 9;
-const shouldShuffle = (lesson) => Number(lesson.id) >= SHUFFLE_FROM_LESSON_ID;
+// Xáo thứ tự lựa chọn cho TOÀN KHOÁ. Trước đây chỉ dám xáo từ Bài 9 vì bài đã nộp lưu lựa chọn
+// theo CHỈ SỐ ô, xáo lại là mở bài cũ ra tô nhầm. Nay server đã dịch mọi bài đã nộp sang lưu theo
+// NỘI DUNG (_migrate_selected_to_texts) nên xáo toàn bộ không còn gây hại.
+const shouldShuffle = () => true;
+
+// Chọn vị trí đích cho đáp án đúng sao cho VỪA CÂN BẰNG VỪA KHÔNG THÀNH QUY LUẬT.
+// - Xáo ngẫu nhiên thuần: hay dồn cụm, câu 2 lựa chọn có 50% rơi vào ô đầu -> nhìn vào vẫn thấy
+//   "toàn đáp án đầu tiên".
+// - Đếm tăng dần (ô 1, ô 2, ô 3...): rải đều nhưng lộ quy luật, học viên đoán được ô kế tiếp.
+// Cách dùng ở đây: trong nhóm các câu CÙNG SỐ LỰA CHỌN, luôn chọn ô đang được dùng ÍT NHẤT;
+// nếu nhiều ô hoà nhau thì bốc theo mã câu. Vừa đều, vừa không đoán được thứ tự.
+const _posUsage = {};
+
+function _pickAnswerPosition(n, code) {
+  if (!_posUsage[n]) _posUsage[n] = new Array(n).fill(0);
+  const usage = _posUsage[n];
+  const min = Math.min(...usage);
+  const candidates = usage.map((c, i) => (c === min ? i : -1)).filter((i) => i >= 0);
+  const pick = candidates[Math.floor(seededRandom(code + "::pos")() * candidates.length)];
+  usage[pick]++;
+  return pick;
+}
 const ANSWER_TYPES = new Set([
   "single", "multi", "match", "order", "order-tag", "tag-mark", "code", "token_scope_check", "gate",
 ]);
@@ -65,8 +83,8 @@ for (const lesson of LESSONS) {
         entry.correctTexts = (q.correct || []).map((i) => (q.options || [])[i]).filter((v) => v != null);
         // Thứ tự lựa chọn thực sự gửi ra trình duyệt — chỉ số `correct` phải tính theo thứ tự
         // NÀY, để trình duyệt nào còn giữ bản app.js cũ (gửi chỉ số) vẫn được chấm đúng.
-        const publicOptions = shouldShuffle(lesson) ? seededShuffle(q.options || [], q.code) : q.options || [];
-        entry.correct = entry.correctTexts.map((t) => publicOptions.indexOf(t)).filter((i) => i >= 0);
+        // Chỉ số `correct` được tính LẠI sau khi dựng xong bản public (xem cuối file) để chắc
+        // chắn khớp đúng thứ tự thật gửi ra trình duyệt.
         // Thứ tự GỐC (chỉ nằm phía server) — dùng để chuyển đổi các bài đã nộp trước khi xáo:
         // chúng lưu lựa chọn theo CHỈ SỐ của thứ tự cũ, không chuyển thì mở lại sẽ tô nhầm ô.
         entry.optionsOriginal = q.options || [];
@@ -136,7 +154,19 @@ function stripQuestion(q, shuffleOptions) {
   // (55% nằm ô 1, 89% nằm ô 1-2) — học viên cứ chọn ô đầu là qua quá nửa. Xáo bằng bộ sinh số
   // CỐ ĐỊNH THEO MÃ CÂU nên mỗi lần sinh lại vẫn ra đúng thứ tự đó (không đổi lung tung, và
   // lựa chọn cũ của học viên đã lưu vẫn tô sáng đúng nhờ đối chiếu theo nội dung).
-  if (Array.isArray(out.options) && shuffleOptions) out.options = seededShuffle(out.options, q.code);
+  if (Array.isArray(out.options) && shuffleOptions) {
+    const shuffled = seededShuffle(out.options, q.code);
+    // Câu 1 đáp án đúng: đưa nó về đúng ô đã định để cả khoá rải đều mọi vị trí.
+    if (q.type === "single" && !q.anyValid && Array.isArray(q.correct) && q.correct.length === 1) {
+      const answer = q.options[q.correct[0]];
+      const target = _pickAnswerPosition(shuffled.length, q.code);
+      const cur = shuffled.indexOf(answer);
+      if (cur >= 0 && cur !== target) {
+        [shuffled[cur], shuffled[target]] = [shuffled[target], shuffled[cur]];
+      }
+    }
+    out.options = shuffled;
+  }
   return out;
 }
 
@@ -182,6 +212,18 @@ const publicBody = TOP_LEVEL_NAMES.map((name) => {
   const value = name === "LESSONS" ? publicLessons : exported[name];
   return `const ${name} = ${JSON.stringify(value, null, 2)};`;
 }).join("\n\n");
+// Chốt lại chỉ số `correct` theo ĐÚNG thứ tự trong bản public (để trình duyệt còn giữ bản app.js
+// cũ — vốn gửi chỉ số ô — vẫn được chấm đúng).
+publicLessons.forEach((l) =>
+  l.questions.forEach((q) => {
+    const e = answerManifest[q.code];
+    if (e && e.correctTexts && Array.isArray(q.options)) {
+      e.correct = e.correctTexts.map((t) => q.options.indexOf(t)).filter((i) => i >= 0);
+    }
+  })
+);
+fs.writeFileSync(path.join(__dirname, "answer_manifest.json"), JSON.stringify(answerManifest, null, 2));
+
 const outPath = path.join(__dirname, "..", "data.public.js");
 fs.writeFileSync(outPath, banner + publicBody + "\n");
 
