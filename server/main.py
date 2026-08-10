@@ -3196,12 +3196,25 @@ def admin_get_upload(request: Request, user_id: int, filename: str):
 
 # ===================== STATIC FRONTEND =====================
 
-app.mount("/static", StaticFiles(directory=BASE_DIR), name="static")
+app.mount("/static", StaticFiles(directory=BASE_DIR / "assets"), name="static")
 
 
 # HTML đầu vào KHÔNG được cache — luôn revalidate để trình duyệt nhận đúng phiên bản app.js/data.js
 # mới nhất (nhờ đó bản vá luôn tới được học viên, không kẹt ở bản cũ trong cache).
 _NO_CACHE_HTML = {"Cache-Control": "no-cache, must-revalidate"}
+
+# CHỈ những file này mới được phục vụ ra ngoài. Trước đây route bắt-tất-cả cho tải BẤT KỲ file nào
+# trong thư mục dự án — nghĩa là toàn bộ mã nguồn server (main.py, auth.py, lark_bot.py) và file
+# đáp án (server/answer_manifest.json) đều đọc được công khai. Dùng danh sách CHO PHÉP thay vì
+# danh sách CẤM: thêm file mới vào dự án sau này sẽ mặc định KHÔNG bị lộ.
+_PUBLIC_ROOT_FILES = {"index.html", "admin.html", "app.js", "admin.js", "data.js", "styles.css"}
+_PUBLIC_DIRS = ("assets/",)
+
+
+def _is_public_asset(rel_path: str) -> bool:
+    if rel_path in _PUBLIC_ROOT_FILES:
+        return True
+    return any(rel_path.startswith(d) for d in _PUBLIC_DIRS)
 
 
 @app.get("/admin")
@@ -3211,8 +3224,10 @@ def admin_page():
 
 @app.get("/{full_path:path}")
 def serve_frontend(full_path: str):
-    # Serve known static assets directly, fall back to index.html for the app shell.
-    candidate = BASE_DIR / full_path
-    if full_path and candidate.is_file() and candidate.resolve().is_relative_to(BASE_DIR.resolve()):
-        return FileResponse(candidate)
+    # Chỉ phục vụ đúng các file giao diện đã cho phép; mọi đường dẫn khác trả về vỏ app.
+    rel = full_path.strip("/")
+    if rel and _is_public_asset(rel):
+        candidate = (BASE_DIR / rel).resolve()
+        if candidate.is_file() and candidate.is_relative_to(BASE_DIR.resolve()):
+            return FileResponse(candidate)
     return FileResponse(BASE_DIR / "index.html", headers=_NO_CACHE_HTML)
