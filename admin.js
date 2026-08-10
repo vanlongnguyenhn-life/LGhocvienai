@@ -61,6 +61,16 @@ const ADMIN_API = {
     fd.append("codes", codes.join(","));
     return this._send(`/api/admin/students/${id}/grant-codes`, { method: "POST", body: fd });
   },
+  setGwsEmail(id, email) {
+    const fd = new FormData();
+    fd.append("gws_email", email);
+    return this._send(`/api/admin/students/${id}/gws-email`, { method: "POST", body: fd });
+  },
+  importGwsEmails(text) {
+    const fd = new FormData();
+    fd.append("text", text);
+    return this._send("/api/admin/gws-emails/import", { method: "POST", body: fd });
+  },
   larkChats() {
     return this._send("/api/admin/lark/chats");
   },
@@ -693,6 +703,42 @@ async function handleResetFromCode(userId) {
   }
 }
 
+async function handleSetGwsEmail(userId) {
+  const input = document.getElementById("admin-gws-email-input");
+  const value = ((input && input.value) || "").trim();
+  if (value && !/^[\w.+-]+@[\w-]+\.[\w.]+$/.test(value)) {
+    alert("Email không hợp lệ: " + value);
+    return;
+  }
+  if (!value && !confirm("Gỡ khoá tài khoản Google của học viên này?\nLần chạy 9.16 tiếp theo sẽ khoá lại theo tài khoản mới.")) {
+    return;
+  }
+  try {
+    await ADMIN_API.setGwsEmail(userId, value);
+    await openStudent(userId);
+    alert(value ? "Đã đăng ký tài khoản Google: " + value : "Đã gỡ khoá tài khoản Google.");
+  } catch (err) {
+    alert("Lưu thất bại: " + (err.message || "lỗi không rõ"));
+  }
+}
+
+async function handleImportGwsEmails() {
+  const box = document.getElementById("admin-gws-import-text");
+  const text = ((box && box.value) || "").trim();
+  if (!text) {
+    alert("Dán danh sách vào ô trước đã.");
+    return;
+  }
+  try {
+    const r = await ADMIN_API.importGwsEmails(text);
+    await loadStudents();
+    const warn = (r.canh_bao || []).length ? "\n\nCần xem lại:\n" + r.canh_bao.join("\n") : "";
+    alert(`Đã gán tài khoản Google cho ${r.so_dong_ap_dung} học viên.` + warn);
+  } catch (err) {
+    alert("Nhập thất bại: " + (err.message || "lỗi không rõ"));
+  }
+}
+
 async function openStudent(id) {
   state.selectedId = id;
   state.detail = null;
@@ -1122,6 +1168,22 @@ function renderDashboard() {
   ]);
   wrap.appendChild(controls);
 
+  // Đăng ký hàng loạt tài khoản Google cho Bài 9. Học viên nào đã đăng ký thì câu 9.16 bắt buộc
+  // đăng nhập GWS CLI đúng email đó — chống việc mượn máy/mượn tài khoản của bạn khác.
+  const gwsDone = enriched.filter((s) => s.gws_email).length;
+  const importPanel = el("details", { class: "admin-import-panel" }, [
+    el("summary", {}, [`🔐 Tài khoản Google cho Bài 9 — đã đăng ký ${gwsDone}/${enriched.length} học viên`]),
+    el("p", { class: "admin-student-username" }, [
+      "Mỗi dòng một học viên: tên đăng nhập (hoặc tên hiển thị / email Lark), rồi dấu phẩy và Gmail. Ví dụ: nguyenvana, a.nguyen@gmail.com",
+    ]),
+    el("textarea", {
+      id: "admin-gws-import-text", class: "reflect-input", rows: "6",
+      placeholder: "nguyenvana, a.nguyen@gmail.com\nTrần Thị B; b.tran@gmail.com",
+    }),
+    el("button", { class: "admin-reset-btn", onclick: () => handleImportGwsEmails() }, ["Nhập danh sách"]),
+  ]);
+  wrap.appendChild(importPanel);
+
   const table = el("table", { class: "admin-table" });
   const thead = el("thead", {}, [
     el("tr", {}, [
@@ -1270,6 +1332,17 @@ function renderStudentDetail() {
           user.is_teacher
             ? el("button", { class: "admin-teacher-btn unteacher", onclick: () => handleTeacher(user.id, 0) }, ["Bỏ quyền giáo viên"])
             : el("button", { class: "admin-teacher-btn", onclick: () => handleTeacher(user.id, 1) }, ["★ Đặt làm giáo viên"]),
+        ]),
+        el("div", { class: "admin-reset-row" }, [
+          el("span", { class: "admin-reset-label" }, ["Tài khoản Google (Bài 9)"]),
+          el("input", {
+            id: "admin-gws-email-input", class: "reflect-input admin-reset-input", type: "text",
+            placeholder: "chua-dang-ky@gmail.com", value: user.gws_email || "",
+          }),
+          el("button", { class: "admin-reset-btn", onclick: () => handleSetGwsEmail(user.id) }, ["Lưu"]),
+          el("span", { class: "admin-reset-label" }, [
+            user.gws_email ? "Đã khoá — câu 9.16 bắt buộc đúng email này." : "Chưa khoá — 9.16 sẽ tự khoá tài khoản đăng nhập đầu tiên.",
+          ]),
         ]),
         el("div", { class: "admin-reset-row" }, [
           el("span", { class: "admin-reset-label" }, ["Xoá tiến độ từ câu"]),

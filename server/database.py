@@ -260,8 +260,13 @@ def init_db():
         if "avatar_url" not in user_cols:
             conn.execute("ALTER TABLE users ADD COLUMN avatar_url TEXT")
         if "email" not in user_cols:
-            # Email tài khoản Lark — câu 9.16 yêu cầu cấu hình GWS CLI đúng tài khoản này.
+            # Email tài khoản Lark — do công ty cấp, KHÔNG dùng để chấm câu 9.16.
             conn.execute("ALTER TABLE users ADD COLUMN email TEXT")
+        if "gws_email" not in user_cols:
+            # Tài khoản Google học viên dùng xuyên suốt Bài 9 (Gmail cá nhân cũng được).
+            # Giáo viên nhập sẵn trong /admin, hoặc để trống thì câu 9.16 tự khoá tài khoản
+            # đầu tiên script phát hiện được. Khoá rồi thì các lần sau phải đúng tài khoản đó.
+            conn.execute("ALTER TABLE users ADD COLUMN gws_email TEXT")
         if "approved" not in user_cols:
             conn.execute("ALTER TABLE users ADD COLUMN approved INTEGER NOT NULL DEFAULT 0")
             # Học viên đã tồn tại trước khi bật tính năng duyệt → tự động duyệt để không khóa oan.

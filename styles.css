@@ -1002,6 +1002,10 @@ input.reflect-input { min-height: unset; }
 .admin-search-input { flex: 1; min-width: 180px; margin-bottom: 0 !important; }
 .admin-inactive-flag { color: var(--brand-red); }
 
+.admin-import-panel { margin: 0 16px 12px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; }
+.admin-import-panel > summary { cursor: pointer; font-weight: 600; }
+.admin-import-panel textarea { width: 100%; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; }
+
 .admin-th-sort { cursor: pointer; user-select: none; white-space: nowrap; }
 .admin-th-sort:hover { color: var(--text-dark); }
 

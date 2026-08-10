@@ -2797,23 +2797,44 @@ async def gws_cli_verify(request: Request):
         blob = str(evidence)
 
     has_cli = bool(evidence)
-    emails = sorted(set(re.findall(r"[\w.+-]+@[\w-]+\.[\w.]+", blob)))
+    emails = sorted(set(e.lower() for e in re.findall(r"[\w.+-]+@[\w-]+\.[\w.]+", blob)))
 
-    # KHÔNG bắt trùng email đăng nhập lớp học. Email đó do công ty cấp (Lark), còn tài khoản
-    # Google học viên dùng để làm bài thường là Gmail cá nhân — ép trùng là cả lớp trượt oan.
-    # Chỉ cần đã đăng nhập MỘT tài khoản Google; ghi lại tài khoản đó để giáo viên đối chiếu.
+    # KHÔNG bắt trùng email đăng nhập lớp học (email đó do công ty cấp qua Lark). Tài khoản chấm
+    # là tài khoản Google RIÊNG của học viên, lấy theo thứ tự ưu tiên:
+    #   1) giáo viên đã nhập sẵn trong /admin  -> bắt buộc phải khớp
+    #   2) chưa nhập -> khoá luôn tài khoản lần đầu script phát hiện (trust-on-first-use)
+    # Khoá xong thì mọi lần chạy lại đều phải đúng tài khoản đó, không đổi giữa chừng được.
+    with get_db() as conn:
+        locked = (conn.execute("SELECT gws_email FROM users WHERE id = ?", (user["id"],)).fetchone()
+                  or {"gws_email": None})["gws_email"]
+    locked = (locked or "").strip().lower() or None
+
     crit = [
         {"label": "Đã cài Google Workspace CLI trên máy", "ok": has_cli,
          "note": "" if has_cli else "Không thấy lệnh gws."},
-        {"label": "Đã đăng nhập một tài khoản Google", "ok": bool(emails),
-         "note": ("Tài khoản đang dùng: " + ", ".join(emails)) if emails
-                 else "Chưa đăng nhập tài khoản Google nào trong GWS CLI."},
     ]
+    if locked:
+        match = locked in emails
+        crit.append({
+            "label": f"Đăng nhập đúng tài khoản Google đã đăng ký ({locked})", "ok": match,
+            "note": "" if match else (
+                f"GWS CLI đang dùng: {', '.join(emails)}. Hãy chạy `gws auth login` với {locked} rồi thử lại."
+                if emails else "Chưa đăng nhập tài khoản Google nào trong GWS CLI."),
+        })
+    else:
+        crit.append({
+            "label": "Đã đăng nhập một tài khoản Google", "ok": bool(emails),
+            "note": (f"Đã khoá tài khoản này cho cả Bài 9: {emails[0]}" if emails
+                     else "Chưa đăng nhập tài khoản Google nào trong GWS CLI."),
+        })
 
     ok = all(c["ok"] for c in crit)
     if emails:
-        # Ghi nhớ tài khoản Google học viên dùng cho cả Bài 9 (chỉ để giáo viên xem, không chấm).
         with get_db() as conn:
+            if ok and not locked:
+                # Trust-on-first-use: chốt tài khoản đầu tiên. Học viên tự đổi sau sẽ không qua được.
+                conn.execute("UPDATE users SET gws_email = ? WHERE id = ?", (emails[0], user["id"]))
+            # Lưu đầy đủ các tài khoản CLI thấy được, để giáo viên đối chiếu khi có khiếu nại.
             conn.execute(
                 """INSERT INTO gws_tasks (user_id, question_code, payload) VALUES (?, '9.16.account', ?)
                    ON CONFLICT(user_id, question_code) DO UPDATE SET payload=excluded.payload,
@@ -3044,7 +3065,8 @@ def admin_students(request: Request):
     with get_db() as conn:
         rows = conn.execute(
             """
-            SELECT u.id, u.username, u.display_name, u.avatar_url, u.approved, u.tenant_key, u.created_at,
+            SELECT u.id, u.username, u.display_name, u.avatar_url, u.approved, u.tenant_key,
+                   u.email, u.gws_email, u.created_at,
                    COUNT(CASE WHEN qs.status IN ('done', 'correct') THEN 1 END) AS done_count,
                    COALESCE(SUM(qs.awarded_points), 0) AS total_points,
                    MAX(qs.updated_at) AS last_activity,
@@ -3067,6 +3089,65 @@ def admin_approve_student(request: Request, user_id: int, approved: int = Form(1
             raise HTTPException(status_code=404, detail="Không tìm thấy học viên.")
         conn.execute("UPDATE users SET approved = ? WHERE id = ?", (1 if approved else 0, user_id))
     return {"ok": True, "approved": 1 if approved else 0}
+
+
+@app.post("/api/admin/students/{user_id}/gws-email")
+def admin_set_gws_email(request: Request, user_id: int, gws_email: str = Form("")):
+    """Đăng ký (hoặc gỡ) tài khoản Google mà học viên phải dùng xuyên suốt Bài 9.
+
+    Để trống = gỡ khoá, học viên chạy lại 9.16 sẽ tự khoá tài khoản mới. Dùng khi học viên
+    đổi máy/đổi tài khoản chính đáng, thay vì bắt các em trượt câu."""
+    current_admin(request)
+    value = (gws_email or "").strip().lower()
+    if value and not re.fullmatch(r"[\w.+-]+@[\w-]+\.[\w.]+", value):
+        raise HTTPException(status_code=400, detail="Email không hợp lệ.")
+    with get_db() as conn:
+        if not conn.execute("SELECT id FROM users WHERE id = ?", (user_id,)).fetchone():
+            raise HTTPException(status_code=404, detail="Không tìm thấy học viên.")
+        conn.execute("UPDATE users SET gws_email = ? WHERE id = ?", (value or None, user_id))
+    return {"ok": True, "gws_email": value or None}
+
+
+@app.post("/api/admin/gws-emails/import")
+def admin_import_gws_emails(request: Request, text: str = Form("")):
+    """Nhập hàng loạt tài khoản Google của cả lớp. Mỗi dòng một học viên, ví dụ:
+
+        nguyenvanA<TAB hoặc , hoặc ;>a.nguyen@gmail.com
+        Trần Thị B, b.tran@gmail.com
+        c.le@gmail.com                      (khớp theo email Lark hoặc tên đăng nhập)
+
+    Khớp theo tên đăng nhập / tên hiển thị / email Lark, không phân biệt hoa thường."""
+    current_admin(request)
+    with get_db() as conn:
+        users = conn.execute("SELECT id, username, display_name, email FROM users").fetchall()
+    index: dict[str, list[int]] = {}
+    for u in users:
+        for key in (u["username"], u["display_name"], u["email"]):
+            if key and str(key).strip():
+                index.setdefault(str(key).strip().lower(), []).append(u["id"])
+
+    applied, problems = [], []
+    with get_db() as conn:
+        for lineno, raw in enumerate((text or "").splitlines(), 1):
+            line = raw.strip()
+            if not line or line.startswith("#"):
+                continue
+            found = re.findall(r"[\w.+-]+@[\w-]+\.[\w.]+", line)
+            if not found:
+                problems.append(f"Dòng {lineno}: không thấy email — bỏ qua.")
+                continue
+            gmail = found[-1].lower()
+            key = line[: line.rfind(found[-1])].strip().strip(",;|\t").strip().lower() or gmail
+            ids = index.get(key) or []
+            if not ids:
+                problems.append(f"Dòng {lineno}: không tìm thấy học viên khớp \"{key}\".")
+                continue
+            if len(ids) > 1:
+                problems.append(f"Dòng {lineno}: \"{key}\" trùng {len(ids)} học viên — hãy dùng tên đăng nhập.")
+                continue
+            conn.execute("UPDATE users SET gws_email = ? WHERE id = ?", (gmail, ids[0]))
+            applied.append({"user_id": ids[0], "key": key, "gws_email": gmail})
+    return {"ok": True, "applied": applied, "so_dong_ap_dung": len(applied), "canh_bao": problems}
 
 
 @app.post("/api/admin/students/{user_id}/teacher")
@@ -3641,7 +3722,8 @@ def admin_student_detail(request: Request, user_id: int):
     current_admin(request)
     with get_db() as conn:
         user_row = conn.execute(
-            "SELECT id, username, display_name, avatar_url, approved, is_teacher, tenant_key, created_at FROM users WHERE id = ?", (user_id,)
+            "SELECT id, username, display_name, avatar_url, approved, is_teacher, tenant_key, email,"
+            " gws_email, created_at FROM users WHERE id = ?", (user_id,)
         ).fetchone()
         if not user_row:
             raise HTTPException(status_code=404, detail="Không tìm thấy học viên.")
