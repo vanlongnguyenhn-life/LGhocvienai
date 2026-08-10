@@ -1573,12 +1573,13 @@ const LESSONS = [
       {
         code: "9.11",
         title: "Câu 9.11 - Bạn ngẫu nhiên hoàn thành lúc nào?",
-        type: "code",
+        type: "npc_time",
         prompt:
-          "Có một bạn học giả lập tên \"bạn Mít\" (không phải người thật) mà hệ thống dùng cho các bài tập tương tác an toàn. Hãy nhờ Agent gọi API sau để tìm giờ bạn Mít hoàn thành Bài 7:",
-        copyPrompt: "GET https://ailg.onrender.com/api/pi-lab/npc-completion-time",
-        secretNote: "🔒 Điền lại đúng giá trị completed_at (định dạng HH:MM:SS DD/MM/YYYY) vào ô dưới.",
-        answer: "17:45:35 19/02/2026",
+          "Đây là avatar đã được convert qua dạng ASCII Art của một người bạn mà hệ thống chọn NGẪU NHIÊN cho bạn (bạn học giả lập, không phải người thật).\n\nBạn có biết bạn ấy hoàn thành Bài 7 lúc nào không?",
+        copyPrompt:
+          "Hãy giúp tôi làm bài tập trong lớp AI Agent — Học Viện AI Life Group theo yêu cầu ở link này:\n{{agent_task_link}}",
+        secretNote:
+          "🔒 Mỗi học viên được ghép một người bạn KHÁC NHAU, nên giờ hoàn thành của bạn cũng khác các bạn cùng lớp. Điền đúng định dạng HH:MM:SS DD/MM/YYYY vào ô dưới.",
         points: 8,
       },
       {

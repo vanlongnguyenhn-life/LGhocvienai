@@ -84,6 +84,7 @@ function loadState() {
           if (a.hintStatus === "loading") delete a.hintStatus;
           if (a.letterStatus === "loading") delete a.letterStatus;
           if (a.gwsStatus === "loading") delete a.gwsStatus;
+          if (a.npcFriend === "loading") delete a.npcFriend;
           // Cờ "đang nộp" chỉ có nghĩa trong phiên đang chạy. Nếu trang bị tải lại đúng lúc
           // đang nộp mà không xoá, nút Nộp bài sẽ bị khoá VĨNH VIỄN ở lần mở sau.
           delete a.submitting;
@@ -1114,6 +1115,12 @@ function renderQuestionCard(lesson, q, locked) {
         a.letterStatus = "loading";
         refreshLetterStatus(q, a);
       }
+    } else if (q.type === "npc_time") {
+      body.appendChild(renderNpcTime(q, a));
+      if (a.npcFriend === undefined) {
+        a.npcFriend = "loading";
+        refreshNpcFriend(q, a, false);
+      }
     } else if (q.type === "gws_task") {
       body.appendChild(renderGwsTask(q, a));
       if (a.gwsStatus === undefined) {
@@ -1438,6 +1445,47 @@ function renderCodeInput(q, a) {
     saveState();
   });
   wrap.appendChild(input);
+  return wrap;
+}
+
+// ===== Câu 9.11: hiện tranh ASCII của người bạn được ghép ngẫu nhiên + nút đổi bạn khác =====
+async function refreshNpcFriend(q, a, reset) {
+  try {
+    a.npcFriend = reset
+      ? await API.request("/api/pi-lab/npc-friend/reset", { method: "POST" })
+      : await API.request("/api/pi-lab/npc-friend");
+  } catch (e) {
+    a.npcFriend = null;
+  }
+  saveState();
+  render();
+  openQuestion(q.code);
+}
+
+function renderNpcTime(q, a) {
+  const wrap = el("div", {});
+  const st = a.npcFriend;
+  if (st === "loading" || st === undefined) {
+    wrap.appendChild(el("div", { class: "secret-note" }, "Đang tải chân dung người bạn của bạn..."));
+  } else if (st && st.ascii) {
+    wrap.appendChild(el("pre", { class: "ascii-avatar" }, st.ascii));
+  } else {
+    wrap.appendChild(el("div", { class: "secret-note" }, "Chưa tải được chân dung — bấm nút bên dưới để thử lại."));
+  }
+  wrap.appendChild(
+    el(
+      "button",
+      {
+        class: "help-link",
+        onclick: () => {
+          if (!confirm("Đổi sang một người bạn KHÁC? Giờ hoàn thành sẽ khác đi, bạn phải hỏi Agent lại từ đầu.")) return;
+          refreshNpcFriend(q, a, true);
+        },
+      },
+      ["🔀 Đổi sang bạn khác"]
+    )
+  );
+  wrap.appendChild(renderCodeInput(q, a));
   return wrap;
 }
 
@@ -2015,6 +2063,7 @@ function buildAnswerData(q, a) {
     case "pi_lab_code":
     case "my_token_check":
     case "pi_lab_letter":
+    case "npc_time":
       return { text: a.text };
     case "token_scope_check":
       return { text: a.text, tokenScopes: a.tokenScopes };
@@ -2313,6 +2362,31 @@ async function submitAnswer(lesson, q) {
       saveState();
       showToast(`Chính xác! +${q.points} điểm`);
     } catch (err) {
+      showToast(err.message);
+      return;
+    }
+  } else if (q.type === "npc_time") {
+    if (!a.text || a.text.trim().length === 0) {
+      showToast("Em hãy nhập giờ hoàn thành (HH:MM:SS DD/MM/YYYY) trước khi nộp bài");
+      return;
+    }
+    // Server tự chấm theo giờ của CHÍNH người bạn được ghép cho học viên này.
+    const fd = new FormData();
+    fd.append("question_code", q.code);
+    fd.append("status", "done");
+    fd.append("awarded_points", String(q.points));
+    fd.append("answer_data", JSON.stringify({ text: a.text.trim() }));
+    try {
+      await API.submitQuestion(fd);
+      a.status = "done";
+      a.awardedPoints = q.points;
+      a.saved = true;
+      saveState();
+      showToast(`Chính xác! +${q.points} điểm`);
+    } catch (err) {
+      a.status = "wrong";
+      a.awardedPoints = 0;
+      saveState();
       showToast(err.message);
       return;
     }

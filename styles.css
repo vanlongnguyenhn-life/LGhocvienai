@@ -1127,3 +1127,17 @@ input.reflect-input { min-height: unset; }
 .gws-criterion { padding: 8px 12px; border-radius: 10px; font-size: 14px; background: #f2f7f2; }
 .gws-criterion.fail { background: #fdf1f0; }
 .gws-criterion-note { font-size: 12.5px; opacity: 0.75; margin-top: 2px; }
+
+/* Tranh ASCII chân dung người bạn (câu 9.11) */
+.ascii-avatar {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 7px;
+  line-height: 1.02;
+  white-space: pre;
+  overflow-x: auto;
+  background: #0f1a13;
+  color: #9be8bb;
+  padding: 12px;
+  border-radius: 10px;
+  margin: 10px 0;
+}

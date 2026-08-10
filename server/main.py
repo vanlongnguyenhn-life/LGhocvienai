@@ -288,6 +288,31 @@ thì chỉnh lại tương phản/kích thước rồi làm lại.
 Sau đó đưa NGUYÊN VĂN tranh ASCII cho học viên để họ dán vào ô trả lời trên trang lớp học.
 KHÔNG được tự nộp bài thay học viên.
 """,
+    "9.11": """**Câu 9.11 — Người bạn ngẫu nhiên hoàn thành Bài 7 lúc nào?**
+
+Hệ thống đã ghép cho học viên một người bạn cùng lớp (ngẫu nhiên, khác nhau với từng người).
+Trên trang câu hỏi đang hiện chân dung ASCII của bạn ấy.
+
+## Việc cần làm
+
+Gọi API sau để lấy hồ sơ của ĐÚNG người bạn đã ghép cho học viên này:
+```
+GET {{base_url}}/api/pi-lab/npc-completion-time
+Headers: X-User-Id: {{uid}}, X-Auth-Token: {{token}}
+```
+
+Response trả JSON gồm `name` (tên bạn ấy), `lesson`, và `completed_at` — giờ hoàn thành Bài 7,
+định dạng `HH:MM:SS DD/MM/YYYY`.
+
+## Báo lại cho học viên
+
+Đọc kỹ TOÀN BỘ response rồi nói cho học viên biết:
+* Tên người bạn được ghép.
+* Giá trị `completed_at` — nguyên văn, đúng từng ký tự, để họ dán vào ô trả lời.
+
+Lưu ý: giờ này là của RIÊNG người bạn được ghép cho học viên này, mỗi người một khác — đừng lấy
+đáp án của ai khác. Nếu học viên bấm nút "Đổi sang bạn khác" thì phải gọi lại API để lấy giờ mới.
+""",
 }
 
 
@@ -1777,6 +1802,19 @@ def submit_question(
             raise HTTPException(status_code=400, detail="Token chưa đúng — kiểm tra lại trước khi nộp.")
         awarded_points = MY_TOKEN_CHECK_MANIFEST[question_code]["points"]
 
+    if question_code in NPC_TIME_MANIFEST and status == "done":
+        # Câu 9.11: giờ hoàn thành là của RIÊNG người bạn được ghép cho học viên này — không có
+        # đáp án chung, nên mách nhau vô ích.
+        try:
+            submitted = json.loads(answer_data or "{}").get("text", "")
+        except (json.JSONDecodeError, AttributeError):
+            submitted = ""
+        with get_db() as conn:
+            assigned = _npc_assignment(conn, user["id"])
+        if _normalize_secret(submitted) != _normalize_secret(assigned["completed_at"]):
+            raise HTTPException(status_code=400, detail="Chưa đúng giờ hoàn thành của người bạn này — kiểm tra lại.")
+        awarded_points = NPC_TIME_MANIFEST[question_code]["points"]
+
     if question_code in PI_LAB_LETTER_MANIFEST and status == "done":
         # Câu 9.24: phải THẬT SỰ đã gửi mật thư và bạn Mít đã đọc, kèm đúng mã hồi âm —
         # không tin bất kỳ trạng thái nào client tự khai.
@@ -2048,12 +2086,10 @@ def verify_my_token(request: Request, code: str = Form(...)):
 
 
 # ===================== NPC bạn Mít — hồ sơ, avatar, mật thư (Câu 9.10 - 9.12, 9.23 - 9.24) =====================
-PI_LAB_NPC_COMPLETION_TIME = "17:45:35 19/02/2026"
 _pi_lab_npc_avatar = {"ascii": None}
 # Token canh cổng hành động GHI (đổi avatar của Mít) — bài học: đọc dữ liệu là kỹ năng,
 # token là quyền. Token này chỉ xuất hiện trong response của /npc-completion-time (9.11),
 # nên học viên phải nhờ Agent quay lại đọc dữ liệu cũ mới tìm ra.
-PI_LAB_AVATAR_UPDATE_TOKEN = "MIT-AVA-0D0B-EDIT"
 # Mật thư của "cô Long" — KHÔNG in lên đề (câu 9.23 là bài học về sự tinh ý: chính mình phải
 # đọc dữ liệu mà Agent xử lý). Mật thư "đi theo" món quà avatar học viên tặng ở 9.12.
 PI_LAB_MAT_THU = (
@@ -2063,20 +2099,105 @@ PI_LAB_MAT_THU = (
 PI_LAB_MAT_THU_CODE = "DUNG-CU-DUNG-LUC-FCD1"
 
 
+# Danh sách "bạn học giả lập" — mỗi học viên được ghép NGẪU NHIÊN một bạn, giống hệt cách web
+# tham khảo bốc ngẫu nhiên một bạn cùng lớp. Nhờ vậy giờ hoàn thành của mỗi người MỘT KHÁC, mách
+# nhau đáp án là vô nghĩa (trước đây đáp án là hằng số chung cho cả lớp).
+NPC_FRIENDS = [
+    "Nguyễn Thị Mít", "Trần Văn Ổi", "Lê Thị Xoài", "Phạm Thảo Na", "Hoàng Văn Bơ",
+    "Đỗ Thị Cam", "Vũ Hồng Đào", "Bùi Thị Mận", "Ngô Sầu Riêng",
+]
+NPC_TIME_MANIFEST = {"9.11": {"points": 8}}
+
+
+def _npc_assignment(conn, user_id: int) -> dict:
+    """Bạn học được ghép cho học viên này (giữ nguyên cho tới khi họ bấm đổi bạn khác)."""
+    row = conn.execute(
+        "SELECT payload FROM gws_tasks WHERE user_id = ? AND question_code = '9.11'", (user_id,)
+    ).fetchone()
+    if row:
+        return json.loads(row["payload"])
+    seed = secrets.randbelow(10**9)
+    rnd = random.Random(seed)
+    data = {
+        "seed": seed,
+        "name": rnd.choice(NPC_FRIENDS),
+        "completed_at": "%02d:%02d:%02d %02d/%02d/2026"
+        % (rnd.randint(7, 22), rnd.randint(0, 59), rnd.randint(0, 59), rnd.randint(1, 28), rnd.randint(1, 7)),
+    }
+    conn.execute(
+        "INSERT INTO gws_tasks (user_id, question_code, payload) VALUES (?, '9.11', ?)",
+        (user_id, json.dumps(data, ensure_ascii=False)),
+    )
+    return data
+
+
+def _npc_avatar_token(user_id: int) -> str:
+    """Token đổi avatar (câu 9.12) — dẫn xuất RIÊNG theo học viên nên không mách nhau được."""
+    return "MIT-AVA-" + hashlib.sha1(f"{user_id}::ags-avatar-edit".encode()).hexdigest()[:6].upper()
+
+
+_ASCII_RAMPS = [" .:-=+*#%@", " .,:;ox%#@", " ..--==++**##@@"]
+
+
+def _npc_ascii_avatar(seed: int) -> str:
+    """Vẽ chân dung bạn ấy thành tranh ASCII — nối thẳng vào bài FFMPEG ở câu 9.10.
+    Mỗi bạn một kiểu (khổ rộng + bảng ký tự khác nhau) nên nhìn ra ngay là người khác."""
+    try:
+        from PIL import Image
+
+        rnd = random.Random(seed)
+        cols = rnd.choice([64, 72, 80])
+        ramp = _ASCII_RAMPS[seed % len(_ASCII_RAMPS)]
+        img = Image.open(BASE_DIR / "assets" / "mit-chan-dung.png").convert("L")
+        rows = max(1, int(cols * img.height / img.width / 2.1))
+        img = img.resize((cols, rows))
+        px = img.load()
+        out = []
+        for y in range(rows):
+            out.append("".join(ramp[min(len(ramp) - 1, px[x, y] * len(ramp) // 256)] for x in range(cols)))
+        return "\n".join(out)
+    except Exception:
+        return ""
+
+
 @app.get("/api/pi-lab/npc-completion-time")
-def pi_lab_npc_completion_time():
+def pi_lab_npc_completion_time(request: Request):
+    user = require_agent_user(request)
+    with get_db() as conn:
+        a = _npc_assignment(conn, user["id"])
     return {
-        "name": "Nguyễn Thị Mít",
+        "name": a["name"],
         "lesson": "Bài 7 - Phần mềm và sự tin cậy",
-        "completed_at": PI_LAB_NPC_COMPLETION_TIME,
+        "completed_at": a["completed_at"],
         # Chìa khoá cho câu 9.12 — chỉ Agent nào đọc kỹ dữ liệu mới thấy.
-        "avatar_update_token": PI_LAB_AVATAR_UPDATE_TOKEN,
+        "avatar_update_token": _npc_avatar_token(user["id"]),
     }
 
 
+@app.get("/api/pi-lab/npc-friend")
+def pi_lab_npc_friend(request: Request):
+    """Trang câu hỏi gọi để hiện tranh ASCII của người bạn được ghép (KHÔNG kèm giờ hoàn thành —
+    đó là thứ học viên phải nhờ Agent đi tìm)."""
+    user = require_approved_user(request)
+    with get_db() as conn:
+        a = _npc_assignment(conn, user["id"])
+    return {"ascii": _npc_ascii_avatar(a["seed"])}
+
+
+@app.post("/api/pi-lab/npc-friend/reset")
+def pi_lab_npc_friend_reset(request: Request):
+    """Đổi sang một người bạn khác — y như nút reset bên web tham khảo."""
+    user = require_approved_user(request)
+    with get_db() as conn:
+        conn.execute("DELETE FROM gws_tasks WHERE user_id = ? AND question_code = '9.11'", (user["id"],))
+        a = _npc_assignment(conn, user["id"])
+    return {"ok": True, "ascii": _npc_ascii_avatar(a["seed"])}
+
+
 @app.post("/api/pi-lab/npc-avatar/set")
-def pi_lab_npc_avatar_set(ascii_art: str = Form(...), update_token: str = Form(None)):
-    if (update_token or "").strip() != PI_LAB_AVATAR_UPDATE_TOKEN:
+def pi_lab_npc_avatar_set(request: Request, ascii_art: str = Form(...), update_token: str = Form(None)):
+    user = require_agent_user(request)
+    if (update_token or "").strip() != _npc_avatar_token(user["id"]):
         raise HTTPException(
             status_code=403,
             detail="Bạn Mít không cho người lạ đổi avatar — thiếu hoặc sai update_token. "
