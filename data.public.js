@@ -2182,9 +2182,9 @@ const LESSONS = [
         "code": "9.10",
         "title": "Câu 9.10 - Convert chân dung thành ASCII art bằng FFMPEG",
         "type": "reflect",
-        "prompt": "FFMPEG là một công cụ dòng lệnh (CLI) xử lý ảnh/video vô cùng mạnh mẽ. Hãy nhờ Coding Agent của bạn cài công cụ này vào máy, rồi dùng nó convert TẤM CHÂN DUNG dưới đây thành một bức tranh ASCII art (resize nhỏ, chuyển grayscale, rồi map độ sáng từng pixel sang ký tự theo bảng \" .:-=+*#%@\").",
+        "prompt": "FFMPEG là một công cụ dòng lệnh (CLI) xử lý ảnh/video vô cùng mạnh mẽ. Hãy nhờ Coding Agent của bạn CÀI CÔNG CỤ NÀY vào máy.\n\nSau đó dùng nó convert hình này thành bức tranh ASCII rồi nộp bài:",
         "image": "assets/mit-chan-dung.png",
-        "copyPrompt": "Tải ảnh https://ailg.onrender.com/assets/mit-chan-dung.png về máy, rồi dùng FFMPEG convert thành tranh ASCII: resize nhỏ (~80 cột), chuyển grayscale, map độ sáng từng pixel sang ký tự \" .:-=+*#%@\". In kết quả ra cho tôi copy.",
+        "copyPrompt": "Hãy giúp tôi làm bài tập trong lớp AI Agent — Học Viện AI Life Group theo yêu cầu ở link này:\n{{agent_task_link}}",
         "instructions": "Dán nguyên văn kết quả ASCII art (dạng text) vào ô dưới.",
         "minLength": 200,
         "points": 14

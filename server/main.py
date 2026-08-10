@@ -258,13 +258,44 @@ Body (JSON): {"question_code": "9.9", "media_item_id": <id ở Bước 1>, "loca
 Sau khi Bước 2 trả `is_correct: true`:
 > "Đã nộp bài câu 9.9 xong ✓ — bạn sang trang lớp học bấm Nộp bài để hoàn tất chấm điểm nhé."
 """,
+    "9.10": """**Câu 9.10 — Convert chân dung thành tranh ASCII bằng FFMPEG**
+
+## Bước 1 — Cài FFMPEG
+Cài FFMPEG vào máy của học viên (winget/choco/brew/apt tuỳ hệ điều hành). Kiểm tra bằng
+`ffmpeg -version`. Nếu máy đã có rồi thì bỏ qua.
+
+## Bước 2 — Tải ảnh gốc
+```
+{{base_url}}/assets/mit-chan-dung.png
+```
+
+## Bước 3 — Convert thành tranh ASCII
+Dùng FFMPEG để:
+1. Thu nhỏ ảnh còn khoảng **80 cột** (giữ tỉ lệ; nhớ nhân đôi chiều rộng hoặc chia đôi chiều cao
+   vì ký tự trong terminal cao hơn rộng, không làm vậy tranh sẽ bị bẹp).
+2. Chuyển sang thang xám (grayscale).
+3. Ánh xạ độ sáng từng điểm ảnh sang ký tự theo bảng `" .:-=+*#%@"` — tối nhất là khoảng trắng,
+   sáng nhất là `@` (hoặc ngược lại, miễn nhìn ra hình).
+
+Gợi ý: dùng FFMPEG xuất ra dạng thô (ví dụ `-pix_fmt gray -f rawvideo`) rồi đọc từng byte độ sáng
+bằng một đoạn script ngắn để ánh xạ sang ký tự. FFMPEG lo phần đọc/resize/grayscale, script lo
+phần đổi sang ký tự.
+
+## Bước 4 — Kiểm tra rồi đưa cho học viên
+In tranh ASCII ra màn hình. **Nhìn phải ra khuôn mặt** — nếu chỉ thấy một mảng ký tự đều tăm tắp
+thì chỉnh lại tương phản/kích thước rồi làm lại.
+
+Sau đó đưa NGUYÊN VĂN tranh ASCII cho học viên để họ dán vào ô trả lời trên trang lớp học.
+KHÔNG được tự nộp bài thay học viên.
+""",
 }
 
 
 def _resolve_agent_task_placeholders(text: str, base_url: str, user_id: int, token: str) -> str:
     base = base_url.rstrip("/")
     return (
-        text.replace("{{uid}}", str(user_id))
+        text.replace("{{base_url}}", base)
+        .replace("{{uid}}", str(user_id))
         .replace("{{token}}", token)
         .replace("{{media_upload_url}}", f"{base}/api/media/upload")
         .replace("{{attempt_answers_url}}", f"{base}/api/attempt-answers")

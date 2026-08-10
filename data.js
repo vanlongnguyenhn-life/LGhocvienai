@@ -1553,12 +1553,21 @@ const LESSONS = [
         title: "Câu 9.10 - Convert chân dung thành ASCII art bằng FFMPEG",
         type: "reflect",
         prompt:
-          "FFMPEG là một công cụ dòng lệnh (CLI) xử lý ảnh/video vô cùng mạnh mẽ. Hãy nhờ Coding Agent của bạn cài công cụ này vào máy, rồi dùng nó convert TẤM CHÂN DUNG dưới đây thành một bức tranh ASCII art (resize nhỏ, chuyển grayscale, rồi map độ sáng từng pixel sang ký tự theo bảng \" .:-=+*#%@\").",
+          "FFMPEG là một công cụ dòng lệnh (CLI) xử lý ảnh/video vô cùng mạnh mẽ. Hãy nhờ Coding Agent của bạn CÀI CÔNG CỤ NÀY vào máy.\n\nSau đó dùng nó convert hình này thành bức tranh ASCII rồi nộp bài:",
         image: "assets/mit-chan-dung.png",
         copyPrompt:
-          "Tải ảnh https://ailg.onrender.com/assets/mit-chan-dung.png về máy, rồi dùng FFMPEG convert thành tranh ASCII: resize nhỏ (~80 cột), chuyển grayscale, map độ sáng từng pixel sang ký tự \" .:-=+*#%@\". In kết quả ra cho tôi copy.",
+          "Hãy giúp tôi làm bài tập trong lớp AI Agent — Học Viện AI Life Group theo yêu cầu ở link này:\n{{agent_task_link}}",
         instructions: "Dán nguyên văn kết quả ASCII art (dạng text) vào ô dưới.",
         minLength: 200,
+        gradingNote:
+          "QUY TẮC CHẤM RIÊNG cho câu này — ghi đè quy tắc mặc định: bài nộp KHÔNG phải văn xuôi mà là " +
+          "một BỨC TRANH ASCII (ảnh vẽ bằng ký tự). Vì vậy TUYỆT ĐỐI KHÔNG được đánh rớt với lý do " +
+          "\"ký tự lặp\", \"vô nghĩa\" hay \"spam\" — ký tự lặp lại chính là bản chất của tranh ASCII. " +
+          "Chấm ĐẠT nếu: có nhiều dòng (từ 10 dòng trở lên), phần lớn ký tự thuộc nhóm vẽ bóng như " +
+          "space . : - = + * # % @ (hoặc nhóm ký tự tương đương), và các dòng xếp thành một khối có " +
+          "hình dạng (đậm nhạt thay đổi, không phải một ký tự duy nhất lặp đều). " +
+          "Chấm KHÔNG ĐẠT chỉ khi: bài nộp là văn xuôi mô tả thay vì tranh, hoặc chỉ vài dòng quá ngắn, " +
+          "hoặc là một ký tự duy nhất lặp lại đều tăm tắp (không tạo thành hình).",
         points: 14,
       },
       {

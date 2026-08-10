@@ -132,10 +132,10 @@
     "gradingNote": null
   },
   "9.10": {
-    "prompt": "FFMPEG là một công cụ dòng lệnh (CLI) xử lý ảnh/video vô cùng mạnh mẽ. Hãy nhờ Coding Agent của bạn cài công cụ này vào máy, rồi dùng nó convert TẤM CHÂN DUNG dưới đây thành một bức tranh ASCII art (resize nhỏ, chuyển grayscale, rồi map độ sáng từng pixel sang ký tự theo bảng \" .:-=+*#%@\").\nTải ảnh https://ailg.onrender.com/assets/mit-chan-dung.png về máy, rồi dùng FFMPEG convert thành tranh ASCII: resize nhỏ (~80 cột), chuyển grayscale, map độ sáng từng pixel sang ký tự \" .:-=+*#%@\". In kết quả ra cho tôi copy.",
+    "prompt": "FFMPEG là một công cụ dòng lệnh (CLI) xử lý ảnh/video vô cùng mạnh mẽ. Hãy nhờ Coding Agent của bạn CÀI CÔNG CỤ NÀY vào máy.\n\nSau đó dùng nó convert hình này thành bức tranh ASCII rồi nộp bài:\nHãy giúp tôi làm bài tập trong lớp AI Agent — Học Viện AI Life Group theo yêu cầu ở link này:\n{{agent_task_link}}",
     "minLength": 200,
     "points": 14,
-    "gradingNote": null
+    "gradingNote": "QUY TẮC CHẤM RIÊNG cho câu này — ghi đè quy tắc mặc định: bài nộp KHÔNG phải văn xuôi mà là một BỨC TRANH ASCII (ảnh vẽ bằng ký tự). Vì vậy TUYỆT ĐỐI KHÔNG được đánh rớt với lý do \"ký tự lặp\", \"vô nghĩa\" hay \"spam\" — ký tự lặp lại chính là bản chất của tranh ASCII. Chấm ĐẠT nếu: có nhiều dòng (từ 10 dòng trở lên), phần lớn ký tự thuộc nhóm vẽ bóng như space . : - = + * # % @ (hoặc nhóm ký tự tương đương), và các dòng xếp thành một khối có hình dạng (đậm nhạt thay đổi, không phải một ký tự duy nhất lặp đều). Chấm KHÔNG ĐẠT chỉ khi: bài nộp là văn xuôi mô tả thay vì tranh, hoặc chỉ vài dòng quá ngắn, hoặc là một ký tự duy nhất lặp lại đều tăm tắp (không tạo thành hình)."
   },
   "9.21": {
     "prompt": "Bộ slide bạn vừa tạo ở Câu 9.20 kể về hành trình của 9 người bạn trong lớp. Giờ hãy nhìn lại nó bằng con mắt của người NHẬN: nếu bạn là một trong 9 bạn ấy và được xem slide này, bạn sẽ chấm nó mấy điểm?\n\nTự chấm bộ slide của mình theo 3 tiêu chí: Info (đủ thông tin), Trình bày (bố cục, dễ đọc), Đẹp (thẩm mỹ) — thang 1-10, kèm giải thích ngắn vì sao cho từng tiêu chí.",
