@@ -499,6 +499,14 @@ async function hydrateProgress() {
           Object.assign(a, JSON.parse(info.answerData));
         } catch (e) {}
       }
+      // Khôi phục lựa chọn cũ theo NỘI DUNG, không theo vị trí ô. Thứ tự lựa chọn có thể đã đổi
+      // kể từ lúc học viên trả lời (xem phần xáo thứ tự trong gen_manifest.js) — nếu cứ tô theo
+      // chỉ số cũ thì mở lại bài sẽ sáng nhầm ô, trông như hệ thống chấm sai.
+      const q = QUESTION_BY_CODE[code];
+      if (q && Array.isArray(a.selectedTexts) && Array.isArray(q.options)) {
+        const mapped = a.selectedTexts.map((t) => q.options.indexOf(t)).filter((i) => i >= 0);
+        if (mapped.length === a.selectedTexts.length) a.selected = mapped;
+      }
     });
     // Đẩy bù ngay các câu đã làm nhưng lưu hụt (server thiếu, saved=false).
     flushUnsavedProgress();

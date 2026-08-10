@@ -481,6 +481,18 @@ app = FastAPI(title="AGS Course Backend")
 @app.on_event("startup")
 def on_startup():
     init_db()
+    # Chạy MỘT LẦN: bổ sung selectedTexts cho các bài nộp trước khi xáo thứ tự lựa chọn.
+    with get_db() as conn:
+        already = conn.execute(
+            "SELECT value FROM app_settings WHERE key = 'migrated_selected_texts'"
+        ).fetchone()
+    if not already:
+        n = _migrate_selected_to_texts()
+        with get_db() as conn:
+            conn.execute(
+                "INSERT OR REPLACE INTO app_settings (key, value) VALUES ('migrated_selected_texts', '1')"
+            )
+        print(f"[migrate] bo sung selectedTexts cho {n} bai da nop truoc khi xao thu tu", flush=True)
     bootstrap_admin()
 
 
@@ -1865,6 +1877,41 @@ def submit_question(
     # Trả lại phán quyết của SERVER: giao diện không còn giữ đáp án nên phải dựa vào đây để
     # hiển thị đúng/sai, thay vì tự tính như trước.
     return {"ok": True, "status": status, "awardedPoints": awarded_points}
+
+
+def _migrate_selected_to_texts() -> int:
+    """Bổ sung selectedTexts cho các bài trắc nghiệm đã nộp TRƯỚC khi xáo thứ tự lựa chọn.
+
+    Chúng chỉ lưu `selected` là CHỈ SỐ ô theo thứ tự cũ. Sau khi xáo, chỉ số đó trỏ sang ô khác —
+    mở lại bài là thấy tô sáng nhầm ô (đã xảy ra thật với câu 9.14). Ở đây dịch chỉ số cũ sang
+    NỘI DUNG bằng thứ tự gốc lưu trong bảng chấm, để giao diện tô theo nội dung, không theo vị trí.
+    """
+    changed = 0
+    with get_db() as conn:
+        rows = conn.execute(
+            "SELECT rowid, question_code, answer_data FROM question_status WHERE answer_data IS NOT NULL"
+        ).fetchall()
+        for r in rows:
+            entry = ANSWER_MANIFEST.get(r["question_code"]) or {}
+            originals = entry.get("optionsOriginal")
+            if not originals:
+                continue
+            try:
+                ad = json.loads(r["answer_data"])
+            except (json.JSONDecodeError, TypeError):
+                continue
+            if not isinstance(ad, dict) or ad.get("selectedTexts") is not None:
+                continue
+            sel = ad.get("selected")
+            if not isinstance(sel, list):
+                continue
+            ad["selectedTexts"] = [originals[i] for i in sel if isinstance(i, int) and 0 <= i < len(originals)]
+            conn.execute(
+                "UPDATE question_status SET answer_data = ? WHERE rowid = ?",
+                (json.dumps(ad, ensure_ascii=False), r["rowid"]),
+            )
+            changed += 1
+    return changed
 
 
 def _autoheal_progress(user_id: int) -> list:

@@ -67,6 +67,9 @@ for (const lesson of LESSONS) {
         // NÀY, để trình duyệt nào còn giữ bản app.js cũ (gửi chỉ số) vẫn được chấm đúng.
         const publicOptions = shouldShuffle(lesson) ? seededShuffle(q.options || [], q.code) : q.options || [];
         entry.correct = entry.correctTexts.map((t) => publicOptions.indexOf(t)).filter((i) => i >= 0);
+        // Thứ tự GỐC (chỉ nằm phía server) — dùng để chuyển đổi các bài đã nộp trước khi xáo:
+        // chúng lưu lựa chọn theo CHỈ SỐ của thứ tự cũ, không chuyển thì mở lại sẽ tô nhầm ô.
+        entry.optionsOriginal = q.options || [];
       } else if (q.type === "match") {
         entry.correctMap = q.correctMap || [];
         entry.correctPairs = (q.leftItems || []).map((left, i) => [left, (q.rightOptions || [])[q.correctMap[i]]]);
