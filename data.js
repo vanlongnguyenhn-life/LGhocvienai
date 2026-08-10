@@ -1708,7 +1708,7 @@ const LESSONS = [
         prompt:
           "Trong suốt Bài 9, cô đã lặng lẽ gửi cho bạn một MẬT THƯ — nó được giấu trong một trong những dữ liệu mà Agent của bạn từng chạm tới trong bài này. Bạn có nhận ra không?\n\nHãy nhờ Agent quay lại \"thăm\" những nơi nó từng đi qua để tìm mật thư, rồi điền mã xác nhận kèm theo mật thư vào ô dưới.",
         secretNote: "🔒 Gợi ý nhỏ: món quà bạn gửi đi ở Câu 9.12 có thể đã mang theo một điều gì đó quay về.",
-        answer: "DUNG-CONG-CU-DUNG-LUC",
+        answer: "DUNG-CU-DUNG-LUC-FCD1",
         points: 8,
       },
       {

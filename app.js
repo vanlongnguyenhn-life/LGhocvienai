@@ -1966,19 +1966,40 @@ function sameSet(a, b) {
   return [...a].sort().join(",") === [...b].sort().join(",");
 }
 
+// Gửi lên server NỘI DUNG học viên đã chọn, không phải số thứ tự ô. Nhờ vậy giao diện xáo được
+// thứ tự hiển thị, và một bảng đáp án bị rò rỉ theo chỉ số ("chọn ô 0, 2, 3") thành vô nghĩa.
+// Vẫn gửi kèm dạng chỉ số cũ để hiển thị lại lựa chọn khi học viên mở lại câu.
 function buildAnswerData(q, a) {
+  const itemText = (it) => (typeof it === "string" ? it : it.text);
   switch (q.type) {
     case "single":
     case "multi":
-      return { selected: a.selected };
+      return {
+        selected: a.selected,
+        selectedTexts: (a.selected || []).map((i) => (q.options || [])[i]).filter((v) => v != null),
+      };
     case "match":
-      return { matchSelected: a.matchSelected };
+      return {
+        matchSelected: a.matchSelected,
+        pairs: (q.leftItems || []).map((left, i) => [left, (q.rightOptions || [])[a.matchSelected[i]]]),
+      };
     case "order":
-      return { orderState: a.orderState };
+      return {
+        orderState: a.orderState,
+        orderedTexts: (a.orderState || []).map((i) => itemText((q.items || [])[i])).filter((v) => v != null),
+      };
     case "order-tag":
-      return { orderState: a.orderState, tagState: a.tagState };
+      return {
+        orderState: a.orderState,
+        tagState: a.tagState,
+        orderedTexts: (a.orderState || []).map((i) => itemText((q.items || [])[i])).filter((v) => v != null),
+        tagByText: Object.fromEntries((q.items || []).map((it, i) => [itemText(it), (a.tagState || [])[i]])),
+      };
     case "tag-mark":
-      return { tagState: a.tagState };
+      return {
+        tagState: a.tagState,
+        iconByText: Object.fromEntries((q.items || []).map((it, i) => [itemText(it), (a.tagState || [])[i]])),
+      };
     case "code":
     case "agent_secret_code":
     case "reflect":
@@ -2022,11 +2043,11 @@ async function persistQuestionStatusInner(q, a) {
   // Thử lại nhiều lần để tránh MẤT TIẾN ĐỘ ÂM THẦM khi mạng/server chập chờn.
   for (let attempt = 0; attempt < 5; attempt++) {
     try {
-      await API.submitQuestion(fd);
+      const res = await API.submitQuestion(fd);
       a.saved = true; // server đã xác nhận
       saveState();
       render(); // mở khoá câu tiếp theo ngay khi vừa lưu xong (xem isQuestionSynced)
-      return;
+      return res; // kèm phán quyết đúng/sai do SERVER tính
     } catch (err) {
       if (attempt === 4) {
         console.warn("Lưu tiến độ thất bại sau nhiều lần thử:", q.code, err);
@@ -2097,6 +2118,28 @@ window.addEventListener("beforeunload", (e) => {
   }
 });
 
+// Nộp bài và lấy PHÁN QUYẾT TỪ SERVER cho các loại câu có đáp án cố định.
+// Trước đây giao diện tự chấm bằng đáp án nằm sẵn trong data.js — chính vì vậy mà đáp án phải
+// gửi về máy học viên và Agent đọc được hết. Nay data.js công khai không còn đáp án; server
+// chấm và trả kết quả về đây.
+async function submitForServerVerdict(q, a, wrongMsg) {
+  a.status = "pending";
+  a.awardedPoints = 0;
+  const res = await persistQuestionStatus(q, a);
+  if (!res || !res.status) {
+    // Không lưu được (mạng/server) — persistQuestionStatus đã báo và giữ cờ chưa đồng bộ.
+    return;
+  }
+  a.status = res.status;
+  a.awardedPoints = res.awardedPoints || 0;
+  saveState();
+  showToast(
+    res.status === "correct" || res.status === "done"
+      ? `Chính xác! +${a.awardedPoints} điểm`
+      : wrongMsg || "Chưa đúng, Bạn xem lại nhé"
+  );
+}
+
 async function submitAnswer(lesson, q) {
   const a = getAnswer(q.code);
 
@@ -2105,21 +2148,13 @@ async function submitAnswer(lesson, q) {
       showToast("Em hãy chọn ít nhất 1 đáp án trước khi nộp bài");
       return;
     }
-    const correct = q.anyValid || sameSet(a.selected, q.correct);
-    a.status = correct ? "correct" : "wrong";
-    a.awardedPoints = correct ? q.points : 0;
-    showToast(correct ? `Chính xác! +${q.points} điểm` : "Chưa đúng, Bạn xem lại nhé");
-    persistQuestionStatus(q, a);
+    await submitForServerVerdict(q, a);
   } else if (q.type === "match") {
     if (a.matchSelected.length < q.leftItems.length || a.matchSelected.some((v) => v == null || v < 0)) {
       showToast("Em hãy nối đủ tất cả các mục trước khi nộp bài");
       return;
     }
-    const correct = q.leftItems.every((_, i) => a.matchSelected[i] === q.correctMap[i]);
-    a.status = correct ? "correct" : "wrong";
-    a.awardedPoints = correct ? q.points : 0;
-    showToast(correct ? `Chính xác! +${q.points} điểm` : "Chưa đúng, Bạn xem lại nhé");
-    persistQuestionStatus(q, a);
+    await submitForServerVerdict(q, a);
   } else if (q.type === "assignment") {
     const missing = q.criteria.filter((c) => !c.optional && !criterionFulfilled(c, a));
     if (missing.length > 0) {
@@ -2194,11 +2229,7 @@ async function submitAnswer(lesson, q) {
       showToast("Em hãy nhập mã xác nhận trước khi nộp bài");
       return;
     }
-    const correct = normalizeCode(a.text) === normalizeCode(q.answer);
-    a.status = correct ? "correct" : "wrong";
-    a.awardedPoints = correct ? q.points : 0;
-    showToast(correct ? `Chính xác! +${q.points} điểm` : "Mã chưa đúng, em đọc lại mật thư nhé");
-    persistQuestionStatus(q, a);
+    await submitForServerVerdict(q, a, "Mã chưa đúng, em đọc lại mật thư nhé");
   } else if (q.type === "pi_lab_code") {
     if (!a.text || a.text.trim().length === 0) {
       showToast("Em hãy nhập mã xác nhận trước khi nộp bài");
@@ -2366,25 +2397,11 @@ async function submitAnswer(lesson, q) {
     showToast(result.valid ? `Chính xác! +${q.points} điểm` : "Token chưa đúng scope yêu cầu (thừa hoặc thiếu quyền), Bạn xem lại nhé");
     persistQuestionStatus(q, a);
   } else if (q.type === "order") {
-    const correct = !!a.orderState && a.orderState.every((v, i) => v === i);
-    a.status = correct ? "correct" : "wrong";
-    a.awardedPoints = correct ? q.points : 0;
-    showToast(correct ? `Chính xác! +${q.points} điểm` : "Chưa đúng thứ tự, Bạn xem lại nhé");
-    persistQuestionStatus(q, a);
+    await submitForServerVerdict(q, a, "Chưa đúng thứ tự, Bạn xem lại nhé");
   } else if (q.type === "order-tag") {
-    const orderOk = !!a.orderState && a.orderState.every((v, i) => v === i);
-    const tagOk = q.items.every((item, i) => a.tagState && a.tagState[i] === item.tag);
-    const correct = orderOk && tagOk;
-    a.status = correct ? "correct" : "wrong";
-    a.awardedPoints = correct ? q.points : 0;
-    showToast(correct ? `Chính xác! +${q.points} điểm` : "Chưa đúng thứ tự hoặc nhãn, Bạn xem lại nhé");
-    persistQuestionStatus(q, a);
+    await submitForServerVerdict(q, a, "Chưa đúng thứ tự hoặc nhãn, Bạn xem lại nhé");
   } else if (q.type === "tag-mark") {
-    const correct = !!a.tagState && q.items.every((item, i) => a.tagState[i] === item.icon);
-    a.status = correct ? "correct" : "wrong";
-    a.awardedPoints = correct ? q.points : 0;
-    showToast(correct ? `Chính xác! +${q.points} điểm` : "Chưa đúng, Bạn xem lại nhé");
-    persistQuestionStatus(q, a);
+    await submitForServerVerdict(q, a);
   } else if (q.type === "reflect") {
     const minLength = q.minLength || 20;
     const text = (a.text || "").trim();

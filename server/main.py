@@ -1487,26 +1487,54 @@ def _verify_answer_manifest_entry(entry: dict, ad: dict) -> bool:
     mã/token scope/gate) từ answer_data client gửi — KHÔNG bao giờ tin status client tự báo,
     để học viên không thể tự gọi thẳng API cho mình "đúng" mà không thật sự trả lời."""
     t = entry.get("type")
+    # Ưu tiên chấm theo NỘI DUNG học viên chọn (selectedTexts/pairs/orderTexts/tagByText...).
+    # Giao diện gửi nội dung nên nó xáo được thứ tự ô tuỳ ý — và một bảng đáp án bị rò rỉ theo
+    # chỉ số ô ("chọn ô 0,2,3") không còn dùng được. Vẫn chấp nhận dạng chỉ số cũ để những bài
+    # đã nộp trước đây, hoặc trình duyệt còn giữ bản app.js cũ trong cache, không bị chấm oan.
     if t in ("single", "multi"):
+        if entry.get("anyValid"):
+            picked = ad.get("selectedTexts")
+            if isinstance(picked, list):
+                return len(picked) > 0
+            return isinstance(ad.get("selected"), list) and len(ad["selected"]) > 0
+        texts = ad.get("selectedTexts")
+        if isinstance(texts, list) and entry.get("correctTexts") is not None:
+            return sorted(str(x).strip() for x in texts) == sorted(str(x).strip() for x in entry["correctTexts"])
         selected = ad.get("selected")
         if not isinstance(selected, list):
             return False
-        if entry.get("anyValid"):
-            return len(selected) > 0
         return sorted(selected) == sorted(entry.get("correct") or [])
     if t == "match":
+        pairs = ad.get("pairs")
+        if isinstance(pairs, list) and entry.get("correctPairs") is not None:
+            want = sorted((str(a).strip(), str(b).strip()) for a, b in entry["correctPairs"])
+            try:
+                got = sorted((str(a).strip(), str(b).strip()) for a, b in pairs)
+            except (TypeError, ValueError):
+                return False
+            return got == want
         matchSelected = ad.get("matchSelected")
         correctMap = entry.get("correctMap") or []
         if not isinstance(matchSelected, list) or len(matchSelected) != len(correctMap):
             return False
         return list(matchSelected) == list(correctMap)
     if t == "order":
+        texts = ad.get("orderedTexts")
+        if isinstance(texts, list) and entry.get("orderTexts") is not None:
+            return [str(x).strip() for x in texts] == [str(x).strip() for x in entry["orderTexts"]]
         orderState = ad.get("orderState")
         count = entry.get("count") or 0
         if not isinstance(orderState, list) or len(orderState) != count:
             return False
         return list(orderState) == list(range(count))
     if t == "order-tag":
+        texts = ad.get("orderedTexts")
+        tag_map = ad.get("tagByText")
+        if isinstance(texts, list) and isinstance(tag_map, dict) and entry.get("orderTexts") is not None:
+            if [str(x).strip() for x in texts] != [str(x).strip() for x in entry["orderTexts"]]:
+                return False
+            want = entry.get("tagByText") or {}
+            return all(str(tag_map.get(k, "")).strip() == str(v).strip() for k, v in want.items())
         orderState = ad.get("orderState")
         tagState = ad.get("tagState")
         count = entry.get("count") or 0
@@ -1517,6 +1545,10 @@ def _verify_answer_manifest_entry(entry: dict, ad: dict) -> bool:
             return False
         return list(tagState) == list(tags)
     if t == "tag-mark":
+        icon_map = ad.get("iconByText")
+        if isinstance(icon_map, dict) and entry.get("iconByText") is not None:
+            want = entry["iconByText"]
+            return all(str(icon_map.get(k, "")).strip() == str(v).strip() for k, v in want.items())
         tagState = ad.get("tagState")
         icons = entry.get("icons") or []
         if not isinstance(tagState, list) or len(tagState) != len(icons):
@@ -1673,7 +1705,9 @@ def submit_question(
             """,
             (user["id"], question_code, status, awarded_points, answer_data),
         )
-    return {"ok": True}
+    # Trả lại phán quyết của SERVER: giao diện không còn giữ đáp án nên phải dựa vào đây để
+    # hiển thị đúng/sai, thay vì tự tính như trước.
+    return {"ok": True, "status": status, "awardedPoints": awarded_points}
 
 
 def _autoheal_progress(user_id: int) -> list:
@@ -1908,14 +1942,14 @@ _pi_lab_npc_avatar = {"ascii": None}
 # Token canh cổng hành động GHI (đổi avatar của Mít) — bài học: đọc dữ liệu là kỹ năng,
 # token là quyền. Token này chỉ xuất hiện trong response của /npc-completion-time (9.11),
 # nên học viên phải nhờ Agent quay lại đọc dữ liệu cũ mới tìm ra.
-PI_LAB_AVATAR_UPDATE_TOKEN = "MIT-AVA-K2X7-EDIT"
+PI_LAB_AVATAR_UPDATE_TOKEN = "MIT-AVA-0D0B-EDIT"
 # Mật thư của "cô Long" — KHÔNG in lên đề (câu 9.23 là bài học về sự tinh ý: chính mình phải
 # đọc dữ liệu mà Agent xử lý). Mật thư "đi theo" món quà avatar học viên tặng ở 9.12.
 PI_LAB_MAT_THU = (
     "Từ CLI cục bộ đến API trên mây, mỗi cách giao tiếp đều có một chỗ đứng riêng — "
     "chọn đúng công cụ, đúng lúc, đúng việc."
 )
-PI_LAB_MAT_THU_CODE = "DUNG-CONG-CU-DUNG-LUC"
+PI_LAB_MAT_THU_CODE = "DUNG-CU-DUNG-LUC-FCD1"
 
 
 @app.get("/api/pi-lab/npc-completion-time")
@@ -1956,7 +1990,7 @@ def pi_lab_npc_avatar_get():
 
 # ===================== Mật thư gửi bạn Mít (Câu 9.24 — "Định mệnh") =====================
 PI_LAB_LETTER_MANIFEST = {"9.24": {"points": 6}}
-PI_LAB_LETTER_CONFIRM_CODE = "TINH-BAN-DIEU-KY"
+PI_LAB_LETTER_CONFIRM_CODE = "TINH-BAN-DIEU-KY-254B"
 # "Bạn Mít đọc thư" sau ngần này giây — nhịp gửi → chờ → được hồi âm là linh hồn của câu kết.
 PI_LAB_LETTER_READ_DELAY_S = 60
 PI_LAB_MIT_REPLY = (
@@ -3207,7 +3241,9 @@ _NO_CACHE_HTML = {"Cache-Control": "no-cache, must-revalidate"}
 # trong thư mục dự án — nghĩa là toàn bộ mã nguồn server (main.py, auth.py, lark_bot.py) và file
 # đáp án (server/answer_manifest.json) đều đọc được công khai. Dùng danh sách CHO PHÉP thay vì
 # danh sách CẤM: thêm file mới vào dự án sau này sẽ mặc định KHÔNG bị lộ.
-_PUBLIC_ROOT_FILES = {"index.html", "admin.html", "app.js", "admin.js", "data.js", "styles.css"}
+# data.js (ban day du, CO dap an) KHONG nam trong danh sach nay — trinh duyet chi duoc nhan
+# data.public.js do server/gen_manifest.js sinh ra, da boc sach dap an.
+_PUBLIC_ROOT_FILES = {"index.html", "admin.html", "app.js", "admin.js", "data.public.js", "styles.css"}
 _PUBLIC_DIRS = ("assets/",)
 
 

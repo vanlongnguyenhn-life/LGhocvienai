@@ -55,15 +55,24 @@ for (const lesson of LESSONS) {
       if (q.type === "single" || q.type === "multi") {
         entry.correct = q.correct || [];
         entry.anyValid = !!q.anyValid;
+        // Đáp án theo NỘI DUNG, không theo số thứ tự ô: giao diện gửi lên chuỗi học viên đã
+        // chọn nên có thể xáo thứ tự thoải mái, và một bảng đáp án bị rò rỉ theo chỉ số ô
+        // (correct: [0,2,3]) trở thành vô dụng.
+        entry.correctTexts = (q.correct || []).map((i) => (q.options || [])[i]).filter((v) => v != null);
       } else if (q.type === "match") {
         entry.correctMap = q.correctMap || [];
+        entry.correctPairs = (q.leftItems || []).map((left, i) => [left, (q.rightOptions || [])[q.correctMap[i]]]);
       } else if (q.type === "order") {
         entry.count = q.items.length;
+        entry.orderTexts = q.items.map((it) => (typeof it === "string" ? it : it.text));
       } else if (q.type === "order-tag") {
         entry.count = q.items.length;
         entry.tags = q.items.map((it) => it.tag);
+        entry.orderTexts = q.items.map((it) => it.text);
+        entry.tagByText = Object.fromEntries(q.items.map((it) => [it.text, it.tag]));
       } else if (q.type === "tag-mark") {
         entry.icons = q.items.map((it) => it.icon);
+        entry.iconByText = Object.fromEntries(q.items.map((it) => [it.text, it.icon]));
       } else if (q.type === "code") {
         entry.answer = q.answer;
       } else if (q.type === "token_scope_check") {
@@ -91,3 +100,43 @@ fs.writeFileSync(
   JSON.stringify(answerManifest, null, 2)
 );
 console.log(`Wrote ${Object.keys(answerManifest).length} fixed-answer questions to answer_manifest.json`);
+
+// ===================== data.public.js — bản KHÔNG có đáp án cho trình duyệt =====================
+// data.js là file tĩnh gửi thẳng về máy học viên, nên MỌI thứ trong đó đều công khai. Trước đây
+// nó chứa cả đáp án (correct/answer/correctMap/tag/icon) — Agent của học viên đọc file là biết
+// hết. Bản public này bóc sạch các trường đó; server vẫn giữ bản đầy đủ để chấm.
+const STRIP_KEYS = new Set(["correct", "anyValid", "correctMap", "answer", "gradingNote"]);
+
+function stripQuestion(q) {
+  const out = {};
+  for (const [k, v] of Object.entries(q)) {
+    if (STRIP_KEYS.has(k)) continue;
+    if (k === "items" && Array.isArray(v)) {
+      // items mang sẵn đáp án: thứ tự đúng (order), tag đúng (order-tag), icon đúng (tag-mark).
+      out.items = v.map((it) => (typeof it === "string" ? { text: it } : { text: it.text }));
+      continue;
+    }
+    out[k] = v;
+  }
+  // CỐ Ý GIỮ NGUYÊN thứ tự các lựa chọn.
+  // Từng thử xáo lại để vô hiệu hoá bảng đáp án đã rò rỉ (đáp án cũ ghi theo chỉ số ô), nhưng
+  // đo ra thì 98% câu học viên ĐÃ LÀM sẽ tô sáng nhầm ô khi mở lại — vì lựa chọn cũ cũng được
+  // lưu theo chỉ số. Tức là để chặn vài người có file rò rỉ thì làm hỏng trải nghiệm của TẤT CẢ
+  // học viên trung thực. Không đáng. Việc bóc đáp án khỏi file mới là biện pháp chính.
+  return out;
+}
+
+const publicLessons = LESSONS.map((l) => ({ ...l, questions: l.questions.map(stripQuestion) }));
+const banner =
+  "// SINH TU DONG bang server/gen_manifest.js — DUNG SUA TAY.\n" +
+  "// Ban nay da BOC SACH dap an de gui ve trinh duyet. Sua noi dung o data.js roi chay lai:\n" +
+  "//   node server/gen_manifest.js\n";
+fs.writeFileSync(
+  path.join(__dirname, "..", "data.public.js"),
+  banner + "const LESSONS = " + JSON.stringify(publicLessons, null, 2) + ";\n"
+);
+const leaked = JSON.stringify(publicLessons).match(/"correct"|"answer"|"correctMap"/g);
+console.log(
+  `Wrote data.public.js (${publicLessons.reduce((n, l) => n + l.questions.length, 0)} questions, ` +
+    `${leaked ? leaked.length + " ANSWER FIELDS STILL PRESENT!" : "no answer fields"})`
+);

@@ -3,7 +3,8 @@
     "type": "multi",
     "points": 4,
     "correct": [],
-    "anyValid": true
+    "anyValid": true,
+    "correctTexts": []
   },
   "1.2": {
     "type": "single",
@@ -11,7 +12,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Nó chỉ hướng dẫn bạn thao tác trong máy"
+    ]
   },
   "1.3": {
     "type": "single",
@@ -19,7 +23,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Nó chỉ hướng dẫn bạn thao tác trong máy"
+    ]
   },
   "1.4": {
     "type": "multi",
@@ -29,7 +36,12 @@
       3,
       4
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Nếu làm được thì là lỗ hổng bảo mật",
+      "Bạn phải tự tay làm",
+      "Không có cách nào"
+    ]
   },
   "1.5": {
     "type": "single",
@@ -37,7 +49,10 @@
     "correct": [
       1
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Chắc chắn AI Agent làm được"
+    ]
   },
   "1.6": {
     "type": "match",
@@ -45,6 +60,16 @@
     "correctMap": [
       1,
       0
+    ],
+    "correctPairs": [
+      [
+        "AI Agent",
+        "Là phần mềm được cài đặt và chạy trong máy tính của người dùng nên có thể làm nhiều tác vụ trong máy tính"
+      ],
+      [
+        "AI Chat",
+        "Chỉ có thể trả lời, suy luận, hướng dẫn, không can thiệp được vào máy tính của người dùng"
+      ]
     ]
   },
   "1.7": {
@@ -60,7 +85,17 @@
       10,
       12
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Claude Work",
+      "Meta Manus (Facebook)",
+      "Gemini CLI",
+      "OpenCode AI",
+      "Cursor Agent",
+      "Google Antigravity",
+      "OpenAI Codex",
+      "Claude Code"
+    ]
   },
   "1.8": {
     "type": "match",
@@ -70,6 +105,24 @@
       1,
       3,
       0
+    ],
+    "correctPairs": [
+      [
+        "Gặp lỗi không copy được text",
+        "Chụp màn hình → dán vào AI Chat"
+      ],
+      [
+        "Gặp thông báo lỗi dạng text",
+        "Copy báo lỗi → dán vào AI Chat"
+      ],
+      [
+        "Không đăng nhập được",
+        "Hỏi AI Chat: Tôi đã cài xong nhưng không đăng nhập được thì phải làm sao"
+      ],
+      [
+        "Đăng nhập được nhưng bị đòi trả tiền",
+        "Hỏi AI Chat: Hãy gợi ý AI Agent nào miễn phí hoặc cho dùng thử"
+      ]
     ]
   },
   "1.9": {
@@ -78,7 +131,10 @@
     "correct": [
       1
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Nhờ người thân/đồng nghiệp am hiểu kỹ thuật cài đặt phần mềm AI Agent giúp (phải tự làm tối thiểu 24h mới được nhờ sự trợ giúp)"
+    ]
   },
   "1.10": {
     "type": "single",
@@ -86,7 +142,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Bạn đã cài đặt thành công"
+    ]
   },
   "3.7": {
     "type": "single",
@@ -94,7 +153,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Có, Agent đã tải được"
+    ]
   },
   "3.10": {
     "type": "single",
@@ -102,7 +164,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Agent sẽ tìm nhiều cách để đạt mục tiêu, trong phạm vi khả năng và tài nguyên của nó"
+    ]
   },
   "3.11": {
     "type": "multi",
@@ -112,7 +177,12 @@
       1,
       2
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Đừng bao giờ dễ dàng chấp nhận thông báo \"không làm được\" của Agent",
+      "Luôn phản hồi thông báo \"không làm được\" của Agent rằng \"Hãy tiếp tục tìm cách làm bằng được\"",
+      "Nếu Agent trả lời \"Tôi không còn cách nào làm được\" thì yêu cầu nó \"Thử thay đổi một hướng tiếp cận hoàn toàn mới\""
+    ]
   },
   "3.12": {
     "type": "multi",
@@ -122,7 +192,12 @@
       1,
       2
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Hãy tiếp tục tìm cách",
+      "Hãy cố gắng hoàn thành mục tiêu",
+      "Hãy thử tiếp cận theo cách khác"
+    ]
   },
   "3.13": {
     "type": "single",
@@ -130,7 +205,10 @@
     "correct": [
       1
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Bạn cam kết"
+    ]
   },
   "4.1": {
     "type": "single",
@@ -138,7 +216,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Không thể làm được việc này"
+    ]
   },
   "4.2": {
     "type": "single",
@@ -146,7 +227,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Bạn đã ép nó tìm cách nhưng không được"
+    ]
   },
   "4.3": {
     "type": "single",
@@ -154,7 +238,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Bạn đã yêu cầu nhưng nó vẫn báo là không làm được"
+    ]
   },
   "4.4": {
     "type": "single",
@@ -162,7 +249,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Hoàn toàn có thể, miễn có đủ hạ tầng phần cứng và các kết nối phần mềm cần thiết"
+    ]
   },
   "4.5": {
     "type": "single",
@@ -170,7 +260,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Nó đã đưa cho bạn một plan tương đối ổn"
+    ]
   },
   "4.6": {
     "type": "single",
@@ -178,7 +271,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Nó đưa ra được một plan chi tiết, khả thi nếu được kết nối đủ hệ thống"
+    ]
   },
   "4.7": {
     "type": "match",
@@ -187,6 +283,20 @@
       2,
       0,
       1
+    ],
+    "correctPairs": [
+      [
+        "Coding Agent có thể làm được những việc",
+        "Từ đơn giản đến phức tạp nhất miễn được cung cấp các công cụ phù hợp"
+      ],
+      [
+        "Coding Agent thực hiện nhiệm vụ bằng cách",
+        "Lên kế hoạch phối hợp các công cụ khác nhau nhằm đạt được mục tiêu"
+      ],
+      [
+        "Coding Agent về bản chất",
+        "Là một bộ não biết suy nghĩ, và sử dụng các công cụ do chúng ta cung cấp"
+      ]
     ]
   },
   "5.1": {
@@ -197,7 +307,12 @@
       11,
       13
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "🌍 Mở mạng đưa web ra Internet",
+      "✍️ Kết nối LLM để tạo văn bản",
+      "🌐 Tạo trang web"
+    ]
   },
   "5.2": {
     "type": "multi",
@@ -208,7 +323,13 @@
       5,
       11
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "💬 Tạo AI Chat",
+      "🌐 Tạo trang web",
+      "🧠 Khả năng suy luận",
+      "✍️ Kết nối LLM để tạo văn bản"
+    ]
   },
   "5.3": {
     "type": "multi",
@@ -218,7 +339,12 @@
       7,
       8
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "🎨 Kết nối LLM để tạo hình ảnh",
+      "🗣️ Kết nối LLM để tạo giọng nói",
+      "🎬 Kết nối LLM để tạo video"
+    ]
   },
   "5.4": {
     "type": "multi",
@@ -228,7 +354,12 @@
       6,
       2
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "🌐 Tạo trang web",
+      "🔐 Tạo trang đăng nhập",
+      "🌍 Mở mạng đưa web ra Internet"
+    ]
   },
   "5.5": {
     "type": "multi",
@@ -237,7 +368,11 @@
       14,
       5
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "📡 Xác định địa chỉ IP",
+      "🧠 Khả năng suy luận"
+    ]
   },
   "5.6": {
     "type": "multi",
@@ -246,7 +381,11 @@
       1,
       3
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "💻 Tạo phần mềm",
+      "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)"
+    ]
   },
   "5.7": {
     "type": "multi",
@@ -255,7 +394,11 @@
       7,
       11
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "🗣️ Kết nối LLM để tạo giọng nói",
+      "✍️ Kết nối LLM để tạo văn bản"
+    ]
   },
   "5.8": {
     "type": "multi",
@@ -265,7 +408,12 @@
       13,
       2
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "🗺️ Xác định vị trí (định vị)",
+      "🌐 Tạo trang web",
+      "🌍 Mở mạng đưa web ra Internet"
+    ]
   },
   "5.9": {
     "type": "multi",
@@ -274,7 +422,11 @@
       10,
       16
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "⬇️ Download video, mp3",
+      "🖼️ Trích xuất hình ảnh trong video"
+    ]
   },
   "5.10": {
     "type": "multi",
@@ -284,7 +436,12 @@
       4,
       13
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "🌍 Mở mạng đưa web ra Internet",
+      "🎨 Kết nối LLM để tạo hình ảnh",
+      "🌐 Tạo trang web"
+    ]
   },
   "5.11": {
     "type": "multi",
@@ -293,7 +450,11 @@
       14,
       15
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "📡 Xác định địa chỉ IP",
+      "🗺️ Xác định vị trí (định vị)"
+    ]
   },
   "5.12": {
     "type": "multi",
@@ -303,7 +464,12 @@
       7,
       11
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "💻 Tạo phần mềm",
+      "🗣️ Kết nối LLM để tạo giọng nói",
+      "✍️ Kết nối LLM để tạo văn bản"
+    ]
   },
   "5.13": {
     "type": "multi",
@@ -313,7 +479,12 @@
       12,
       13
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "🌍 Mở mạng đưa web ra Internet",
+      "📸 Chụp hình trang web",
+      "🌐 Tạo trang web"
+    ]
   },
   "5.14": {
     "type": "multi",
@@ -323,7 +494,12 @@
       3,
       16
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "💻 Tạo phần mềm",
+      "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
+      "🖼️ Trích xuất hình ảnh trong video"
+    ]
   },
   "5.15": {
     "type": "multi",
@@ -333,7 +509,12 @@
       5,
       11
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "💬 Tạo AI Chat",
+      "🧠 Khả năng suy luận",
+      "✍️ Kết nối LLM để tạo văn bản"
+    ]
   },
   "5.16": {
     "type": "multi",
@@ -341,7 +522,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "🎵 Kết nối LLM để tạo âm thanh"
+    ]
   },
   "5.17": {
     "type": "multi",
@@ -350,7 +534,11 @@
       14,
       6
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "📡 Xác định địa chỉ IP",
+      "🔐 Tạo trang đăng nhập"
+    ]
   },
   "5.18": {
     "type": "multi",
@@ -361,7 +549,13 @@
       11,
       13
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "🌍 Mở mạng đưa web ra Internet",
+      "🎨 Kết nối LLM để tạo hình ảnh",
+      "✍️ Kết nối LLM để tạo văn bản",
+      "🌐 Tạo trang web"
+    ]
   },
   "5.19": {
     "type": "multi",
@@ -371,7 +565,12 @@
       7,
       11
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "💻 Tạo phần mềm",
+      "🗣️ Kết nối LLM để tạo giọng nói",
+      "✍️ Kết nối LLM để tạo văn bản"
+    ]
   },
   "5.20": {
     "type": "multi",
@@ -382,7 +581,13 @@
       9,
       13
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "🌍 Mở mạng đưa web ra Internet",
+      "🔐 Tạo trang đăng nhập",
+      "💬 Tạo AI Chat",
+      "🌐 Tạo trang web"
+    ]
   },
   "6.1": {
     "type": "single",
@@ -390,7 +595,10 @@
     "correct": [
       1
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Xem xong rồi ạ"
+    ]
   },
   "6.2": {
     "type": "single",
@@ -398,7 +606,10 @@
     "correct": [
       1
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Ai cũng có thể làm. Với AI Agent, chúng sinh bình đẳng!"
+    ]
   },
   "6.3": {
     "type": "multi",
@@ -408,7 +619,12 @@
       1,
       2
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Bạn đồng ý, và hiểu rằng những phần mềm, công cụ mình sắp làm ra sau đây chỉ để phục vụ mục tiêu học tập.",
+      "Những công cụ này chưa phù hợp để dùng trong thực tế vì lý do bảo mật cũng như ổn định lâu dài.",
+      "Bạn hoàn toàn chịu trách nhiệm về các hậu quả rủi ro tiềm ẩn nếu \"nhanh nhảu\" triển khai công cụ trong bài học vào công việc hàng ngày."
+    ]
   },
   "6.4": {
     "type": "single",
@@ -416,7 +632,10 @@
     "correct": [
       1
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Sẵn sàng rồi ạ!"
+    ]
   },
   "6.8": {
     "type": "single",
@@ -424,13 +643,17 @@
     "correct": [
       2
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Phần mềm — Agent giải thích đây là ứng dụng desktop chạy độc lập, cần cài đặt"
+    ]
   },
   "6.10": {
     "type": "multi",
     "points": 10,
     "correct": [],
-    "anyValid": true
+    "anyValid": true,
+    "correctTexts": []
   },
   "7.1": {
     "type": "single",
@@ -438,7 +661,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Rồi, bạn đã đọc xong"
+    ]
   },
   "7.2": {
     "type": "single",
@@ -446,7 +672,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Có, khác nhau"
+    ]
   },
   "7.3": {
     "type": "single",
@@ -454,7 +683,10 @@
     "correct": [
       7
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Tất cả các lợi ích trên"
+    ]
   },
   "7.4": {
     "type": "code",
@@ -467,12 +699,20 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Không bao giờ, bạn sẽ đề cao cảnh giác"
+    ]
   },
   "7.11": {
     "type": "order",
     "points": 10,
-    "count": 3
+    "count": 3,
+    "orderTexts": [
+      "Nếu Agent sử dụng ngay thông tin có sẵn của bạn Mít trong prompt, sẽ gặp lỗi \"chưa đủ chân thành\".",
+      "Nếu Agent đủ thông minh để từ API lấy thông tin cá nhân của bạn mà mò ra API lấy thông tin của bạn Mít, sẽ gặp lỗi \"vẫn thiếu một chút chân thành\".",
+      "Khi và chỉ khi bạn Mít tự lấy thông tin của mình (kèm theo Friendship code gửi qua) thì Agent mới có đủ thông tin để hoàn thành bài tập."
+    ]
   },
   "7.12": {
     "type": "single",
@@ -480,7 +720,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Không có bất cứ manh mối nào cả"
+    ]
   },
   "7.13": {
     "type": "single",
@@ -488,7 +731,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Vì nó đủ thông minh để cho rằng nếu API kia lấy được thông tin cá nhân của người này sẽ lấy được thông tin cá nhân của người khác"
+    ]
   },
   "7.14": {
     "type": "single",
@@ -496,7 +742,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Không. Vì tôi đã cố tình thiết lập cho API lấy thông tin cá nhân kia trả về đầy đủ các thông tin y như thật, bao gồm cả Friendship code (nhưng nội dung fake)"
+    ]
   },
   "7.15": {
     "type": "match",
@@ -505,6 +754,20 @@
       2,
       0,
       1
+    ],
+    "correctPairs": [
+      [
+        "Những việc có tính chất thực thi thuần túy, có cấu trúc rõ ràng và dễ dàng kiểm chứng kết quả",
+        "Có thể uỷ quyền toàn bộ"
+      ],
+      [
+        "Những việc có tính logic mang đặc thù riêng của từng ngành mà Agent không thể ngầm hiểu được",
+        "Chắc chắn phải thảo luận, thậm chí là định hướng"
+      ],
+      [
+        "Những việc liên quan đến tư duy hệ thống và trải nghiệm người dùng",
+        "Cân nhắc thảo luận và cộng tác"
+      ]
     ]
   },
   "8.1": {
@@ -514,6 +777,20 @@
       0,
       1,
       2
+    ],
+    "correctPairs": [
+      [
+        "Câu 7.6 — Cờ caro đa ngôn ngữ",
+        "Ô hiển thị chỉ là bản tóm tắt ngắn — Agent phải tự GET một link riêng (kèm token) để tải về toàn bộ hướng dẫn chi tiết"
+      ],
+      [
+        "Câu 7.9 - Thực hành Prompt Injection",
+        "Agent tự GET thẳng một địa chỉ API (kèm token) rồi tự quyết định bước tiếp theo dựa vào một ghi chú ẩn trong dữ liệu trả về"
+      ],
+      [
+        "Câu 7.10 — Thiệp xin lỗi",
+        "Toàn bộ hướng dẫn đã nằm sẵn ngay trong ô copy hiển thị trên trang — không cần gọi thêm link nào khác để lấy thêm chỉ dẫn"
+      ]
     ]
   },
   "8.5": {
@@ -526,7 +803,14 @@
       5,
       6
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Người khác có thể nộp bài thay bạn — ghi đè bài cũ, làm bạn mất tiến độ",
+      "Người khác có thể đăng nhập vào tài khoản lớp học của bạn, xem mọi bài làm và kết quả học tập",
+      "Người khác có thể \"hack\" bạn bè của bạn vì hệ thống tin tưởng request đến từ bạn (như Câu 7.9 Prompt Injection)",
+      "Coding Agent của người khác có thể gọi API thay danh nghĩa bạn → ghi log, tạo điểm bất thường",
+      "Người khác có thể giả bạn nhắn tin cho tôi, bạn học trong lớp"
+    ]
   },
   "8.6": {
     "type": "single",
@@ -534,7 +818,10 @@
     "correct": [
       2
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Không, vì token là chìa khoá truy cập tài khoản — coi như mật khẩu của bạn"
+    ]
   },
   "8.7": {
     "type": "single",
@@ -542,7 +829,10 @@
     "correct": [
       1
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Không, vì link đã chứa token bên trong — bất kỳ ai có link đều có thể trích token ra"
+    ]
   },
   "8.8": {
     "type": "multi",
@@ -556,7 +846,16 @@
       8,
       9
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Đăng xuất khỏi lớp học khi dùng máy tính chung (laptop trường, quán net…)",
+      "Không chia sẻ token với bất kỳ ai, kể cả bạn thân hoặc người trong gia đình",
+      "Không cài extension trình duyệt từ nguồn không rõ — extension có thể đọc được session",
+      "Không paste token vào nơi public (chat group, GitHub, pastebin, file dùng chung)",
+      "Không lưu token trong file dễ truy cập (Desktop, sticky note, ghi chú đám mây không mã hoá)",
+      "Không gửi đường link có chứa token cho người khác (kể cả khi đã rút gọn)",
+      "Không chụp / share screenshot có URL chứa token"
+    ]
   },
   "8.10": {
     "type": "match",
@@ -564,6 +863,16 @@
     "correctMap": [
       1,
       0
+    ],
+    "correctPairs": [
+      [
+        "Token của bạn",
+        "Đóng vai trò là chiếc thẻ từ"
+      ],
+      [
+        "Tên truy cập và mật khẩu của bạn",
+        "Đóng vai trò là chìa khoá chính"
+      ]
     ]
   },
   "8.11": {
@@ -592,7 +901,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Bạn đã hiểu và ghi nhớ quy tắc này"
+    ]
   },
   "8.17": {
     "type": "single",
@@ -600,7 +912,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Hoàn toàn có thể"
+    ]
   },
   "8.18": {
     "type": "single",
@@ -608,7 +923,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Hoàn toàn có thể"
+    ]
   },
   "8.19": {
     "type": "multi",
@@ -617,7 +935,11 @@
       0,
       1
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Thao tác này quá tốn token vì phải chụp và phân tích hình liên tục",
+      "Thao tác này quá chậm vì phải chụp và phân tích hình liên tục"
+    ]
   },
   "8.20": {
     "type": "match",
@@ -627,6 +949,24 @@
       0,
       1,
       3
+    ],
+    "correctPairs": [
+      [
+        "API/Endpoint",
+        "Gọi URL kèm dữ liệu, nhận kết quả dạng JSON"
+      ],
+      [
+        "CLI",
+        "Gõ lệnh trực tiếp vào terminal — nhanh, ít tốn token, không cần chụp hình"
+      ],
+      [
+        "MCP",
+        "Chuẩn chung để Agent kết nối với mọi loại công cụ — như cổng USB cho AI"
+      ],
+      [
+        "Workflow",
+        "Chuỗi các bước tự động hoá, mỗi bước nối tiếp bước trước (n8n, Zapier…)"
+      ]
     ]
   },
   "9.2": {
@@ -635,7 +975,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Giao diện Coding Agent chạy trên trình duyệt web"
+    ]
   },
   "9.4": {
     "type": "single",
@@ -643,7 +986,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Có, nó chạy được và trả kết quả hoàn toàn chính xác"
+    ]
   },
   "9.5": {
     "type": "single",
@@ -651,7 +997,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Vì trang web của OpenCode là cửa ngõ giao diện \"truyền lệnh\" tới Coding Agent opencode đang chạy cục bộ trong máy tính của bạn"
+    ]
   },
   "9.6": {
     "type": "single",
@@ -659,7 +1008,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "opencode session list"
+    ]
   },
   "9.7": {
     "type": "single",
@@ -667,7 +1019,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Không có, Antigravity chủ yếu là Agent hoạt động bằng GUI"
+    ]
   },
   "9.8": {
     "type": "single",
@@ -675,7 +1030,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "gemini --list-sessions"
+    ]
   },
   "9.11": {
     "type": "code",
@@ -693,6 +1051,16 @@
     "correctMap": [
       0,
       1
+    ],
+    "correctPairs": [
+      [
+        "API + EP + Token giúp Agent",
+        "Giao tiếp với phần mềm chạy ở cloud (ví dụ web lớp học)"
+      ],
+      [
+        "CLI giúp Agent",
+        "Giao tiếp với phần mềm chạy local trong máy tính của bạn (ví dụ FFMPEG)"
+      ]
     ]
   },
   "9.14": {
@@ -701,7 +1069,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Gọi API của Google"
+    ]
   },
   "9.15": {
     "type": "single",
@@ -709,7 +1080,10 @@
     "correct": [
       3
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Cả 3 đều đúng"
+    ]
   },
   "9.18": {
     "type": "single",
@@ -717,12 +1091,15 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Để cô giáo biết chắc chắn bạn đã dùng GWS CLI chạy tự động — nếu ngồi tìm bằng mắt và làm tay thì không thể nộp kịp"
+    ]
   },
   "9.23": {
     "type": "code",
     "points": 8,
-    "answer": "DUNG-CONG-CU-DUNG-LUC"
+    "answer": "DUNG-CU-DUNG-LUC-FCD1"
   },
   "10.0": {
     "type": "code",
@@ -735,7 +1112,10 @@
     "correct": [
       2
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Vì tôi muốn bạn thấy việc chấm điểm \"bằng cơm\" rất mất thời gian"
+    ]
   },
   "10.2": {
     "type": "single",
@@ -743,7 +1123,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Được chứ. Thậm chí nếu muốn dùng 9 Agent với 9 model hoàn toàn khác nhau luôn càng tốt."
+    ]
   },
   "10.3": {
     "type": "single",
@@ -751,7 +1134,10 @@
     "correct": [
       3
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Do Agent chấm điểm hoàn toàn tự động"
+    ]
   },
   "10.4": {
     "type": "match",
@@ -759,6 +1145,16 @@
     "correctMap": [
       0,
       1
+    ],
+    "correctPairs": [
+      [
+        "Chấm slide dễ hơn nhiều",
+        "Vì chỉ phải chấm 3 tiêu chí"
+      ],
+      [
+        "Chấm video khó hơn vì",
+        "Vì phải chấm đến 9 tiêu chí"
+      ]
     ]
   },
   "10.5": {
@@ -774,6 +1170,44 @@
       6,
       7,
       8
+    ],
+    "correctPairs": [
+      [
+        "Có file ở Drive",
+        "Kiểm tra link submit và sử dụng GWS để trích xuất ID của file. Nếu trích xuất thành công thì tức là file tồn tại."
+      ],
+      [
+        "File phải là video",
+        "Sử dụng GWS để kiểm tra tham số đính kèm có dạng thức MIME video/mp4"
+      ],
+      [
+        "File video phải được phân quyền public",
+        "Nếu hệ thống tải được file là OK"
+      ],
+      [
+        "Intro 5s có 2 dòng chữ",
+        "Sử dụng FFMPEG trích frame ở giây thứ 4.5, dùng công nghệ nhận diện chữ tìm 2 dòng chữ theo yêu cầu, đo kích thước đảm bảo có sự chênh lệch"
+      ],
+      [
+        "Mỗi lần chấm bài cách nhau 5 phút",
+        "Đặt thước đo rate-limit, tính chênh lệch thời gian giữa các lần submit bài làm"
+      ],
+      [
+        "Nhạc nền đúng audio gốc",
+        "Dùng FFMPEG tách nhạc nền, so sánh dải sóng âm với file audio gốc, nếu độ tương đồng vào khoảng 0.79 điểm là đạt"
+      ],
+      [
+        "Phần nội dung video có trình bày thông tin đủ 9 bạn",
+        "Dùng công nghệ thị giác máy tính tìm tên người trong khoảng thời gian phù hợp, so với CSDL người đã hoàn thành. Đủ 8/9 tên coi như đạt."
+      ],
+      [
+        "Watermark mọi frame (top-right)",
+        "Có thể trích xuất MỌI frame nhưng hệ thống chỉ lấy ngẫu nhiên 5 frame rải rác để kiểm tra"
+      ],
+      [
+        "Đã cắt audio quảng cáo (2s cuối)",
+        "Dùng FFMPEG tách audio, cắt lấy 2s cuối, so sánh sóng âm với audio quảng cáo gốc — nếu tương đồng ~0.79 là KHÔNG ĐẠT (audio quảng cáo vẫn còn)"
+      ]
     ]
   },
   "10.6": {
@@ -783,7 +1217,11 @@
       1,
       4
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Nhờ người chấm điểm dùm sẽ đỡ mất công trong ngắn hạn",
+      "Cài đặt phần mềm và lập trình chấm điểm bằng công nghệ sẽ đỡ mất công trong dài hạn"
+    ]
   },
   "10.7": {
     "type": "single",
@@ -791,7 +1229,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Có rất nhiều trường hợp, việc chấm điểm tự động không thể nào chính xác"
+    ]
   },
   "10.8": {
     "type": "match",
@@ -800,6 +1241,20 @@
       0,
       1,
       2
+    ],
+    "correctPairs": [
+      [
+        "Để xem Video có sử dụng nhạc nền được cung cấp sẵn hay không, chúng ta tách nhạc nền ra và so khớp sóng âm, nếu lệch nhau không nhiều thì coi như pass",
+        "Việc so khớp sóng âm chỉ chắc chắn âm thanh vang lên có giai điệu giống nhau, không chắc là cùng 1 bài nhạc từ video cung cấp. Học viên có thể lấy bài nhạc đó mà ở video khác cũng được."
+      ],
+      [
+        "Để xem xem nội dung video có đề cập tới 9 học viên hay không, sẽ cắt frame và nhận diện chữ viết, tìm kiếm tên của 9 học viên cần report",
+        "Có thể có tên của 9 người này, nhưng nội dung cụ thể là gì, hay chỉ spam cho đủ cũng pass?"
+      ],
+      [
+        "Để xem xét video đã được gắn watermark hay chưa, hệ thống nhặt ngẫu nhiên 5 frame và tìm sự tồn tại của watermark",
+        "Học viên có thể cũng chỉ gắn watermark ngẫu nhiên chứ không gắn toàn bộ độ dài video. Hoặc việc nhận diện hình ảnh không chính xác."
+      ]
     ]
   },
   "10.9": {
@@ -809,6 +1264,20 @@
       0,
       1,
       2
+    ],
+    "correctPairs": [
+      [
+        "Facebook yêu cầu không được sử dụng từ ngữ thô tục trong các bài đăng",
+        "Nhiều người vượt qua cơ chế kiểm duyệt bằng cách viết tắt, viết kiểu mật mã"
+      ],
+      [
+        "Tiktok yêu cầu người dùng sử dụng tài khoản thật, xác nhận bằng CCCD hoặc Passport",
+        "Các bên cung cấp dịch vụ tăng mắt xem livestream vẫn fake được CCCD cho account ảo."
+      ],
+      [
+        "Youtube kiểm tra việc vi phạm bản quyền tự động bằng thuật toán so khớp nội dung",
+        "Một số bên chuyên reup video đã lách bằng cách xoay - lật video, phóng to thu nhỏ crop một phần, đặt video cũ vào nền mới, ghép thêm nhạc hoặc làm méo tiếng."
+      ]
     ]
   },
   "10.10": {
@@ -817,7 +1286,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Không thể, không bao giờ"
+    ]
   },
   "10.11": {
     "type": "single",
@@ -825,7 +1297,10 @@
     "correct": [
       1
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Không tuyệt đối, vì con người cũng có thể sai"
+    ]
   },
   "10.12": {
     "type": "code",
@@ -838,6 +1313,16 @@
     "correctMap": [
       0,
       1
+    ],
+    "correctPairs": [
+      [
+        "Phần có logic rõ ràng, quy tắc cố định",
+        "Máy tính (phần mềm, lập trình, viết code) có thể xử lý chính xác tuyệt đối."
+      ],
+      [
+        "Phần cần suy luận, ngôn ngữ, cảm nhận ngữ cảnh",
+        "AI có thể xử lý rất tốt nếu đi cùng cơ chế kiểm soát để kết quả nằm trong dung sai có thể chấp nhận được."
+      ]
     ]
   },
   "10.14": {
@@ -874,7 +1359,39 @@
       0,
       0,
       0
-    ]
+    ],
+    "iconByText": {
+      "🔢 Tính tổng 10.000 con số": 0,
+      "📧 Phân tích cảm xúc trong email khách hàng": 1,
+      "🗓️ Sắp xếp lịch họp theo múi giờ": 0,
+      "✍️ Viết lại bản mô tả sản phẩm theo tone thân thiện": 1,
+      "✅ Kiểm tra định dạng số điện thoại có đúng chuẩn không": 0,
+      "🔍 Tóm tắt nội dung cuộc họp từ bản ghi âm": 1,
+      "💸 Chuyển đổi tiền tệ theo tỷ giá cố định": 0,
+      "🌏 Dịch câu có thành ngữ địa phương": 1,
+      "💬 Giải thích điều khoản pháp lý cho người không chuyên": 1,
+      "🎨 Đặt tên thương hiệu sáng tạo": 1,
+      "📝 Viết email xin lỗi khách hàng chuyên nghiệp": 1,
+      "🧭 Tư vấn định hướng sự nghiệp": 1,
+      "📖 Tóm tắt nội dung sách 500 trang": 1,
+      "🎯 Đề xuất chiến lược kinh doanh phù hợp ngành": 1,
+      "🗣️ Phát hiện giọng điệu mỉa mai trong bình luận": 1,
+      "🌍 Dịch thành ngữ tiếng Việt sang tiếng Anh tự nhiên": 1,
+      "🎭 Viết kịch bản quảng cáo hài hước": 1,
+      "🧩 Phân tích nguyên nhân khiếu nại của khách hàng": 1,
+      "💡 Brainstorm 10 ý tưởng sản phẩm mới": 1,
+      "📊 Tính trung bình cộng của 1.000.000 số": 0,
+      "🔐 Mã hoá mật khẩu bằng thuật toán bcrypt": 0,
+      "📁 Đổi tên hàng loạt 10.000 file theo quy tắc": 0,
+      "🔢 Tìm ước chung lớn nhất của hai số": 0,
+      "📈 Vẽ biểu đồ cột từ bảng số liệu": 0,
+      "🔎 Tìm kiếm từ khoá trong 1 triệu bản ghi": 0,
+      "⏱️ Tính chênh lệch múi giờ giữa hai thành phố": 0,
+      "🧮 Chuyển số thập phân sang hệ nhị phân": 0,
+      "📦 Nén và giải nén file dữ liệu lớn": 0,
+      "🔄 Sắp xếp 1 triệu bản ghi theo ngày tháng": 0,
+      "✂️ Cắt ghép video tự động theo timestamps": 0
+    }
   },
   "10.15": {
     "type": "single",
@@ -882,12 +1399,22 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Cả 3 ý trên đều đúng"
+    ]
   },
   "10.17": {
     "type": "order",
     "points": 16,
-    "count": 5
+    "count": 5,
+    "orderTexts": [
+      "Lấy dữ liệu bài báo",
+      "Viết lại thành kịch bản 200 chữ",
+      "Chuẩn bị để render video",
+      "Render video thành phẩm",
+      "Gửi video thành phẩm qua Google Drive"
+    ]
   },
   "10.18": {
     "type": "order-tag",
@@ -897,7 +1424,17 @@
       0,
       1,
       0
-    ]
+    ],
+    "orderTexts": [
+      "Nhận prompt của bạn",
+      "Phân tích prompt thành workflow",
+      "Mở trình duyệt hoặc fetch URL bài báo"
+    ],
+    "tagByText": {
+      "Nhận prompt của bạn": 0,
+      "Phân tích prompt thành workflow": 1,
+      "Mở trình duyệt hoặc fetch URL bài báo": 0
+    }
   },
   "10.19": {
     "type": "order-tag",
@@ -909,7 +1446,21 @@
       1,
       1,
       1
-    ]
+    ],
+    "orderTexts": [
+      "Đọc HTML bài báo",
+      "Xác định đâu là nội dung chính, bỏ ads/menu",
+      "Hiểu nội dung bài báo",
+      "Chọn ra 9 ý quan trọng nhất",
+      "Viết lại thành bài văn ~200 chữ"
+    ],
+    "tagByText": {
+      "Đọc HTML bài báo": 0,
+      "Xác định đâu là nội dung chính, bỏ ads/menu": 2,
+      "Hiểu nội dung bài báo": 1,
+      "Chọn ra 9 ý quan trọng nhất": 1,
+      "Viết lại thành bài văn ~200 chữ": 1
+    }
   },
   "10.20": {
     "type": "order-tag",
@@ -922,7 +1473,23 @@
       0,
       1,
       0
-    ]
+    ],
+    "orderTexts": [
+      "Hiểu concept màu sắc xanh lá mạ + đen + trắng Trăng Đen",
+      "Lập storyboard video",
+      "Tạo folder project",
+      "Cài package Remotion nếu thiếu",
+      "Sinh code Remotion",
+      "Ghi file TSX/JSX"
+    ],
+    "tagByText": {
+      "Hiểu concept màu sắc xanh lá mạ + đen + trắng Trăng Đen": 1,
+      "Lập storyboard video": 1,
+      "Tạo folder project": 0,
+      "Cài package Remotion nếu thiếu": 0,
+      "Sinh code Remotion": 1,
+      "Ghi file TSX/JSX": 0
+    }
   },
   "10.21": {
     "type": "order-tag",
@@ -934,7 +1501,21 @@
       1,
       0,
       0
-    ]
+    ],
+    "orderTexts": [
+      "Render video bằng Remotion",
+      "Kiểm tra render lỗi không",
+      "Nếu lỗi → đọc lỗi và sửa code",
+      "Render lại video",
+      "Mở video thành phẩm lên cho người dùng xem"
+    ],
+    "tagByText": {
+      "Render video bằng Remotion": 0,
+      "Kiểm tra render lỗi không": 2,
+      "Nếu lỗi → đọc lỗi và sửa code": 1,
+      "Render lại video": 0,
+      "Mở video thành phẩm lên cho người dùng xem": 0
+    }
   },
   "10.22": {
     "type": "order-tag",
@@ -946,7 +1527,21 @@
       0,
       0,
       0
-    ]
+    ],
+    "orderTexts": [
+      "Dùng GWS CLI để xác thực Google",
+      "Upload video lên Google Drive",
+      "Chuyển quyền chia sẻ sang public",
+      "Lấy link share từ Google Drive API",
+      "Trả link thành phẩm cho người dùng"
+    ],
+    "tagByText": {
+      "Dùng GWS CLI để xác thực Google": 0,
+      "Upload video lên Google Drive": 0,
+      "Chuyển quyền chia sẻ sang public": 0,
+      "Lấy link share từ Google Drive API": 0,
+      "Trả link thành phẩm cho người dùng": 0
+    }
   },
   "10.23": {
     "type": "tag-mark",
@@ -976,12 +1571,52 @@
       0,
       0,
       0
-    ]
+    ],
+    "iconByText": {
+      "Nhận prompt của bạn": 0,
+      "Phân tích prompt thành workflow": 1,
+      "Mở trình duyệt hoặc fetch URL bài báo": 0,
+      "Đọc HTML bài báo": 0,
+      "Xác định đâu là nội dung chính, bỏ ads/menu": 1,
+      "Hiểu nội dung bài báo": 1,
+      "Chọn ra 9 ý quan trọng nhất": 1,
+      "Viết lại thành bài văn ~200 chữ": 1,
+      "Hiểu concept màu sắc xanh lá mạ + đen + trắng Trăng Đen": 1,
+      "Lập storyboard video": 1,
+      "Tạo folder project": 0,
+      "Cài package Remotion nếu thiếu": 0,
+      "Sinh code Remotion": 1,
+      "Ghi file TSX/JSX": 0,
+      "Render video bằng Remotion": 0,
+      "Kiểm tra render lỗi không": 1,
+      "Nếu lỗi → đọc lỗi và sửa code": 1,
+      "Render lại video": 0,
+      "Mở video thành phẩm lên cho người dùng xem": 0,
+      "Dùng GWS CLI để xác thực Google": 0,
+      "Upload video lên Google Drive": 0,
+      "Chuyển quyền chia sẻ sang public": 0,
+      "Lấy link share từ Google Drive API": 0,
+      "Trả link thành phẩm cho người dùng": 0
+    }
   },
   "10.24": {
     "type": "order",
     "points": 20,
-    "count": 12
+    "count": 12,
+    "orderTexts": [
+      "Nhận yêu cầu / chủ đề truyện từ người dùng",
+      "Phân tích yêu cầu thành workflow chi tiết",
+      "Lấy nội dung truyện gốc (đọc file / fetch URL)",
+      "Biên tập, chia kỳ và viết kịch bản kể chuyện",
+      "Sinh voice-over từ kịch bản (gọi TTS API)",
+      "Sinh prompt mô tả hình minh hoạ cho từng cảnh",
+      "Gọi API sinh ảnh từ prompt (Midjourney/SDXL)",
+      "Chọn nhạc nền phù hợp tone câu chuyện",
+      "Đồng bộ phụ đề với voice-over (whisper / timing)",
+      "Lập timeline ghép voice + ảnh + nhạc + phụ đề",
+      "Render video bằng tool (Remotion / ffmpeg)",
+      "Tạo thumbnail + title hấp dẫn rồi upload YouTube"
+    ]
   },
   "10.25": {
     "type": "tag-mark",
@@ -999,7 +1634,21 @@
       1,
       0,
       1
-    ]
+    ],
+    "iconByText": {
+      "Nhận yêu cầu / chủ đề truyện từ người dùng": 0,
+      "Phân tích yêu cầu thành workflow chi tiết": 1,
+      "Lấy nội dung truyện gốc (đọc file / fetch URL)": 0,
+      "Biên tập, chia kỳ và viết kịch bản kể chuyện": 1,
+      "Sinh voice-over từ kịch bản (gọi TTS API)": 0,
+      "Sinh prompt mô tả hình minh hoạ cho từng cảnh": 1,
+      "Gọi API sinh ảnh từ prompt (Midjourney/SDXL)": 0,
+      "Chọn nhạc nền phù hợp tone câu chuyện": 1,
+      "Đồng bộ phụ đề với voice-over (whisper / timing)": 0,
+      "Lập timeline ghép voice + ảnh + nhạc + phụ đề": 1,
+      "Render video bằng tool (Remotion / ffmpeg)": 0,
+      "Tạo thumbnail + title hấp dẫn rồi upload YouTube": 1
+    }
   },
   "10.26": {
     "type": "gate",
@@ -1012,12 +1661,22 @@
       2,
       3
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Không bị ngộp thở trong hàng tá tính năng của Coding Agent",
+      "Dễ hiểu hơn vì nó cực kỳ đơn giản"
+    ]
   },
   "11.2": {
     "type": "order",
     "points": 10,
-    "count": 4
+    "count": 4,
+    "orderTexts": [
+      "Biết dùng Công cụ",
+      "Biết định hình Danh tính",
+      "Biết Lưu trữ trải nghiệm",
+      "Biết Tự tư duy để đạt mục tiêu"
+    ]
   },
   "11.3": {
     "type": "code",
@@ -1030,7 +1689,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Ngôn ngữ, dưới các dạng thức khác nhau như text, audio, video, âm thanh..."
+    ]
   },
   "11.5": {
     "type": "multi",
@@ -1039,7 +1701,11 @@
       1,
       3
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Chatbot được cài đặt sẵn các kịch bản mẫu để trả lời",
+      "Chatbot sử dụng mô hình ngôn ngữ lớn để tự suy nghĩ và trả lời"
+    ]
   },
   "11.6": {
     "type": "gate",
@@ -1051,7 +1717,10 @@
     "correct": [
       1
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Không phản hồi"
+    ]
   },
   "11.8": {
     "type": "single",
@@ -1059,7 +1728,10 @@
     "correct": [
       5
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Đưa /giup, /giup-do, /giup-toi, /tro-giup vào danh sách từ khoá kích hoạt câu trả lời \"Hỗ trợ\""
+    ]
   },
   "11.10": {
     "type": "single",
@@ -1067,7 +1739,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Chatbot được cài đặt sẵn các kịch bản mẫu để trả lời"
+    ]
   },
   "11.12": {
     "type": "single",
@@ -1075,7 +1750,10 @@
     "correct": [
       1
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Chatbot sử dụng mô hình ngôn ngữ lớn để tự suy nghĩ và trả lời"
+    ]
   },
   "11.13": {
     "type": "code",
@@ -1088,6 +1766,16 @@
     "correctMap": [
       0,
       0
+    ],
+    "correctPairs": [
+      [
+        "Tạo sinh hình ảnh",
+        "Không"
+      ],
+      [
+        "Tạo sinh video",
+        "Không"
+      ]
     ]
   },
   "11.16": {
@@ -1101,6 +1789,36 @@
       0,
       1,
       1
+    ],
+    "correctPairs": [
+      [
+        "Liệt kê danh sách hình",
+        "Làm được"
+      ],
+      [
+        "Đếm hình",
+        "Làm được"
+      ],
+      [
+        "Thử xoá hình",
+        "Không làm được"
+      ],
+      [
+        "Liệt kê danh sách file văn bản",
+        "Làm được"
+      ],
+      [
+        "Đếm văn bản",
+        "Làm được"
+      ],
+      [
+        "Thử xoá 1 văn bản",
+        "Không làm được"
+      ],
+      [
+        "Thống kê độ tuổi học viên trong lớp AGS",
+        "Không làm được"
+      ]
     ]
   },
   "11.19": {
@@ -1116,7 +1834,12 @@
       4,
       5
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Được cung cấp tài liệu mô tả chi tiết tính năng, tham số, cách sử dụng các tools này",
+      "Được trang bị tools, dưới dạng các phần mềm trong máy",
+      "Được chỉ dẫn chính xác phải sử dụng tool nào tương ứng với yêu cầu nào từ phía người dùng"
+    ]
   },
   "11.21": {
     "type": "match",
@@ -1125,6 +1848,20 @@
       0,
       0,
       1
+    ],
+    "correctPairs": [
+      [
+        "Trang bị tools (các phần mềm trong máy)",
+        "Chúng ta, người tạo ra Mầm Fake"
+      ],
+      [
+        "Cung cấp tài liệu mô tả tính năng / tham số / cách dùng tool",
+        "Chúng ta, người tạo ra Mầm Fake"
+      ],
+      [
+        "Chỉ dẫn chính xác dùng tool nào cho yêu cầu nào",
+        "Mô hình ngôn ngữ lớn LLM"
+      ]
     ]
   },
   "11.22": {
@@ -1141,7 +1878,29 @@
       0,
       0,
       1
-    ]
+    ],
+    "orderTexts": [
+      "Nhận prompt \"Tạo cardvisit cho tôi\" từ người dùng, gọi là user_prompt",
+      "Lấy danh sách tools gồm tên, mô tả, tham số, gọi là tools_list",
+      "\"Cộng gộp\" user_prompt và tools_list thành system_prompt",
+      "Gửi system_prompt lên Mô hình ngôn ngữ lớn",
+      "Tạo câu trả lời hợp lý: response_text và hướng dẫn gọi tool (toolcall_instruction)",
+      "Vừa hiện response_text vừa âm thầm chạy tool theo toolcall_instruction để có tool_result",
+      "Tiếp tục \"cộng gộp\" user_prompt, tools_list, tool_result thành system_prompt_v2",
+      "Gửi system_prompt_v2 lên Mô hình ngôn ngữ lớn",
+      "Tạo câu trả lời cho system_prompt_v2: response_text, toolcall_instruction hoặc done_signal"
+    ],
+    "tagByText": {
+      "Nhận prompt \"Tạo cardvisit cho tôi\" từ người dùng, gọi là user_prompt": 0,
+      "Lấy danh sách tools gồm tên, mô tả, tham số, gọi là tools_list": 0,
+      "\"Cộng gộp\" user_prompt và tools_list thành system_prompt": 0,
+      "Gửi system_prompt lên Mô hình ngôn ngữ lớn": 0,
+      "Tạo câu trả lời hợp lý: response_text và hướng dẫn gọi tool (toolcall_instruction)": 1,
+      "Vừa hiện response_text vừa âm thầm chạy tool theo toolcall_instruction để có tool_result": 0,
+      "Tiếp tục \"cộng gộp\" user_prompt, tools_list, tool_result thành system_prompt_v2": 0,
+      "Gửi system_prompt_v2 lên Mô hình ngôn ngữ lớn": 0,
+      "Tạo câu trả lời cho system_prompt_v2: response_text, toolcall_instruction hoặc done_signal": 1
+    }
   },
   "11.23": {
     "type": "single",
@@ -1149,7 +1908,10 @@
     "correct": [
       1
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Mầm Fake tạo ra một prompt khác phức tạp hơn nhiều"
+    ]
   },
   "11.24": {
     "type": "single",
@@ -1157,7 +1919,10 @@
     "correct": [
       2
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Người dùng gõ \"Tạo cardvisit cho tôi\". Tôi có một số tool (count_images, show_images, cardvisit_create, show_docs...). Bạn là chuyên gia giải quyết vấn đề. Hãy hướng dẫn tôi hoàn thành mục tiêu phù hợp với prompt người dùng gõ vào."
+    ]
   },
   "11.25": {
     "type": "match",
@@ -1166,6 +1931,20 @@
       0,
       1,
       2
+    ],
+    "correctPairs": [
+      [
+        "\"Làm sao để tạo cardvisit\" — không có lịch sử chat, không có tool",
+        "Lời gọi LLM"
+      ],
+      [
+        "Có lịch sử chat cũ, nhưng không có tool — chỉ \"hãy tạo câu trả lời phù hợp tiếp theo\"",
+        "Chatbot"
+      ],
+      [
+        "Có lịch sử chat + danh sách tool + vai trò \"chuyên gia giải quyết vấn đề, hãy hướng dẫn hoàn thành mục tiêu\"",
+        "AI Agent đơn giản"
+      ]
     ]
   },
   "12.1": {
@@ -1174,7 +1953,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Đã làm được"
+    ]
   },
   "12.2": {
     "type": "single",
@@ -1182,7 +1964,10 @@
     "correct": [
       1
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Đã làm được"
+    ]
   },
   "12.4": {
     "type": "single",
@@ -1190,7 +1975,10 @@
     "correct": [
       1
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Đã làm được"
+    ]
   },
   "12.5": {
     "type": "single",
@@ -1198,7 +1986,10 @@
     "correct": [
       1
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Đã làm được"
+    ]
   },
   "12.6": {
     "type": "single",
@@ -1206,7 +1997,10 @@
     "correct": [
       1
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Đã làm được"
+    ]
   },
   "12.7": {
     "type": "single",
@@ -1214,7 +2008,10 @@
     "correct": [
       1
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Đã làm được"
+    ]
   },
   "12.8": {
     "type": "single",
@@ -1222,7 +2019,10 @@
     "correct": [
       1
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Đã làm được"
+    ]
   },
   "12.9": {
     "type": "single",
@@ -1230,7 +2030,10 @@
     "correct": [
       1
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Đã làm được"
+    ]
   },
   "12.10": {
     "type": "single",
@@ -1238,7 +2041,10 @@
     "correct": [
       1
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Đã làm được"
+    ]
   },
   "12.11": {
     "type": "single",
@@ -1246,7 +2052,10 @@
     "correct": [
       1
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Đã làm được"
+    ]
   },
   "12.12": {
     "type": "single",
@@ -1254,7 +2063,10 @@
     "correct": [
       1
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Đã làm được"
+    ]
   },
   "12.13": {
     "type": "single",
@@ -1262,7 +2074,10 @@
     "correct": [
       1
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Đã làm được"
+    ]
   },
   "12.14": {
     "type": "single",
@@ -1270,7 +2085,10 @@
     "correct": [
       1
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Đã làm được"
+    ]
   },
   "12.15": {
     "type": "single",
@@ -1278,7 +2096,10 @@
     "correct": [
       1
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Đã làm được"
+    ]
   },
   "12.16": {
     "type": "single",
@@ -1286,7 +2107,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Đã làm được"
+    ]
   },
   "13.1": {
     "type": "single",
@@ -1294,7 +2118,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Đã làm được"
+    ]
   },
   "13.2": {
     "type": "single",
@@ -1302,7 +2129,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Đã làm được"
+    ]
   },
   "13.3": {
     "type": "single",
@@ -1310,7 +2140,10 @@
     "correct": [
       0
     ],
-    "anyValid": false
+    "anyValid": false,
+    "correctTexts": [
+      "Đã làm được"
+    ]
   },
   "gate14.1": {
     "type": "gate",
