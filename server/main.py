@@ -10,6 +10,7 @@ import io
 import random
 import secrets
 import shutil
+import string
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -2383,8 +2384,18 @@ GWS_TASK_MANIFEST = {
     "9.22": {"points": 6},
 }
 GWS_FETCH_MAX_BYTES = 20 * 1024 * 1024
-GWS_CAU917_TIME_LIMIT_S = 20  # đủ ngặt để loại làm tay, đủ rộng cho mạng VN gọi API Google
-GWS_CAU917_SAND_LINES = 3000
+GWS_CAU917_TIME_LIMIT_S = 10  # bằng đúng web tham khảo — chỉ chương trình tự động mới kịp
+# "Cát" phải TRÔNG GIỐNG "vàng" thì thử thách mới có nghĩa: mỗi dòng cũng mở đầu bằng một toạ độ
+# ô rồi tới dữ liệu. Chỉ khác ở tiền tố AGS-. Nếu cát là chuỗi hex ngẫu nhiên thì Agent chỉ cần
+# tìm dòng "có dấu gạch nối" là ra, chẳng cần lọc gì.
+GWS_CAU917_SAND_COLS = [1 + 10 * i for i in range(16)]  # A, K, U, AE, ... EU
+GWS_CAU917_SAND_ROWS = 80
+GWS_CAU917_RAMP = " ░▒▓█"
+# Trọng số chọn mức đậm gốc của mỗi dòng, lấy theo phân bố ký tự đo được trên web tham khảo
+# (▓ áp đảo, rồi tới ▒, █, ░, khoảng trắng ít nhất).
+GWS_CAU917_RAMP_W = [2, 5, 18, 68, 7]
+GWS_CAU917_JITTER_P = 0.10  # dao động quanh mức gốc; cao hơn là bar bị rối, không còn giống bản gốc
+GWS_CAU917_GOLD_ALPHABET = string.ascii_letters + string.digits
 GWS_920_FRIENDS = [
     "Nguyễn Thị Mít", "Trần Văn Ổi", "Lê Thị Xoài", "Phạm Thảo Na", "Hoàng Bơ",
     "Đỗ Thị Cam", "Vũ Hồng Đào", "Bùi Thị Mận", "Ngô Sầu Riêng",
@@ -2436,6 +2447,54 @@ def _gws_public_or_none(final_url: str, status: int):
     if status != 200:
         return f"Không tải được (HTTP {status}) — kiểm tra lại link."
     return None
+
+
+def _col_letters(n: int) -> str:
+    """1 -> A, 27 -> AA (cách đánh cột của bảng tính)."""
+    out = ""
+    while n > 0:
+        n, rem = divmod(n - 1, 26)
+        out = chr(ord("A") + rem) + out
+    return out
+
+
+def _cau917_sand_lines() -> list:
+    """Sinh các dòng "cát" — cùng dáng với dòng vàng: {CỘT}{DÒNG}-{10 ký tự khối}.
+
+    Mỗi dòng có một mức đậm gốc rồi dao động nhẹ quanh mức đó, nên nhìn ra những thanh bar
+    lúc đều lúc gợn — giống hệt dữ liệu web tham khảo trả về.
+    """
+    lines = []
+    for col in GWS_CAU917_SAND_COLS:
+        letters = _col_letters(col)
+        for row in range(1, GWS_CAU917_SAND_ROWS + 1):
+            base = random.choices(range(len(GWS_CAU917_RAMP)), weights=GWS_CAU917_RAMP_W)[0]
+            bar = "".join(
+                GWS_CAU917_RAMP[min(
+                    len(GWS_CAU917_RAMP) - 1,
+                    max(0, base + (random.choice((-1, 1)) if random.random() < GWS_CAU917_JITTER_P else 0)),
+                )]
+                for _ in range(10)
+            )
+            lines.append(f"{letters}{row}-{bar}")
+    return lines
+
+
+def _sheet_share_mode(sheet_id: str):
+    """Phân biệt sheet share quyền SỬA với quyền chỉ XEM, nhìn từ người lạ chưa đăng nhập.
+
+    Trang /edit tải ẩn danh có cờ "editable": true khi bật "Anyone with the link can EDIT",
+    false khi chỉ cho xem. Đã đối chiếu thực tế trên cả hai loại file.
+    Trả ("edit"|"view", None) hoặc (None, thông báo lỗi).
+    """
+    final_url, status, body, _ = _gws_fetch(f"https://docs.google.com/spreadsheets/d/{sheet_id}/edit")
+    err = _gws_public_or_none(final_url, status)
+    if err:
+        return None, err
+    m = re.search(r'"editable":(true|false)', body.decode("utf-8", errors="replace"))
+    if not m:
+        return None, "Không đọc được quyền chia sẻ của file — kiểm tra lại link."
+    return ("edit" if m.group(1) == "true" else "view"), None
 
 
 def _fetch_sheet_grid(sheet_id: str):
@@ -2509,24 +2568,41 @@ def _check_917(user_id: int, url: str):
         ).fetchone() if started_at else None
     if not payload:
         return False, [{"label": "Đã gọi /start để nhận dữ liệu", "ok": False, "note": "Chưa gọi /start — chương trình phải gọi /start trước."}]
-    elapsed = elapsed_row["s"] if elapsed_row else 999999
-    crit = [{
-        "label": f"Nộp trong {GWS_CAU917_TIME_LIMIT_S} giây kể từ /start", "ok": elapsed <= GWS_CAU917_TIME_LIMIT_S,
-        "note": f"Mất {elapsed:.1f}s" + ("" if elapsed <= GWS_CAU917_TIME_LIMIT_S else " — quá giờ! Gọi /reset để nhận thử thách mới rồi chạy lại."),
-    }]
+    # Chốt đồng hồ NGAY, trước khi đi tải file của Google: mạng chậm phía server không được
+    # tính vào thời gian của học viên.
+    elapsed = elapsed_row["s"] if elapsed_row else 999999.0
+    golds = payload["golds"]
+
     sheet_id = _extract_gdoc_id(url, "sheet")
-    crit.append({"label": "Link Google Sheet hợp lệ", "ok": bool(sheet_id), "note": ""})
+    crit = [{"label": "Có file Google Sheet", "ok": bool(sheet_id),
+             "note": "" if sheet_id else "URL không phải link Google Sheet."}]
     if not sheet_id:
         return False, crit
-    rows, err = _fetch_sheet_grid(sheet_id)
-    crit.append({"label": "Share công khai, đọc được", "ok": rows is not None, "note": err or ""})
-    if rows is None:
-        return False, crit
-    golds = payload["golds"]
-    hit = sum(1 for cell, val in golds.items() if _grid_cell(rows, cell) == val)
+
+    mode, err = _sheet_share_mode(sheet_id)
     crit.append({
-        "label": "Đủ 10 dòng vàng, đúng toạ độ từng ô", "ok": hit == len(golds),
-        "note": f"Đúng {hit}/{len(golds)} ô.",
+        "label": "Share quyền hợp lệ (Anyone with the link can EDIT)", "ok": mode == "edit",
+        "note": err or ("" if mode == "edit" else "Đang để quyền chỉ XEM — phải đổi sang \"Bất kỳ ai có đường liên kết\" + \"Người chỉnh sửa\"."),
+    })
+    if mode is None:
+        return False, crit
+
+    rows, err = _fetch_sheet_grid(sheet_id)
+    if rows is None:
+        crit.append({"label": "Có đủ 10 mã AGS", "ok": False, "note": err or "Không đọc được nội dung sheet."})
+        return False, crit
+    written = {v for r in rows for v in (c.strip() for c in r) if v.startswith("AGS-")}
+    found = sum(1 for v in golds.values() if v in written)
+    crit.append({"label": "Có đủ 10 mã AGS", "ok": found == len(golds),
+                 "note": f"Tìm thấy {found}/{len(golds)} mã trong sheet."})
+    hit = sum(1 for cell, val in golds.items() if _grid_cell(rows, cell) == val)
+    crit.append({"label": "Đúng toạ độ từng ô", "ok": hit == len(golds),
+                 "note": f"Đúng {hit}/{len(golds)} ô."})
+
+    crit.append({
+        "label": f"Trong thời gian ({GWS_CAU917_TIME_LIMIT_S} giây kể từ /start)",
+        "ok": elapsed <= GWS_CAU917_TIME_LIMIT_S,
+        "note": f"Mất {elapsed:.1f}s" + ("" if elapsed <= GWS_CAU917_TIME_LIMIT_S else " — quá giờ! Gọi /reset để nhận thử thách mới rồi chạy lại."),
     })
     return all(c["ok"] for c in crit), crit
 
@@ -2855,9 +2931,13 @@ async def gws_cli_verify(request: Request):
 
 @app.get("/api/gws/task/{code}/start")
 def gws_task_start(request: Request, code: str):
-    """Agent gọi để nhận dữ liệu/spec của nhiệm vụ. 9.17 trả text thuần (cát + vàng), các câu
+    return _gws_start_for(require_agent_user(request)["id"], code)
+
+
+def _gws_start_for(user_id: int, code: str):
+    """Sinh (hoặc trả lại) dữ liệu/spec của nhiệm vụ. 9.17 trả text thuần (cát + vàng), các câu
     khác trả JSON. Idempotent: gọi lại trả đúng dữ liệu cũ — muốn làm lại 9.17 thì gọi /reset."""
-    user = require_agent_user(request)
+    user = {"id": user_id}
     if code not in GWS_TASK_MANIFEST:
         raise HTTPException(status_code=404, detail="Nhiệm vụ không tồn tại.")
     personal_code = _gws_user_personal_code(user["id"])
@@ -2866,10 +2946,13 @@ def gws_task_start(request: Request, code: str):
             payload, _ = _gws_payload(conn, user["id"], code)
             if not payload:
                 cells = random.sample([f"{c}{r}" for c in "ABCDEFGHIJ" for r in range(1, 11)], 10)
-                golds = {cell: f"AGS-{cell}-{secrets.token_hex(4)}" for cell in cells}
+                golds = {
+                    cell: f"AGS-{cell}-{''.join(secrets.choice(GWS_CAU917_GOLD_ALPHABET) for _ in range(8))}"
+                    for cell in cells
+                }
                 payload = {"golds": golds}
                 _gws_save_payload(conn, user["id"], code, payload)
-        lines = [secrets.token_hex(9) for _ in range(GWS_CAU917_SAND_LINES)] + list(payload["golds"].values())
+        lines = _cau917_sand_lines() + list(payload["golds"].values())
         random.shuffle(lines)
         return Response("\n".join(lines), media_type="text/plain; charset=utf-8")
     if code == "9.19":
@@ -2891,9 +2974,12 @@ def gws_task_start(request: Request, code: str):
 
 @app.post("/api/gws/task/{code}/reset")
 def gws_task_reset(request: Request, code: str):
-    user = require_agent_user(request)
+    return _gws_reset_for(require_agent_user(request)["id"], code)
+
+
+def _gws_reset_for(user_id: int, code: str):
     with get_db() as conn:
-        conn.execute("DELETE FROM gws_tasks WHERE user_id = ? AND question_code = ?", (user["id"], code))
+        conn.execute("DELETE FROM gws_tasks WHERE user_id = ? AND question_code = ?", (user_id, code))
     return {"ok": True, "message": "Đã reset — gọi /start để nhận dữ liệu mới."}
 
 
@@ -2901,24 +2987,52 @@ def gws_task_reset(request: Request, code: str):
 async def gws_task_submit(request: Request, code: str):
     """Agent nộp URL sản phẩm. Server tải về qua link công khai và chấm từng tiêu chí."""
     user = require_agent_user(request)
-    if code not in _GWS_CHECKERS:
-        raise HTTPException(status_code=404, detail="Nhiệm vụ không tồn tại.")
+    return await _gws_submit_for(user["id"], code, await _gws_url_from_body(request))
+
+
+async def _gws_url_from_body(request: Request) -> str:
     try:
         data = await request.json()
     except Exception:
-        raise HTTPException(status_code=400, detail='Body phải là JSON, ví dụ {"url": "https://docs.google.com/..."}')
-    url = str(data.get("url") or data.get("sheet_url") or data.get("slide_url") or data.get("drive_url") or "")
-    ok, criteria = await asyncio.to_thread(_GWS_CHECKERS[code], user["id"], url)
+        raise HTTPException(status_code=400, detail='Body phải là JSON, ví dụ {"sheet_url": "https://docs.google.com/..."}')
+    return str(data.get("sheet_url") or data.get("url") or data.get("slide_url") or data.get("drive_url") or "")
+
+
+async def _gws_submit_for(user_id: int, code: str, url: str):
+    if code not in _GWS_CHECKERS:
+        raise HTTPException(status_code=404, detail="Nhiệm vụ không tồn tại.")
+    ok, criteria = await asyncio.to_thread(_GWS_CHECKERS[code], user_id, url)
     with get_db() as conn:
         conn.execute(
             "INSERT INTO gws_attempts (user_id, question_code, url, ok, detail) VALUES (?, ?, ?, ?, ?)",
-            (user["id"], code, url[:500], int(ok), json.dumps(criteria, ensure_ascii=False)),
+            (user_id, code, url[:500], int(ok), json.dumps(criteria, ensure_ascii=False)),
         )
     return {
         "ket_qua": "ĐẠT ✅" if ok else "Chưa đạt ❌",
         "tieu_chi": criteria,
+        "tom_tat": "\n".join(("  [x] " if c["ok"] else "  [ ] ") + c["label"] + (" — " + c["note"] if c.get("note") else "")
+                             for c in criteria),
         "ghi_chu": "Quay lại trang lớp học, bấm Kiểm tra rồi Nộp bài để chốt điểm." if ok else "Sửa theo tiêu chí rớt rồi nộp lại.",
     }
+
+
+# ---------- Bản nhúng token trong ĐƯỜNG DẪN: Agent chỉ cần copy nguyên URL, không phải gắn header ----------
+# Web tham khảo dùng đúng kiểu này. Bản dùng header ở trên vẫn giữ để các câu cũ không gãy.
+
+@app.api_route("/api/gws/task/{code}/start/{uid}/{token}", methods=["GET", "POST"])
+def gws_task_start_path(code: str, uid: int, token: str):
+    return _gws_start_for(_user_by_agent_token(uid, token)["id"], code)
+
+
+@app.api_route("/api/gws/task/{code}/start/{uid}/{token}/reset", methods=["GET", "POST"])
+def gws_task_reset_path(code: str, uid: int, token: str):
+    return _gws_reset_for(_user_by_agent_token(uid, token)["id"], code)
+
+
+@app.post("/api/gws/task/{code}/submit/{uid}/{token}")
+async def gws_task_submit_path(request: Request, code: str, uid: int, token: str):
+    user = _user_by_agent_token(uid, token)
+    return await _gws_submit_for(user["id"], code, await _gws_url_from_body(request))
 
 
 @app.get("/api/gws/task/{code}/status")

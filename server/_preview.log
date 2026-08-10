@@ -33,3 +33,4 @@ INFO:     127.0.0.1:64637 - "GET /api/auth/lark/status HTTP/1.1" 200 OK
 INFO:     127.0.0.1:64637 - "GET /api/me HTTP/1.1" 200 OK
 INFO:     127.0.0.1:64637 - "GET /api/progress HTTP/1.1" 200 OK
 INFO:     127.0.0.1:64637 - "GET /api/me/agent-token HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51651 - "GET / HTTP/1.1" 200 OK
