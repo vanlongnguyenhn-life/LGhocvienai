@@ -66,19 +66,6 @@
     ],
     "points": 30
   },
-  "9.9": {
-    "prompt": "Nhờ Coding Agent viết một trang web đơn giản chạy ở localhost, có 2 nút bấm: Gemini CLI và OpenCode. Khi bấm mỗi nút, trang gọi lệnh CLI tương ứng (gemini --list-sessions / opencode session list) ở backend, lấy danh sách session và hiển thị lên trang.\nMở trang trên trình duyệt thật, bấm cả 2 nút để thấy danh sách session của cả 2 Coding Agent, rồi chụp ảnh toàn trang.",
-    "criteria": [
-      {
-        "key": "image",
-        "optional": false,
-        "minLength": null,
-        "label": "Ảnh minh chứng",
-        "desc": "Chọn ảnh chụp màn hình trang web hiển thị danh sách session."
-      }
-    ],
-    "points": 14
-  },
   "11.9": {
     "prompt": "(Bản gốc: mở widget \"Mầm Fake V1\" thật trên trang và test ≥15 câu chat xoay quanh 3 chủ đề Chào hỏi/Sức khoẻ/Nghề nghiệp — cần widget demo thật nên được đơn giản hoá lại.) Hãy tự viết ra ít nhất 5 câu chat mẫu cho MỖI chủ đề (Chào hỏi, Sức khoẻ, Nghề nghiệp) mà một chatbot kiểu \"kịch bản mẫu, dò từ khoá\" có thể nhận diện và trả lời được.\nLiệt kê các câu chat mẫu theo từng chủ đề.",
     "criteria": [

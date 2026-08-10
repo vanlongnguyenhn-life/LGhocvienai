@@ -51,6 +51,12 @@ function resolveAgentPlaceholders(text, code) {
     .replace(/\{\{electron_cmd_queue_url\}\}/g, `${location.origin}/api/electron/cmd-queue`)
     .replace(/\{\{electron_cmd_ack_url\}\}/g, `${location.origin}/api/electron/cmd-ack`)
     .replace(/\{\{agent_task_url\}\}/g, `${location.origin}/api/agent-task/${code || ""}`)
+    // Link đã nhúng sẵn uid+token: ô copy chỉ còn MỘT dòng, Agent dán vào là đọc được ngay,
+    // không phải dặn nó gắn header (giống hệt cách web tham khảo làm).
+    .replace(
+      /\{\{agent_task_link\}\}/g,
+      `${location.origin}/api/agent-task/${agentTokenInfo.uid}/${agentTokenInfo.token}/${code || ""}`
+    )
     .replace(/\{\{pi_lab_my_profile_url\}\}/g, `${location.origin}/api/pi-lab/my-profile`)
     .replace(/\{\{npc_profile_url\}\}/g, `${location.origin}/api/pi-lab/npc-profile`);
 }

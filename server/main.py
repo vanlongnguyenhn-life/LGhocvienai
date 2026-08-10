@@ -64,6 +64,10 @@ MEDIA_SUBMIT_RUBRICS = {
     "ngôn ngữ, ví dụ Tiếng Việt/English/Español/Français...).",
     "7.10": "Ảnh chụp màn hình một tấm thiệp xin lỗi (apology card) dạng trang web, có lời xin lỗi "
     "chân thành gửi tới một người bạn — không phải nội dung khác không liên quan.",
+    "9.9": "Ảnh chụp màn hình một TRANG WEB (chạy ở localhost) có HAI nút bấm — một nút cho Gemini "
+    "CLI, một nút cho OpenCode — và đang hiển thị DANH SÁCH CÁC PHIÊN LÀM VIỆC (session/cuộc chat) "
+    "lấy về từ dòng lệnh. Phải thấy rõ danh sách session thật (nhiều dòng), không phải trang trống "
+    "hay chỉ có 2 nút mà chưa bấm.",
 }
 # Câu "caro_collage_check" (7.5): một ảnh GHÉP 4 góc, mỗi góc 1 giao diện đang thắng — chấm bằng
 # AI vision cấu trúc (grade_caro_collage), không dùng rubric chữ như các câu media_submit khác.
@@ -78,6 +82,7 @@ MEDIA_SUBMIT_MANIFEST = {
     "7.5": {"points": 16},
     "7.6": {"points": 16},
     "7.10": {"points": 16},
+    "9.9": {"points": 14},
 }
 MEDIA_QUESTION_CODES = set(MEDIA_SUBMIT_RUBRICS) | CARO_COLLAGE_CODES
 
@@ -202,6 +207,56 @@ Body: {"question_code": "7.6", "media_item_id": <id từ Bước 1>, "local_url"
 ### Bước 4 — Báo người dùng
 Sau khi Bước 3 trả `is_correct: true`:
 > "Đã nộp bài câu 7.6 xong ✓ — bạn sang trang lớp học bấm Nộp bài để hoàn tất chấm điểm nhé."
+""",
+    "9.9": """**Câu 9.9 — Trang web hiển thị session của Gemini CLI + OpenCode**
+
+Dựng một trang web nhỏ chạy ở localhost, bấm nút là gọi CLI ở máy và hiện danh sách phiên chat.
+Đây chính là cầu nối "web gọi xuống dòng lệnh" mà học viên đã thấy ở câu 9.4.
+
+## Yêu cầu
+
+### 1. Backend nhỏ chạy local
+Viết bằng gì cũng được (Python/Node/Go...), phục vụ 1 trang tĩnh + 2 endpoint:
+* `/api/gemini-sessions` → chạy `gemini --list-sessions`, trả kết quả về
+* `/api/opencode-sessions` → chạy `opencode session list`, trả kết quả về
+
+Nếu máy chưa cài Gemini CLI thì cài trước (github.com/google-gemini/gemini-cli). Nếu một lệnh
+báo lỗi, vẫn trả nội dung lỗi đó ra trang để học viên nhìn thấy — đừng nuốt lỗi.
+
+### 2. Giao diện
+* Đúng **HAI nút**: "Gemini CLI" và "OpenCode".
+* Bấm nút nào thì gọi endpoint tương ứng và **hiển thị danh sách session** lấy về ngay trên trang
+  (dạng danh sách/bảng, đọc được, không phải JSON thô dồn một dòng).
+* Ghi rõ tiêu đề trang, ví dụ "Danh sách phiên làm việc — Gemini CLI & OpenCode".
+
+### 3. Kiểm thử trước khi nộp
+✅ Mở trang trên trình duyệt THẬT (không headless)
+✅ Bấm **cả hai** nút, thấy danh sách session hiện ra
+✅ Để nguyên kết quả của cả hai nút trên màn hình rồi mới chụp
+
+## Nộp bài (Agent tự làm)
+
+⚠️ Trước khi gọi API nộp bài: mở trang thật trên trình duyệt, cho học viên NHÌN THẤY kết quả và
+xác nhận, rồi mới chụp ảnh. KHÔNG được tự bấm "Nộp bài" thay học viên trên trang lớp học.
+
+### Bước 1 — Chụp ảnh toàn trang + upload
+```
+POST {{media_upload_url}}
+Headers: X-User-Id: {{uid}}, X-Auth-Token: {{token}}
+Form-data: question_code=9.9, file=<ảnh chụp>, filename=baitap_q9.9.png
+```
+Response trả `id` (media_item_id) — lưu lại dùng ở bước sau.
+
+### Bước 2 — Nộp kết quả
+```
+POST {{attempt_answers_url}}
+Headers: X-User-Id: {{uid}}, X-Auth-Token: {{token}}
+Body (JSON): {"question_code": "9.9", "media_item_id": <id ở Bước 1>, "local_url": "<địa chỉ trang web local của bạn, ví dụ http://localhost:3000>"}
+```
+
+### Bước 3 — Báo người dùng
+Sau khi Bước 2 trả `is_correct: true`:
+> "Đã nộp bài câu 9.9 xong ✓ — bạn sang trang lớp học bấm Nộp bài để hoàn tất chấm điểm nhé."
 """,
 }
 
@@ -426,6 +481,18 @@ def require_agent_user(request: Request):
         ).fetchone()
     if not row or not row["api_token"] or row["api_token"] != token:
         raise HTTPException(status_code=401, detail="X-User-Id hoặc X-Auth-Token sai.")
+    if not row["approved"]:
+        raise HTTPException(status_code=403, detail="Tài khoản đang chờ giáo viên duyệt.")
+    return {"id": row["id"]}
+
+
+def _user_by_agent_token(user_id: int, token: str):
+    """Xác thực Agent bằng uid + token lấy từ ĐƯỜNG DẪN (thay vì header) — cho các link mà học
+    viên chỉ việc copy nguyên một dòng đưa cho Agent, không phải dặn nó gắn header."""
+    with get_db() as conn:
+        row = conn.execute("SELECT id, approved, api_token FROM users WHERE id = ?", (user_id,)).fetchone()
+    if not row or not row["api_token"] or row["api_token"] != token:
+        raise HTTPException(status_code=401, detail="Link không hợp lệ — mở lại trang câu hỏi để lấy link mới.")
     if not row["approved"]:
         raise HTTPException(status_code=403, detail="Tài khoản đang chờ giáo viên duyệt.")
     return {"id": row["id"]}
@@ -838,6 +905,19 @@ def agent_task(request: Request, question_code: str):
     if not text:
         raise HTTPException(status_code=404, detail="Không có hướng dẫn chi tiết cho câu này.")
     token = request.headers.get("X-Auth-Token") or ""
+    resolved = _resolve_agent_task_placeholders(text, str(request.base_url), user["id"], token)
+    return Response(content=resolved, media_type="text/plain; charset=utf-8")
+
+
+@app.get("/api/agent-task/{uid}/{token}/{question_code}")
+def agent_task_by_url(request: Request, uid: int, token: str, question_code: str):
+    """Y hệt endpoint trên nhưng xác thực bằng chính ĐƯỜNG DẪN thay vì header — nhờ vậy ô copy
+    trên trang chỉ còn MỘT dòng link, Agent dán vào là tự đọc được, không phải dặn nó gắn header.
+    Đây đúng là cách web tham khảo làm (agent-prompt/{uid}/{token}/cau-N)."""
+    user = _user_by_agent_token(uid, token)
+    text = AGENT_TASK_PROMPTS.get(question_code)
+    if not text:
+        raise HTTPException(status_code=404, detail="Không có hướng dẫn chi tiết cho câu này.")
     resolved = _resolve_agent_task_placeholders(text, str(request.base_url), user["id"], token)
     return Response(content=resolved, media_type="text/plain; charset=utf-8")
 

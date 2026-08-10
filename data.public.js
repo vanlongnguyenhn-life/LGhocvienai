@@ -2173,16 +2173,9 @@ const LESSONS = [
       {
         "code": "9.9",
         "title": "Câu 9.9 - Web hiển thị session Gemini CLI + OpenCode",
-        "type": "assignment",
-        "prompt": "Nhờ Coding Agent viết một trang web đơn giản chạy ở localhost, có 2 nút bấm: Gemini CLI và OpenCode. Khi bấm mỗi nút, trang gọi lệnh CLI tương ứng (gemini --list-sessions / opencode session list) ở backend, lấy danh sách session và hiển thị lên trang.",
-        "instructions": "Mở trang trên trình duyệt thật, bấm cả 2 nút để thấy danh sách session của cả 2 Coding Agent, rồi chụp ảnh toàn trang.",
-        "criteria": [
-          {
-            "key": "image",
-            "label": "Ảnh minh chứng",
-            "desc": "Chọn ảnh chụp màn hình trang web hiển thị danh sách session."
-          }
-        ],
+        "type": "agent_media",
+        "prompt": "Nhờ Coding Agent viết một trang web hiển thị danh sách các cuộc chat trong Gemini CLI và OpenCode, sau đó chụp hình upload nộp bài.",
+        "copyPrompt": "Hãy giúp tôi làm bài tập trong lớp AI Agent — Học Viện AI Life Group theo yêu cầu ở link này:\n{{agent_task_link}}",
         "points": 14
       },
       {
