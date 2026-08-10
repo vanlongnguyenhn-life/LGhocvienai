@@ -788,14 +788,17 @@ def _media_criteria(row, user_id: int, question_code: str):
             "detail": f"Địa chỉ học viên khai báo: {local_url}" if local_url else "Chưa khai báo local_url.",
             "ok": url_valid,
         },
-    ] + _friendship_code_criterion(row, question_code)
+    ] + _friendship_code_criterion(row, question_code, user_id)
 
 
-def _friendship_code_criterion(row, question_code: str):
+def _friendship_code_criterion(row, question_code: str, user_id: int):
     if question_code not in MEDIA_FRIENDSHIP_CHECK_CODES:
         return []
     submitted = ((row["friendship_code"] if row else "") or "").strip()
-    ok = submitted == PI_LAB_FRIENDSHIP_CODE
+    # Mã kết bạn là RIÊNG của từng học viên (sinh ở câu 7.9) — không còn hằng số dùng chung.
+    with get_db() as conn:
+        real_code, _ = _get_or_create_pi_lab_secrets(conn, user_id)
+    ok = bool(submitted) and _normalize_secret(submitted) == _normalize_secret(real_code)
     return [{
         "key": "friendship_code",
         "title": "Mã kết bạn với người được xin lỗi",
