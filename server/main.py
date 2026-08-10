@@ -2171,6 +2171,73 @@ def _check_917(user_id: int, url: str):
     return all(c["ok"] for c in crit), crit
 
 
+def _theme_palette(wb) -> list:
+    """Bảng màu chủ đề của file — cần để giải mã <color theme="N"/>.
+
+    Google Sheets xuất màu theo HAI kiểu tuỳ học viên chọn ở đâu trong bảng màu: chọn ô màu
+    tuỳ chỉnh thì ra rgb, chọn ở hàng màu chủ đề thì ra theme index. Không giải mã theme thì
+    openpyxl trả về một đối tượng lỗi (không phải chuỗi hex) và bài đúng vẫn bị chấm sai.
+    """
+    try:
+        xml = wb.loaded_theme.decode("utf-8") if isinstance(wb.loaded_theme, bytes) else str(wb.loaded_theme)
+        scheme = re.search(r"<a:clrScheme.*?</a:clrScheme>", xml, re.S).group(0)
+        order = ["lt1", "dk1", "lt2", "dk2", "accent1", "accent2", "accent3", "accent4", "accent5", "accent6", "hlink", "folHlink"]
+        out = []
+        for name in order:
+            block = re.search(rf"<a:{name}>(.*?)</a:{name}>", scheme, re.S)
+            hexval = None
+            if block:
+                inner = block.group(1)
+                # srgbClr ghi hex thẳng ở val; sysClr ghi tên hệ thống ở val và hex ở lastClr.
+                m = re.search(r"<a:srgbClr[^>]*val=\"([0-9A-Fa-f]{6})\"", inner) or re.search(
+                    r"<a:sysClr[^>]*lastClr=\"([0-9A-Fa-f]{6})\"", inner
+                )
+                if m:
+                    hexval = m.group(1).upper()
+            out.append(hexval)
+        return out
+    except Exception:
+        return []
+
+
+def _font_rgb(cell, palette: list) -> str | None:
+    """Màu chữ của ô dưới dạng hex 6 ký tự, giải mã được cả rgb lẫn theme."""
+    color = cell.font.color if cell.font else None
+    if color is None:
+        return None
+    if color.type == "rgb":
+        raw = color.rgb
+        if isinstance(raw, str) and re.fullmatch(r"[0-9A-Fa-f]{6,8}", raw):
+            return raw[-6:].upper()
+        return None
+    if color.type == "theme":
+        try:
+            idx = int(color.theme)
+        except (TypeError, ValueError):
+            return None
+        if 0 <= idx < len(palette) and palette[idx]:
+            return palette[idx]
+    return None
+
+
+def _font_size(cell, default_size: float) -> float:
+    """Cỡ chữ của ô. Google BỎ QUA thẻ <sz> khi ô dùng đúng cỡ mặc định của bảng tính —
+    lúc đó openpyxl trả None, phải quy về cỡ mặc định thay vì coi như 0 (sẽ chấm sai)."""
+    size = cell.font.size if cell.font else None
+    try:
+        return float(size) if size is not None else default_size
+    except (TypeError, ValueError):
+        return default_size
+
+
+def _workbook_default_font_size(wb) -> float:
+    try:
+        f0 = wb._fonts[0]
+        return float(f0.size) if f0.size is not None else 11.0
+    except Exception:
+        return 11.0
+
+
 def _check_919(user_id: int, url: str):
     sheet_id = _extract_gdoc_id(url, "sheet")
     crit = [{"label": "Link Google Sheet hợp lệ", "ok": bool(sheet_id), "note": ""}]
@@ -2189,22 +2256,34 @@ def _check_919(user_id: int, url: str):
     except Exception as e:
         crit.append({"label": "File đọc được dạng bảng tính", "ok": False, "note": f"Không đọc được: {e}"})
         return False, crit
+    palette = _theme_palette(wb)
+    default_size = _workbook_default_font_size(wb)
     value_ok = fmt_ok = 0
     bad = []
     for f in GWS_919_FIELDS:
         c = ws[f["cell"]]
         v_ok = (str(c.value or "").strip() == f["value"])
-        size = float(c.font.size or 0) if c.font else 0
-        rgb = str(c.font.color.rgb)[-6:].upper() if c.font and c.font.color and c.font.color.rgb else ""
+        size = _font_size(c, default_size)
+        rgb = _font_rgb(c, palette)
         f_ok = abs(size - f["size"]) < 0.6 and rgb == f["color"]
         value_ok += v_ok
         fmt_ok += f_ok
         if not (v_ok and f_ok):
-            bad.append(f["cell"])
+            detail = []
+            if not v_ok:
+                detail.append("nội dung")
+            if abs(size - f["size"]) >= 0.6:
+                detail.append(f"cỡ chữ {size:g}≠{f['size']}")
+            if rgb != f["color"]:
+                detail.append(f"màu {rgb or '?'}≠{f['color']}")
+            bad.append(f"{f['cell']} ({', '.join(detail)})")
     expected = _gws_user_personal_code(user_id) or "?"
     a1_ok = str(ws["A1"].value or "").strip() == expected
-    crit.append({"label": f"Nội dung đúng 9/9 ô", "ok": value_ok == 9, "note": f"Đúng {value_ok}/9" + (f" — sai: {', '.join(bad[:5])}" if bad else "")})
-    crit.append({"label": f"Định dạng (cỡ chữ + màu) đúng 9/9 ô", "ok": fmt_ok == 9, "note": f"Đúng {fmt_ok}/9"})
+    crit.append({"label": "Nội dung đúng 9/9 ô", "ok": value_ok == 9, "note": f"Đúng {value_ok}/9"})
+    crit.append({
+        "label": "Định dạng (cỡ chữ + màu) đúng 9/9 ô", "ok": fmt_ok == 9,
+        "note": f"Đúng {fmt_ok}/9" + (f" — cần sửa: {'; '.join(bad[:4])}" if bad else ""),
+    })
     crit.append({"label": "Ô A1 chứa mã cá nhân", "ok": a1_ok, "note": "" if a1_ok else "Thiếu mã cá nhân ở A1."})
     return all(c["ok"] for c in crit), crit
 
