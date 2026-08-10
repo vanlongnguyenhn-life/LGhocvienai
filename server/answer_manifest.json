@@ -1729,10 +1729,10 @@
     "points": 10,
     "anyValid": false,
     "correctTexts": [
-      "Để cô giáo biết chắc chắn bạn đã dùng GWS CLI chạy tự động — nếu ngồi tìm bằng mắt và làm tay thì không thể nộp kịp"
+      "Để hệ thống biết chắc chắn bạn đã dùng GWS CLI chạy tự động — nếu ngồi tìm bằng mắt và làm tay thì không thể nộp kịp"
     ],
     "optionsOriginal": [
-      "Để cô giáo biết chắc chắn bạn đã dùng GWS CLI chạy tự động — nếu ngồi tìm bằng mắt và làm tay thì không thể nộp kịp",
+      "Để hệ thống biết chắc chắn bạn đã dùng GWS CLI chạy tự động — nếu ngồi tìm bằng mắt và làm tay thì không thể nộp kịp",
       "Để mô phỏng môi trường làm việc thực tế — luôn có deadline",
       "Để giảm tải cho server — nhiều học viên submit cùng lúc sẽ làm chậm hệ thống",
       "Vì Google Sheets có giới hạn 30 lượt tạo sheet mỗi 30 giây"

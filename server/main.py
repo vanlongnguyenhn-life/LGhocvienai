@@ -2400,17 +2400,51 @@ GWS_920_FRIENDS = [
     "Nguyễn Thị Mít", "Trần Văn Ổi", "Lê Thị Xoài", "Phạm Thảo Na", "Hoàng Bơ",
     "Đỗ Thị Cam", "Vũ Hồng Đào", "Bùi Thị Mận", "Ngô Sầu Riêng",
 ]
-GWS_919_FIELDS = [
-    {"cell": "B2", "value": "Học Viện AI Life Group — Khoá ALG", "size": 32, "color": "C0392B"},
-    {"cell": "B3", "value": "Biến AI thành nhân sự THẬT", "size": 18, "color": "7F8C8D"},
-    {"cell": "B5", "value": "Đồng hành: Bé Ailai", "size": 16, "color": "27AE60"},
-    {"cell": "B6", "value": "Người bạn định mệnh: Nguyễn Thị Mít", "size": 16, "color": "E67E22"},
-    {"cell": "A8", "value": "Câu hỏi thường gặp", "size": 18, "color": "2C3E50"},
-    {"cell": "A10", "value": "Q: Cần biết lập trình trước không?", "size": 14, "color": "2C3E50"},
-    {"cell": "A11", "value": "A: KHÔNG — Agent lo phần code, bạn lo phần tư duy.", "size": 12, "color": "7F8C8D"},
-    {"cell": "A13", "value": "Q: Học xong làm được gì?", "size": 14, "color": "2C3E50"},
-    {"cell": "A14", "value": "A: Tự động hoá công việc thật với AI Agent.", "size": 12, "color": "7F8C8D"},
+# Câu 9.19 — spec trang giới thiệu khoá ALG. Vị trí/cỡ chữ/màu là CỐ ĐỊNH, còn hai ô số liệu
+# lấy THẬT từ tiến độ của chính học viên nên mỗi người một khác — chép sheet của bạn là sai ngay.
+GWS_919_LAYOUT = [
+    ("ten_khoa_hoc", "Tên khoá học", "B2", 32, "#C0392B"),
+    ("slogan", "Slogan", "B3", 18, "#7F8C8D"),
+    ("diem_da_dat", "Điểm đã đạt", "B5", 16, "#27AE60"),
+    ("so_cau_hoan_thanh", "Số câu đã hoàn thành", "B6", 16, "#E67E22"),
+    ("header_faq", "Heading FAQ", "A8", 18, "#2C3E50"),
+    ("hoi_1", "Câu hỏi 1", "A10", 14, "#2C3E50"),
+    ("dap_1", "Trả lời 1", "A11", 12, "#7F8C8D"),
+    ("hoi_2", "Câu hỏi 2", "A13", 14, "#2C3E50"),
+    ("dap_2", "Trả lời 2", "A14", 12, "#7F8C8D"),
 ]
+GWS_919_TEXTS = {
+    "ten_khoa_hoc": "ALG - Biến AI thành nhân sự thật",
+    "slogan": "Học từ nguyên lý. Hiểu từ gốc rễ.",
+    "header_faq": "Câu hỏi thường gặp",
+    "hoi_1": "Q: Có cần biết lập trình trước khi học không?",
+    "dap_1": "A: KHÔNG cần. Agent lo phần kỹ thuật, bạn lo phần tư duy — học viên là Kế toán, Nhân sự, CEO đều tự dựng được Agent riêng.",
+    "hoi_2": "Q: Học xong thì làm được gì?",
+    "dap_2": "A: Tự động hoá công việc thật bằng AI Agent — từ đọc dữ liệu, dựng web, tới điều phối nhiều Agent cùng lúc.",
+}
+
+
+def _gws_919_spec(user_id: int) -> dict:
+    """Sinh spec 9 field cho học viên, chốt số liệu tiến độ tại thời điểm gọi /start.
+
+    Chốt lại (thay vì đọc lúc chấm) vì học viên có thể làm thêm câu khác giữa lúc /start và
+    /submit — số điểm đổi thì sheet đúng cũng bị chấm sai.
+    """
+    with get_db() as conn:
+        row = conn.execute(
+            """SELECT COALESCE(SUM(awarded_points), 0) AS diem,
+                      COUNT(CASE WHEN status IN ('done', 'correct') THEN 1 END) AS so_cau
+               FROM question_status WHERE user_id = ?""",
+            (user_id,),
+        ).fetchone()
+    values = dict(GWS_919_TEXTS)
+    values["diem_da_dat"] = f"Điểm đã đạt: {row['diem']:,} điểm".replace(",", ".")
+    values["so_cau_hoan_thanh"] = f"Số câu đã hoàn thành: {row['so_cau']} câu"
+    return {
+        key: {"label": label, "value": values[key],
+              "format": {"pos": pos, "fontsize": size, "color": color}}
+        for key, label, pos, size, color in GWS_919_LAYOUT
+    }
 
 
 def _gws_http_get(url: str):
@@ -2675,15 +2709,27 @@ def _workbook_default_font_size(wb) -> float:
 
 
 def _check_919(user_id: int, url: str):
+    """Chấm từng field: đúng nội dung + đúng cỡ chữ + đúng màu chữ, trả bảng so sánh chi tiết.
+
+    Không kiểm tra quyền share là view hay edit — chỉ cần đọc công khai được, giống bộ chấm
+    của web tham khảo (đã thử nộp sheet quyền edit vào đó, nó vẫn nhận).
+    """
+    with get_db() as conn:
+        payload, _ = _gws_payload(conn, user_id, "9.19")
+    if not payload:
+        return False, [{"label": "Đã gọi /start để nhận spec", "ok": False, "note": "Chưa gọi /start."}], {}
+    spec = payload["fields"]
+
     sheet_id = _extract_gdoc_id(url, "sheet")
-    crit = [{"label": "Link Google Sheet hợp lệ", "ok": bool(sheet_id), "note": ""}]
+    crit = [{"label": "Có file Google Sheet", "ok": bool(sheet_id),
+             "note": "" if sheet_id else "URL không phải link Google Sheet."}]
     if not sheet_id:
-        return False, crit
+        return False, crit, {}
     final_url, status, body, _ = _gws_fetch(f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=xlsx")
     err = _gws_public_or_none(final_url, status)
     crit.append({"label": "Share công khai, đọc được", "ok": err is None, "note": err or ""})
     if err:
-        return False, crit
+        return False, crit, {}
     try:
         import openpyxl
 
@@ -2691,37 +2737,46 @@ def _check_919(user_id: int, url: str):
         ws = wb.worksheets[0]
     except Exception as e:
         crit.append({"label": "File đọc được dạng bảng tính", "ok": False, "note": f"Không đọc được: {e}"})
-        return False, crit
+        return False, crit, {}
+
     palette = _theme_palette(wb)
     default_size = _workbook_default_font_size(wb)
-    value_ok = fmt_ok = 0
-    bad = []
-    for f in GWS_919_FIELDS:
-        c = ws[f["cell"]]
-        v_ok = (str(c.value or "").strip() == f["value"])
-        size = _font_size(c, default_size)
-        rgb = _font_rgb(c, palette)
-        f_ok = abs(size - f["size"]) < 0.6 and rgb == f["color"]
+    bang, value_ok, fmt_ok = [], 0, 0
+    for key, f in spec.items():
+        pos = f["format"]["pos"]
+        want_size = float(f["format"]["fontsize"])
+        want_color = f["format"]["color"].lstrip("#").upper()
+        c = ws[pos]
+        got_value = str(c.value or "").strip()
+        got_size = _font_size(c, default_size)
+        got_color = _font_rgb(c, palette)
+        v_ok = got_value == f["value"]
+        size_ok = abs(got_size - want_size) < 0.6
+        color_ok = got_color == want_color
         value_ok += v_ok
-        fmt_ok += f_ok
-        if not (v_ok and f_ok):
-            detail = []
-            if not v_ok:
-                detail.append("nội dung")
-            if abs(size - f["size"]) >= 0.6:
-                detail.append(f"cỡ chữ {size:g}≠{f['size']}")
-            if rgb != f["color"]:
-                detail.append(f"màu {rgb or '?'}≠{f['color']}")
-            bad.append(f"{f['cell']} ({', '.join(detail)})")
+        fmt_ok += size_ok and color_ok
+        bang.append({
+            "field": key, "label": f["label"], "toa_do": pos,
+            "value_yeu_cau": f["value"], "value_thuc_te": got_value, "value_ok": "đúng" if v_ok else "sai",
+            "fontsize_yc": f"{want_size:g}pt", "fontsize_tt": f"{got_size:g}pt",
+            "color_yc": "#" + want_color, "color_tt": ("#" + got_color) if got_color else "",
+            "format_ok": "đúng" if (size_ok and color_ok) else "sai",
+        })
+
+    n = len(spec)
     expected = _gws_user_personal_code(user_id) or "?"
     a1_ok = str(ws["A1"].value or "").strip() == expected
-    crit.append({"label": "Nội dung đúng 9/9 ô", "ok": value_ok == 9, "note": f"Đúng {value_ok}/9"})
-    crit.append({
-        "label": "Định dạng (cỡ chữ + màu) đúng 9/9 ô", "ok": fmt_ok == 9,
-        "note": f"Đúng {fmt_ok}/9" + (f" — cần sửa: {'; '.join(bad[:4])}" if bad else ""),
-    })
-    crit.append({"label": "Ô A1 chứa mã cá nhân", "ok": a1_ok, "note": "" if a1_ok else "Thiếu mã cá nhân ở A1."})
-    return all(c["ok"] for c in crit), crit
+    sai_value = [b["toa_do"] for b in bang if b["value_ok"] == "sai"]
+    sai_format = [b["toa_do"] for b in bang if b["format_ok"] == "sai"]
+    crit.append({"label": f"Nội dung đúng {n}/{n} ô", "ok": value_ok == n,
+                 "note": f"Đúng {value_ok}/{n}" + (f" — cần sửa: {', '.join(sai_value[:5])}" if sai_value else "")})
+    crit.append({"label": f"Định dạng (cỡ chữ + màu) đúng {n}/{n} ô", "ok": fmt_ok == n,
+                 "note": f"Đúng {fmt_ok}/{n}" + (f" — cần sửa: {', '.join(sai_format[:5])}" if sai_format else "")})
+    crit.append({"label": "Ô A1 chứa mã cá nhân", "ok": a1_ok,
+                 "note": "" if a1_ok else f"A1 đang là \"{str(ws['A1'].value or '')[:24]}\" — cần {expected}."})
+    ok = all(c["ok"] for c in crit)
+    return ok, crit, {"co_file": "đã có", "dinh_dang": ("đúng" if fmt_ok == n else f"sai ({fmt_ok}/{n} field đúng)"),
+                      "fields": bang}
 
 
 def _check_920(user_id: int, url: str):
@@ -2956,7 +3011,12 @@ def _gws_start_for(user_id: int, code: str):
         random.shuffle(lines)
         return Response("\n".join(lines), media_type="text/plain; charset=utf-8")
     if code == "9.19":
-        return {"personal_code_cell": "A1", "personal_code": personal_code, "fields": GWS_919_FIELDS}
+        with get_db() as conn:
+            payload, _ = _gws_payload(conn, user["id"], code)
+            if not payload:
+                payload = {"fields": _gws_919_spec(user["id"])}
+                _gws_save_payload(conn, user["id"], code, payload)
+        return {**payload["fields"], "personal_code": personal_code, "personal_code_cell": "A1"}
     if code == "9.20":
         with get_db() as conn:
             payload, _ = _gws_payload(conn, user["id"], code)
@@ -3001,13 +3061,17 @@ async def _gws_url_from_body(request: Request) -> str:
 async def _gws_submit_for(user_id: int, code: str, url: str):
     if code not in _GWS_CHECKERS:
         raise HTTPException(status_code=404, detail="Nhiệm vụ không tồn tại.")
-    ok, criteria = await asyncio.to_thread(_GWS_CHECKERS[code], user_id, url)
+    result = await asyncio.to_thread(_GWS_CHECKERS[code], user_id, url)
+    # Hàm chấm trả (ok, tiêu_chí) hoặc (ok, tiêu_chí, chi_tiết) — chi tiết là bảng so sánh
+    # từng field để Agent in ra terminal, học viên thấy ngay sai ở đâu.
+    ok, criteria, extra = result if len(result) == 3 else (*result, {})
     with get_db() as conn:
         conn.execute(
             "INSERT INTO gws_attempts (user_id, question_code, url, ok, detail) VALUES (?, ?, ?, ?, ?)",
             (user_id, code, url[:500], int(ok), json.dumps(criteria, ensure_ascii=False)),
         )
     return {
+        **extra,
         "ket_qua": "ĐẠT ✅" if ok else "Chưa đạt ❌",
         "tieu_chi": criteria,
         "tom_tat": "\n".join(("  [x] " if c["ok"] else "  [ ] ") + c["label"] + (" — " + c["note"] if c.get("note") else "")
