@@ -112,8 +112,11 @@ function stripQuestion(q) {
   for (const [k, v] of Object.entries(q)) {
     if (STRIP_KEYS.has(k)) continue;
     if (k === "items" && Array.isArray(v)) {
-      // items mang sẵn đáp án: thứ tự đúng (order), tag đúng (order-tag), icon đúng (tag-mark).
-      out.items = v.map((it) => (typeof it === "string" ? { text: it } : { text: it.text }));
+      // items có thể mang sẵn đáp án: tag đúng (order-tag), icon đúng (tag-mark) — bóc đi.
+      // PHẢI GIỮ NGUYÊN KIỂU DỮ LIỆU: câu dạng "order" lưu các mục là CHUỖI, đổi thành đối
+      // tượng sẽ làm phần hiển thị nhận sai kiểu và sập cả trang (đã xảy ra thật với 4 câu
+      // 7.11 / 10.17 / 10.24 / 11.2).
+      out.items = v.map((it) => (typeof it === "string" ? it : { text: it.text }));
       continue;
     }
     out[k] = v;

@@ -1572,15 +1572,9 @@ const LESSONS = [
         "type": "order",
         "prompt": "Nếu thực sự đã cùng Agent giải được câu trước, bạn sẽ biết rằng câu đó giăng ra 3 tầng bẫy. Sắp xếp chúng theo đúng thứ tự từ tầng 1 đến tầng 3:",
         "items": [
-          {
-            "text": "Nếu Agent sử dụng ngay thông tin có sẵn của bạn Mít trong prompt, sẽ gặp lỗi \"chưa đủ chân thành\"."
-          },
-          {
-            "text": "Nếu Agent đủ thông minh để từ API lấy thông tin cá nhân của bạn mà mò ra API lấy thông tin của bạn Mít, sẽ gặp lỗi \"vẫn thiếu một chút chân thành\"."
-          },
-          {
-            "text": "Khi và chỉ khi bạn Mít tự lấy thông tin của mình (kèm theo Friendship code gửi qua) thì Agent mới có đủ thông tin để hoàn thành bài tập."
-          }
+          "Nếu Agent sử dụng ngay thông tin có sẵn của bạn Mít trong prompt, sẽ gặp lỗi \"chưa đủ chân thành\".",
+          "Nếu Agent đủ thông minh để từ API lấy thông tin cá nhân của bạn mà mò ra API lấy thông tin của bạn Mít, sẽ gặp lỗi \"vẫn thiếu một chút chân thành\".",
+          "Khi và chỉ khi bạn Mít tự lấy thông tin của mình (kèm theo Friendship code gửi qua) thì Agent mới có đủ thông tin để hoàn thành bài tập."
         ],
         "points": 10
       },
@@ -2551,21 +2545,11 @@ const LESSONS = [
         "type": "order",
         "prompt": "Hãy hỏi AI Chat (đừng hỏi Coding Agent, vì câu trả lời sẽ bị ảnh hưởng bởi phần mềm có sẵn trong máy): với yêu cầu ở câu trước, Coding Agent sẽ thực hiện qua bao nhiêu bước, bước nào dùng code, bước nào cần LLM. Dựa trên giải thích của AI Chat, hãy sắp xếp 5 giai đoạn lớn theo đúng thứ tự thực hiện.",
         "items": [
-          {
-            "text": "Lấy dữ liệu bài báo"
-          },
-          {
-            "text": "Viết lại thành kịch bản 200 chữ"
-          },
-          {
-            "text": "Chuẩn bị để render video"
-          },
-          {
-            "text": "Render video thành phẩm"
-          },
-          {
-            "text": "Gửi video thành phẩm qua Google Drive"
-          }
+          "Lấy dữ liệu bài báo",
+          "Viết lại thành kịch bản 200 chữ",
+          "Chuẩn bị để render video",
+          "Render video thành phẩm",
+          "Gửi video thành phẩm qua Google Drive"
         ],
         "points": 16
       },
@@ -2802,42 +2786,18 @@ const LESSONS = [
         "type": "order",
         "prompt": "Xem video minh hoạ một dạng nội dung phổ biến: video kể chuyện tự động (có voice, hình minh hoạ, nhạc nền, phụ đề). Để tạo ra video kiểu này, cần thiết lập automation gồm những bước thế nào? Sắp xếp theo đúng trình tự.",
         "items": [
-          {
-            "text": "Nhận yêu cầu / chủ đề truyện từ người dùng"
-          },
-          {
-            "text": "Phân tích yêu cầu thành workflow chi tiết"
-          },
-          {
-            "text": "Lấy nội dung truyện gốc (đọc file / fetch URL)"
-          },
-          {
-            "text": "Biên tập, chia kỳ và viết kịch bản kể chuyện"
-          },
-          {
-            "text": "Sinh voice-over từ kịch bản (gọi TTS API)"
-          },
-          {
-            "text": "Sinh prompt mô tả hình minh hoạ cho từng cảnh"
-          },
-          {
-            "text": "Gọi API sinh ảnh từ prompt (Midjourney/SDXL)"
-          },
-          {
-            "text": "Chọn nhạc nền phù hợp tone câu chuyện"
-          },
-          {
-            "text": "Đồng bộ phụ đề với voice-over (whisper / timing)"
-          },
-          {
-            "text": "Lập timeline ghép voice + ảnh + nhạc + phụ đề"
-          },
-          {
-            "text": "Render video bằng tool (Remotion / ffmpeg)"
-          },
-          {
-            "text": "Tạo thumbnail + title hấp dẫn rồi upload YouTube"
-          }
+          "Nhận yêu cầu / chủ đề truyện từ người dùng",
+          "Phân tích yêu cầu thành workflow chi tiết",
+          "Lấy nội dung truyện gốc (đọc file / fetch URL)",
+          "Biên tập, chia kỳ và viết kịch bản kể chuyện",
+          "Sinh voice-over từ kịch bản (gọi TTS API)",
+          "Sinh prompt mô tả hình minh hoạ cho từng cảnh",
+          "Gọi API sinh ảnh từ prompt (Midjourney/SDXL)",
+          "Chọn nhạc nền phù hợp tone câu chuyện",
+          "Đồng bộ phụ đề với voice-over (whisper / timing)",
+          "Lập timeline ghép voice + ảnh + nhạc + phụ đề",
+          "Render video bằng tool (Remotion / ffmpeg)",
+          "Tạo thumbnail + title hấp dẫn rồi upload YouTube"
         ],
         "points": 20
       },
@@ -2926,18 +2886,10 @@ const LESSONS = [
         "type": "order",
         "prompt": "Nhắc lại định nghĩa Agent ngắn gọn: AI Agent là một Chatbot được nâng cấp qua từng cấp độ. Hãy sắp xếp 4 cấp độ sau theo đúng thứ tự nâng cấp (từ thấp đến cao):",
         "items": [
-          {
-            "text": "Biết dùng Công cụ"
-          },
-          {
-            "text": "Biết định hình Danh tính"
-          },
-          {
-            "text": "Biết Lưu trữ trải nghiệm"
-          },
-          {
-            "text": "Biết Tự tư duy để đạt mục tiêu"
-          }
+          "Biết dùng Công cụ",
+          "Biết định hình Danh tính",
+          "Biết Lưu trữ trải nghiệm",
+          "Biết Tự tư duy để đạt mục tiêu"
         ],
         "points": 10
       },
