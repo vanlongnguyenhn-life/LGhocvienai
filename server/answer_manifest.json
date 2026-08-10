@@ -2,56 +2,56 @@
   "1.1": {
     "type": "multi",
     "points": 4,
-    "correct": [],
     "anyValid": true,
-    "correctTexts": []
+    "correctTexts": [],
+    "correct": []
   },
   "1.2": {
     "type": "single",
     "points": 6,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Nó chỉ hướng dẫn bạn thao tác trong máy"
+    ],
+    "correct": [
+      0
     ]
   },
   "1.3": {
     "type": "single",
     "points": 6,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Nó chỉ hướng dẫn bạn thao tác trong máy"
+    ],
+    "correct": [
+      0
     ]
   },
   "1.4": {
     "type": "multi",
     "points": 8,
-    "correct": [
-      0,
-      3,
-      4
-    ],
     "anyValid": false,
     "correctTexts": [
       "Nếu làm được thì là lỗ hổng bảo mật",
       "Bạn phải tự tay làm",
       "Không có cách nào"
+    ],
+    "correct": [
+      0,
+      3,
+      4
     ]
   },
   "1.5": {
     "type": "single",
     "points": 6,
-    "correct": [
-      1
-    ],
     "anyValid": false,
     "correctTexts": [
       "Chắc chắn AI Agent làm được"
+    ],
+    "correct": [
+      1
     ]
   },
   "1.6": {
@@ -75,16 +75,6 @@
   "1.7": {
     "type": "multi",
     "points": 10,
-    "correct": [
-      0,
-      1,
-      2,
-      3,
-      5,
-      7,
-      10,
-      12
-    ],
     "anyValid": false,
     "correctTexts": [
       "Claude Work",
@@ -95,6 +85,16 @@
       "Google Antigravity",
       "OpenAI Codex",
       "Claude Code"
+    ],
+    "correct": [
+      0,
+      1,
+      2,
+      3,
+      5,
+      7,
+      10,
+      12
     ]
   },
   "1.8": {
@@ -128,152 +128,152 @@
   "1.9": {
     "type": "single",
     "points": 6,
-    "correct": [
-      1
-    ],
     "anyValid": false,
     "correctTexts": [
       "Nhờ người thân/đồng nghiệp am hiểu kỹ thuật cài đặt phần mềm AI Agent giúp (phải tự làm tối thiểu 24h mới được nhờ sự trợ giúp)"
+    ],
+    "correct": [
+      1
     ]
   },
   "1.10": {
     "type": "single",
     "points": 8,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Bạn đã cài đặt thành công"
+    ],
+    "correct": [
+      0
     ]
   },
   "3.7": {
     "type": "single",
     "points": 12,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Có, Agent đã tải được"
+    ],
+    "correct": [
+      0
     ]
   },
   "3.10": {
     "type": "single",
     "points": 12,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Agent sẽ tìm nhiều cách để đạt mục tiêu, trong phạm vi khả năng và tài nguyên của nó"
+    ],
+    "correct": [
+      0
     ]
   },
   "3.11": {
     "type": "multi",
     "points": 24,
-    "correct": [
-      0,
-      1,
-      2
-    ],
     "anyValid": false,
     "correctTexts": [
       "Đừng bao giờ dễ dàng chấp nhận thông báo \"không làm được\" của Agent",
       "Luôn phản hồi thông báo \"không làm được\" của Agent rằng \"Hãy tiếp tục tìm cách làm bằng được\"",
       "Nếu Agent trả lời \"Tôi không còn cách nào làm được\" thì yêu cầu nó \"Thử thay đổi một hướng tiếp cận hoàn toàn mới\""
+    ],
+    "correct": [
+      0,
+      1,
+      2
     ]
   },
   "3.12": {
     "type": "multi",
     "points": 24,
-    "correct": [
-      0,
-      1,
-      2
-    ],
     "anyValid": false,
     "correctTexts": [
       "Hãy tiếp tục tìm cách",
       "Hãy cố gắng hoàn thành mục tiêu",
       "Hãy thử tiếp cận theo cách khác"
+    ],
+    "correct": [
+      0,
+      1,
+      2
     ]
   },
   "3.13": {
     "type": "single",
     "points": 30,
-    "correct": [
-      1
-    ],
     "anyValid": false,
     "correctTexts": [
       "Bạn cam kết"
+    ],
+    "correct": [
+      1
     ]
   },
   "4.1": {
     "type": "single",
     "points": 18,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Không thể làm được việc này"
+    ],
+    "correct": [
+      0
     ]
   },
   "4.2": {
     "type": "single",
     "points": 18,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Bạn đã ép nó tìm cách nhưng không được"
+    ],
+    "correct": [
+      0
     ]
   },
   "4.3": {
     "type": "single",
     "points": 18,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Bạn đã yêu cầu nhưng nó vẫn báo là không làm được"
+    ],
+    "correct": [
+      0
     ]
   },
   "4.4": {
     "type": "single",
     "points": 18,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Hoàn toàn có thể, miễn có đủ hạ tầng phần cứng và các kết nối phần mềm cần thiết"
+    ],
+    "correct": [
+      0
     ]
   },
   "4.5": {
     "type": "single",
     "points": 18,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Nó đã đưa cho bạn một plan tương đối ổn"
+    ],
+    "correct": [
+      0
     ]
   },
   "4.6": {
     "type": "single",
     "points": 18,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Nó đưa ra được một plan chi tiết, khả thi nếu được kết nối đủ hệ thống"
+    ],
+    "correct": [
+      0
     ]
   },
   "4.7": {
@@ -302,390 +302,390 @@
   "5.1": {
     "type": "multi",
     "points": 12,
-    "correct": [
-      2,
-      11,
-      13
-    ],
     "anyValid": false,
     "correctTexts": [
       "🌍 Mở mạng đưa web ra Internet",
       "✍️ Kết nối LLM để tạo văn bản",
       "🌐 Tạo trang web"
+    ],
+    "correct": [
+      2,
+      11,
+      13
     ]
   },
   "5.2": {
     "type": "multi",
     "points": 12,
-    "correct": [
-      9,
-      13,
-      5,
-      11
-    ],
     "anyValid": false,
     "correctTexts": [
       "💬 Tạo AI Chat",
       "🌐 Tạo trang web",
       "🧠 Khả năng suy luận",
       "✍️ Kết nối LLM để tạo văn bản"
+    ],
+    "correct": [
+      9,
+      13,
+      5,
+      11
     ]
   },
   "5.3": {
     "type": "multi",
     "points": 10,
-    "correct": [
-      4,
-      7,
-      8
-    ],
     "anyValid": false,
     "correctTexts": [
       "🎨 Kết nối LLM để tạo hình ảnh",
       "🗣️ Kết nối LLM để tạo giọng nói",
       "🎬 Kết nối LLM để tạo video"
+    ],
+    "correct": [
+      4,
+      7,
+      8
     ]
   },
   "5.4": {
     "type": "multi",
     "points": 12,
-    "correct": [
-      13,
-      6,
-      2
-    ],
     "anyValid": false,
     "correctTexts": [
       "🌐 Tạo trang web",
       "🔐 Tạo trang đăng nhập",
       "🌍 Mở mạng đưa web ra Internet"
+    ],
+    "correct": [
+      13,
+      6,
+      2
     ]
   },
   "5.5": {
     "type": "multi",
     "points": 10,
-    "correct": [
-      14,
-      5
-    ],
     "anyValid": false,
     "correctTexts": [
       "📡 Xác định địa chỉ IP",
       "🧠 Khả năng suy luận"
+    ],
+    "correct": [
+      14,
+      5
     ]
   },
   "5.6": {
     "type": "multi",
     "points": 10,
-    "correct": [
-      1,
-      3
-    ],
     "anyValid": false,
     "correctTexts": [
       "💻 Tạo phần mềm",
       "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)"
+    ],
+    "correct": [
+      1,
+      3
     ]
   },
   "5.7": {
     "type": "multi",
     "points": 8,
-    "correct": [
-      7,
-      11
-    ],
     "anyValid": false,
     "correctTexts": [
       "🗣️ Kết nối LLM để tạo giọng nói",
       "✍️ Kết nối LLM để tạo văn bản"
+    ],
+    "correct": [
+      7,
+      11
     ]
   },
   "5.8": {
     "type": "multi",
     "points": 12,
-    "correct": [
-      15,
-      13,
-      2
-    ],
     "anyValid": false,
     "correctTexts": [
       "🗺️ Xác định vị trí (định vị)",
       "🌐 Tạo trang web",
       "🌍 Mở mạng đưa web ra Internet"
+    ],
+    "correct": [
+      15,
+      13,
+      2
     ]
   },
   "5.9": {
     "type": "multi",
     "points": 10,
-    "correct": [
-      10,
-      16
-    ],
     "anyValid": false,
     "correctTexts": [
       "⬇️ Download video, mp3",
       "🖼️ Trích xuất hình ảnh trong video"
+    ],
+    "correct": [
+      10,
+      16
     ]
   },
   "5.10": {
     "type": "multi",
     "points": 8,
-    "correct": [
-      2,
-      4,
-      13
-    ],
     "anyValid": false,
     "correctTexts": [
       "🌍 Mở mạng đưa web ra Internet",
       "🎨 Kết nối LLM để tạo hình ảnh",
       "🌐 Tạo trang web"
+    ],
+    "correct": [
+      2,
+      4,
+      13
     ]
   },
   "5.11": {
     "type": "multi",
     "points": 10,
-    "correct": [
-      14,
-      15
-    ],
     "anyValid": false,
     "correctTexts": [
       "📡 Xác định địa chỉ IP",
       "🗺️ Xác định vị trí (định vị)"
+    ],
+    "correct": [
+      14,
+      15
     ]
   },
   "5.12": {
     "type": "multi",
     "points": 8,
-    "correct": [
-      1,
-      7,
-      11
-    ],
     "anyValid": false,
     "correctTexts": [
       "💻 Tạo phần mềm",
       "🗣️ Kết nối LLM để tạo giọng nói",
       "✍️ Kết nối LLM để tạo văn bản"
+    ],
+    "correct": [
+      1,
+      7,
+      11
     ]
   },
   "5.13": {
     "type": "multi",
     "points": 10,
-    "correct": [
-      2,
-      12,
-      13
-    ],
     "anyValid": false,
     "correctTexts": [
       "🌍 Mở mạng đưa web ra Internet",
       "📸 Chụp hình trang web",
       "🌐 Tạo trang web"
+    ],
+    "correct": [
+      2,
+      12,
+      13
     ]
   },
   "5.14": {
     "type": "multi",
     "points": 10,
-    "correct": [
-      1,
-      3,
-      16
-    ],
     "anyValid": false,
     "correctTexts": [
       "💻 Tạo phần mềm",
       "👁️ Tìm kiếm hình ảnh (Thị giác máy tính)",
       "🖼️ Trích xuất hình ảnh trong video"
+    ],
+    "correct": [
+      1,
+      3,
+      16
     ]
   },
   "5.15": {
     "type": "multi",
     "points": 12,
-    "correct": [
-      9,
-      5,
-      11
-    ],
     "anyValid": false,
     "correctTexts": [
       "💬 Tạo AI Chat",
       "🧠 Khả năng suy luận",
       "✍️ Kết nối LLM để tạo văn bản"
+    ],
+    "correct": [
+      9,
+      5,
+      11
     ]
   },
   "5.16": {
     "type": "multi",
     "points": 8,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "🎵 Kết nối LLM để tạo âm thanh"
+    ],
+    "correct": [
+      0
     ]
   },
   "5.17": {
     "type": "multi",
     "points": 10,
-    "correct": [
-      14,
-      6
-    ],
     "anyValid": false,
     "correctTexts": [
       "📡 Xác định địa chỉ IP",
       "🔐 Tạo trang đăng nhập"
+    ],
+    "correct": [
+      14,
+      6
     ]
   },
   "5.18": {
     "type": "multi",
     "points": 12,
-    "correct": [
-      2,
-      4,
-      11,
-      13
-    ],
     "anyValid": false,
     "correctTexts": [
       "🌍 Mở mạng đưa web ra Internet",
       "🎨 Kết nối LLM để tạo hình ảnh",
       "✍️ Kết nối LLM để tạo văn bản",
       "🌐 Tạo trang web"
+    ],
+    "correct": [
+      2,
+      4,
+      11,
+      13
     ]
   },
   "5.19": {
     "type": "multi",
     "points": 10,
-    "correct": [
-      1,
-      7,
-      11
-    ],
     "anyValid": false,
     "correctTexts": [
       "💻 Tạo phần mềm",
       "🗣️ Kết nối LLM để tạo giọng nói",
       "✍️ Kết nối LLM để tạo văn bản"
+    ],
+    "correct": [
+      1,
+      7,
+      11
     ]
   },
   "5.20": {
     "type": "multi",
     "points": 12,
-    "correct": [
-      2,
-      6,
-      9,
-      13
-    ],
     "anyValid": false,
     "correctTexts": [
       "🌍 Mở mạng đưa web ra Internet",
       "🔐 Tạo trang đăng nhập",
       "💬 Tạo AI Chat",
       "🌐 Tạo trang web"
+    ],
+    "correct": [
+      2,
+      6,
+      9,
+      13
     ]
   },
   "6.1": {
     "type": "single",
     "points": 6,
-    "correct": [
-      1
-    ],
     "anyValid": false,
     "correctTexts": [
       "Xem xong rồi ạ"
+    ],
+    "correct": [
+      1
     ]
   },
   "6.2": {
     "type": "single",
     "points": 8,
-    "correct": [
-      1
-    ],
     "anyValid": false,
     "correctTexts": [
       "Ai cũng có thể làm. Với AI Agent, chúng sinh bình đẳng!"
+    ],
+    "correct": [
+      1
     ]
   },
   "6.3": {
     "type": "multi",
     "points": 10,
-    "correct": [
-      0,
-      1,
-      2
-    ],
     "anyValid": false,
     "correctTexts": [
       "Bạn đồng ý, và hiểu rằng những phần mềm, công cụ mình sắp làm ra sau đây chỉ để phục vụ mục tiêu học tập.",
       "Những công cụ này chưa phù hợp để dùng trong thực tế vì lý do bảo mật cũng như ổn định lâu dài.",
       "Bạn hoàn toàn chịu trách nhiệm về các hậu quả rủi ro tiềm ẩn nếu \"nhanh nhảu\" triển khai công cụ trong bài học vào công việc hàng ngày."
+    ],
+    "correct": [
+      0,
+      1,
+      2
     ]
   },
   "6.4": {
     "type": "single",
     "points": 6,
-    "correct": [
-      1
-    ],
     "anyValid": false,
     "correctTexts": [
       "Sẵn sàng rồi ạ!"
+    ],
+    "correct": [
+      1
     ]
   },
   "6.8": {
     "type": "single",
     "points": 10,
-    "correct": [
-      2
-    ],
     "anyValid": false,
     "correctTexts": [
       "Phần mềm — Agent giải thích đây là ứng dụng desktop chạy độc lập, cần cài đặt"
+    ],
+    "correct": [
+      2
     ]
   },
   "6.10": {
     "type": "multi",
     "points": 10,
-    "correct": [],
     "anyValid": true,
-    "correctTexts": []
+    "correctTexts": [],
+    "correct": []
   },
   "7.1": {
     "type": "single",
     "points": 14,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Rồi, bạn đã đọc xong"
+    ],
+    "correct": [
+      0
     ]
   },
   "7.2": {
     "type": "single",
     "points": 14,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Có, khác nhau"
+    ],
+    "correct": [
+      0
     ]
   },
   "7.3": {
     "type": "single",
     "points": 16,
-    "correct": [
-      7
-    ],
     "anyValid": false,
     "correctTexts": [
       "Tất cả các lợi ích trên"
+    ],
+    "correct": [
+      7
     ]
   },
   "7.4": {
@@ -696,12 +696,12 @@
   "7.7": {
     "type": "single",
     "points": 14,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Không bao giờ, bạn sẽ đề cao cảnh giác"
+    ],
+    "correct": [
+      0
     ]
   },
   "7.11": {
@@ -717,34 +717,34 @@
   "7.12": {
     "type": "single",
     "points": 14,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Không có bất cứ manh mối nào cả"
+    ],
+    "correct": [
+      0
     ]
   },
   "7.13": {
     "type": "single",
     "points": 14,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Vì nó đủ thông minh để cho rằng nếu API kia lấy được thông tin cá nhân của người này sẽ lấy được thông tin cá nhân của người khác"
+    ],
+    "correct": [
+      0
     ]
   },
   "7.14": {
     "type": "single",
     "points": 14,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Không. Vì tôi đã cố tình thiết lập cho API lấy thông tin cá nhân kia trả về đầy đủ các thông tin y như thật, bao gồm cả Friendship code (nhưng nội dung fake)"
+    ],
+    "correct": [
+      0
     ]
   },
   "7.15": {
@@ -796,13 +796,6 @@
   "8.5": {
     "type": "multi",
     "points": 12,
-    "correct": [
-      0,
-      2,
-      3,
-      5,
-      6
-    ],
     "anyValid": false,
     "correctTexts": [
       "Người khác có thể nộp bài thay bạn — ghi đè bài cũ, làm bạn mất tiến độ",
@@ -810,42 +803,40 @@
       "Người khác có thể \"hack\" bạn bè của bạn vì hệ thống tin tưởng request đến từ bạn (như Câu 7.9 Prompt Injection)",
       "Coding Agent của người khác có thể gọi API thay danh nghĩa bạn → ghi log, tạo điểm bất thường",
       "Người khác có thể giả bạn nhắn tin cho tôi, bạn học trong lớp"
-    ]
-  },
-  "8.6": {
-    "type": "single",
-    "points": 8,
-    "correct": [
-      2
     ],
-    "anyValid": false,
-    "correctTexts": [
-      "Không, vì token là chìa khoá truy cập tài khoản — coi như mật khẩu của bạn"
-    ]
-  },
-  "8.7": {
-    "type": "single",
-    "points": 8,
-    "correct": [
-      1
-    ],
-    "anyValid": false,
-    "correctTexts": [
-      "Không, vì link đã chứa token bên trong — bất kỳ ai có link đều có thể trích token ra"
-    ]
-  },
-  "8.8": {
-    "type": "multi",
-    "points": 12,
     "correct": [
       0,
       2,
       3,
       5,
-      6,
-      8,
-      9
+      6
+    ]
+  },
+  "8.6": {
+    "type": "single",
+    "points": 8,
+    "anyValid": false,
+    "correctTexts": [
+      "Không, vì token là chìa khoá truy cập tài khoản — coi như mật khẩu của bạn"
     ],
+    "correct": [
+      2
+    ]
+  },
+  "8.7": {
+    "type": "single",
+    "points": 8,
+    "anyValid": false,
+    "correctTexts": [
+      "Không, vì link đã chứa token bên trong — bất kỳ ai có link đều có thể trích token ra"
+    ],
+    "correct": [
+      1
+    ]
+  },
+  "8.8": {
+    "type": "multi",
+    "points": 12,
     "anyValid": false,
     "correctTexts": [
       "Đăng xuất khỏi lớp học khi dùng máy tính chung (laptop trường, quán net…)",
@@ -855,6 +846,15 @@
       "Không lưu token trong file dễ truy cập (Desktop, sticky note, ghi chú đám mây không mã hoá)",
       "Không gửi đường link có chứa token cho người khác (kể cả khi đã rút gọn)",
       "Không chụp / share screenshot có URL chứa token"
+    ],
+    "correct": [
+      0,
+      2,
+      3,
+      5,
+      6,
+      8,
+      9
     ]
   },
   "8.10": {
@@ -898,47 +898,47 @@
   "8.15": {
     "type": "single",
     "points": 8,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Bạn đã hiểu và ghi nhớ quy tắc này"
+    ],
+    "correct": [
+      0
     ]
   },
   "8.17": {
     "type": "single",
     "points": 10,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Hoàn toàn có thể"
+    ],
+    "correct": [
+      0
     ]
   },
   "8.18": {
     "type": "single",
     "points": 10,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Hoàn toàn có thể"
+    ],
+    "correct": [
+      0
     ]
   },
   "8.19": {
     "type": "multi",
     "points": 14,
-    "correct": [
-      0,
-      1
-    ],
     "anyValid": false,
     "correctTexts": [
       "Thao tác này quá tốn token vì phải chụp và phân tích hình liên tục",
       "Thao tác này quá chậm vì phải chụp và phân tích hình liên tục"
+    ],
+    "correct": [
+      0,
+      1
     ]
   },
   "8.20": {
@@ -972,67 +972,67 @@
   "9.2": {
     "type": "single",
     "points": 8,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Giao diện Coding Agent chạy trên trình duyệt web"
+    ],
+    "correct": [
+      3
     ]
   },
   "9.4": {
     "type": "single",
     "points": 10,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Có, nó chạy được và trả kết quả hoàn toàn chính xác"
+    ],
+    "correct": [
+      1
     ]
   },
   "9.5": {
     "type": "single",
     "points": 10,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Vì trang web của OpenCode là cửa ngõ giao diện \"truyền lệnh\" tới Coding Agent opencode đang chạy cục bộ trong máy tính của bạn"
+    ],
+    "correct": [
+      1
     ]
   },
   "9.6": {
     "type": "single",
     "points": 8,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "opencode session list"
+    ],
+    "correct": [
+      4
     ]
   },
   "9.7": {
     "type": "single",
     "points": 8,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Không có, Antigravity chủ yếu là Agent hoạt động bằng GUI"
+    ],
+    "correct": [
+      4
     ]
   },
   "9.8": {
     "type": "single",
     "points": 8,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "gemini --list-sessions"
+    ],
+    "correct": [
+      0
     ]
   },
   "9.11": {
@@ -1066,34 +1066,34 @@
   "9.14": {
     "type": "single",
     "points": 8,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Gọi API của Google"
+    ],
+    "correct": [
+      1
     ]
   },
   "9.15": {
     "type": "single",
     "points": 10,
-    "correct": [
-      3
-    ],
     "anyValid": false,
     "correctTexts": [
       "Cả 3 đều đúng"
+    ],
+    "correct": [
+      3
     ]
   },
   "9.18": {
     "type": "single",
     "points": 10,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Để cô giáo biết chắc chắn bạn đã dùng GWS CLI chạy tự động — nếu ngồi tìm bằng mắt và làm tay thì không thể nộp kịp"
+    ],
+    "correct": [
+      3
     ]
   },
   "9.23": {
@@ -1109,34 +1109,34 @@
   "10.1": {
     "type": "single",
     "points": 8,
-    "correct": [
-      2
-    ],
     "anyValid": false,
     "correctTexts": [
       "Vì tôi muốn bạn thấy việc chấm điểm \"bằng cơm\" rất mất thời gian"
+    ],
+    "correct": [
+      2
     ]
   },
   "10.2": {
     "type": "single",
     "points": 8,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Được chứ. Thậm chí nếu muốn dùng 9 Agent với 9 model hoàn toàn khác nhau luôn càng tốt."
+    ],
+    "correct": [
+      0
     ]
   },
   "10.3": {
     "type": "single",
     "points": 8,
-    "correct": [
-      3
-    ],
     "anyValid": false,
     "correctTexts": [
       "Do Agent chấm điểm hoàn toàn tự động"
+    ],
+    "correct": [
+      2
     ]
   },
   "10.4": {
@@ -1213,25 +1213,25 @@
   "10.6": {
     "type": "multi",
     "points": 12,
-    "correct": [
-      1,
-      4
-    ],
     "anyValid": false,
     "correctTexts": [
       "Nhờ người chấm điểm dùm sẽ đỡ mất công trong ngắn hạn",
       "Cài đặt phần mềm và lập trình chấm điểm bằng công nghệ sẽ đỡ mất công trong dài hạn"
+    ],
+    "correct": [
+      1,
+      4
     ]
   },
   "10.7": {
     "type": "single",
     "points": 8,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Có rất nhiều trường hợp, việc chấm điểm tự động không thể nào chính xác"
+    ],
+    "correct": [
+      0
     ]
   },
   "10.8": {
@@ -1283,23 +1283,23 @@
   "10.10": {
     "type": "single",
     "points": 8,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Không thể, không bao giờ"
+    ],
+    "correct": [
+      0
     ]
   },
   "10.11": {
     "type": "single",
     "points": 8,
-    "correct": [
-      1
-    ],
     "anyValid": false,
     "correctTexts": [
       "Không tuyệt đối, vì con người cũng có thể sai"
+    ],
+    "correct": [
+      0
     ]
   },
   "10.12": {
@@ -1396,12 +1396,12 @@
   "10.15": {
     "type": "single",
     "points": 10,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Cả 3 ý trên đều đúng"
+    ],
+    "correct": [
+      0
     ]
   },
   "10.17": {
@@ -1657,14 +1657,14 @@
   "11.1": {
     "type": "multi",
     "points": 10,
-    "correct": [
-      2,
-      3
-    ],
     "anyValid": false,
     "correctTexts": [
       "Không bị ngộp thở trong hàng tá tính năng của Coding Agent",
       "Dễ hiểu hơn vì nó cực kỳ đơn giản"
+    ],
+    "correct": [
+      2,
+      3
     ]
   },
   "11.2": {
@@ -1686,25 +1686,25 @@
   "11.4": {
     "type": "single",
     "points": 6,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Ngôn ngữ, dưới các dạng thức khác nhau như text, audio, video, âm thanh..."
+    ],
+    "correct": [
+      2
     ]
   },
   "11.5": {
     "type": "multi",
     "points": 12,
-    "correct": [
-      1,
-      3
-    ],
     "anyValid": false,
     "correctTexts": [
       "Chatbot được cài đặt sẵn các kịch bản mẫu để trả lời",
       "Chatbot sử dụng mô hình ngôn ngữ lớn để tự suy nghĩ và trả lời"
+    ],
+    "correct": [
+      5,
+      1
     ]
   },
   "11.6": {
@@ -1714,45 +1714,45 @@
   "11.7": {
     "type": "single",
     "points": 8,
-    "correct": [
-      1
-    ],
     "anyValid": false,
     "correctTexts": [
       "Không phản hồi"
+    ],
+    "correct": [
+      0
     ]
   },
   "11.8": {
     "type": "single",
     "points": 10,
-    "correct": [
-      5
-    ],
     "anyValid": false,
     "correctTexts": [
       "Đưa /giup, /giup-do, /giup-toi, /tro-giup vào danh sách từ khoá kích hoạt câu trả lời \"Hỗ trợ\""
+    ],
+    "correct": [
+      5
     ]
   },
   "11.10": {
     "type": "single",
     "points": 8,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Chatbot được cài đặt sẵn các kịch bản mẫu để trả lời"
+    ],
+    "correct": [
+      0
     ]
   },
   "11.12": {
     "type": "single",
     "points": 8,
-    "correct": [
-      1
-    ],
     "anyValid": false,
     "correctTexts": [
       "Chatbot sử dụng mô hình ngôn ngữ lớn để tự suy nghĩ và trả lời"
+    ],
+    "correct": [
+      1
     ]
   },
   "11.13": {
@@ -1829,16 +1829,16 @@
   "11.20": {
     "type": "multi",
     "points": 14,
-    "correct": [
-      3,
-      4,
-      5
-    ],
     "anyValid": false,
     "correctTexts": [
       "Được cung cấp tài liệu mô tả chi tiết tính năng, tham số, cách sử dụng các tools này",
       "Được trang bị tools, dưới dạng các phần mềm trong máy",
       "Được chỉ dẫn chính xác phải sử dụng tool nào tương ứng với yêu cầu nào từ phía người dùng"
+    ],
+    "correct": [
+      4,
+      5,
+      2
     ]
   },
   "11.21": {
@@ -1905,23 +1905,23 @@
   "11.23": {
     "type": "single",
     "points": 10,
-    "correct": [
-      1
-    ],
     "anyValid": false,
     "correctTexts": [
       "Mầm Fake tạo ra một prompt khác phức tạp hơn nhiều"
+    ],
+    "correct": [
+      1
     ]
   },
   "11.24": {
     "type": "single",
     "points": 10,
-    "correct": [
-      2
-    ],
     "anyValid": false,
     "correctTexts": [
       "Người dùng gõ \"Tạo cardvisit cho tôi\". Tôi có một số tool (count_images, show_images, cardvisit_create, show_docs...). Bạn là chuyên gia giải quyết vấn đề. Hãy hướng dẫn tôi hoàn thành mục tiêu phù hợp với prompt người dùng gõ vào."
+    ],
+    "correct": [
+      2
     ]
   },
   "11.25": {
@@ -1950,199 +1950,199 @@
   "12.1": {
     "type": "single",
     "points": 10,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Đã làm được"
+    ],
+    "correct": [
+      0
     ]
   },
   "12.2": {
     "type": "single",
     "points": 12,
-    "correct": [
-      1
-    ],
     "anyValid": false,
     "correctTexts": [
       "Đã làm được"
+    ],
+    "correct": [
+      1
     ]
   },
   "12.4": {
     "type": "single",
     "points": 14,
-    "correct": [
-      1
-    ],
     "anyValid": false,
     "correctTexts": [
       "Đã làm được"
+    ],
+    "correct": [
+      1
     ]
   },
   "12.5": {
     "type": "single",
     "points": 14,
-    "correct": [
-      1
-    ],
     "anyValid": false,
     "correctTexts": [
       "Đã làm được"
+    ],
+    "correct": [
+      1
     ]
   },
   "12.6": {
     "type": "single",
     "points": 12,
-    "correct": [
-      1
-    ],
     "anyValid": false,
     "correctTexts": [
       "Đã làm được"
+    ],
+    "correct": [
+      0
     ]
   },
   "12.7": {
     "type": "single",
     "points": 14,
-    "correct": [
-      1
-    ],
     "anyValid": false,
     "correctTexts": [
       "Đã làm được"
+    ],
+    "correct": [
+      1
     ]
   },
   "12.8": {
     "type": "single",
     "points": 14,
-    "correct": [
-      1
-    ],
     "anyValid": false,
     "correctTexts": [
       "Đã làm được"
+    ],
+    "correct": [
+      1
     ]
   },
   "12.9": {
     "type": "single",
     "points": 12,
-    "correct": [
-      1
-    ],
     "anyValid": false,
     "correctTexts": [
       "Đã làm được"
+    ],
+    "correct": [
+      1
     ]
   },
   "12.10": {
     "type": "single",
     "points": 14,
-    "correct": [
-      1
-    ],
     "anyValid": false,
     "correctTexts": [
       "Đã làm được"
+    ],
+    "correct": [
+      0
     ]
   },
   "12.11": {
     "type": "single",
     "points": 12,
-    "correct": [
-      1
-    ],
     "anyValid": false,
     "correctTexts": [
       "Đã làm được"
+    ],
+    "correct": [
+      0
     ]
   },
   "12.12": {
     "type": "single",
     "points": 16,
-    "correct": [
-      1
-    ],
     "anyValid": false,
     "correctTexts": [
       "Đã làm được"
+    ],
+    "correct": [
+      1
     ]
   },
   "12.13": {
     "type": "single",
     "points": 14,
-    "correct": [
-      1
-    ],
     "anyValid": false,
     "correctTexts": [
       "Đã làm được"
+    ],
+    "correct": [
+      1
     ]
   },
   "12.14": {
     "type": "single",
     "points": 16,
-    "correct": [
-      1
-    ],
     "anyValid": false,
     "correctTexts": [
       "Đã làm được"
+    ],
+    "correct": [
+      0
     ]
   },
   "12.15": {
     "type": "single",
     "points": 12,
-    "correct": [
-      1
-    ],
     "anyValid": false,
     "correctTexts": [
       "Đã làm được"
+    ],
+    "correct": [
+      0
     ]
   },
   "12.16": {
     "type": "single",
     "points": 16,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Đã làm được"
+    ],
+    "correct": [
+      1
     ]
   },
   "13.1": {
     "type": "single",
     "points": 20,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Đã làm được"
+    ],
+    "correct": [
+      1
     ]
   },
   "13.2": {
     "type": "single",
     "points": 20,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Đã làm được"
+    ],
+    "correct": [
+      1
     ]
   },
   "13.3": {
     "type": "single",
     "points": 16,
-    "correct": [
-      0
-    ],
     "anyValid": false,
     "correctTexts": [
       "Đã làm được"
+    ],
+    "correct": [
+      1
     ]
   },
   "gate14.1": {

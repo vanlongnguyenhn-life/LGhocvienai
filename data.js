@@ -1430,8 +1430,6 @@ const LESSONS = [
     code: "9",
     title: "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)",
     points: 212,
-    intro:
-      "Bài này bạn sẽ thực hành để Coding Agent \"nói chuyện\" với nhiều loại phần mềm khác nhau: qua CLI (OpenCode, Gemini CLI), qua API/token (Google Workspace) — và hiểu khi nào nên dùng cách nào.\n\nGhi chú: các câu tương tác bạn học (9.11, 9.12, 9.23, 9.24) dùng một nhân vật giả lập \"bạn Mít\" (không phải người thật) để bạn có trải nghiệm sống thật mà không đụng vào dữ liệu của ai. Các câu 9.16-9.22 cần một tài khoản Google THẬT của bạn — sản phẩm (Sheet/Slide/video) được hệ thống chấm tự động qua link chia sẻ công khai.",
     questions: [
       {
         code: "9.1",

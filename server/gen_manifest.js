@@ -20,6 +20,11 @@ const { LESSONS } = exported;
 const manifest = {};
 const reflectManifest = {};
 const answerManifest = {};
+
+// CHỈ xáo thứ tự lựa chọn từ bài này trở đi. Các bài trước đó học viên đã làm xong rồi — lựa
+// chọn cũ của họ lưu theo CHỈ SỐ ô, xáo lại là mở bài cũ ra thấy tô sáng nhầm ô.
+const SHUFFLE_FROM_LESSON_ID = 9;
+const shouldShuffle = (lesson) => Number(lesson.id) >= SHUFFLE_FROM_LESSON_ID;
 const ANSWER_TYPES = new Set([
   "single", "multi", "match", "order", "order-tag", "tag-mark", "code", "token_scope_check", "gate",
 ]);
@@ -54,12 +59,14 @@ for (const lesson of LESSONS) {
       // mở) — server phải tự tính lại đúng/sai từ answer_data, không tin status client gửi.
       const entry = { type: q.type, points: q.points };
       if (q.type === "single" || q.type === "multi") {
-        entry.correct = q.correct || [];
         entry.anyValid = !!q.anyValid;
         // Đáp án theo NỘI DUNG, không theo số thứ tự ô: giao diện gửi lên chuỗi học viên đã
-        // chọn nên có thể xáo thứ tự thoải mái, và một bảng đáp án bị rò rỉ theo chỉ số ô
-        // (correct: [0,2,3]) trở thành vô dụng.
+        // chọn nên xáo thứ tự thoải mái, và bảng đáp án rò rỉ theo chỉ số ô trở thành vô dụng.
         entry.correctTexts = (q.correct || []).map((i) => (q.options || [])[i]).filter((v) => v != null);
+        // Thứ tự lựa chọn thực sự gửi ra trình duyệt — chỉ số `correct` phải tính theo thứ tự
+        // NÀY, để trình duyệt nào còn giữ bản app.js cũ (gửi chỉ số) vẫn được chấm đúng.
+        const publicOptions = shouldShuffle(lesson) ? seededShuffle(q.options || [], q.code) : q.options || [];
+        entry.correct = entry.correctTexts.map((t) => publicOptions.indexOf(t)).filter((i) => i >= 0);
       } else if (q.type === "match") {
         entry.correctMap = q.correctMap || [];
         entry.correctPairs = (q.leftItems || []).map((left, i) => [left, (q.rightOptions || [])[q.correctMap[i]]]);
@@ -108,7 +115,7 @@ console.log(`Wrote ${Object.keys(answerManifest).length} fixed-answer questions 
 // hết. Bản public này bóc sạch các trường đó; server vẫn giữ bản đầy đủ để chấm.
 const STRIP_KEYS = new Set(["correct", "anyValid", "correctMap", "answer", "gradingNote"]);
 
-function stripQuestion(q) {
+function stripQuestion(q, shuffleOptions) {
   const out = {};
   for (const [k, v] of Object.entries(q)) {
     if (STRIP_KEYS.has(k)) continue;
@@ -122,15 +129,45 @@ function stripQuestion(q) {
     }
     out[k] = v;
   }
-  // CỐ Ý GIỮ NGUYÊN thứ tự các lựa chọn.
-  // Từng thử xáo lại để vô hiệu hoá bảng đáp án đã rò rỉ (đáp án cũ ghi theo chỉ số ô), nhưng
-  // đo ra thì 98% câu học viên ĐÃ LÀM sẽ tô sáng nhầm ô khi mở lại — vì lựa chọn cũ cũng được
-  // lưu theo chỉ số. Tức là để chặn vài người có file rò rỉ thì làm hỏng trải nghiệm của TẤT CẢ
-  // học viên trung thực. Không đáng. Việc bóc đáp án khỏi file mới là biện pháp chính.
+  // Xáo thứ tự lựa chọn của câu trắc nghiệm. Trong data.js đáp án đúng bị dồn về đầu danh sách
+  // (55% nằm ô 1, 89% nằm ô 1-2) — học viên cứ chọn ô đầu là qua quá nửa. Xáo bằng bộ sinh số
+  // CỐ ĐỊNH THEO MÃ CÂU nên mỗi lần sinh lại vẫn ra đúng thứ tự đó (không đổi lung tung, và
+  // lựa chọn cũ của học viên đã lưu vẫn tô sáng đúng nhờ đối chiếu theo nội dung).
+  if (Array.isArray(out.options) && shuffleOptions) out.options = seededShuffle(out.options, q.code);
   return out;
 }
 
-const publicLessons = LESSONS.map((l) => ({ ...l, questions: l.questions.map(stripQuestion) }));
+// Bộ sinh số ngẫu nhiên có hạt giống (mulberry32) — cùng mã câu thì luôn ra cùng thứ tự.
+function seededRandom(seedStr) {
+  let h = 1779033703 ^ seedStr.length;
+  for (let i = 0; i < seedStr.length; i++) {
+    h = Math.imul(h ^ seedStr.charCodeAt(i), 3432918353);
+    h = (h << 13) | (h >>> 19);
+  }
+  let a = h >>> 0;
+  return function () {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function seededShuffle(arr, seedStr) {
+  const rnd = seededRandom(seedStr);
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rnd() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+const publicLessons = LESSONS.map((l) => ({
+  ...l,
+  questions: l.questions.map((q) => stripQuestion(q, shouldShuffle(l))),
+}));
 const banner =
   "// SINH TU DONG bang server/gen_manifest.js — DUNG SUA TAY.\n" +
   "// Ban nay da BOC SACH dap an de gui ve trinh duyet. Sua noi dung o data.js roi chay lai:\n" +

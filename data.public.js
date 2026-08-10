@@ -2064,7 +2064,6 @@ const LESSONS = [
     "code": "9",
     "title": "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)",
     "points": 212,
-    "intro": "Bài này bạn sẽ thực hành để Coding Agent \"nói chuyện\" với nhiều loại phần mềm khác nhau: qua CLI (OpenCode, Gemini CLI), qua API/token (Google Workspace) — và hiểu khi nào nên dùng cách nào.\n\nGhi chú: các câu tương tác bạn học (9.11, 9.12, 9.23, 9.24) dùng một nhân vật giả lập \"bạn Mít\" (không phải người thật) để bạn có trải nghiệm sống thật mà không đụng vào dữ liệu của ai. Các câu 9.16-9.22 cần một tài khoản Google THẬT của bạn — sản phẩm (Sheet/Slide/video) được hệ thống chấm tự động qua link chia sẻ công khai.",
     "questions": [
       {
         "code": "9.1",
@@ -2081,12 +2080,12 @@ const LESSONS = [
         "type": "single",
         "prompt": "Gõ lệnh opencode web, bạn thấy kết quả thế nào?",
         "options": [
-          "Giao diện Coding Agent chạy trên trình duyệt web",
           "Báo lỗi 'command not found'",
-          "In ra version của OpenCode rồi thoát",
-          "Mở bot Telegram của OpenCode",
           "In ra dòng 'Hello World' rồi thoát",
-          "Mở trình duyệt đến trang trắng không có gì"
+          "Mở bot Telegram của OpenCode",
+          "Giao diện Coding Agent chạy trên trình duyệt web",
+          "Mở trình duyệt đến trang trắng không có gì",
+          "In ra version của OpenCode rồi thoát"
         ],
         "points": 8
       },
@@ -2107,8 +2106,8 @@ const LESSONS = [
         "copyPrompt": "Chúng ta đang làm việc ở thư mục nào? Liệt kê danh sách các file, folder trong thư mục này.",
         "copyPromptTrailing": "Nó có thực hiện được nhiệm vụ (đếm file, folders) không?",
         "options": [
-          "Có, nó chạy được và trả kết quả hoàn toàn chính xác",
-          "Không, nó báo không truy cập được vào máy tính của bạn"
+          "Không, nó báo không truy cập được vào máy tính của bạn",
+          "Có, nó chạy được và trả kết quả hoàn toàn chính xác"
         ],
         "points": 10
       },
@@ -2118,11 +2117,11 @@ const LESSONS = [
         "type": "single",
         "prompt": "Tại sao các AI Chat như chatgpt.com, gemini.com, grok.com… không làm được nhiệm vụ này, mà OpenCode trên nền web thì làm được?",
         "options": [
+          "Trình duyệt chặn AI Chat truy cập file",
           "Vì trang web của OpenCode là cửa ngõ giao diện \"truyền lệnh\" tới Coding Agent opencode đang chạy cục bộ trong máy tính của bạn",
-          "OpenCode thông minh hơn các AI Chat khác",
           "OpenCode dùng GPU mạnh hơn",
           "OpenCode trả phí, các AI Chat kia free nên bị giới hạn",
-          "Trình duyệt chặn AI Chat truy cập file"
+          "OpenCode thông minh hơn các AI Chat khác"
         ],
         "points": 10
       },
@@ -2132,11 +2131,11 @@ const LESSONS = [
         "type": "single",
         "prompt": "Lệnh CLI nào để liệt kê các session (phiên làm việc / cuộc chat) trong OpenCode?",
         "options": [
-          "opencode session list",
-          "opencode chat list",
           "opencode list sessions",
+          "opencode chat list",
           "opencode --list",
           "opencode sessions",
+          "opencode session list",
           "opencode show all"
         ],
         "points": 8
@@ -2147,12 +2146,12 @@ const LESSONS = [
         "type": "single",
         "prompt": "Lệnh CLI nào để liệt kê các session (phiên làm việc / cuộc chat) trong Google Antigravity?",
         "options": [
-          "Không có, Antigravity chủ yếu là Agent hoạt động bằng GUI",
           "antigravity session list",
           "antigravity --sessions",
+          "Có lệnh nhưng phải trả phí Pro mới dùng được",
           "antigravity list-chats",
-          "antigravity-cli sessions",
-          "Có lệnh nhưng phải trả phí Pro mới dùng được"
+          "Không có, Antigravity chủ yếu là Agent hoạt động bằng GUI",
+          "antigravity-cli sessions"
         ],
         "points": 8
       },
@@ -2163,11 +2162,11 @@ const LESSONS = [
         "prompt": "Hãy nhờ Coding Agent của bạn cài Gemini CLI (github.com/google-gemini/gemini-cli) — là Coding Agent hoạt động ở Terminal, và hỗ trợ CLI mạnh mẽ.\n\nLệnh CLI nào để liệt kê các session (phiên làm việc / cuộc chat) trong Gemini CLI?",
         "options": [
           "gemini --list-sessions",
-          "gemini sessions",
-          "gemini list",
-          "gemini chat list",
           "gemini --history",
-          "gemini-cli sessions"
+          "gemini chat list",
+          "gemini-cli sessions",
+          "gemini list",
+          "gemini sessions"
         ],
         "points": 8
       },
@@ -2236,8 +2235,8 @@ const LESSONS = [
         "type": "single",
         "prompt": "Vậy để Agent của bạn có thể Kiểm tra thư Gmail, Tạo/xoá/sửa Google Sheet, Sửa file Docs, tạo file trình chiếu Google Slide… Bạn cần:",
         "options": [
-          "Gọi API của Google",
-          "Cài bộ phần mềm Google Office CLI vào máy"
+          "Cài bộ phần mềm Google Office CLI vào máy",
+          "Gọi API của Google"
         ],
         "points": 8
       },
@@ -2247,9 +2246,9 @@ const LESSONS = [
         "type": "single",
         "prompt": "Vì các sản phẩm như Gmail, Sheet, Docs, Slides đều là sản phẩm trên cloud của Google nên chắc chắn phải gọi API từ Google để thao tác.\n\nMặc dù bạn có thể sử dụng một phần mềm cài được vào máy tên là GWS CLI (Google Workspace CLI) để thực hiện hầu hết các tác vụ, nhưng bản chất nó chính là:",
         "options": [
+          "Phần mềm giúp quản lý token để thực hiện việc gọi API của Google",
           "Phần mềm giúp đơn giản hoá việc gọi API của Google",
           "Phần mềm giúp chuẩn hoá việc gọi API của Google",
-          "Phần mềm giúp quản lý token để thực hiện việc gọi API của Google",
           "Cả 3 đều đúng"
         ],
         "points": 10
@@ -2276,10 +2275,10 @@ const LESSONS = [
         "type": "single",
         "prompt": "Nhiệm vụ \"Đãi cát tìm vàng\" (Câu 9.17 — sắp mở) yêu cầu Agent lấy về hàng nghìn dòng dữ liệu \"cát\", tìm ra 10 dòng \"vàng\" rồi ghi đúng toạ độ từng dòng vào một Google Sheet thật — TẤT CẢ phải xong trong tối đa 10 giây.\n\nTheo bạn, tại sao nhiệm vụ lại có giới hạn thời gian ngặt nghèo như vậy?",
         "options": [
-          "Để cô giáo biết chắc chắn bạn đã dùng GWS CLI chạy tự động — nếu ngồi tìm bằng mắt và làm tay thì không thể nộp kịp",
-          "Để mô phỏng môi trường làm việc thực tế — luôn có deadline",
           "Để giảm tải cho server — nhiều học viên submit cùng lúc sẽ làm chậm hệ thống",
-          "Vì Google Sheets có giới hạn 30 lượt tạo sheet mỗi 30 giây"
+          "Vì Google Sheets có giới hạn 30 lượt tạo sheet mỗi 30 giây",
+          "Để mô phỏng môi trường làm việc thực tế — luôn có deadline",
+          "Để cô giáo biết chắc chắn bạn đã dùng GWS CLI chạy tự động — nếu ngồi tìm bằng mắt và làm tay thì không thể nộp kịp"
         ],
         "points": 10
       },
@@ -2356,8 +2355,8 @@ const LESSONS = [
         "type": "single",
         "prompt": "Tại sao nhiệm vụ dùng GWS làm slide (Câu 9.21 — Tình bạn diệu kỳ) tôi lại yêu cầu bạn nhờ 9 người bạn cùng chấm điểm?",
         "options": [
-          "Vì Agent không thể tự chấm bài",
           "Vì tôi không có thời gian chấm bài",
+          "Vì Agent không thể tự chấm bài",
           "Vì tôi muốn bạn thấy việc chấm điểm \"bằng cơm\" rất mất thời gian"
         ],
         "points": 8
@@ -2379,10 +2378,10 @@ const LESSONS = [
         "type": "single",
         "prompt": "Trong thực tế, tới nhiệm vụ dùng Remotion làm video (Câu 9.22), việc chấm điểm do ai thực hiện?",
         "options": [
-          "Tôi chấm",
-          "Do con người chấm",
           "Nhờ bạn học chấm",
-          "Do Agent chấm điểm hoàn toàn tự động"
+          "Do con người chấm",
+          "Do Agent chấm điểm hoàn toàn tự động",
+          "Tôi chấm"
         ],
         "points": 8
       },
@@ -2436,9 +2435,9 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Việc đi nhờ người chấm điểm so với việc cài đặt phần mềm, lập trình chấm điểm bằng nhiều công nghệ và công cụ khác nhau, việc nào mất thời gian hơn?",
         "options": [
-          "Nhờ người chấm điểm luôn tối ưu nhất nên không cần đầu tư hệ thống chấm tự động",
-          "Nhờ người chấm điểm dùm sẽ đỡ mất công trong ngắn hạn",
           "Chấm tự động thay thế hoàn toàn con người trong mọi ngữ cảnh nên không có rủi ro sai lệch",
+          "Nhờ người chấm điểm dùm sẽ đỡ mất công trong ngắn hạn",
+          "Nhờ người chấm điểm luôn tối ưu nhất nên không cần đầu tư hệ thống chấm tự động",
           "Chỉ cần viết 1 lần là hệ thống tự chấm đúng mãi mãi, không cần bảo trì hoặc cập nhật",
           "Cài đặt phần mềm và lập trình chấm điểm bằng công nghệ sẽ đỡ mất công trong dài hạn"
         ],
@@ -2506,8 +2505,8 @@ const LESSONS = [
         "type": "single",
         "prompt": "Nhưng trong thực tế, nếu cho con người \"gác cửa\" các khâu mà máy móc có thể sai thì vấn đề có giải quyết được không?",
         "options": [
-          "Sẽ đúng tuyệt đối",
-          "Không tuyệt đối, vì con người cũng có thể sai"
+          "Không tuyệt đối, vì con người cũng có thể sai",
+          "Sẽ đúng tuyệt đối"
         ],
         "points": 8
       },
@@ -2645,8 +2644,8 @@ const LESSONS = [
         "options": [
           "Cả 3 ý trên đều đúng",
           "Giảm thiểu sai xót",
-          "Tiết kiệm token",
-          "Tiết kiệm thời gian"
+          "Tiết kiệm thời gian",
+          "Tiết kiệm token"
         ],
         "points": 10
       },
@@ -2993,11 +2992,11 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Coding Agent thật có thể làm gần như mọi thứ, dựa trên 3 năng lực: suy luận vô hạn, thực thi dựa trên tool có sẵn, và tự viết phần mềm mới để làm việc lặp lại định kỳ. Vì các Coding Agent thật (OpenCode, Gemini CLI...) quá phức tạp, tôi tạo ra một Agent Demo giới hạn tính năng để học từng bước. Việc tìm hiểu Agent Demo này mang lại lợi ích nào?",
         "options": [
-          "Học xong Agent Demo là đủ, các bạn sẽ không cần tìm hiểu các Coding Agent thật nữa",
           "Vì do tôi tự viết nên Agent Demo mạnh hơn và chạy nhanh hơn mọi Coding Agent mã nguồn mở",
+          "Agent Demo tuy đơn giản nhưng vẫn đủ sức thay thế hoàn toàn Coding Agent trong công việc thực tế",
           "Không bị ngộp thở trong hàng tá tính năng của Coding Agent",
           "Dễ hiểu hơn vì nó cực kỳ đơn giản",
-          "Agent Demo tuy đơn giản nhưng vẫn đủ sức thay thế hoàn toàn Coding Agent trong công việc thực tế"
+          "Học xong Agent Demo là đủ, các bạn sẽ không cần tìm hiểu các Coding Agent thật nữa"
         ],
         "points": 10
       },
@@ -3028,10 +3027,10 @@ const LESSONS = [
         "type": "single",
         "prompt": "AI Agent là một Chatbot được nâng cấp qua từng cấp độ: biết dùng Công cụ, biết định hình Danh tính, biết Lưu trữ trải nghiệm và biết Tự tư duy để đạt mục tiêu.\n\nVậy thì trước hết, nó phải là một chatbot! Chatbot là một chương trình máy tính được thiết kế để trò chuyện với con người. Đầu vào và đầu ra của nó là dạng thức gì?",
         "options": [
-          "Ngôn ngữ, dưới các dạng thức khác nhau như text, audio, video, âm thanh...",
           "Những con số / dữ liệu nhị phân",
-          "Mã nguồn lập trình",
-          "Chỉ hình ảnh tĩnh"
+          "Chỉ hình ảnh tĩnh",
+          "Ngôn ngữ, dưới các dạng thức khác nhau như text, audio, video, âm thanh...",
+          "Mã nguồn lập trình"
         ],
         "points": 6
       },
@@ -3041,12 +3040,12 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Chatbot có đầu vào/đầu ra đều là ngôn ngữ. Vậy dựa vào đâu chatbot có thể đọc hiểu câu hỏi để trả lời?",
         "options": [
-          "Chatbot phải gọi điện hỏi lập trình viên mỗi khi gặp câu hỏi mới",
-          "Chatbot được cài đặt sẵn các kịch bản mẫu để trả lời",
           "Mỗi câu hỏi đều có một nhân viên trực tổng đài trả lời thay chatbot",
           "Chatbot sử dụng mô hình ngôn ngữ lớn để tự suy nghĩ và trả lời",
-          "Chatbot có cảm xúc và trực giác y như con người nên tự nhiên hiểu được",
           "Chatbot kết nối trực tiếp vào não người dùng để đọc được suy nghĩ",
+          "Chatbot phải gọi điện hỏi lập trình viên mỗi khi gặp câu hỏi mới",
+          "Chatbot có cảm xúc và trực giác y như con người nên tự nhiên hiểu được",
+          "Chatbot được cài đặt sẵn các kịch bản mẫu để trả lời",
           "Chatbot đoán ngẫu nhiên rồi trả lời đại cho xong"
         ],
         "points": 12
@@ -3064,8 +3063,8 @@ const LESSONS = [
         "type": "single",
         "prompt": "Nếu gõ /giup hoặc /giup-do hoặc /giup-toi hoặc /tro-giup (thay vì đúng từ khoá /help) thì bot \"Bé Mầm\" (kiểu kịch bản mẫu) có phản hồi không?",
         "options": [
-          "Có phản hồi bình thường",
-          "Không phản hồi"
+          "Không phản hồi",
+          "Có phản hồi bình thường"
         ],
         "points": 8
       },
@@ -3075,11 +3074,11 @@ const LESSONS = [
         "type": "single",
         "prompt": "Để Bé Mầm phản hồi thêm cả /giup, /giup-do, /giup-toi, /tro-giup, tôi cần làm gì?",
         "options": [
-          "Nhờ lập trình viên sửa mã nguồn rồi build lại app mỗi khi thêm lệnh",
-          "Đổi tên nhóm Zalo thành \"/giup\" để bot nhận ra",
-          "Tạo một con bot riêng cho mỗi lệnh /giup, /giup-do...",
           "Không cần làm gì, Bé Mầm tự học được các lệnh đó",
+          "Đổi tên nhóm Zalo thành \"/giup\" để bot nhận ra",
           "Cài đặt lại toàn bộ Bé Mầm từ đầu cho mỗi lệnh mới",
+          "Tạo một con bot riêng cho mỗi lệnh /giup, /giup-do...",
+          "Nhờ lập trình viên sửa mã nguồn rồi build lại app mỗi khi thêm lệnh",
           "Đưa /giup, /giup-do, /giup-toi, /tro-giup vào danh sách từ khoá kích hoạt câu trả lời \"Hỗ trợ\""
         ],
         "points": 10
@@ -3242,13 +3241,13 @@ const LESSONS = [
         "type": "multi",
         "prompt": "Để Mầm Fake \"gọi được\" các tool này để hoàn tất công việc được giao, thì nó phải có gì?",
         "options": [
-          "Phải được huấn luyện lại (train) toàn bộ mô hình LLM mỗi khi bổ sung một tool mới",
-          "Có kết nối Internet để tải tool từ trên mạng về máy mỗi lần được người dùng yêu cầu",
+          "Được cấp quyền quản trị (root/admin) tối cao trên toàn bộ máy chủ",
           "Tự có ý thức và cảm xúc như con người để tự hiểu việc cần làm",
+          "Được chỉ dẫn chính xác phải sử dụng tool nào tương ứng với yêu cầu nào từ phía người dùng",
+          "Có kết nối Internet để tải tool từ trên mạng về máy mỗi lần được người dùng yêu cầu",
           "Được cung cấp tài liệu mô tả chi tiết tính năng, tham số, cách sử dụng các tools này",
           "Được trang bị tools, dưới dạng các phần mềm trong máy",
-          "Được chỉ dẫn chính xác phải sử dụng tool nào tương ứng với yêu cầu nào từ phía người dùng",
-          "Được cấp quyền quản trị (root/admin) tối cao trên toàn bộ máy chủ"
+          "Phải được huấn luyện lại (train) toàn bộ mô hình LLM mỗi khi bổ sung một tool mới"
         ],
         "points": 14
       },
@@ -3325,8 +3324,8 @@ const LESSONS = [
         "type": "single",
         "prompt": "Prompt phức tạp cuối cùng mà Mầm Fake tạo ra để gửi lên LLM trông giống mẫu nào nhất?",
         "options": [
-          "Người dùng gõ \"Tạo cardvisit cho tôi\". Bạn là Agent thông minh siêu cấp vũ trụ, hãy hoàn thành mục tiêu phù hợp với prompt người dùng gõ vào.",
           "Người dùng gõ \"Tạo cardvisit cho tôi\", hãy soạn câu trả lời",
+          "Người dùng gõ \"Tạo cardvisit cho tôi\". Bạn là Agent thông minh siêu cấp vũ trụ, hãy hoàn thành mục tiêu phù hợp với prompt người dùng gõ vào.",
           "Người dùng gõ \"Tạo cardvisit cho tôi\". Tôi có một số tool (count_images, show_images, cardvisit_create, show_docs...). Bạn là chuyên gia giải quyết vấn đề. Hãy hướng dẫn tôi hoàn thành mục tiêu phù hợp với prompt người dùng gõ vào."
         ],
         "points": 10
@@ -3459,8 +3458,8 @@ const LESSONS = [
         "copyPrompt": "Bạn là lập trình viên Node.js. App Zalo Web ĐÃ CÓ tab \"AI Chat\" (Groq API Key, chủ đề, vai trò, Ghi nhớ, tryReply + listener).\nHãy CHỈ THÊM 2 mục cấu hình lọc tin nhắn: nhóm chat và nick Zalo.\n\n## Mục tiêu\n- Dropdown \"Chỉ trả lời trong nhóm chat\": danh sách tên nhóm từ Zalo.\n- Multi-select \"Chỉ trả lời từ nick Zalo\": danh sách nick trong nhóm vừa chọn (phụ thuộc bước trước).\n- Lưu vào SQLite, áp dụng TRƯỚC khi gọi Groq (sau auto-reply /lệnh nếu có).\n- Không đụng logic Groq prompt / SKIP — chỉ thêm lọc phạm vi.\n\n---\n\n## 1. SQLite — mở rộng `ai_chat_config`\nThêm 2 cột (migration trong `initDb()` nếu chưa có):\n```sql\nallowed_group_id   TEXT NOT NULL DEFAULT ''     -- rỗng = không giới hạn nhóm\nallowed_sender_ids TEXT NOT NULL DEFAULT '[]'   -- JSON array UID\n```\nCập nhật `getAiChatConfig()` / `saveAiChatConfig()`:\n- `allowedGroupId: string`\n- `allowedSenderIds: string[]` (parse/stringify JSON)\n\nPOST `/api/ai-chat` nhận thêm:\n```json\n{\n  \"allowedGroupId\": \"8730782370489245793\",\n  \"allowedSenderIds\": [\"8100134965626169633\", \"5561335127772106853\"]\n}\n```\nGET `/api/ai-chat` trả về 2 field trên trong `config`.\n\n---\n\n## 2. API lấy dữ liệu Zalo (cần đã login)\n\n### GET `/api/zalo/groups`\n- 401 nếu chưa đăng nhập.\n- `api.getAllGroups()` → lấy keys `gridVerMap`.\n- `api.getGroupInfo(ids)` theo **lô 25 id/lần** (quan trọng: gửi hết 500+ id một lần sẽ lỗi \"Tham số không hợp lệ\").\n- Response: `{ groups: [{ id, name }] }` sắp tên A→Z (locale `vi`).\n\n### GET `/api/zalo/groups/:groupId/members`\n- `api.getGroupInfo(groupId)` một nhóm.\n- Lấy UID từ: `currentMems`, `memberIds`, và **`memVerList`** (chuỗi dạng `uid_0` → bỏ `_0`).\n- `api.getGroupMembersInfo(chunk)` lô 50 để lấy `displayName` / `zaloName`.\n- Response: `{ members: [{ id, displayName, zaloName }] }`.\n\nThêm trong `zalo-service.js`: `isLoggedIn()`, `listGroups()`, `listGroupMembers(groupId)`.\n\n---\n\n## 3. Lọc tin — `ai-chat.js`\nHàm `shouldProcessMessage(message)` (dùng `ThreadType.Group` từ `zca-js`):\n\n| Cấu hình                        | Quy tắc                                                             |\n|---------------------------------|---------------------------------------------------------------------|\n| `allowedGroupId` rỗng           | Không lọc nhóm (cá nhân + mọi nhóm)                                 |\n| `allowedGroupId` = X            | Chỉ `message.type === Group` VÀ `message.threadId === X`            |\n| `allowedSenderIds` rỗng `[]`    | Mọi nick (trong phạm vi nhóm nếu đã chọn nhóm)                      |\n| `allowedSenderIds` có phần tử   | Chỉ khi `message.data.uidFrom` nằm trong mảng                       |\n\nSửa `tryReply(userMessage, message)`:\n```javascript\nif (message && !shouldProcessMessage(message)) return null;\n// ... gọi Groq như cũ\n```\n\nTrong `zalo-service.js` listener:\n```javascript\nconst aiReply = await aiChat.tryReply(stored.content, message); // truyền object message\n```\n\n---\n\n## 4. Giao diện — tab AI Chat (`public/config.js`)\nThêm 2 field VÀO FORM hiện có (trước nút Ghi nhớ):\n\n**4. Chỉ trả lời trong nhóm chat**\n```html\n<select id=\"ai-group\">\n  <option value=\"\">— Tất cả (không giới hạn nhóm) —</option>\n  <!-- option từ GET /api/zalo/groups -->\n</select>\n```\n\n**5. Chỉ trả lời từ nick Zalo**\n```html\n<select id=\"ai-senders\" multiple size=\"6\" disabled>\n  <option>Chọn nhóm ở trên để tải danh sách nick</option>\n</select>\n<p class=\"field-hint\">Ctrl/Cmd chọn nhiều. Để trống = mọi nick trong nhóm đã chọn.</p>\n```\n\nHành vi JS:\n- Mở tab `ai-chat` → `GET /api/ai-chat` → load groups → chọn lại `allowedGroupId` đã lưu → load members → tick `allowedSenderIds`.\n- `change` `#ai-group` → `GET /api/zalo/groups/:id/members` → fill multi-select, bật enabled.\n- Submit Ghi nhớ → POST kèm `allowedGroupId` + `allowedSenderIds` (mảng UID từ `selectedOptions`).\n\nCSS: style `select` / `select[multiple]` giống form AI Chat hiện có.\n\n---\n\n## 5. Kiểm thử\n1. Chưa login Zalo → dropdown nhóm báo lỗi / cần login.\n2. Đã login → dropdown có tên nhóm thật.\n3. Chọn nhóm → list nick (dùng `memVerList` nếu `currentMems` rỗng).\n4. Ghi nhớ → restart → group + nick vẫn đúng.\n5. Tin nhóm khác → không gọi Groq.\n6. Tin nick không chọn → không gọi Groq.\n7. Tin đúng nhóm + nick + chủ đề → Groq trả lời như cũ.\n\n---\n\n## Ràng buộc\n- Chỉ sửa phần lọc nhóm/nick; không viết lại Groq prompt, không đổi tab auto-reply.\n- `getGroupInfo` bắt buộc theo lô.\n- Lỗi API Zalo: log, không crash listener.\n\nKết quả: Cấu hình → AI Chat → chọn nhóm → (tuỳ chọn) chọn nick → Ghi nhớ → AI chỉ trả lời đúng phạm vi đã chọn.",
         "copyPromptTrailing": "Bạn đã làm được chưa?",
         "options": [
-          "Chưa làm được",
-          "Đã làm được"
+          "Đã làm được",
+          "Chưa làm được"
         ],
         "points": 12
       },
@@ -3511,8 +3510,8 @@ const LESSONS = [
         "copyPrompt": "Mở rộng tính năng Cloudflare Tunnel hiện có (app Zalo Web — Express + Socket.IO + sqlite3 + zca-js + login admin + tunnel ON/OFF gửi tin 1-1 đã có). Thêm khả năng ĐỔI URL TỪ XA bằng lệnh chat Zalo.\n\nYÊU CẦU:\n\n1. SETTINGS — bổ sung mục \"Đổi URL từ xa\" trong tab Cloudflare Tunnel\n   • Toggle ON/OFF để bật/tắt tính năng đổi URL bằng lệnh chat.\n   • Ô nhập \"Lệnh đổi URL\" — text input, mặc định gợi ý `/reset`. Cho phép nhập 1 hoặc nhiều lệnh phân tách bằng dấu phẩy (ví dụ: `/start, /on, /reset`).\n   • Mô tả ngắn dưới ô: \"Khi chatbot nhận được tin nhắn khớp 1 trong các lệnh trên từ nick Zalo đã cấu hình (cả tin 1-1 lẫn tin trong nhóm), URL Cloudflare hiện tại sẽ bị gỡ và thay bằng URL mới.\"\n\n2. SQLite — mở rộng bảng `tunnel_config`\n```sql\nALTER TABLE tunnel_config ADD COLUMN remote_reset_enabled INTEGER NOT NULL DEFAULT 0;\nALTER TABLE tunnel_config ADD COLUMN remote_reset_commands TEXT NOT NULL DEFAULT '/reset';\n```\n   Lưu cờ bật/tắt + danh sách lệnh (CSV) khi user thay đổi.\n\n3. LẮNG NGHE TIN NHẮN\n   Trong listener Zalo (zalo-service.js) đã có sẵn, sau khi normalize message:\n   • Nếu `remote_reset_enabled === 1` VÀ `notify_zalo_id` đã cấu hình:\n     - Kiểm tra `message.data.uidFrom === notify_zalo_id` (nick đã cấu hình gửi).\n     - Match cả `ThreadType.User` (DM) lẫn `ThreadType.Group` (tin trong nhóm).\n     - Trích text từ `message.data.content`, normalize (lower + trim).\n     - So với danh sách lệnh `remote_reset_commands` (split bằng dấu phẩy, trim, lower).\n     - Nếu khớp 1 trong các lệnh → chạy luồng \"Đổi URL\".\n   • Luồng \"Đổi URL\" (idempotent, có lock chống chạy chồng):\n     a. Kill process cloudflared cũ (như khi tắt OFF), xoá URL khỏi state.\n     b. Spawn lại process cloudflared mới (như khi bật ON).\n     c. Chờ URL công khai mới xuất hiện (timeout 30s).\n     d. Khi có URL mới:\n        - Push Socket.IO `tunnel-state` cập nhật UI cho admin đang mở Settings.\n        - Gửi tin nhắn 1-1 đến nick admin (chính là `notify_zalo_id` đã cấu hình) nội dung:\n          \"🔄 URL Cloudflare đã được đổi qua lệnh `<lệnh vừa gõ>`!\n          🌐 URL mới: <URL_mới>\n          ⛔ URL cũ đã bị gỡ — link cũ không còn truy cập được.\"\n     e. Nếu timeout / lỗi → gửi tin 1-1 báo lỗi: \"❌ Đổi URL thất bại: <error>. URL hiện tại: <URL_cũ hoặc 'đang tắt'>.\"\n\n4. AN TOÀN\n   • CHỈ chấp nhận lệnh từ đúng `uidFrom` đã cấu hình — không xử lý nick khác kể cả gõ đúng lệnh.\n   • Lock chống spam: nếu vừa đổi URL cách đây < 10s thì bỏ qua tin tiếp theo, log warning.\n   • KHÔNG echo lệnh ngược lại nhóm (tránh để lộ cho thành viên khác biết app có cơ chế này).\n   • Khi tunnel đang OFF mà nhận lệnh đổi URL → bật ON luôn (coi như user muốn bật + đổi).\n\n5. API + Socket\n   • GET /api/tunnel/status → bổ sung field `remoteResetEnabled`, `remoteResetCommands`.\n   • PUT /api/tunnel/config → body có thể chứa `remoteResetEnabled` + `remoteResetCommands`.\n   • Socket event `tunnel-state` đẩy URL mới sau khi đổi thành công.\n\n6. UI HIỂN THỊ SAU KHI ĐỔI\n   • Banner xanh nhỏ trong tab Cloudflare Tunnel: \"🔄 URL vừa được đổi lúc <thời gian>\" — biến mất sau 30s.\n   • URL hiện tại trên UI tự cập nhật, nút Copy vẫn copy URL mới.\n\nKIỂM THỬ:\n- Cấu hình notify_zalo_id = UID của chính mình, bật tunnel, bật \"Đổi URL từ xa\", lệnh `/reset, /new`.\n- Từ chính nick đó nhắn `/reset` vào bot → URL cũ bị gỡ, URL mới sinh ra, nhận được tin 1-1 chứa URL mới.\n- Từ nick KHÁC nhắn `/reset` → bot bỏ qua (không đổi).\n- Nhắn `/reset` 2 lần liên tiếp trong 5s → lần 2 bị bỏ qua (chống spam).\n- Nhắn `/reset` trong nhóm có bot + chính chủ → vẫn đổi (chấp nhận tin nhóm), tin báo URL mới vẫn gửi 1-1.\n\nRÀNG BUỘC:\n- ES modules (`\"type\": \"module\"`).\n- Phải tận dụng lại hàm spawn/kill tunnel + hàm sendMessage 1-1 đã có ở câu trước, không viết lại từ đầu.\n- Log đầy đủ: ai gõ lệnh, lệnh gì, URL cũ, URL mới, ts — để debug khi có sự cố.",
         "copyPromptTrailing": "Bạn đã làm được chưa?",
         "options": [
-          "Chưa làm được",
-          "Đã làm được"
+          "Đã làm được",
+          "Chưa làm được"
         ],
         "points": 14
       },
@@ -3524,8 +3523,8 @@ const LESSONS = [
         "copyPrompt": "Refactor lại UI của App theo layout chia 2 cột: có sidebar bên trái và main content bên phải. Chiều rộng của 2 cột này có thể di chuột vào để nhấn giữ kéo và thay đổi.\n\nBiến nó trở thành App có nhiều phân hệ, mỗi phân hệ là một mục menu bên tay trái. Hiện nay có các mục là Chat Zalo và Note - Ghi chú (click vào hiện thông báo đang xây dựng).\n\nSidebar có phần top bar cố định có account kèm dropdown, có mục Thông tin cá nhân (đang xây dựng), Cấu hình (gắn vào mục Cấu hình hiện nay ở Zalo) và Logout ở dưới cùng.",
         "copyPromptTrailing": "Bạn đã làm được chưa?",
         "options": [
-          "Chưa làm được",
-          "Đã làm được"
+          "Đã làm được",
+          "Chưa làm được"
         ],
         "points": 12
       },
@@ -3563,8 +3562,8 @@ const LESSONS = [
         "copyPrompt": "Thêm vào phần cấu hình Đăng nhập một lựa chọn \"Chỉ cho phép đăng nhập khi cùng mạng Tailscale\".\n\nLàm tính năng này bằng cách tạo ra 1 endpoint kiểu /vpn-check sẽ trả về 1 TOKEN tồn tại trong 5 phút.\n\nSau đó sửa lại luồng đăng nhập để client phải gửi kèm TOKEN cùng account, password. Hệ thống check nếu TOKEN hợp lệ mới được vào.\n\nLưu ý: endpoint /vpn-check chỉ được gọi thông qua đường dẫn Tailscale (IP nội bộ Tailscale) thay vì URL công cộng.",
         "copyPromptTrailing": "Bạn đã làm được chưa?",
         "options": [
-          "Chưa làm được",
-          "Đã làm được"
+          "Đã làm được",
+          "Chưa làm được"
         ],
         "points": 16
       },
@@ -3576,8 +3575,8 @@ const LESSONS = [
         "copyPrompt": "Thêm vào nút BACKUP ở vị trí dưới cùng bên trái cột sidebar. Khi click vào đây sẽ chạy lệnh để backup toàn bộ Repo này trong máy + toàn bộ DB lên GitHub và/hoặc Google Drive tuỳ cấu hình.\n\nCũng thêm vào trong Settings một tab mới tên là BACKUP cho phép Admin chỉ định nơi backup gồm GitHub và/hoặc Google Drive hoặc cả 2.\n\nTiến trình backup sẽ chạy nền không cản trở các tiến trình khác trong hệ thống, và có thanh progress bar hiển thị trực quan, cũng như thông báo kết quả khi hoàn thành backup.",
         "copyPromptTrailing": "Bạn đã làm được chưa?",
         "options": [
-          "Chưa làm được",
-          "Đã làm được"
+          "Đã làm được",
+          "Chưa làm được"
         ],
         "points": 12
       },
@@ -3589,8 +3588,8 @@ const LESSONS = [
         "copyPrompt": "Thêm vào tab Backup trong Settings tính năng cấu hình backup định kỳ, lưu log vào Database có thể CRUD và gửi thông báo qua email + Zalo cho admin khi hoàn thành, hoặc khi có sự cố bất thường.",
         "copyPromptTrailing": "Bạn đã làm được chưa?",
         "options": [
-          "Đã làm được",
-          "Chưa làm được"
+          "Chưa làm được",
+          "Đã làm được"
         ],
         "points": 16
       },
@@ -3621,8 +3620,8 @@ const LESSONS = [
         "copyPrompt": "Tích hợp module Quản lý thực đơn ở sidebar bên trái theo hướng dẫn dưới đây. Riêng phần Auth thì sử dụng hệ thống Auth có sẵn (account, OTP, VPN...).\n\n===========================================================\n\n# Loky Food — Product & Technical Spec (cho coding agent)\n\n> Mục đích: mô tả đủ chi tiết để agent **tự implement** app quản lý món ăn & thực đơn gia đình tương tự.\n> Không ràng buộc stack cụ thể — spec tham chiếu từ bản PHP + SQLite monolith đang chạy production.\n\n---\n\n## 1. Product summary\n\n**Loky Food** giúp gia đình:\n\n- Lưu **kho món** (tên, tags, nguyên liệu, cách làm)\n- Lên **thực đơn theo ngày × bữa** (Sáng / Trưa / Chiều)\n- Cho **người nấu / giúp việc** xem thực đơn + nguyên liệu (trang public, không cần login)\n- **Góp ý** món theo ngày (user đăng nhập)\n- **Thống kê** món hay dùng\n- (Tuỳ chọn) **Chat agent** đọc/ghi DB qua CLI hoặc API\n\n### Personas\n\n| Persona | Nhu cầu |\n|---------|---------|\n| Admin / chủ nhà | CRUD món, lên menu tuần, xem thống kê |\n| Người nấu (helper) | Xem hôm nay ăn gì, định lượng NL, in/ dark mode mobile |\n| Thành viên | Góp ý món, xác nhận đã xem menu |\n\n---\n\n## 2. Functional requirements\n\n### 2.1 Kho món (`dishes`)\n\n- CRUD món: `name`, `note`, `tags`, `cooking_method` (optional)\n- Mỗi món có **nhiều nguyên liệu** (`ingredients`): `name`, `quantity` (text tự do), `note`\n- **Tags** là chuỗi, token cách nhau bằng space, prefix `#`, ví dụ: `#man #rau #embe`\n\n**Tag nhóm bắt buộc cho bữa chính (Trưa/Chiều):**\n\n| Tag | Ý nghĩa |\n|-----|---------|\n| `#man` | Món mặn |\n| `#rau` | Rau / món xanh |\n| `#trangmieng` | Tráng miệng / trái cây |\n| `#embe` | Món em bé (tuỳ chọn) |\n| `#ba` | Món riêng (tuỳ chọn) |\n\n**Business rule:** Khi hiển thị hoặc validate bữa Trưa/Chiều, cảnh báo nếu thiếu nhóm `#man`, `#rau`, hoặc `#trangmieng`.\n\n### 2.2 Thực đơn (`menus`)\n\n- Một record = **một bữa** trong một ngày\n- `meal_time`: enum `Sáng` | `Trưa` | `Chiều`\n- `dish_ids`: JSON array integer, ví dụ `[12, 45, 78]`\n- `note`: ghi chú bữa (optional)\n- Upsert theo `(date, meal_time)` khi lưu từ automation/CLI; web có thể insert hoặc update tùy UX\n\n**Định lượng ghi đè theo bữa** (`menu_ingredients`):\n\n- Khi lên menu, admin có thể chỉnh NL khác món gốc\n- Khi hiển thị: **ưu tiên** `menu_ingredients`; không có thì fallback `ingredients` của món\n\n### 2.3 Trang public — xem thực đơn (`helper_menu`)\n\nKhông yêu cầu đăng nhập.\n\n- Param `date` (default: hôm nay)\n- Liệt kê bữa Sáng/Trưa/Chiều, món + NL\n- Dark/light theme (persist localStorage)\n- Nút prev/next ngày, link sang **weekly view**\n- In ấn: ẩn nav (`no-print`)\n\n**Shortcut routing:** `?act=today` → redirect server-side sang `helper_menu` với `date=hôm nay` (tránh client tính sai ngày).\n\n### 2.4 Weekly overview (`weekly_menu`)\n\n- Lưới 7 cột (T2–CN hoặc theo tuần chứa `date` param)\n- Hàng: Sáng / Trưa / Chiều\n- Ô click → `helper_menu` ngày đó\n- Prev/next tuần\n\n### 2.5 Góp ý (`menu_feedbacks`)\n\n- User **đã login** mới góp ý\n- Unique: `(dish_id, user_id, date)` — một góp ý / món / ngày / user\n- CRUD: create, update, delete (chủ góp ý hoặc admin)\n- Trang `view_feedbacks`: list tất cả, phân trang\n\n### 2.6 Xác nhận đã xem menu (`menu_confirmations`)\n\n- User login bấm xác nhận đã xem thực đơn ngày X\n- Unique `(date, user_id)` — **một chiều**, không hoàn tác (INSERT OR IGNORE / equivalent)\n\n### 2.7 Admin — trang chủ menu (`menus`)\n\n- Cần login\n- Filter: 7 / 14 / 30 ngày tới, hoặc tất cả ngày có data\n- Group theo ngày × bữa, link edit/delete\n\n### 2.8 Tạo/sửa menu (`create_menu`, `edit_menu`)\n\n- Chọn ngày, bữa\n- **Tìm món AJAX**: theo tên và/hoặc tag (`#man`, `#rau`, …)\n- Chọn nhiều món → build `dish_ids` JSON\n- Modal chỉnh định lượng NL → lưu `menu_ingredients`\n- Có thể thêm món mới inline rồi quay lại form menu\n\n### 2.9 Thống kê (`stats`)\n\n- Top N món xuất hiện nhiều nhất trong lịch sử `menus` (đếm qua `dish_ids` JSON)\n- Hiển thị bar chart hoặc list\n\n### 2.10 Auth & users\n\n- Session-based login (username + password hash)\n- Roles: `user`, `super_admin`\n- `super_admin`: quản lý user, copy link \"menu hôm nay\" (admin banner — optional)\n- Seed admin khi DB trống (migration/init)\n\n### 2.11 JSON API (optional nhưng nên có)\n\n| Endpoint | Params | Response |\n|----------|--------|----------|\n| `search` | `q` (tên hoặc `#tag`) | `Dish[]` |\n| `dish` | `id` | `Dish + ingredients[]` |\n| `stats` | — | `{ name, count }[]` top 10 |\n| `popular_tags` | — | `string[]` |\n| `menu_ingredients` | `menu_id` | map `dish_id → Ingredient[]` |\n\n### 2.12 CLI / automation layer (optional)\n\nScript đọc/ghi cùng DB, phục vụ chat agent:\n\n| Command | Behavior |\n|---------|----------|\n| `week [n]` | Bữa N ngày gần nhất |\n| `range <from> <to>` | Bữa trong khoảng |\n| `top [n]` | Top món |\n| `recent-dishes [n]` | Id món đã dùng (tránh lặp khi gợi ý) |\n| `pool [#tag]` | Kho món lọc tag |\n| `dish <id>` | Chi tiết món |\n| `stats` | Tổng quan |\n| `save-menu <date> <meal> <id,id,...> [note]` | Upsert bữa |\n| `add-dish` | JSON stdin → thêm món |\n\nFlags: `--json`, `--db=<path>`\n\n**Agent gợi ý menu (logic nghiệp vụ):**\n\n- Bữa Trưa/Chiều: 1–2 `#man` + 1 `#rau` + canh + 1 `#trangmieng` + (optional) `#embe`\n- Tránh món trong `recent-dishes` 14 ngày\n- Gợi ý ≠ lưu; chỉ `save-menu` khi user xác nhận\n\n---\n\n## 3. Routing model (reference)\n\nSingle entry `index.php` hoặc tương đương:\n\n| Query | Access | Page |\n|-------|--------|------|\n| `act=today` | Public | Redirect → helper_menu hôm nay |\n| `page=helper_menu&date=` | Public | Thực đơn 1 ngày |\n| `page=weekly_menu&date=` | Public | Lưới tuần |\n| `page=view_feedbacks&p=` | Public | Góp ý (read) |\n| `page=menus` | Auth | Lịch admin |\n| `page=dishes` | Auth | CRUD món |\n| `page=add_dish` / `edit_dish` | Auth | Form món |\n| `page=create_menu` / `edit_menu` | Auth | Form bữa |\n| `page=stats` | Auth | Thống kê |\n| `page=profile` | Auth | Hồ sơ |\n| `page=manage_users` | super_admin | Users |\n| `api=search|dish|stats|...` | Mixed | JSON |\n\n**Auth gate:** Public pages render và `exit` trước login form; admin pages require session.\n\n---\n\n## 4. Database schema (SQLite-compatible)\n\n### 4.1 ER diagram\n\n```mermaid\nerDiagram\n    dishes ||--o{ ingredients : has\n    dishes ||--o{ menu_ingredients : \"used in\"\n    menus ||--o{ menu_ingredients : overrides\n    users ||--o{ menu_feedbacks : writes\n    users ||--o{ menu_confirmations : confirms\n\n    dishes {\n        int id PK\n        text name\n        text cooking_method\n        text note\n        text tags\n        datetime created_at\n    }\n    ingredients {\n        int id PK\n        int dish_id FK\n        text name\n        text quantity\n        text note\n    }\n    menus {\n        int id PK\n        date date\n        text meal_time\n        text dish_ids\n        text note\n        datetime created_at\n    }\n    menu_ingredients {\n        int id PK\n        int menu_id FK\n        int dish_id FK\n        text ingredient_name\n        text quantity\n        text note\n    }\n    users {\n        int id PK\n        text username UK\n        text password_hash\n        text display_name\n        text role\n        datetime created_at\n    }\n    menu_feedbacks {\n        int id PK\n        text date\n        text meal_time\n        int dish_id\n        text dish_name\n        int user_id FK\n        text content\n        datetime created_at\n        datetime updated_at\n    }\n    menu_confirmations {\n        int id PK\n        text date\n        int user_id FK\n        datetime created_at\n    }\n```\n\n### 4.2 DDL reference\n\n```sql\nCREATE TABLE dishes (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    name TEXT NOT NULL,\n    cooking_method TEXT,\n    note TEXT,\n    tags TEXT,\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE TABLE ingredients (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    dish_id INTEGER NOT NULL,\n    name TEXT NOT NULL,\n    quantity TEXT,\n    note TEXT,\n    FOREIGN KEY(dish_id) REFERENCES dishes(id) ON DELETE CASCADE\n);\n\nCREATE TABLE menus (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    date DATE NOT NULL,\n    meal_time TEXT NOT NULL,\n    dish_ids TEXT,\n    note TEXT,\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE TABLE menu_ingredients (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    menu_id INTEGER NOT NULL,\n    dish_id INTEGER NOT NULL,\n    ingredient_name TEXT NOT NULL,\n    quantity TEXT,\n    note TEXT,\n    FOREIGN KEY(menu_id) REFERENCES menus(id) ON DELETE CASCADE,\n    FOREIGN KEY(dish_id) REFERENCES dishes(id) ON DELETE CASCADE\n);\n\nCREATE TABLE users (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    username TEXT NOT NULL UNIQUE,\n    password_hash TEXT NOT NULL,\n    display_name TEXT NOT NULL,\n    role TEXT NOT NULL DEFAULT 'user',\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE TABLE menu_feedbacks (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    date TEXT NOT NULL,\n    meal_time TEXT,\n    dish_id INTEGER NOT NULL,\n    dish_name TEXT NOT NULL DEFAULT '',\n    user_id INTEGER NOT NULL,\n    content TEXT NOT NULL,\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,\n    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,\n    UNIQUE(dish_id, user_id, date),\n    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE\n);\n\nCREATE TABLE menu_confirmations (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    date TEXT NOT NULL,\n    user_id INTEGER NOT NULL,\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,\n    UNIQUE(date, user_id),\n    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE\n);\n```\n\n**Indexes đề xuất:** `menus(date)`, `menus(date, meal_time)`, `ingredients(dish_id)`, `menu_ingredients(menu_id)`.\n\n**Legacy (có thể bỏ khi build mới):** cột `menus.html_content`; bảng `dish_feedbacks` nếu không migrate.\n\n---\n\n## 5. Core data flows\n\n### Save menu (web)\n\n```\nPOST save_menu\n  → validate date, meal_time, dish_ids JSON\n  → INSERT menus (+ menu_id)\n  → DELETE + INSERT menu_ingredients from custom_ingredients JSON\n```\n\n### Save menu (CLI)\n\n```\nsave-menu date meal ids note\n  → SELECT id FROM menus WHERE date AND meal_time\n  → UPDATE dish_ids OR INSERT\n```\n\n### Render helper_menu\n\n```\nGET date\n  → SELECT menus WHERE date ORDER BY meal (Sáng→Trưa→Chiều)\n  → FOR EACH dish_id IN JSON(dish_ids):\n        load dish\n        load menu_ingredients OR fallback ingredients\n  → load feedbacks for date, confirmations for user\n```\n\n---\n\n## 6. UX / UI notes\n\n- **Mobile-first** cho `helper_menu` (người nấu dùng điện thoại)\n- Bootstrap hoặc design system tương đương\n- Dark mode trên public pages\n- Print-friendly helper view\n- Admin: navbar Dishes | Create menu | Stats | Profile\n- Form tạo menu: search-as-you-type, chip tags, drag reorder món (nice-to-have)\n\n---\n\n## 7. Non-functional requirements\n\n| Area | Requirement |\n|------|-------------|\n| DB | SQLite file hoặc Postgres — schema tương đương |\n| Auth | Password hashing (bcrypt/argon2), session cookie httponly |\n| i18n | UI tiếng Việt; `meal_time` literal tiếng Việt |\n| Timezone | Server `date()` cho `act=today`; document TZ |\n| Security | Rate-limit API search nếu public; CSRF trên POST admin |\n| Backup | File DB copyable; export JSON optional |\n\n---\n\n## 8. Suggested project structure (agent tự chọn stack)\n\n```\napp/\n  public/index.php          # hoặc Next.js / FastAPI routes\n  src/\n    models/                   # Dish, Menu, User, ...\n    services/                 # MenuValidator, SuggestMenu, ...\n    repositories/             # SQLite/ORM\n  cli/menu-cli.php            # hoặc menu-cli.py\n  migrations/001_init.sql\n  seed/                       # sample dishes + admin user\ndocs/\n  API.md\n```\n\n**MVP scope (phase 1):**\n\n1. Schema + seed\n2. CRUD dishes + ingredients\n3. create/edit menu + helper_menu public\n4. Login + menus list admin\n5. `act=today` redirect\n\n**Phase 2:** weekly_menu, feedbacks, stats, CLI, dark mode\n\n**Phase 3:** Chat agent integration, suggest menu AI\n\n---\n\n## 9. Acceptance checklist\n\n- [ ] Public `helper_menu` hiển thị đúng món + NL theo ngày, không cần login\n- [ ] `act=today` luôn trỏ đúng ngày server\n- [ ] Trưa/Chiều cảnh báo thiếu `#man` / `#rau` / `#trangmieng`\n- [ ] `menu_ingredients` override NL món gốc khi có\n- [ ] Upsert menu theo `(date, meal_time)` từ CLI\n- [ ] Feedback unique per user/dish/date\n- [ ] Admin CRUD món + menu behind auth\n- [ ] Top stats đếm từ lịch sử menu\n\n---\n\n*Spec độc lập deployment — agent implement stack tùy chọn, giữ nguyên nghiệp vụ & schema ở trên.*",
         "copyPromptTrailing": "Bạn đã làm được chưa?",
         "options": [
-          "Đã làm được",
-          "Chưa làm được"
+          "Chưa làm được",
+          "Đã làm được"
         ],
         "points": 20
       },
@@ -3634,8 +3633,8 @@ const LESSONS = [
         "copyPrompt": "Thêm tab Agent vào hệ thống menu hiện có của module Quản lý thực đơn (bên cạnh các mục Thực đơn, Món ăn, Thống kê...).\n\nTrong mục Agent sẽ cho phép Admin chọn 1 nhóm chat Zalo để chatbot nhận lệnh, có thể cấu hình cho chatbot nhận lệnh từ 1 hay nhiều người cụ thể trong nhóm này. Tin nhắn từ những người đó sẽ đóng vai trò là bộ truyền lệnh cho chatbot để thực hiện các vòng lặp cần thiết hoàn thành mục tiêu do các nick chat kia ra lệnh hoặc đặt câu hỏi.\n\nCó một ô textarea cho phép Admin cấu hình chủ đề nào thì chatbot sẽ trả lời, các nội dung khác sẽ bỏ qua (mặc định điền sẵn nội dung \"Trao đổi về thực đơn, nấu ăn và dinh dưỡng\").\n\nCũng có thêm ô cho phép cấu hình Soul của chatbot (khi này đóng vai Agent) để nó trả lời theo thói quen, sở thích của Admin mong muốn.\n\nChatbot khi này sử dụng LLM được cấu hình sẵn trong Settings hệ thống.",
         "copyPromptTrailing": "Bạn đã làm được chưa?",
         "options": [
-          "Đã làm được",
-          "Chưa làm được"
+          "Chưa làm được",
+          "Đã làm được"
         ],
         "points": 20
       },
@@ -3645,8 +3644,8 @@ const LESSONS = [
         "type": "single",
         "prompt": "Nếu loay hoay với LLM thuần mãi không làm Agent tư vấn món ăn đủ thông minh, bạn có thể \"triệu hồi\" hẳn một Coding Agent (ví dụ OpenCode) đứng sau làm bộ não: tạo session, đưa Soul + hướng dẫn nhiệm vụ + danh sách tool cho nó, rồi bơm prompt liên tục vào session đó để nó tự trả lời trong nhóm chat. Bạn đã thử cách này chưa?",
         "options": [
-          "Đã làm được",
-          "Chưa làm được"
+          "Chưa làm được",
+          "Đã làm được"
         ],
         "points": 16
       },
