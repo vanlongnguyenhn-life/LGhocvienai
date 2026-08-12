@@ -2249,7 +2249,7 @@ const LESSONS = [
         "code": "9.16",
         "title": "Câu 9.16 - Connector giúp Agent \"nói chuyện\" với Google Workspace",
         "type": "gws_task",
-        "prompt": "Nhờ Coding Agent CÀI GOOGLE WORKSPACE CLI (github.com/googleworkspace/cli) và đăng nhập bằng tài khoản Google của bạn.\n\n⚠️ Dùng ĐÚNG tài khoản Google bạn đã đăng ký với giáo viên (Gmail cá nhân cũng được — KHÔNG cần trùng email đăng nhập lớp học, vì email đó do công ty cấp). Nếu chưa đăng ký thì tài khoản bạn đăng nhập LẦN ĐẦU ở câu này sẽ được khoá cho cả Bài 9: các câu sau tạo Sheet/Slide/video đều phải làm trong chính tài khoản đó, đổi giữa chừng sẽ không qua được.\n\nSau đó mở Terminal, chạy lệnh sau để lớp học xác minh CLI đã cài:",
+        "prompt": "Nhờ Coding Agent CÀI GOOGLE WORKSPACE CLI (github.com/googleworkspace/cli) và cấu hình bằng tài khoản Google của bạn là {{gws_email}}\n\n⚠️ Phải cấu hình GWS CLI đúng email trên thì mới làm được các nhiệm vụ tiếp theo — từ đây đến hết Bài 9, mọi Sheet/Slide/video đều phải nằm trong chính tài khoản này.\n\nSau đó mở Terminal, chạy lệnh sau để lớp học xác minh CLI đã cài:",
         "copyPrompt": "curl -O {{base_url}}/agentsee-verify.py && python3 agentsee-verify.py {{uid}} {{token}}",
         "points": 10
       },

@@ -961,12 +961,19 @@ def _personal_code_from_token(token: str) -> str:
 def get_agent_token(request: Request):
     user = require_approved_user(request)
     with get_db() as conn:
-        row = conn.execute("SELECT api_token FROM users WHERE id = ?", (user["id"],)).fetchone()
+        row = conn.execute("SELECT api_token, gws_email FROM users WHERE id = ?", (user["id"],)).fetchone()
         token = row["api_token"] if row else None
         if not token:
             token = secrets.token_urlsafe(32)
             conn.execute("UPDATE users SET api_token = ? WHERE id = ?", (token, user["id"]))
-    return {"uid": user["id"], "token": token, "personal_code": _personal_code_from_token(token)}
+    return {
+        "uid": user["id"],
+        "token": token,
+        "personal_code": _personal_code_from_token(token),
+        # Tài khoản Google giáo viên đã đăng ký cho học viên này — câu 9.16 in thẳng vào đề để
+        # họ biết chính xác phải cấu hình GWS CLI bằng email nào.
+        "gws_email": (row["gws_email"] if row else None) or "",
+    }
 
 
 @app.get("/api/agent-task/{question_code}")

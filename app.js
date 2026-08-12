@@ -62,6 +62,12 @@ function resolveAgentPlaceholders(text, code) {
     .replace(/\{\{electron_cmd_queue_url\}\}/g, `${location.origin}/api/electron/cmd-queue`)
     .replace(/\{\{electron_cmd_ack_url\}\}/g, `${location.origin}/api/electron/cmd-ack`)
     .replace(/\{\{base_url\}\}/g, location.origin)
+    // Email Google giáo viên đã đăng ký cho học viên này (câu 9.16). Chưa đăng ký thì nói rõ
+    // là tài khoản đăng nhập lần đầu sẽ bị khoá, thay vì để trống gây hoang mang.
+    .replace(
+      /\{\{gws_email\}\}/g,
+      agentTokenInfo.gws_email || "(giáo viên chưa đăng ký — tài khoản bạn đăng nhập LẦN ĐẦU sẽ được khoá)"
+    )
     .replace(/\{\{agent_task_url\}\}/g, `${location.origin}/api/agent-task/${code || ""}`)
     // Link đã nhúng sẵn uid+token: ô copy chỉ còn MỘT dòng, Agent dán vào là đọc được ngay,
     // không phải dặn nó gắn header (giống hệt cách web tham khảo làm).
@@ -1100,7 +1106,7 @@ function renderQuestionCard(lesson, q, locked) {
   if (expanded) {
     const body = el("div", { class: "q-card-body" });
     if (q.video) body.appendChild(renderQuestionVideo(q.video));
-    body.appendChild(el("p", { class: "q-prompt" }, q.prompt));
+    body.appendChild(el("p", { class: "q-prompt" }, resolveAgentPlaceholders(q.prompt, q.code)));
     if (q.image) body.appendChild(el("img", { class: "q-image", src: q.image, alt: "" }));
     if (q.chatLog) body.appendChild(renderChatLog(q.chatLog));
     if (q.copyPrompt) body.appendChild(renderCopyPromptBox(resolveAgentPlaceholders(q.copyPrompt, q.code)));
