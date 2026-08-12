@@ -26,6 +26,17 @@ const API = {
   },
   me: () => API.request("/api/me"),
   larkStatus: () => API.request("/api/auth/lark/status"),
+  cau921Data: (uid) => API.request(`/api/cau921/data/${uid}`),
+  cau921MyStatus: () => API.request("/api/cau921/my-status"),
+  cau921Invite: () => API.request("/api/cau921/invite", { method: "POST" }),
+  cau921Grade: (uid, sc) => {
+    const fd = new FormData();
+    fd.append("info_score", String(sc.info));
+    fd.append("avatars_score", String(sc.avatars));
+    fd.append("design_score", String(sc.design));
+    fd.append("comment", sc.comment || "");
+    return API.request(`/api/cau921/grade/${uid}`, { method: "POST", body: fd });
+  },
   register: (fd) => API.request("/api/register", { method: "POST", body: fd }),
   login: (fd) => API.request("/api/login", { method: "POST", body: fd }),
   logout: () => API.request("/api/logout", { method: "POST" }),
@@ -87,6 +98,7 @@ function loadState() {
           if (a.gwsStatus === "loading") delete a.gwsStatus;
           if (a.npcFriend === "loading") delete a.npcFriend;
           if (a.npcAvatar === "loading") delete a.npcAvatar;
+          if (a.peer === "loading") delete a.peer;
           // Cờ "đang nộp" chỉ có nghĩa trong phiên đang chạy. Nếu trang bị tải lại đúng lúc
           // đang nộp mà không xoá, nút Nộp bài sẽ bị khoá VĨNH VIỄN ở lần mở sau.
           delete a.submitting;
@@ -335,6 +347,8 @@ function render() {
       root.appendChild(renderLogin());
     } else if (state.currentUser && !state.currentUser.approved) {
       root.appendChild(renderPending());
+    } else if (state.view === "grade") {
+      root.appendChild(renderShell(renderGradePage()));
     } else if (state.view === "home") {
       root.appendChild(renderShell(renderHome()));
     } else {
@@ -1137,6 +1151,12 @@ function renderQuestionCard(lesson, q, locked) {
         a.npcFriend = "loading";
         refreshNpcFriend(q, a, false);
       }
+    } else if (q.type === "peer_review") {
+      body.appendChild(renderPeerReview(q, a));
+      if (a.peer === undefined) {
+        a.peer = "loading";
+        refreshPeerReview(q, a);
+      }
     } else if (q.type === "gws_task") {
       body.appendChild(renderGwsTask(q, a));
       if (a.gwsStatus === undefined) {
@@ -1442,6 +1462,198 @@ function renderTagMark(q, a) {
     ]);
     wrap.appendChild(row);
   });
+  return wrap;
+}
+
+// ===== Câu 9.21: trang các bạn cùng lớp chấm chéo bộ slide =====
+// Vào bằng link ?cham-bai=<uid>. Người chấm phải đang đăng nhập tài khoản của CHÍNH họ —
+// server đối chiếu phiên đăng nhập với danh sách bạn cùng lớp, nên Agent không chấm hộ được.
+let gradeState = { loading: true, data: null, error: "", form: { info: 7, avatars: 7, design: 7, comment: "" }, saving: false };
+
+async function loadGradePage() {
+  gradeState.loading = true;
+  gradeState.error = "";
+  render();
+  try {
+    const d = await API.cau921Data(state.gradeSubjectUid);
+    gradeState.data = d;
+    if (d.diem_cua_toi) {
+      gradeState.form = {
+        info: d.diem_cua_toi.info,
+        avatars: d.diem_cua_toi.avatars,
+        design: d.diem_cua_toi.design,
+        comment: d.diem_cua_toi.comment || "",
+      };
+    }
+  } catch (err) {
+    gradeState.error = err.message || "Không tải được bài để chấm.";
+  }
+  gradeState.loading = false;
+  render();
+}
+
+async function submitGrade() {
+  if (gradeState.saving) return;
+  gradeState.saving = true;
+  render();
+  try {
+    const d = await API.cau921Grade(state.gradeSubjectUid, gradeState.form);
+    gradeState.data = Object.assign({}, gradeState.data, d);
+    showToast("Đã gửi điểm — cảm ơn bạn!");
+  } catch (err) {
+    showToast(err.message || "Chưa gửi được điểm.");
+  }
+  gradeState.saving = false;
+  render();
+}
+
+function scoreRow(label, key) {
+  const val = gradeState.form[key];
+  const row = el("div", { class: "grade-score-row" }, [el("span", { class: "grade-score-label" }, label)]);
+  const box = el("div", { class: "grade-score-btns" });
+  for (let n = 1; n <= 10; n++) {
+    box.appendChild(
+      el("button", {
+        class: "grade-score-btn" + (val === n ? " on" : ""),
+        onclick: () => { gradeState.form[key] = n; render(); },
+      }, [String(n)])
+    );
+  }
+  row.appendChild(box);
+  return row;
+}
+
+function renderGradePage() {
+  const wrap = el("div", { class: "grade-page" });
+  wrap.appendChild(
+    el("button", { class: "help-link", onclick: () => { state.view = "home"; saveState(); render(); } }, ["← Về trang lớp học"])
+  );
+  if (gradeState.loading) {
+    wrap.appendChild(el("div", { class: "secret-note" }, "Đang tải bài để chấm..."));
+    return wrap;
+  }
+  if (gradeState.error) {
+    wrap.appendChild(el("div", { class: "secret-note" }, gradeState.error));
+    return wrap;
+  }
+  const d = gradeState.data || {};
+  wrap.appendChild(el("h2", {}, ["Chấm bài cho " + (d.hv_ten || "bạn học")]));
+  wrap.appendChild(
+    el("div", { class: "secret-note" }, [
+      `Đã có ${d.num_graders || 0}/${d.so_ban_can_cham || 0} bạn chấm · điểm trung bình hiện tại ${d.avg_overall || "0.00"} (cần từ ${d.pass_threshold} trở lên)`,
+    ])
+  );
+
+  if (d.slide_url) {
+    const embed = d.slide_url.replace("/edit", "/embed").replace("/preview", "/embed").replace(/\?.*$/, "");
+    const frame = el("iframe", { class: "grade-slide", src: embed, allowfullscreen: "true" });
+    wrap.appendChild(frame);
+    wrap.appendChild(
+      el("a", { class: "help-link", href: d.slide_url, target: "_blank", rel: "noopener" }, ["Mở slide ở tab mới ↗"])
+    );
+  } else {
+    wrap.appendChild(el("div", { class: "secret-note" }, "Bạn này chưa nộp bộ slide nào."));
+  }
+
+  if (d.ly_do_khong_cham_duoc) {
+    wrap.appendChild(el("div", { class: "secret-note" }, d.ly_do_khong_cham_duoc));
+    return wrap;
+  }
+
+  const form = el("div", { class: "assignment-box" }, [
+    el("div", { class: "label" }, [d.diem_cua_toi ? "Bạn đã chấm bài này — có thể sửa lại điểm" : "Chấm 3 tiêu chí (thang 10)"]),
+  ]);
+  form.appendChild(scoreRow("Thông tin", "info"));
+  form.appendChild(scoreRow("Ảnh đại diện", "avatars"));
+  form.appendChild(scoreRow("Trình bày", "design"));
+  const ta = el("textarea", {
+    class: "reflect-input",
+    rows: "3",
+    placeholder: "Nhận xét cho bạn ấy (tối thiểu 30 ký tự) — điều gì tốt, điều gì nên sửa?",
+  });
+  ta.value = gradeState.form.comment;
+  ta.addEventListener("input", (e) => { gradeState.form.comment = e.target.value; });
+  form.appendChild(ta);
+  form.appendChild(
+    el("button", { class: "submit-btn", disabled: gradeState.saving ? "disabled" : null, onclick: () => submitGrade() },
+      [gradeState.saving ? "Đang gửi..." : d.diem_cua_toi ? "Cập nhật điểm" : "Gửi điểm"])
+  );
+  wrap.appendChild(form);
+  return wrap;
+}
+
+// ===== Câu 9.21 nhìn từ phía CHỦ BÀI: link đi nhờ + ai đã chấm, ai chưa =====
+async function refreshPeerReview(q, a) {
+  try {
+    a.peer = await API.cau921MyStatus();
+  } catch (e) {
+    a.peer = null;
+  }
+  saveState();
+  render();
+  openQuestion(q.code);
+}
+
+async function invitePeers(q, a) {
+  try {
+    const r = await API.cau921Invite();
+    showToast(r.message || `Đã nhắn Lark cho ${r.da_gui} bạn.` + ((r.that_bai || []).length ? ` Chưa nhắn được: ${r.that_bai.join(", ")}` : ""));
+  } catch (err) {
+    showToast(err.message || "Chưa gửi được lời nhờ.");
+  }
+}
+
+function renderPeerReview(q, a) {
+  const wrap = el("div", {});
+  const st = a.peer;
+  if (st === "loading" || st === undefined) {
+    wrap.appendChild(el("div", { class: "secret-note" }, "Đang tải tình hình chấm bài..."));
+    return wrap;
+  }
+  if (!st) {
+    wrap.appendChild(el("div", { class: "secret-note" }, "Chưa tải được — bấm nút bên dưới để thử lại."));
+    wrap.appendChild(el("button", { class: "help-link", onclick: () => refreshPeerReview(q, a) }, ["🔄 Thử lại"]));
+    return wrap;
+  }
+
+  wrap.appendChild(
+    el("div", { class: "secret-note" }, [
+      `Đã có ${st.num_graders}/${st.so_ban_can_cham} bạn chấm · trung bình ${st.avg_overall} (cần từ ${st.pass_threshold})`,
+    ])
+  );
+
+  const linkRow = el("div", { class: "assignment-box" }, [
+    el("div", { class: "label" }, ["Link gửi cho các bạn chấm"]),
+    el("div", { class: "peer-link" }, [st.link_cham || ""]),
+  ]);
+  linkRow.appendChild(
+    el("button", {
+      class: "help-link",
+      onclick: () => {
+        navigator.clipboard.writeText(st.link_cham || "").then(
+          () => showToast("Đã sao chép link"),
+          () => showToast("Không sao chép được — bạn bôi đen rồi copy tay nhé")
+        );
+      },
+    }, ["📋 Sao chép link"])
+  );
+  linkRow.appendChild(
+    el("button", { class: "help-link", onclick: () => invitePeers(q, a) }, ["💬 Nhắn Lark nhờ các bạn chưa chấm"])
+  );
+  wrap.appendChild(linkRow);
+
+  const list = el("div", { class: "criteria-list" });
+  (st.friends || []).forEach((f) => {
+    const done = !!f.scores;
+    list.appendChild(
+      el("div", { class: "assignment-box" }, [
+        el("div", { class: "label" }, [(done ? "✅ " : "⏳ ") + f.fullname + (done ? ` — ${f.scores.avg}/10` : " — chưa chấm")]),
+        done && f.scores.comment ? el("div", { class: "secret-note" }, ["“" + f.scores.comment + "”"]) : null,
+      ])
+    );
+  });
+  wrap.appendChild(list);
+  wrap.appendChild(el("button", { class: "help-link", onclick: () => refreshPeerReview(q, a) }, ["🔄 Kiểm tra lại"]));
   return wrap;
 }
 
@@ -2434,6 +2646,24 @@ async function submitAnswer(lesson, q) {
       showToast(err.message);
       return;
     }
+  } else if (q.type === "peer_review") {
+    // Server tự đếm lại số lượt chấm và điểm trung bình trong bảng peer_reviews — client
+    // không tạo được phiếu chấm nào, nên ở đây chỉ cần gọi và để server phán quyết.
+    const fd = new FormData();
+    fd.append("question_code", q.code);
+    fd.append("status", "done");
+    fd.append("awarded_points", String(q.points));
+    try {
+      await API.submitQuestion(fd);
+      a.status = "done";
+      a.awardedPoints = q.points;
+      a.saved = true;
+      saveState();
+      showToast(`Hoàn thành! +${q.points} điểm`);
+    } catch (err) {
+      showToast(err.message);
+      return;
+    }
   } else if (q.type === "npc_time") {
     if (!a.text || a.text.trim().length === 0) {
       showToast("Em hãy nhập giờ hoàn thành (HH:MM:SS DD/MM/YYYY) trước khi nộp bài");
@@ -2592,6 +2822,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     larkConfigured = !!status.configured;
   } catch (e) {}
 
+  // Link các bạn nhận được để chấm bài câu 9.21. Đọc TRƯỚC khi gọi API.me() để dù chưa đăng
+  // nhập, sau khi đăng nhập xong vẫn quay lại đúng bài cần chấm.
+  const chamBai = new URLSearchParams(location.search).get("cham-bai");
+  if (chamBai && /^\d+$/.test(chamBai)) {
+    state.gradeSubjectUid = Number(chamBai);
+    state.view = "grade";
+    history.replaceState(null, "", location.pathname);
+  }
+
   const larkError = new URLSearchParams(location.search).get("lark_error");
   if (larkError) {
     authError = "Đăng nhập Lark thất bại (" + larkError + "), thử lại nhé.";
@@ -2605,6 +2844,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     state.connectionLost = false;
     if (state.view === "login") state.view = "home";
     await hydrateProgress();
+    if (state.view === "grade" && state.gradeSubjectUid) loadGradePage();
     try {
       agentTokenInfo = await API.agentToken();
     } catch (e) {

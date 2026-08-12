@@ -1145,3 +1145,13 @@ input.reflect-input { min-height: unset; }
   border-radius: 10px;
   margin: 10px 0;
 }
+
+/* Câu 9.21 — trang bạn cùng lớp chấm chéo */
+.grade-page { padding: 16px; max-width: 860px; margin: 0 auto; }
+.grade-slide { width: 100%; aspect-ratio: 16 / 9; border: 1px solid var(--border); border-radius: 10px; margin: 12px 0 4px; }
+.grade-score-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 10px 0; }
+.grade-score-label { min-width: 110px; font-weight: 600; }
+.grade-score-btns { display: flex; gap: 4px; flex-wrap: wrap; }
+.grade-score-btn { width: 32px; height: 32px; border: 1px solid var(--border); border-radius: 6px; background: transparent; cursor: pointer; }
+.grade-score-btn.on { background: var(--brand-green, #2ba25e); color: #fff; border-color: transparent; font-weight: 700; }
+.peer-link { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; word-break: break-all; margin: 6px 0; }

@@ -227,6 +227,18 @@ fs.writeFileSync(path.join(__dirname, "answer_manifest.json"), JSON.stringify(an
 const outPath = path.join(__dirname, "..", "data.public.js");
 fs.writeFileSync(outPath, banner + publicBody + "\n");
 
+// Thứ tự câu — server cần để biết một học viên "đang ở câu nào" (câu 9.20 báo cáo tiến độ
+// của các bạn cùng lớp). Trước đây thứ tự chỉ tồn tại phía trình duyệt (ALL_QUESTIONS_ORDERED
+// trong admin.js), server không có cách nào tự suy ra.
+const order = LESSONS.flatMap((l) =>
+  l.questions.map((q) => ({ code: q.code, title: q.title, lesson: l.title }))
+);
+fs.writeFileSync(
+  path.join(__dirname, "question_order.json"),
+  JSON.stringify(order, null, 1) + "\n"
+);
+console.log(`Wrote question_order.json (${order.length} questions in order)`);
+
 // Kiểm tra ngay tại chỗ: đủ hằng số, không sót đáp án, và mỗi câu giữ đúng kiểu dữ liệu.
 const publicNames = [...fs.readFileSync(outPath, "utf8").matchAll(/^const\s+([A-Za-z_$][\w$]*)\s*=/gm)].map((m) => m[1]);
 const missing = TOP_LEVEL_NAMES.filter((n) => !publicNames.includes(n));

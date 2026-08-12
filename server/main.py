@@ -54,6 +54,11 @@ with open(Path(__file__).parent / "reflect_manifest.json", encoding="utf-8") as 
 with open(Path(__file__).parent / "answer_manifest.json", encoding="utf-8") as f:
     ANSWER_MANIFEST = json.load(f)
 
+# Thứ tự câu toàn khoá (do gen_manifest.js sinh) — dùng để biết một học viên đang ở câu nào.
+with open(Path(__file__).parent / "question_order.json", encoding="utf-8") as f:
+    QUESTION_ORDER = json.load(f)
+QUESTION_TITLE_BY_CODE = {q["code"]: q["title"] for q in QUESTION_ORDER}
+
 # Câu dạng "media_submit": học viên KHÔNG tự upload qua form — chính Coding Agent của họ phải
 # gọi /api/media/upload + /api/attempt-answers bằng curl thật, dựng từ app đang chạy thật.
 MEDIA_SUBMIT_RUBRICS = {
@@ -1724,6 +1729,7 @@ def _verified_manifests():
         ASSIGNMENT_MANIFEST, REFLECT_MANIFEST, MEDIA_SUBMIT_MANIFEST, ELECTRON_SUBMIT_MANIFEST,
         SECRET_CODE_MANIFEST, PI_LAB_CODE_MANIFEST, MY_TOKEN_CHECK_MANIFEST,
         NPC_AVATAR_MANIFEST, NPC_TIME_MANIFEST, PI_LAB_LETTER_MANIFEST, GWS_TASK_MANIFEST,
+        PEER_REVIEW_MANIFEST,
     )
 
 
@@ -1884,6 +1890,14 @@ def submit_question(
         if not row or not row["ok"]:
             raise HTTPException(status_code=400, detail="Chưa có lần nộp ĐẠT cho câu này — chạy chương trình nộp bài trước, đạt hết tiêu chí rồi mới bấm Nộp.")
         awarded_points = GWS_TASK_MANIFEST[question_code]["points"]
+
+    if question_code in PEER_REVIEW_MANIFEST and status == "done":
+        # Câu 9.21: đủ số lượt bạn cùng lớp chấm VÀ trung bình đạt ngưỡng. Điểm/lượt chấm nằm
+        # trong bảng peer_reviews, client không ghi được — chỉ các bạn đăng nhập thật mới tạo ra.
+        ok_peer, reason = _cau921_passed(user["id"])
+        if not ok_peer:
+            raise HTTPException(status_code=400, detail=reason)
+        awarded_points = PEER_REVIEW_MANIFEST[question_code]["points"]
 
     with get_db() as conn:
         conn.execute(
@@ -2422,10 +2436,60 @@ GWS_CAU917_RAMP = " ░▒▓█"
 GWS_CAU917_RAMP_W = [2, 5, 18, 68, 7]
 GWS_CAU917_JITTER_P = 0.10  # dao động quanh mức gốc; cao hơn là bar bị rối, không còn giống bản gốc
 GWS_CAU917_GOLD_ALPHABET = string.ascii_letters + string.digits
-GWS_920_FRIENDS = [
-    "Nguyễn Thị Mít", "Trần Văn Ổi", "Lê Thị Xoài", "Phạm Thảo Na", "Hoàng Bơ",
-    "Đỗ Thị Cam", "Vũ Hồng Đào", "Bùi Thị Mận", "Ngô Sầu Riêng",
-]
+CAU921_PASS_THRESHOLD = 7.0   # điểm trung bình tối thiểu để câu 9.21 được tính ĐẠT
+CAU921_MIN_COMMENT = 30       # độ dài tối thiểu của nhận xét — chặn chấm cho có
+
+
+def _current_question_of(conn, user_id: int) -> dict:
+    """Học viên này đang ở câu nào: câu ĐẦU TIÊN trong thứ tự khoá mà họ chưa hoàn thành.
+
+    Dùng cho câu 9.20 — bản gốc liệt kê từng câu Bài 6 của mỗi bạn, nhưng lớp mình có bạn chưa
+    tới Bài 6 nên báo "đang ở câu nào" mới đúng thực tế.
+    """
+    done = {
+        r["question_code"]
+        for r in conn.execute(
+            "SELECT question_code FROM question_status WHERE user_id = ? AND status IN ('done','correct')",
+            (user_id,),
+        )
+    }
+    for q in QUESTION_ORDER:
+        if q["code"] not in done:
+            return {"code": q["code"], "title": q["title"], "lesson": q["lesson"],
+                    "done_count": len(done), "total": len(QUESTION_ORDER)}
+    return {"code": None, "title": "Đã hoàn thành toàn khoá", "lesson": "",
+            "done_count": len(done), "total": len(QUESTION_ORDER)}
+
+
+def _class_friends(user_id: int) -> list:
+    """9 người bạn của câu 9.20/9.21 = TOÀN BỘ các bạn còn lại trong lớp (lớp có 10 người).
+
+    Không bốc ngẫu nhiên: ai cũng phải báo cáo về tất cả những người còn lại, và cũng chính
+    những người đó chấm bài cho mình. Loại giáo viên và tài khoản chưa được duyệt.
+    Chỉ lấy tên, ảnh và vị trí học — KHÔNG lấy IP/email/Zalo như web tham khảo, vì những thứ đó
+    chưa từng công khai trong lớp và không phục vụ gì cho bài học.
+    """
+    with get_db() as conn:
+        rows = conn.execute(
+            """SELECT id, display_name, avatar_url FROM users
+               WHERE id != ? AND approved = 1 AND COALESCE(is_teacher, 0) = 0
+               ORDER BY id""",
+            (user_id,),
+        ).fetchall()
+        out = []
+        for r in rows:
+            cur = _current_question_of(conn, r["id"])
+            out.append({
+                "uid": r["id"],
+                "fullname": r["display_name"],
+                "avatar_url": r["avatar_url"] or "",
+                "dang_o_cau": cur["code"],
+                "ten_cau": cur["title"],
+                "bai": cur["lesson"],
+                "so_cau_da_xong": cur["done_count"],
+                "tong_so_cau": cur["total"],
+            })
+    return out
 # Câu 9.19 — spec trang giới thiệu khoá ALG. Vị trí/cỡ chữ/màu là CỐ ĐỊNH, còn hai ô số liệu
 # lấy THẬT từ tiến độ của chính học viên nên mỗi người một khác — chép sheet của bạn là sai ngay.
 GWS_919_LAYOUT = [
@@ -2806,10 +2870,17 @@ def _check_919(user_id: int, url: str):
 
 
 def _check_920(user_id: int, url: str):
-    with get_db() as conn:
-        payload, _ = _gws_payload(conn, user_id, "9.20")
-    if not payload:
-        return False, [{"label": "Đã gọi /start để nhận dữ liệu", "ok": False, "note": "Chưa gọi /start."}]
+    """Chấm bộ slide báo cáo về các bạn cùng lớp.
+
+    Đọc lại danh sách bạn ngay lúc chấm (không dùng bản chốt lúc /start) — tiến độ lớp đổi từng
+    ngày, học viên làm slide xong mới nộp thì phải chấm theo dữ liệu họ thật sự nhận được.
+    Tên là thứ bắt buộc phải có; câu đang học chỉ cần đúng cho phần lớn để chừa dung sai cho
+    bạn nào vừa làm thêm một câu giữa lúc dựng slide và lúc nộp.
+    """
+    friends = _class_friends(user_id)
+    if not friends:
+        return False, [{"label": "Lớp có bạn để báo cáo", "ok": False,
+                        "note": "Chưa có bạn học nào khác trong lớp — báo giáo viên giúp bạn nhé."}]
     slide_id = _extract_gdoc_id(url, "slide")
     crit = [{"label": "Link Google Slides hợp lệ", "ok": bool(slide_id), "note": ""}]
     if not slide_id:
@@ -2823,25 +2894,45 @@ def _check_920(user_id: int, url: str):
         from pptx import Presentation
 
         prs = Presentation(io.BytesIO(body))
-        texts = []
+        texts, n_images = [], 0
         for slide in prs.slides:
             for shape in slide.shapes:
                 if shape.has_text_frame:
                     texts.append(shape.text_frame.text)
+                if shape.shape_type == 13:  # PICTURE
+                    n_images += 1
         all_text = "\n".join(texts)
         n_slides = len(prs.slides)
     except Exception as e:
         crit.append({"label": "File đọc được dạng trình chiếu", "ok": False, "note": f"Không đọc được: {e}"})
         return False, crit
-    names = [f["name"] for f in payload["friends"]]
-    missing = [n for n in names if n not in all_text]
+
+    n = len(friends)
+    need_slides = n + 3
+    missing_name = [f["fullname"] for f in friends if f["fullname"] not in all_text]
+    wrong_pos = [f["fullname"] for f in friends
+                 if f["dang_o_cau"] and f["dang_o_cau"] not in all_text]
     expected = _gws_user_personal_code(user_id) or "?"
     low = all_text.lower()
-    crit.append({"label": "Đủ tối thiểu 12 slide (bìa + tổng quan + 9 bạn + cảm ơn)", "ok": n_slides >= 12, "note": f"Hiện có {n_slides} slide."})
-    crit.append({"label": "Nhắc tên đủ 9 người bạn", "ok": not missing, "note": "" if not missing else f"Thiếu: {', '.join(missing[:4])}"})
+
+    crit.append({"label": f"Đủ tối thiểu {need_slides} slide (bìa + tổng quan + {n} bạn + cảm ơn)",
+                 "ok": n_slides >= need_slides, "note": f"Hiện có {n_slides} slide."})
+    crit.append({"label": f"Nhắc tên đủ {n} người bạn", "ok": not missing_name,
+                 "note": "" if not missing_name else f"Thiếu: {', '.join(missing_name[:4])}"})
+    crit.append({"label": "Ghi đúng câu mỗi bạn đang học",
+                 "ok": len(wrong_pos) <= max(1, n // 5),
+                 "note": "" if not wrong_pos else f"Sai/thiếu ở: {', '.join(wrong_pos[:4])}"})
+    crit.append({"label": f"Có chèn ảnh đại diện (tối thiểu {n} ảnh)", "ok": n_images >= n,
+                 "note": f"Đếm được {n_images} ảnh trong bộ slide."})
     crit.append({"label": "Slide cảm ơn", "ok": "cảm ơn" in low or "cam on" in low, "note": ""})
-    crit.append({"label": "Có mã cá nhân trong bộ slide (trang bìa)", "ok": expected in all_text, "note": "" if expected in all_text else "Thiếu mã cá nhân."})
-    return all(c["ok"] for c in crit), crit
+    crit.append({"label": "Có mã cá nhân trong bộ slide (trang bìa)", "ok": expected in all_text,
+                 "note": "" if expected in all_text else "Thiếu mã cá nhân."})
+    ok = all(c["ok"] for c in crit)
+    if ok:
+        # 9.21 cần link này để nhúng slide cho các bạn chấm.
+        with get_db() as conn:
+            _gws_save_payload(conn, user_id, "9.20", {"slide_url": url, "slide_id": slide_id})
+    return ok, crit
 
 
 def _check_922(user_id: int, url: str):
@@ -2863,6 +2954,177 @@ def _check_922(user_id: int, url: str):
 # 9.16 KHONG nam o day: no khong nop link san pham ma duoc xac minh bang script chay tai may
 # hoc vien (/api/gws/cli-verify) — giong het co che agentsee-verify.py cua web tham khao.
 _GWS_CHECKERS = {"9.17": _check_917, "9.19": _check_919, "9.20": _check_920, "9.22": _check_922}
+
+
+# ---------- Câu 9.21: các bạn cùng lớp chấm chéo bộ slide 9.20 ----------
+# Lớp 10 người => "9 người bạn" chính là toàn bộ những người còn lại. Học viên phải TỰ đi nhờ
+# từng người vào chấm; đủ 9 lượt và trung bình >= ngưỡng mới qua. Chờ 9 người bận rộn chính là
+# bài học của câu 10.1 ("chấm bằng người thì chậm cỡ nào").
+PEER_REVIEW_MANIFEST = {"9.21": {"points": 6}}
+
+
+def _cau921_slide_url(conn, user_id: int) -> str:
+    row = conn.execute(
+        "SELECT payload FROM gws_tasks WHERE user_id = ? AND question_code = '9.20'", (user_id,)
+    ).fetchone()
+    if not row:
+        return ""
+    try:
+        return json.loads(row["payload"]).get("slide_url", "") or ""
+    except (json.JSONDecodeError, TypeError):
+        return ""
+
+
+def _cau921_state(subject_id: int) -> dict:
+    """Toan canh viec cham bai cua mot hoc vien: ai da cham, may diem, trung binh bao nhieu."""
+    friends = _class_friends(subject_id)
+    with get_db() as conn:
+        slide_url = _cau921_slide_url(conn, subject_id)
+        rows = conn.execute(
+            "SELECT grader_user_id, info_score, avatars_score, design_score, comment, updated_at"
+            " FROM peer_reviews WHERE subject_user_id = ?",
+            (subject_id,),
+        ).fetchall()
+    by_grader = {r["grader_user_id"]: r for r in rows}
+    diems = []
+    for f in friends:
+        r = by_grader.get(f["uid"])
+        if r:
+            avg = (r["info_score"] + r["avatars_score"] + r["design_score"]) / 3
+            diems.append(avg)
+            f["scores"] = {
+                "info": r["info_score"], "avatars": r["avatars_score"], "design": r["design_score"],
+                "avg": "%.2f" % avg, "comment": r["comment"] or "", "graded_at": r["updated_at"],
+            }
+        else:
+            f["scores"] = None
+    return {
+        "hv_uid": subject_id,
+        "slide_url": slide_url,
+        "friends": friends,
+        "num_graders": len(diems),
+        "so_ban_can_cham": len(friends),
+        "avg_overall": ("%.2f" % (sum(diems) / len(diems))) if diems else "0.00",
+        "pass_threshold": CAU921_PASS_THRESHOLD,
+    }
+
+
+def _cau921_passed(subject_id: int):
+    st = _cau921_state(subject_id)
+    if not st["slide_url"]:
+        return False, "Chưa có bộ slide nào — hoàn thành câu 9.20 trước đã."
+    if st["num_graders"] < st["so_ban_can_cham"]:
+        return False, "Mới có %d/%d bạn chấm — chờ đủ rồi nộp nhé." % (st["num_graders"], st["so_ban_can_cham"])
+    if float(st["avg_overall"]) < CAU921_PASS_THRESHOLD:
+        return False, "Điểm trung bình %s chưa đạt ngưỡng %g — sửa slide rồi nhờ các bạn chấm lại." % (
+            st["avg_overall"], CAU921_PASS_THRESHOLD)
+    return True, ""
+
+
+@app.get("/api/cau921/data/{subject_uid}")
+def cau921_data(request: Request, subject_uid: int):
+    """Du lieu cho trang cham. Nguoi xem PHAI dang nhap bang tai khoan cua chinh ho va phai nam
+    trong danh sach ban cung lop — day la cho chan 'nho Agent cham ho' hoac tu cham cho minh."""
+    me = require_approved_user(request)
+    with get_db() as conn:
+        row = conn.execute("SELECT display_name FROM users WHERE id = ?", (subject_uid,)).fetchone()
+    if not row:
+        raise HTTPException(status_code=404, detail="Không tìm thấy học viên này.")
+    st = _cau921_state(subject_uid)
+    st["hv_ten"] = row["display_name"]
+    st["toi_la_nguoi_cham"] = any(f["uid"] == me["id"] for f in st["friends"])
+    st["diem_cua_toi"] = next((f["scores"] for f in st["friends"] if f["uid"] == me["id"]), None)
+    if me["id"] == subject_uid:
+        st["ly_do_khong_cham_duoc"] = "Đây là bài của chính bạn — không tự chấm cho mình được."
+    elif not st["toi_la_nguoi_cham"]:
+        st["ly_do_khong_cham_duoc"] = "Bạn không nằm trong danh sách bạn cùng lớp của học viên này."
+    return st
+
+
+@app.post("/api/cau921/grade/{subject_uid}")
+def cau921_grade(
+    request: Request,
+    subject_uid: int,
+    info_score: int = Form(...),
+    avatars_score: int = Form(...),
+    design_score: int = Form(...),
+    comment: str = Form(""),
+):
+    me = require_approved_user(request)
+    if me["id"] == subject_uid:
+        raise HTTPException(status_code=400, detail="Không tự chấm cho mình được.")
+    if not any(f["uid"] == me["id"] for f in _class_friends(subject_uid)):
+        raise HTTPException(status_code=403, detail="Bạn không nằm trong danh sách bạn cùng lớp của học viên này.")
+    for label, v in (("Thông tin", info_score), ("Ảnh đại diện", avatars_score), ("Trình bày", design_score)):
+        if not (1 <= v <= 10):
+            raise HTTPException(status_code=400, detail="Điểm %s phải từ 1 đến 10." % label)
+    comment = (comment or "").strip()
+    if len(comment) < CAU921_MIN_COMMENT:
+        raise HTTPException(
+            status_code=400,
+            detail="Hãy viết nhận xét ít nhất %d ký tự — bạn ấy cần biết vì sao được điểm đó." % CAU921_MIN_COMMENT,
+        )
+    with get_db() as conn:
+        conn.execute(
+            "INSERT INTO peer_reviews"
+            " (subject_user_id, grader_user_id, info_score, avatars_score, design_score, comment)"
+            " VALUES (?, ?, ?, ?, ?, ?)"
+            " ON CONFLICT(subject_user_id, grader_user_id)"
+            " DO UPDATE SET info_score=excluded.info_score, avatars_score=excluded.avatars_score,"
+            "               design_score=excluded.design_score, comment=excluded.comment,"
+            "               updated_at=datetime('now')",
+            (subject_uid, me["id"], info_score, avatars_score, design_score, comment),
+        )
+    out = {"ok": True}
+    out.update(_cau921_state(subject_uid))
+    return out
+
+
+@app.get("/api/cau921/my-status")
+def cau921_my_status(request: Request):
+    """Trang cau 9.21 cua chinh hoc vien: link cham de di nho + ai da cham, ai chua."""
+    me = require_approved_user(request)
+    st = _cau921_state(me["id"])
+    st["link_cham"] = "%s/?cham-bai=%d" % (str(request.base_url).rstrip("/"), me["id"])
+    ok, reason = _cau921_passed(me["id"])
+    st["du_dieu_kien_nop"] = ok
+    st["ly_do"] = reason
+    return st
+
+
+@app.post("/api/cau921/invite")
+async def cau921_invite(request: Request):
+    """Nhan Lark cho nhung ban CHUA cham, loi nhan dung ten chinh hoc vien."""
+    me = require_approved_user(request)
+    st = _cau921_state(me["id"])
+    if not st["slide_url"]:
+        raise HTTPException(status_code=400, detail="Chưa có bộ slide — hoàn thành câu 9.20 trước đã.")
+    link = "%s/?cham-bai=%d" % (str(request.base_url).rstrip("/"), me["id"])
+    chua_cham = [f["uid"] for f in st["friends"] if not f["scores"]]
+    if not chua_cham:
+        return {"ok": True, "da_gui": 0, "message": "Tất cả các bạn đã chấm rồi."}
+    marks = ",".join("?" * len(chua_cham))
+    with get_db() as conn:
+        rows = conn.execute(
+            "SELECT id, display_name, lark_open_id FROM users WHERE id IN (%s)" % marks, chua_cham
+        ).fetchall()
+    sent, failed = 0, []
+    for r in rows:
+        if not r["lark_open_id"]:
+            failed.append("%s (chưa đăng nhập Lark)" % r["display_name"])
+            continue
+        text = (
+            "Chào %s! Mình là %s.\n\n"
+            "Mình vừa làm xong bộ slide báo cáo về cả lớp (Câu 9.20). Bạn chấm giúp mình 3 tiêu chí "
+            "(Thông tin / Ảnh đại diện / Trình bày) nhé — mất khoảng 2 phút thôi:\n%s\n\n"
+            "Cảm ơn bạn nhiều!" % (r["display_name"], me["display_name"], link)
+        )
+        res = await lark_bot.send_direct_message(r["lark_open_id"], text)
+        if isinstance(res, dict) and res.get("code") == 0:
+            sent += 1
+        else:
+            failed.append(r["display_name"])
+    return {"ok": True, "da_gui": sent, "that_bai": failed}
 
 
 # ---------- Câu 9.16: script tải về chạy tại máy để xác minh đã cài GWS CLI ----------
@@ -3044,16 +3306,22 @@ def _gws_start_for(user_id: int, code: str):
                 _gws_save_payload(conn, user["id"], code, payload)
         return {**payload["fields"], "personal_code": personal_code, "personal_code_cell": "A1"}
     if code == "9.20":
+        # KHÔNG chốt cứng vào payload như 9.17/9.19: tiến độ các bạn thay đổi từng ngày, học viên
+        # gọi lại /start là phải thấy số liệu mới nhất. Bộ chấm cũng đọc lại danh sách lúc chấm.
         with get_db() as conn:
-            payload, _ = _gws_payload(conn, user["id"], code)
-            if not payload:
-                friends = [
-                    {"name": n, "done_count": random.randint(8, 26), "total_text": f"{random.randint(1, 4)} ngày, {random.randint(0, 23)} giờ, {random.randint(0, 59)} phút"}
-                    for n in GWS_920_FRIENDS
-                ]
-                payload = {"friends": friends}
-                _gws_save_payload(conn, user["id"], code, payload)
-        return {"personal_code": personal_code, "friends": payload["friends"], "yeu_cau_slide_toi_thieu": 12}
+            me = conn.execute("SELECT display_name, avatar_url FROM users WHERE id = ?", (user["id"],)).fetchone()
+        friends = _class_friends(user["id"])
+        return {
+            "subject": {
+                "uid": user["id"],
+                "full_name": me["display_name"] if me else "",
+                "avatar_url": (me["avatar_url"] if me else "") or "",
+                "personal_code": personal_code,
+            },
+            "friends": friends,
+            "so_ban": len(friends),
+            "yeu_cau_slide_toi_thieu": len(friends) + 3,
+        }
     # 9.16 / 9.22: không có dữ liệu riêng, chỉ nhắc mã cá nhân.
     return {"personal_code": personal_code}
 

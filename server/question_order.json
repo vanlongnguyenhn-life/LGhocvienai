@@ -1,0 +1,1052 @@
+[
+ {
+  "code": "1.1",
+  "title": "Câu 1.1 - AI Chat bạn đã biết",
+  "lesson": "Bài 1 - Cài đặt Coding Agent và dùng thử"
+ },
+ {
+  "code": "1.2",
+  "title": "Câu 1.2 - Kiểm tra ổ đĩa",
+  "lesson": "Bài 1 - Cài đặt Coding Agent và dùng thử"
+ },
+ {
+  "code": "1.3",
+  "title": "Câu 1.3 - Thử năn nỉ & nhờ vả",
+  "lesson": "Bài 1 - Cài đặt Coding Agent và dùng thử"
+ },
+ {
+  "code": "1.4",
+  "title": "Câu 1.4 - Giới hạn của AI Chat",
+  "lesson": "Bài 1 - Cài đặt Coding Agent và dùng thử"
+ },
+ {
+  "code": "1.5",
+  "title": "Câu 1.5 - AI Agent có làm được không?",
+  "lesson": "Bài 1 - Cài đặt Coding Agent và dùng thử"
+ },
+ {
+  "code": "1.6",
+  "title": "Câu 1.6 - AI Chat vs AI Agent",
+  "lesson": "Bài 1 - Cài đặt Coding Agent và dùng thử"
+ },
+ {
+  "code": "1.7",
+  "title": "Câu 1.7 - Nhận diện AI Agent",
+  "lesson": "Bài 1 - Cài đặt Coding Agent và dùng thử"
+ },
+ {
+  "code": "1.8",
+  "title": "Câu 1.8 - Cách xử lý sự cố khi cài AI Agent",
+  "lesson": "Bài 1 - Cài đặt Coding Agent và dùng thử"
+ },
+ {
+  "code": "1.9",
+  "title": "Câu 1.9 - Khi AI Chat không giải quyết được",
+  "lesson": "Bài 1 - Cài đặt Coding Agent và dùng thử"
+ },
+ {
+  "code": "1.10",
+  "title": "Câu 1.10 - Cài AI Agent thành công",
+  "lesson": "Bài 1 - Cài đặt Coding Agent và dùng thử"
+ },
+ {
+  "code": "1.11",
+  "title": "Câu 1.11 - Dựng trang hồ sơ cá nhân + chụp ảnh tự động",
+  "lesson": "Bài 1 - Cài đặt Coding Agent và dùng thử"
+ },
+ {
+  "code": "1.12",
+  "title": "Câu 1.12 - Đổi giao diện xanh lá + chụp lại",
+  "lesson": "Bài 1 - Cài đặt Coding Agent và dùng thử"
+ },
+ {
+  "code": "1.13",
+  "title": "Câu 1.13 - Dark theme + hiệu ứng pháo hoa, để Agent tự tìm cách",
+  "lesson": "Bài 1 - Cài đặt Coding Agent và dùng thử"
+ },
+ {
+  "code": "2.1",
+  "title": "Câu 2.1 - Yêu cầu bài 1 là gì?",
+  "lesson": "Bài 2 - Coding Agent đã làm những gì?"
+ },
+ {
+  "code": "2.2",
+  "title": "Câu 2.2 - Công nghệ & công cụ agent dùng",
+  "lesson": "Bài 2 - Coding Agent đã làm những gì?"
+ },
+ {
+  "code": "2.3",
+  "title": "Câu 2.3 - Kỹ thuật chụp hình",
+  "lesson": "Bài 2 - Coding Agent đã làm những gì?"
+ },
+ {
+  "code": "2.4",
+  "title": "Câu 2.4 - Headless browser",
+  "lesson": "Bài 2 - Coding Agent đã làm những gì?"
+ },
+ {
+  "code": "2.5",
+  "title": "Câu 2.5 - Các cách chụp hình khác",
+  "lesson": "Bài 2 - Coding Agent đã làm những gì?"
+ },
+ {
+  "code": "2.6",
+  "title": "Câu 2.6 - Trình duyệt dùng để làm gì",
+  "lesson": "Bài 2 - Coding Agent đã làm những gì?"
+ },
+ {
+  "code": "3.1",
+  "title": "Câu 3.1 - Tại sao Agent biết?",
+  "lesson": "Bài 3 - Năng lực đặc biệt của Coding Agent"
+ },
+ {
+  "code": "3.2",
+  "title": "Câu 3.2 - Bao nhiêu công cụ?",
+  "lesson": "Bài 3 - Năng lực đặc biệt của Coding Agent"
+ },
+ {
+  "code": "3.3",
+  "title": "Câu 3.3 - Tại sao biết dùng công cụ đó?",
+  "lesson": "Bài 3 - Năng lực đặc biệt của Coding Agent"
+ },
+ {
+  "code": "3.4",
+  "title": "Câu 3.4 - Có cần liệt kê công cụ không?",
+  "lesson": "Bài 3 - Năng lực đặc biệt của Coding Agent"
+ },
+ {
+  "code": "3.5",
+  "title": "Câu 3.5 - Yêu cầu tốt gồm những yếu tố nào?",
+  "lesson": "Bài 3 - Năng lực đặc biệt của Coding Agent"
+ },
+ {
+  "code": "3.6",
+  "title": "Câu 3.6 - Tải video YouTube",
+  "lesson": "Bài 3 - Năng lực đặc biệt của Coding Agent"
+ },
+ {
+  "code": "3.7",
+  "title": "Câu 3.7 - Agent có tải được không?",
+  "lesson": "Bài 3 - Năng lực đặc biệt của Coding Agent"
+ },
+ {
+  "code": "3.8",
+  "title": "Câu 3.8 - Công cụ tải YouTube/TikTok",
+  "lesson": "Bài 3 - Năng lực đặc biệt của Coding Agent"
+ },
+ {
+  "code": "3.9",
+  "title": "Câu 3.9 - Cài tool và download",
+  "lesson": "Bài 3 - Năng lực đặc biệt của Coding Agent"
+ },
+ {
+  "code": "3.10",
+  "title": "Câu 3.10 - Agent có bỏ cuộc không?",
+  "lesson": "Bài 3 - Năng lực đặc biệt của Coding Agent"
+ },
+ {
+  "code": "3.11",
+  "title": "Câu 3.11 - Tư duy khi làm việc với AI Agent",
+  "lesson": "Bài 3 - Năng lực đặc biệt của Coding Agent"
+ },
+ {
+  "code": "3.12",
+  "title": "Câu 3.12 - Câu thần chú khi làm việc với Agent",
+  "lesson": "Bài 3 - Năng lực đặc biệt của Coding Agent"
+ },
+ {
+  "code": "3.13",
+  "title": "Câu 3.13 - Cam kết với tôi",
+  "lesson": "Bài 3 - Năng lực đặc biệt của Coding Agent"
+ },
+ {
+  "code": "4.1",
+  "title": "Câu 4.1 - Giao việc khó",
+  "lesson": "Bài 4 - Giới hạn của Coding Agent"
+ },
+ {
+  "code": "4.2",
+  "title": "Câu 4.2 - Nhắc lại cam kết",
+  "lesson": "Bài 4 - Giới hạn của Coding Agent"
+ },
+ {
+  "code": "4.3",
+  "title": "Câu 4.3 - Thay đổi hướng tiếp cận",
+  "lesson": "Bài 4 - Giới hạn của Coding Agent"
+ },
+ {
+  "code": "4.4",
+  "title": "Câu 4.4 - Câu hỏi quyết định",
+  "lesson": "Bài 4 - Giới hạn của Coding Agent"
+ },
+ {
+  "code": "4.5",
+  "title": "Câu 4.5 - Một nhiệm vụ khác",
+  "lesson": "Bài 4 - Giới hạn của Coding Agent"
+ },
+ {
+  "code": "4.6",
+  "title": "Câu 4.6 - Nhiệm vụ trong mơ",
+  "lesson": "Bài 4 - Giới hạn của Coding Agent"
+ },
+ {
+  "code": "4.7",
+  "title": "Câu 4.7 - Không giới hạn",
+  "lesson": "Bài 4 - Giới hạn của Coding Agent"
+ },
+ {
+  "code": "5.1",
+  "title": "Câu 5.1 — Blog cá nhân",
+  "lesson": "Bài 5 - Ghép LEGO"
+ },
+ {
+  "code": "5.2",
+  "title": "Câu 5.2 — Chatbot phòng khám",
+  "lesson": "Bài 5 - Ghép LEGO"
+ },
+ {
+  "code": "5.3",
+  "title": "Câu 5.3 — Video quảng cáo",
+  "lesson": "Bài 5 - Ghép LEGO"
+ },
+ {
+  "code": "5.4",
+  "title": "Câu 5.4 — Shop online",
+  "lesson": "Bài 5 - Ghép LEGO"
+ },
+ {
+  "code": "5.5",
+  "title": "Câu 5.5 — Phát hiện gian lận",
+  "lesson": "Bài 5 - Ghép LEGO"
+ },
+ {
+  "code": "5.6",
+  "title": "Câu 5.6 — An ninh camera",
+  "lesson": "Bài 5 - Ghép LEGO"
+ },
+ {
+  "code": "5.7",
+  "title": "Câu 5.7 — Podcast không cần nói",
+  "lesson": "Bài 5 - Ghép LEGO"
+ },
+ {
+  "code": "5.8",
+  "title": "Câu 5.8 — Bản đồ lớp học",
+  "lesson": "Bài 5 - Ghép LEGO"
+ },
+ {
+  "code": "5.9",
+  "title": "Câu 5.9 — Trích xuất khoảnh khắc đẹp",
+  "lesson": "Bài 5 - Ghép LEGO"
+ },
+ {
+  "code": "5.10",
+  "title": "Câu 5.10 — Vẽ tranh theo yêu cầu",
+  "lesson": "Bài 5 - Ghép LEGO"
+ },
+ {
+  "code": "5.11",
+  "title": "Câu 5.11 — Đăng nhập bảo mật",
+  "lesson": "Bài 5 - Ghép LEGO"
+ },
+ {
+  "code": "5.12",
+  "title": "Câu 5.12 — Đọc truyện trẻ em",
+  "lesson": "Bài 5 - Ghép LEGO"
+ },
+ {
+  "code": "5.13",
+  "title": "Câu 5.13 — Portfolio freelancer",
+  "lesson": "Bài 5 - Ghép LEGO"
+ },
+ {
+  "code": "5.14",
+  "title": "Câu 5.14 — Phân tích video siêu thị",
+  "lesson": "Bài 5 - Ghép LEGO"
+ },
+ {
+  "code": "5.15",
+  "title": "Câu 5.15 — Gia sư toán AI",
+  "lesson": "Bài 5 - Ghép LEGO"
+ },
+ {
+  "code": "5.16",
+  "title": "Câu 5.16 — Nhạc nền trailer",
+  "lesson": "Bài 5 - Ghép LEGO"
+ },
+ {
+  "code": "5.17",
+  "title": "Câu 5.17 — Ngân hàng chống xâm nhập",
+  "lesson": "Bài 5 - Ghép LEGO"
+ },
+ {
+  "code": "5.18",
+  "title": "Câu 5.18 — Trang tin tức tự động",
+  "lesson": "Bài 5 - Ghép LEGO"
+ },
+ {
+  "code": "5.19",
+  "title": "Câu 5.19 — Hỗ trợ người khiếm thị",
+  "lesson": "Bài 5 - Ghép LEGO"
+ },
+ {
+  "code": "5.20",
+  "title": "Câu 5.20 — Tư vấn pháp lý online",
+  "lesson": "Bài 5 - Ghép LEGO"
+ },
+ {
+  "code": "6.1",
+  "title": "Câu 6.1 — Bạn đã xem video chưa?",
+  "lesson": "Bài 6 - Chúng sinh bình đẳng"
+ },
+ {
+  "code": "6.2",
+  "title": "Câu 6.2 — Ai có thể tạo phần mềm?",
+  "lesson": "Bài 6 - Chúng sinh bình đẳng"
+ },
+ {
+  "code": "6.3",
+  "title": "Câu 6.3 — Lưu ý trước khi tiếp tục",
+  "lesson": "Bài 6 - Chúng sinh bình đẳng"
+ },
+ {
+  "code": "6.4",
+  "title": "Câu 6.4 — Sẵn sàng bắt đầu",
+  "lesson": "Bài 6 - Chúng sinh bình đẳng"
+ },
+ {
+  "code": "6.5",
+  "title": "Câu 6.5 — Chơi cờ caro 3x3",
+  "lesson": "Bài 6 - Chúng sinh bình đẳng"
+ },
+ {
+  "code": "6.6",
+  "title": "Câu 6.6 — Chơi cờ caro 15x15",
+  "lesson": "Bài 6 - Chúng sinh bình đẳng"
+ },
+ {
+  "code": "6.7",
+  "title": "Câu 6.7 — Convert caro 15×15 thành Electron desktop app",
+  "lesson": "Bài 6 - Chúng sinh bình đẳng"
+ },
+ {
+  "code": "6.8",
+  "title": "Câu 6.8 — Phần mềm hay trang web?",
+  "lesson": "Bài 6 - Chúng sinh bình đẳng"
+ },
+ {
+  "code": "6.9",
+  "title": "Câu 6.9 — Agent ơi, phần mềm này có nguy hiểm không?",
+  "lesson": "Bài 6 - Chúng sinh bình đẳng"
+ },
+ {
+  "code": "6.10",
+  "title": "Câu 6.10 — Và bạn thì nghĩ sao?",
+  "lesson": "Bài 6 - Chúng sinh bình đẳng"
+ },
+ {
+  "code": "6.11",
+  "title": "Câu 6.11 — Nhập mã bảo mật từ mật thư",
+  "lesson": "Bài 6 - Chúng sinh bình đẳng"
+ },
+ {
+  "code": "7.1",
+  "title": "Câu 7.1 - Phần mềm tin cậy",
+  "lesson": "Bài 7 - Phần mềm và sự tin cậy"
+ },
+ {
+  "code": "7.2",
+  "title": "Câu 7.2 - Prompt ngắn vs hội thoại",
+  "lesson": "Bài 7 - Phần mềm và sự tin cậy"
+ },
+ {
+  "code": "7.3",
+  "title": "Câu 7.3 - Lợi ích của hội thoại chi tiết",
+  "lesson": "Bài 7 - Phần mềm và sự tin cậy"
+ },
+ {
+  "code": "7.4",
+  "title": "Câu 7.4 - Rèn thói quen thảo luận chi tiết với Agent về Kế hoạch",
+  "lesson": "Bài 7 - Phần mềm và sự tin cậy"
+ },
+ {
+  "code": "7.5",
+  "title": "Câu 7.5 — Cờ caro đa giao diện",
+  "lesson": "Bài 7 - Phần mềm và sự tin cậy"
+ },
+ {
+  "code": "7.6",
+  "title": "Câu 7.6 — Cờ caro đa ngôn ngữ",
+  "lesson": "Bài 7 - Phần mềm và sự tin cậy"
+ },
+ {
+  "code": "7.7",
+  "title": "Câu 7.7 - Cảnh giác với prompt thần thánh",
+  "lesson": "Bài 7 - Phần mềm và sự tin cậy"
+ },
+ {
+  "code": "7.8",
+  "title": "Câu 7.8 - Định nghĩa Prompt Injection",
+  "lesson": "Bài 7 - Phần mềm và sự tin cậy"
+ },
+ {
+  "code": "7.9",
+  "title": "Câu 7.9 - Thực hành Prompt Injection",
+  "lesson": "Bài 7 - Phần mềm và sự tin cậy"
+ },
+ {
+  "code": "7.10",
+  "title": "Câu 7.10 — Thiệp xin lỗi",
+  "lesson": "Bài 7 - Phần mềm và sự tin cậy"
+ },
+ {
+  "code": "7.11",
+  "title": "Câu 7.11 — 3 cấp độ \"chân thành\"",
+  "lesson": "Bài 7 - Phần mềm và sự tin cậy"
+ },
+ {
+  "code": "7.12",
+  "title": "Câu 7.12 — Manh mối trong đề",
+  "lesson": "Bài 7 - Phần mềm và sự tin cậy"
+ },
+ {
+  "code": "7.13",
+  "title": "Câu 7.13 - Khả năng suy luận",
+  "lesson": "Bài 7 - Phần mềm và sự tin cậy"
+ },
+ {
+  "code": "7.14",
+  "title": "Câu 7.14 - Ngưỡng thông minh",
+  "lesson": "Bài 7 - Phần mềm và sự tin cậy"
+ },
+ {
+  "code": "7.15",
+  "title": "Câu 7.15 — Uỷ quyền và Thảo luận",
+  "lesson": "Bài 7 - Phần mềm và sự tin cậy"
+ },
+ {
+  "code": "8.1",
+  "title": "Câu 8.1 - Mình lướt qua đời nhau",
+  "lesson": "Bài 8 - Để Agent \"nói chuyện\""
+ },
+ {
+  "code": "8.2",
+  "title": "Câu 8.2 - Token",
+  "lesson": "Bài 8 - Để Agent \"nói chuyện\""
+ },
+ {
+  "code": "8.4",
+  "title": "Câu 8.4 - Token lớp học",
+  "lesson": "Bài 8 - Để Agent \"nói chuyện\""
+ },
+ {
+  "code": "8.5",
+  "title": "Câu 8.5 - Tầm quan trọng",
+  "lesson": "Bài 8 - Để Agent \"nói chuyện\""
+ },
+ {
+  "code": "8.6",
+  "title": "Câu 8.6 - Chia sẻ token",
+  "lesson": "Bài 8 - Để Agent \"nói chuyện\""
+ },
+ {
+  "code": "8.7",
+  "title": "Câu 8.7 - Chia sẻ đường link",
+  "lesson": "Bài 8 - Để Agent \"nói chuyện\""
+ },
+ {
+  "code": "8.8",
+  "title": "Câu 8.8 - Bảo mật token",
+  "lesson": "Bài 8 - Để Agent \"nói chuyện\""
+ },
+ {
+  "code": "8.9",
+  "title": "Câu 8.9 - Token trong đời sống",
+  "lesson": "Bài 8 - Để Agent \"nói chuyện\""
+ },
+ {
+  "code": "8.10",
+  "title": "Câu 8.10 - Token hết hạn",
+  "lesson": "Bài 8 - Để Agent \"nói chuyện\""
+ },
+ {
+  "code": "8.11",
+  "title": "Câu 8.11 - Tạo token có scope",
+  "lesson": "Bài 8 - Để Agent \"nói chuyện\""
+ },
+ {
+  "code": "8.12",
+  "title": "Câu 8.12 - Sử dụng Token",
+  "lesson": "Bài 8 - Để Agent \"nói chuyện\""
+ },
+ {
+  "code": "8.13",
+  "title": "Câu 8.13 - Có thẻ, nhưng mở phòng nào?",
+  "lesson": "Bài 8 - Để Agent \"nói chuyện\""
+ },
+ {
+  "code": "8.14",
+  "title": "Câu 8.14 - Đổi số điện thoại từ xa",
+  "lesson": "Bài 8 - Để Agent \"nói chuyện\""
+ },
+ {
+  "code": "8.15",
+  "title": "Câu 8.15 - Đúng token, đúng chức năng",
+  "lesson": "Bài 8 - Để Agent \"nói chuyện\""
+ },
+ {
+  "code": "8.16",
+  "title": "Câu 8.16 - Giao tiếp kiểu \"con người\"",
+  "lesson": "Bài 8 - Để Agent \"nói chuyện\""
+ },
+ {
+  "code": "8.17",
+  "title": "Câu 8.17 - Agent có sử dụng GUI được?",
+  "lesson": "Bài 8 - Để Agent \"nói chuyện\""
+ },
+ {
+  "code": "8.18",
+  "title": "Câu 8.18 - Tay và mắt của Agent",
+  "lesson": "Bài 8 - Để Agent \"nói chuyện\""
+ },
+ {
+  "code": "8.19",
+  "title": "Câu 8.19 - Thủ tục đầu tiên!",
+  "lesson": "Bài 8 - Để Agent \"nói chuyện\""
+ },
+ {
+  "code": "8.20",
+  "title": "Câu 8.20 - Giao tiếp kiểu Agent",
+  "lesson": "Bài 8 - Để Agent \"nói chuyện\""
+ },
+ {
+  "code": "9.1",
+  "title": "Câu 9.1 - Giao tiếp với OpenCode",
+  "lesson": "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)"
+ },
+ {
+  "code": "9.2",
+  "title": "Câu 9.2 - Chạy Agent trên WEB",
+  "lesson": "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)"
+ },
+ {
+  "code": "9.3",
+  "title": "Câu 9.3 - Chiếm cổng",
+  "lesson": "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)"
+ },
+ {
+  "code": "9.4",
+  "title": "Câu 9.4 - Can thiệp từ web vào máy tính",
+  "lesson": "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)"
+ },
+ {
+  "code": "9.5",
+  "title": "Câu 9.5 - Khác gì AI Chat trên nền web?",
+  "lesson": "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)"
+ },
+ {
+  "code": "9.6",
+  "title": "Câu 9.6 - Liệt kê session OpenCode",
+  "lesson": "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)"
+ },
+ {
+  "code": "9.7",
+  "title": "Câu 9.7 - Liệt kê session Antigravity",
+  "lesson": "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)"
+ },
+ {
+  "code": "9.8",
+  "title": "Câu 9.8 - Liệt kê session Gemini CLI",
+  "lesson": "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)"
+ },
+ {
+  "code": "9.9",
+  "title": "Câu 9.9 - Web hiển thị session Gemini CLI + OpenCode",
+  "lesson": "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)"
+ },
+ {
+  "code": "9.10",
+  "title": "Câu 9.10 - Convert chân dung thành ASCII art bằng FFMPEG",
+  "lesson": "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)"
+ },
+ {
+  "code": "9.11",
+  "title": "Câu 9.11 - Người bạn ấy hoàn thành lúc nào?",
+  "lesson": "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)"
+ },
+ {
+  "code": "9.12",
+  "title": "Câu 9.12 - Đổi avatar bạn bằng ảnh ASCII",
+  "lesson": "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)"
+ },
+ {
+  "code": "9.13",
+  "title": "Câu 9.13 - Khi nào dùng CLI, khi nào dùng API + Token?",
+  "lesson": "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)"
+ },
+ {
+  "code": "9.14",
+  "title": "Câu 9.14 - Cách Agent thao tác Google Workspace",
+  "lesson": "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)"
+ },
+ {
+  "code": "9.15",
+  "title": "Câu 9.15 - Bản chất của GWS CLI",
+  "lesson": "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)"
+ },
+ {
+  "code": "9.16",
+  "title": "Câu 9.16 - Connector giúp Agent \"nói chuyện\" với Google Workspace",
+  "lesson": "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)"
+ },
+ {
+  "code": "9.17",
+  "title": "Câu 9.17 - Đãi cát tìm vàng",
+  "lesson": "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)"
+ },
+ {
+  "code": "9.18",
+  "title": "Câu 9.18 - Vì sao có giới hạn thời gian?",
+  "lesson": "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)"
+ },
+ {
+  "code": "9.19",
+  "title": "Câu 9.19 - Định dạng Sheet bằng connector",
+  "lesson": "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)"
+ },
+ {
+  "code": "9.20",
+  "title": "Câu 9.20 - Tạo Slide bằng connector",
+  "lesson": "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)"
+ },
+ {
+  "code": "9.21",
+  "title": "Câu 9.21 - Tình bạn diệu kỳ",
+  "lesson": "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)"
+ },
+ {
+  "code": "9.22",
+  "title": "Câu 9.22 - Tạo video bằng connector",
+  "lesson": "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)"
+ },
+ {
+  "code": "9.23",
+  "title": "Câu 9.23 - Mật thư",
+  "lesson": "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)"
+ },
+ {
+  "code": "9.24",
+  "title": "Câu 9.24 - Định mệnh",
+  "lesson": "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)"
+ },
+ {
+  "code": "10.0",
+  "title": "Câu 10.0 - Cam kết",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "10.1",
+  "title": "Câu 10.1",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "10.2",
+  "title": "Câu 10.2",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "10.3",
+  "title": "Câu 10.3",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "10.4",
+  "title": "Câu 10.4",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "10.5",
+  "title": "Câu 10.5",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "10.6",
+  "title": "Câu 10.6",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "10.7",
+  "title": "Câu 10.7",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "10.8",
+  "title": "Câu 10.8",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "10.9",
+  "title": "Câu 10.9",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "10.10",
+  "title": "Câu 10.10",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "10.11",
+  "title": "Câu 10.11",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "10.12",
+  "title": "Câu 10.12",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "10.13",
+  "title": "Câu 10.13",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "10.14",
+  "title": "Câu 10.14",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "10.15",
+  "title": "Câu 10.15",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "10.16",
+  "title": "Câu 10.16",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "10.17",
+  "title": "Câu 10.17",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "10.18",
+  "title": "Câu 10.18",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "10.19",
+  "title": "Câu 10.19",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "10.20",
+  "title": "Câu 10.20",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "10.21",
+  "title": "Câu 10.21",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "10.22",
+  "title": "Câu 10.22",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "10.23",
+  "title": "Câu 10.23",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "10.24",
+  "title": "Câu 10.24",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "10.25",
+  "title": "Câu 10.25",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "10.26",
+  "title": "Câu 10.26",
+  "lesson": "Bài 10 - Tự động hoá với AI Agent"
+ },
+ {
+  "code": "11.1",
+  "title": "Câu 11.1",
+  "lesson": "Bài 11 - Đại phẫu một Agent"
+ },
+ {
+  "code": "11.2",
+  "title": "Câu 11.2",
+  "lesson": "Bài 11 - Đại phẫu một Agent"
+ },
+ {
+  "code": "11.3",
+  "title": "Câu 11.3",
+  "lesson": "Bài 11 - Đại phẫu một Agent"
+ },
+ {
+  "code": "11.4",
+  "title": "Câu 11.4",
+  "lesson": "Bài 11 - Đại phẫu một Agent"
+ },
+ {
+  "code": "11.5",
+  "title": "Câu 11.5",
+  "lesson": "Bài 11 - Đại phẫu một Agent"
+ },
+ {
+  "code": "11.6",
+  "title": "Câu 11.6",
+  "lesson": "Bài 11 - Đại phẫu một Agent"
+ },
+ {
+  "code": "11.7",
+  "title": "Câu 11.7",
+  "lesson": "Bài 11 - Đại phẫu một Agent"
+ },
+ {
+  "code": "11.8",
+  "title": "Câu 11.8",
+  "lesson": "Bài 11 - Đại phẫu một Agent"
+ },
+ {
+  "code": "11.9",
+  "title": "Câu 11.9",
+  "lesson": "Bài 11 - Đại phẫu một Agent"
+ },
+ {
+  "code": "11.10",
+  "title": "Câu 11.10",
+  "lesson": "Bài 11 - Đại phẫu một Agent"
+ },
+ {
+  "code": "11.11",
+  "title": "Câu 11.11",
+  "lesson": "Bài 11 - Đại phẫu một Agent"
+ },
+ {
+  "code": "11.12",
+  "title": "Câu 11.12",
+  "lesson": "Bài 11 - Đại phẫu một Agent"
+ },
+ {
+  "code": "11.13",
+  "title": "Câu 11.13",
+  "lesson": "Bài 11 - Đại phẫu một Agent"
+ },
+ {
+  "code": "11.14",
+  "title": "Câu 11.14",
+  "lesson": "Bài 11 - Đại phẫu một Agent"
+ },
+ {
+  "code": "11.15",
+  "title": "Câu 11.15",
+  "lesson": "Bài 11 - Đại phẫu một Agent"
+ },
+ {
+  "code": "11.16",
+  "title": "Câu 11.16",
+  "lesson": "Bài 11 - Đại phẫu một Agent"
+ },
+ {
+  "code": "11.17",
+  "title": "Câu 11.17",
+  "lesson": "Bài 11 - Đại phẫu một Agent"
+ },
+ {
+  "code": "11.18",
+  "title": "Câu 11.18",
+  "lesson": "Bài 11 - Đại phẫu một Agent"
+ },
+ {
+  "code": "11.19",
+  "title": "Câu 11.19",
+  "lesson": "Bài 11 - Đại phẫu một Agent"
+ },
+ {
+  "code": "11.20",
+  "title": "Câu 11.20",
+  "lesson": "Bài 11 - Đại phẫu một Agent"
+ },
+ {
+  "code": "11.21",
+  "title": "Câu 11.21",
+  "lesson": "Bài 11 - Đại phẫu một Agent"
+ },
+ {
+  "code": "11.22",
+  "title": "Câu 11.22",
+  "lesson": "Bài 11 - Đại phẫu một Agent"
+ },
+ {
+  "code": "11.23",
+  "title": "Câu 11.23",
+  "lesson": "Bài 11 - Đại phẫu một Agent"
+ },
+ {
+  "code": "11.24",
+  "title": "Câu 11.24",
+  "lesson": "Bài 11 - Đại phẫu một Agent"
+ },
+ {
+  "code": "11.25",
+  "title": "Câu 11.25",
+  "lesson": "Bài 11 - Đại phẫu một Agent"
+ },
+ {
+  "code": "11.26",
+  "title": "Câu 11.26",
+  "lesson": "Bài 11 - Đại phẫu một Agent"
+ },
+ {
+  "code": "12.1",
+  "title": "Câu 12.1 - Xuất danh sách tin nhắn Zalo",
+  "lesson": "Bài 12 - Khung siêu ứng dụng tích hợp Zalo"
+ },
+ {
+  "code": "12.2",
+  "title": "Câu 12.2 - Tạo ứng dụng chat Zalo",
+  "lesson": "Bài 12 - Khung siêu ứng dụng tích hợp Zalo"
+ },
+ {
+  "code": "12.3",
+  "title": "Câu 12.3 - Cam kết & mô tả ứng dụng mong muốn",
+  "lesson": "Bài 12 - Khung siêu ứng dụng tích hợp Zalo"
+ },
+ {
+  "code": "12.4",
+  "title": "Câu 12.4 - Thêm tính năng trả lời tự động",
+  "lesson": "Bài 12 - Khung siêu ứng dụng tích hợp Zalo"
+ },
+ {
+  "code": "12.5",
+  "title": "Câu 12.5 - Chatbot trả lời bằng LLM",
+  "lesson": "Bài 12 - Khung siêu ứng dụng tích hợp Zalo"
+ },
+ {
+  "code": "12.6",
+  "title": "Câu 12.6 - Bảo mật bằng nhóm chat và nick chat",
+  "lesson": "Bài 12 - Khung siêu ứng dụng tích hợp Zalo"
+ },
+ {
+  "code": "12.7",
+  "title": "Câu 12.7 - Trả lời bằng dữ liệu trong Kho tri thức",
+  "lesson": "Bài 12 - Khung siêu ứng dụng tích hợp Zalo"
+ },
+ {
+  "code": "12.8",
+  "title": "Câu 12.8 - Bảo mật bằng tài khoản Admin",
+  "lesson": "Bài 12 - Khung siêu ứng dụng tích hợp Zalo"
+ },
+ {
+  "code": "12.9",
+  "title": "Câu 12.9 - Đưa ứng dụng từ \"bóng tối\" ra \"ánh sáng\"",
+  "lesson": "Bài 12 - Khung siêu ứng dụng tích hợp Zalo"
+ },
+ {
+  "code": "12.10",
+  "title": "Câu 12.10 - Tăng cường bảo mật",
+  "lesson": "Bài 12 - Khung siêu ứng dụng tích hợp Zalo"
+ },
+ {
+  "code": "12.11",
+  "title": "Câu 12.11 - Quy hoạch App chat Zalo thành Siêu ứng dụng",
+  "lesson": "Bài 12 - Khung siêu ứng dụng tích hợp Zalo"
+ },
+ {
+  "code": "12.12",
+  "title": "Câu 12.12 - Module Email nhận diện nội dung quan trọng bằng Tự học",
+  "lesson": "Bài 12 - Khung siêu ứng dụng tích hợp Zalo"
+ },
+ {
+  "code": "12.13",
+  "title": "Câu 12.13 - Bảo mật bằng OTP",
+  "lesson": "Bài 12 - Khung siêu ứng dụng tích hợp Zalo"
+ },
+ {
+  "code": "12.14",
+  "title": "Câu 12.14 - Bảo mật cao cấp với mạng riêng ảo VPN",
+  "lesson": "Bài 12 - Khung siêu ứng dụng tích hợp Zalo"
+ },
+ {
+  "code": "12.15",
+  "title": "Câu 12.15 - Sao lưu an toàn",
+  "lesson": "Bài 12 - Khung siêu ứng dụng tích hợp Zalo"
+ },
+ {
+  "code": "12.16",
+  "title": "Câu 12.16 - Toàn cảnh các lớp phòng thủ và bảo mật an toàn",
+  "lesson": "Bài 12 - Khung siêu ứng dụng tích hợp Zalo"
+ },
+ {
+  "code": "12.17",
+  "title": "Câu 12.17 - Thảo luận",
+  "lesson": "Bài 12 - Khung siêu ứng dụng tích hợp Zalo"
+ },
+ {
+  "code": "13.1",
+  "title": "Câu 13.1 - Xây dựng phần mềm Quản lý thực đơn",
+  "lesson": "Bài 13 - Agent quản lý món ăn ngon \"ngày 3 bữa\""
+ },
+ {
+  "code": "13.2",
+  "title": "Câu 13.2 - Thêm trợ lý AI bé Mầm",
+  "lesson": "Bài 13 - Agent quản lý món ăn ngon \"ngày 3 bữa\""
+ },
+ {
+  "code": "13.3",
+  "title": "Câu 13.3 - Dùng Coding Agent làm trợ lý",
+  "lesson": "Bài 13 - Agent quản lý món ăn ngon \"ngày 3 bữa\""
+ },
+ {
+  "code": "13.4",
+  "title": "Câu 13.4 - Thảo luận",
+  "lesson": "Bài 13 - Agent quản lý món ăn ngon \"ngày 3 bữa\""
+ },
+ {
+  "code": "gate14.1",
+  "title": "Chặn",
+  "lesson": "Bài 14 - Module tạo curated content tự động"
+ },
+ {
+  "code": "gate.1",
+  "title": "Chặn",
+  "lesson": "Chatbot thông minh"
+ },
+ {
+  "code": "gate2.1",
+  "title": "Chặn",
+  "lesson": "Bài 1 - Tự học Agent bằng tiếng Việt"
+ },
+ {
+  "code": "gate2.2",
+  "title": "Câu 1 - Chuyển REPO thành website tự học",
+  "lesson": "Bài 1 - Tự học Agent bằng tiếng Việt"
+ },
+ {
+  "code": "gate2.3",
+  "title": "Câu 2 — Nộp URL Vercel (kiểm tra tự động)",
+  "lesson": "Bài 1 - Tự học Agent bằng tiếng Việt"
+ },
+ {
+  "code": "gate3.1",
+  "title": "Chặn",
+  "lesson": "Tạo trang web tổng hợp tin tức"
+ },
+ {
+  "code": "gate4.1",
+  "title": "Chặn",
+  "lesson": "Nghiên cứu OpenClaw và nâng cấp ứng dụng"
+ },
+ {
+  "code": "gate5.1",
+  "title": "Chặn",
+  "lesson": "Kết nối Telegram và tự động tóm tắt URL"
+ }
+]

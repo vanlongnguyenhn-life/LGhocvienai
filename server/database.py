@@ -214,6 +214,23 @@ CREATE TABLE IF NOT EXISTS gws_attempts (
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+-- Câu 9.21: các bạn cùng lớp chấm chéo bộ slide của nhau.
+-- Khoá chính (chủ bài, người chấm) => mỗi người chỉ có đúng 1 phiếu cho một bài, chấm lại thì
+-- ghi đè chứ không cộng thêm lượt.
+CREATE TABLE IF NOT EXISTS peer_reviews (
+    subject_user_id INTEGER NOT NULL,
+    grader_user_id INTEGER NOT NULL,
+    info_score INTEGER NOT NULL,
+    avatars_score INTEGER NOT NULL,
+    design_score INTEGER NOT NULL,
+    comment TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    PRIMARY KEY (subject_user_id, grader_user_id),
+    FOREIGN KEY (subject_user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (grader_user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 """
 
 

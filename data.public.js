@@ -2286,17 +2286,16 @@ const LESSONS = [
         "code": "9.20",
         "title": "Câu 9.20 - Tạo Slide bằng connector",
         "type": "gws_task",
-        "prompt": "Agent tự dựng nguyên một bộ slide báo cáo từ dữ liệu hệ thống cấp: trang bìa, tổng quan, một slide riêng cho từng người bạn trong lớp, lời cảm ơn — rồi share công khai để hệ thống tải về chấm cấu trúc.",
-        "copyPrompt": "Tôi đang làm bài tập tạo slide tự động của lớp AI Agent. Hãy giúp tôi:\n1- GET https://ailg.onrender.com/api/gws/task/9.20/start (header X-User-Id: {{uid}}, X-Auth-Token: {{token}}). Server trả JSON gồm personal_code + danh sách 9 người bạn (name, done_count, total_text).\n2- Dùng tài khoản Google của tôi tạo 1 Google Slides MỚI, tối thiểu 12 slide:\n   - Slide 1 (bìa): tiêu đề \"Báo cáo hành trình lớp ALG\", phụ đề chứa personal_code.\n   - Slide 2 (tổng quan): liệt kê 9 bạn kèm tổng thời gian học (total_text).\n   - Slide 3-11: mỗi bạn 1 slide — tên, số câu đã làm (done_count), tổng thời gian.\n   - Slide cuối: lời \"Cảm ơn\".\n3- Share \"Anyone with the link can VIEW\".\n4- POST https://ailg.onrender.com/api/gws/task/9.20/submit (cùng 2 header) body JSON {\"url\": \"<link slides>\"} — in kết quả chấm ra cho tôi.",
+        "prompt": "Tạo bộ slide báo cáo về tình hình học tập của các bạn CÙNG LỚP — dùng GWS CLI Slides API dựng slide hoàn toàn tự động từ dữ liệu hệ thống cấp.",
+        "copyPrompt": "Tôi đang làm bài tập của lớp AI Agent - Học Viện AI Life Group (khoá ALG). Nhiệm vụ: tạo bộ slide BÁO CÁO tình hình học tập của các bạn cùng lớp.\n\nYêu cầu: tạo 1 chương trình nhỏ (Python/Node/Go… đều được) chạy trên máy cục bộ để:\n\n1- Gọi POST tới URL /start (KHÔNG cần header auth — token đã nhúng sẵn trong URL):\n{{base_url}}/api/gws/task/9.20/start/{{uid}}/{{token}}\n\nServer trả JSON gồm:\n- subject: thông tin của tôi — uid, full_name, avatar_url, personal_code\n- friends: các bạn còn lại trong lớp, mỗi bạn có uid, fullname, avatar_url, dang_o_cau (mã câu đang học), ten_cau, bai, so_cau_da_xong, tong_so_cau\n- so_ban, yeu_cau_slide_toi_thieu\n\n2- Dùng GWS CLI Slides API tạo 1 Google Presentation MỚI:\n\n[Slide 1] BÌA\n- Tiêu đề \"Báo cáo tình hình học tập lớp ALG\" — cỡ chữ lớn, canh giữa.\n- Phụ đề: \"Thực hiện bởi {subject.full_name}\" và personal_code của tôi.\n- Chèn ảnh avatar của tôi (subject.avatar_url) ở góc.\n\n[Slide 2] TỔNG QUAN — mỗi bạn một dòng, gồm: ảnh avatar thumbnail, họ tên, và \"đã xong X/Y câu\".\n\n[Slide 3 trở đi] CHI TIẾT — mỗi bạn 1 slide:\n- Tiêu đề: \"Hành trình của {fullname}\"\n- Ảnh avatar lớn (chèn ảnh thật từ avatar_url)\n- Đang học tới: mã câu (dang_o_cau) + tên câu + thuộc bài nào\n- Đã hoàn thành: X/Y câu\n\n[Slide cuối] LỜI CẢM ƠN.\n\n3- Share Google Slides ở chế độ \"Anyone with the link can VIEW\".\n\n4- Gọi POST tới /submit với body JSON {\"slide_url\": \"<link vừa tạo>\"}:\n{{base_url}}/api/gws/task/9.20/submit/{{uid}}/{{token}}\n\nIn bảng chấm từng tiêu chí ra terminal cho tôi xem.",
         "points": 8
       },
       {
         "code": "9.21",
         "title": "Câu 9.21 - Tình bạn diệu kỳ",
-        "type": "reflect",
-        "prompt": "Bộ slide bạn vừa tạo ở Câu 9.20 kể về hành trình của 9 người bạn trong lớp. Giờ hãy nhìn lại nó bằng con mắt của người NHẬN: nếu bạn là một trong 9 bạn ấy và được xem slide này, bạn sẽ chấm nó mấy điểm?\n\nTự chấm bộ slide của mình theo 3 tiêu chí: Info (đủ thông tin), Trình bày (bố cục, dễ đọc), Đẹp (thẩm mỹ) — thang 1-10, kèm giải thích ngắn vì sao cho từng tiêu chí.",
-        "instructions": "Điền điểm 3 tiêu chí và lý do.",
-        "minLength": 20,
+        "type": "peer_review",
+        "prompt": "Bộ slide bạn vừa dựng ở Câu 9.20 là viết VỀ các bạn cùng lớp. Giờ hãy nhờ chính những người bạn ấy chấm điểm cho nó.\n\nGửi link bên dưới cho từng bạn — mỗi bạn sẽ xem slide của bạn ngay trên trang và chấm 3 tiêu chí: Thông tin, Ảnh đại diện, Trình bày. Đủ tất cả các bạn chấm và điểm trung bình từ 7.0 trở lên thì câu này mới xong.",
+        "secretNote": "🔒 Chỉ đúng các bạn cùng lớp — đang đăng nhập bằng tài khoản của chính họ — mới chấm được. Bạn không tự chấm cho mình, và nhờ Agent chấm hộ cũng không được.",
         "points": 6
       },
       {

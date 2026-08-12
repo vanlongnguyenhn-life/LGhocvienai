@@ -131,12 +131,6 @@
     "points": 14,
     "gradingNote": "QUY TẮC CHẤM RIÊNG cho câu này — ghi đè quy tắc mặc định: bài nộp KHÔNG phải văn xuôi mà là một BỨC TRANH ASCII (ảnh vẽ bằng ký tự). Vì vậy TUYỆT ĐỐI KHÔNG được đánh rớt với lý do \"ký tự lặp\", \"vô nghĩa\" hay \"spam\" — ký tự lặp lại chính là bản chất của tranh ASCII. Chấm ĐẠT nếu: có nhiều dòng (từ 10 dòng trở lên), phần lớn ký tự thuộc nhóm vẽ bóng như space . : - = + * # % @ (hoặc nhóm ký tự tương đương), và các dòng xếp thành một khối có hình dạng (đậm nhạt thay đổi, không phải một ký tự duy nhất lặp đều). Chấm KHÔNG ĐẠT chỉ khi: bài nộp là văn xuôi mô tả thay vì tranh, hoặc chỉ vài dòng quá ngắn, hoặc là một ký tự duy nhất lặp lại đều tăm tắp (không tạo thành hình)."
   },
-  "9.21": {
-    "prompt": "Bộ slide bạn vừa tạo ở Câu 9.20 kể về hành trình của 9 người bạn trong lớp. Giờ hãy nhìn lại nó bằng con mắt của người NHẬN: nếu bạn là một trong 9 bạn ấy và được xem slide này, bạn sẽ chấm nó mấy điểm?\n\nTự chấm bộ slide của mình theo 3 tiêu chí: Info (đủ thông tin), Trình bày (bố cục, dễ đọc), Đẹp (thẩm mỹ) — thang 1-10, kèm giải thích ngắn vì sao cho từng tiêu chí.",
-    "minLength": 20,
-    "points": 6,
-    "gradingNote": null
-  },
   "10.16": {
     "prompt": "Hãy xem xét ví dụ sau đây. Giả sử chúng ta cần làm một ứng dụng tự động lấy tin bài từ một trang báo chỉ định trước, sau đó tóm tắt lấy ý chính quan trọng, viết lại thành một bài recap ngắn, rồi chuyển định dạng thành video.\n\nTheo thói quen thông thường, bạn có thể ra lệnh cho Coding Agent thực hiện bằng prompt đại khái như sau:\nTruy cập bài báo sau https://vnexpress.net/gia-roi-ai-nuoi-minh-5072169.html, tóm tắt lấy 9 ý chính quan trọng nhất, viết lại thành 1 bài văn ngắn hoàn chỉnh dài khoảng 200 chữ, sau đó dùng remotion để làm thành video sử dụng tông màu xanh lá mạ, đen và trắng của Trăng Đen. Khi hoàn thành, mở video thành phẩm lên cho tôi xem.\n\nSau đó, dùng gws cli để upload lên Google Drive, chia sẻ ở chế độ công khai rồi gửi link lại cho tôi.",
     "minLength": 20,
