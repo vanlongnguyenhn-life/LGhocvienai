@@ -69,6 +69,11 @@ def _access_token() -> str:
             "exp": issued + 3600,
         },
     )
+    # gjwt.encode trả về BYTES. Đưa thẳng bytes vào form của httpx thì nó mã hoá thành
+    # chuỗi repr kiểu b'eyJ...' — cả chữ b lẫn dấu nháy đều bị gửi đi, và Google trả
+    # invalid_request. Phải chuyển sang str trước.
+    if isinstance(assertion, bytes):
+        assertion = assertion.decode("ascii")
     with httpx.Client(timeout=25.0) as client:
         resp = client.post(
             TOKEN_URL,
