@@ -2311,7 +2311,7 @@ const LESSONS = [
         "title": "Câu 9.23 - Mật thư",
         "type": "code",
         "hasHints": true,
-        "prompt": "Sau chuỗi nhiệm vụ Google Workspace vừa rồi, một MẬT THƯ đã được gửi tới bạn. Bạn có nhận ra không?\n\nMật thư gồm 10 mẩu nằm rải rác. Mỗi mẩu là một mã ngắn, và điều cần điền là TOẠ ĐỘ Ô chứa mã đó ghép với chính mã đó — ví dụ ô B3 chứa mã 62m27OCf thì mẩu ấy là B362m27OCf.\n\nGhép đủ 10 mẩu theo thứ tự từ trên xuống, từ trái sang phải, rồi điền vào ô dưới. Ngăn cách kiểu gì cũng được.",
+        "prompt": "Sau chuỗi nhiệm vụ Google Workspace vừa rồi, một MẬT THƯ đã được gửi tới bạn. Bạn có nhận ra không?\n\nHãy điền nội dung mật thư đó vào ô bên dưới.",
         "secretNote": "🔒 Mật thư nằm trong một sản phẩm bạn đã tạo ra ở Bài 9 — chỗ mà bạn chưa từng nhìn tới. Bí quá thì bấm 🛟 Giúp, gợi ý sẽ mở dần theo số ngày bạn kiên trì thử.",
         "points": 8
       }
