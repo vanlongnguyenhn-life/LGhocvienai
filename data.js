@@ -1701,9 +1701,9 @@ const LESSONS = [
         title: "Câu 9.22 - Tạo video bằng connector",
         type: "gws_task",
         prompt:
-          "Đỉnh của thang tự động hoá trong bài: Agent dựng một VIDEO ngắn hoàn chỉnh (dùng FFMPEG đã cài ở Câu 9.10, hoặc Remotion nếu bạn thích), upload lên Google Drive và share công khai. Gợi ý nội dung: intro chữ \"Học Viện AI Life Group\", vài khung hình về hành trình Bài 9 của bạn — hoặc chính bức ASCII bạn Mít chuyển động!",
+          "Cài thêm một connector mới giúp Coding Agent tạo video tự động bằng Remotion (remotion.dev) — kết hợp GWS Drive để upload và share công khai.",
         copyPrompt:
-          "Tôi đang làm bài tập tạo video tự động của lớp AI Agent. Hãy giúp tôi:\n1- Dùng FFMPEG (hoặc Remotion) trên máy tôi dựng 1 video MP4 ngắn (≥5 giây): mở đầu có dòng chữ \"Học Viện AI Life Group\", phần thân tuỳ ý sáng tạo (gợi ý: cho bức tranh ASCII bạn Mít ở Câu 9.10 xuất hiện).\n2- Upload file MP4 lên Google Drive của tôi (GWS CLI/API đều được).\n3- Share \"Anyone with the link can VIEW\" và lấy link dạng https://drive.google.com/file/d/{ID}/view\n4- POST https://ailg.onrender.com/api/gws/task/9.22/submit (header X-User-Id: {{uid}}, X-Auth-Token: {{token}}) body JSON {\"url\": \"<link video>\"} — in kết quả chấm ra cho tôi.",
+          "Tôi đang làm bài tập của lớp AI Agent - Học Viện AI Life Group (khoá ALG). Nhiệm vụ: cài connector Remotion cho Coding Agent để tạo video tự động.\n\n═════ YÊU CẦU CHI TIẾT VIDEO ═════\n\n▸ MỞ ĐẦU (5 giây đầu)\n• Dòng chữ LỚN: \"Học Viện AI Life Group\"\n• Dòng chữ NHỎ phía dưới: \"Biến AI thành nhân sự thật\"\n• Hiệu ứng fade-in / slide-in / zoom tuỳ ý, nhưng tới giây thứ 4-5 phải nhìn rõ cả hai dòng chữ.\n\n▸ THÂN VIDEO\n• Nguồn dữ liệu: gọi POST {{base_url}}/api/gws/task/9.20/start/{{uid}}/{{token}} để lấy danh sách các bạn cùng lớp (giống câu 9.20).\n• Mỗi bạn MỘT đoạn dài đúng 3 giây, hiện rõ: họ tên, ảnh đại diện (avatar_url), và câu đang học.\n\n▸ NHẠC NỀN\n• Ghép một bản nhạc nền chạy xuyên suốt video (lặp lại nếu ngắn hơn video).\n• Video BẮT BUỘC phải có tiếng — bài nộp không có luồng âm thanh sẽ bị chấm rớt.\n\n▸ HÌNH MỜ (khuyến khích)\n• Chèn logo {{base_url}}/assets/logo-icon.png ở góc trên bên phải, hiện ở mọi khung hình.\n\n═════ CÁC BƯỚC ═════\n\n[1] Cài Remotion (https://www.remotion.dev/) trên máy và dựng video theo yêu cầu trên, xuất ra MP4.\n[2] Upload file MP4 lên Google Drive bằng GWS CLI, share \"Anyone with the link can VIEW\", lấy link dạng https://drive.google.com/file/d/{ID}/view\n[3] Gọi POST {{base_url}}/api/gws/task/9.22/submit/{{uid}}/{{token}} với body JSON {\"drive_url\": \"<link video>\"} — in bảng chấm ra terminal cho tôi xem.",
         points: 6,
       },
       {
@@ -1720,7 +1720,7 @@ const LESSONS = [
         title: "Câu 9.24 - Định mệnh",
         type: "pi_lab_letter",
         prompt:
-          "Bật mí cuối bài: tấm chân dung bạn cặm cụi convert bằng FFMPEG ở Câu 9.10 chính là BẠN MÍT — \"định mệnh\" đã đi cùng bạn suốt từ Bài 7: người nhận tấm thiệp xin lỗi (7.10), người cho bạn xem hồ sơ (9.11), người nhận bức tranh ASCII (9.12). Mọi thứ đã kết nối từ lâu — chỉ là bạn chưa biết.\n\nGiờ hãy gửi mật thư của cô cho bạn Mít: dán NGUYÊN VĂN mật thư (tìm được ở Câu 9.23) vào ô dưới rồi bấm Gửi. Khi bạn Mít ĐỌC thư và hồi âm, bạn sẽ nhận được mã hoàn thành.",
+          "Trong chuỗi nhiệm vụ Google Workspace vừa rồi, bạn đã được đưa cho bức hình của một người bạn — người giữ vai trò \"định mệnh\" của bạn. Đó chính là tấm chân dung bạn cặm cụi convert thành tranh ASCII ở Câu 9.10: BẠN MÍT, người đã đi cùng bạn từ Bài 7 — nhận tấm thiệp xin lỗi (7.10), cho bạn xem hồ sơ (9.11), nhận bức tranh ASCII (9.12). Mọi thứ đã kết nối từ lâu, chỉ là bạn chưa nhận ra.\n\nGiờ hãy gửi mật thư cho bạn Mít: dán chuỗi 10 mẩu bạn tìm được ở Câu 9.23 vào ô dưới rồi bấm Gửi. Khi bạn Mít ĐỌC được thư, bạn ấy sẽ hồi âm kèm mã hoàn thành dành riêng cho bạn.",
         image: "assets/mit-chan-dung.png",
         secretNote: "🔒 Sau khi bạn Mít đọc thư, dán mã hồi âm của Mít vào ô dưới rồi bấm Nộp bài.",
         points: 6,
