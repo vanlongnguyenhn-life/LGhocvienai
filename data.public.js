@@ -2312,17 +2312,8 @@ const LESSONS = [
         "type": "code",
         "hasHints": true,
         "prompt": "Sau chuỗi nhiệm vụ Google Workspace vừa rồi, một MẬT THƯ đã được gửi tới bạn. Bạn có nhận ra không?\n\nMật thư gồm 10 mẩu nằm rải rác. Mỗi mẩu là một mã ngắn, và điều cần điền là TOẠ ĐỘ Ô chứa mã đó ghép với chính mã đó — ví dụ ô B3 chứa mã 62m27OCf thì mẩu ấy là B362m27OCf.\n\nGhép đủ 10 mẩu theo thứ tự từ trên xuống, từ trái sang phải, rồi điền vào ô dưới. Ngăn cách kiểu gì cũng được.",
-        "secretNote": "🔒 Mật thư nằm trong một sản phẩm bạn đã tạo ra ở Bài 9 — chỗ mà bạn chưa từng nhìn tới. Mắt thường không thấy được đâu, thử bôi đen xem.",
+        "secretNote": "🔒 Mật thư nằm trong một sản phẩm bạn đã tạo ra ở Bài 9 — chỗ mà bạn chưa từng nhìn tới. Bí quá thì bấm 🛟 Giúp, gợi ý sẽ mở dần theo số ngày bạn kiên trì thử.",
         "points": 8
-      },
-      {
-        "code": "9.24",
-        "title": "Câu 9.24 - Định mệnh",
-        "type": "pi_lab_letter",
-        "prompt": "Trong chuỗi nhiệm vụ Google Workspace vừa rồi, bạn đã được đưa cho bức hình của một người bạn — người giữ vai trò \"định mệnh\" của bạn. Đó chính là tấm chân dung bạn cặm cụi convert thành tranh ASCII ở Câu 9.10: BẠN MÍT, người đã đi cùng bạn từ Bài 7 — nhận tấm thiệp xin lỗi (7.10), cho bạn xem hồ sơ (9.11), nhận bức tranh ASCII (9.12). Mọi thứ đã kết nối từ lâu, chỉ là bạn chưa nhận ra.\n\nGiờ hãy gửi mật thư cho bạn Mít: dán chuỗi 10 mẩu bạn tìm được ở Câu 9.23 vào ô dưới rồi bấm Gửi. Khi bạn Mít ĐỌC được thư, bạn ấy sẽ hồi âm kèm mã hoàn thành dành riêng cho bạn.",
-        "image": "assets/mit-chan-dung.png",
-        "secretNote": "🔒 Sau khi bạn Mít đọc thư, dán mã hồi âm của Mít vào ô dưới rồi bấm Nộp bài.",
-        "points": 6
       }
     ]
   },

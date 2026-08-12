@@ -1468,7 +1468,9 @@ SECRET_HINTS = {
     "9.23": [
         "Mình cần phải đãi cát tìm vàng.",
         "Ngoài vàng, còn có thể có đá quý kim cương.",
-        "Mình tìm thấy đá quý kim cương ở toạ độ nào thì cần ghi rõ.",
+        "Mình tìm thấy đá quý kim cương ở toạ độ nào thì cần ghi rõ. Mà kim cương thì TRONG SUỐT — "
+        "nhìn thẳng vào sẽ không thấy gì, lẫn giữa một đống đá thường trông y hệt nhau. Ghép "
+        "toạ độ ô với mã trong ô đó, đủ cả 10 mẩu, xếp từ trên xuống rồi từ trái sang.",
     ],
 }
 # Tầng gợi ý cuối của 7.9 là 1 câu phải gửi NGUYÊN VĂN cho Bé Ailai — tách riêng thành ô "copy"
@@ -2775,13 +2777,15 @@ def _check_917(user_id: int, url: str):
         "note": f"Mất {elapsed:.1f}s" + ("" if elapsed <= GWS_CAU917_TIME_LIMIT_S else " — quá giờ! Gọi /reset để nhận thử thách mới rồi chạy lại."),
     })
     ok = all(c["ok"] for c in crit)
-    if ok:
-        # Đây là lúc bỏ mật thư câu 9.23 vào chính bảng tính vừa chấm. Ghi hụt cũng KHÔNG chặn
-        # 9.17 — học viên vẫn qua, và có nút gửi lại ở câu 9.23.
-        with get_db() as conn:
-            _gws_save_payload(conn, user_id, "9.17.sheet", {"spreadsheet_id": sheet_id})
-        if gsheets.is_configured():
-            _cau923_deliver(user_id, sheet_id)
+    # Bỏ mật thư câu 9.23 vào chính bảng tính này. Làm ở MỌI lần nộp — kể cả lần trượt — và mỗi
+    # lần là một bộ mã mới, đúng như web tham khảo (đã đo trực tiếp trên bảng tính thật của họ).
+    # Nộp trượt vẫn ghi là hợp lý: điều kiện duy nhất để ghi được là sheet còn quyền chỉnh sửa,
+    # mà điều đó đã kiểm ngay ở tiêu chí phía trên. Ghi hụt KHÔNG chặn 9.17 — học viên vẫn qua,
+    # và câu 9.23 có nút gửi lại.
+    with get_db() as conn:
+        _gws_save_payload(conn, user_id, "9.17.sheet", {"spreadsheet_id": sheet_id})
+    if gsheets.is_configured():
+        _cau923_deliver(user_id, sheet_id)
     return ok, crit
 
 
@@ -3145,28 +3149,49 @@ _GWS_CHECKERS = {"9.17": _check_917, "9.19": _check_919, "9.20": _check_920, "9.
 CAU923_MANIFEST = {"9.23": {"points": 8}}
 CAU923_PIECES = 10
 CAU923_CODE_LEN = 8
+CAU923_DECOYS = 260   # số mẩu giả trộn kèm — đủ để bản CSV trở nên vô dụng
 
 
-def _cau923_secrets(user_id: int) -> list:
-    """Bộ 10 mẩu mật thư của học viên này, sinh một lần rồi giữ nguyên."""
+def _cau923_secrets(user_id: int, sinh_moi: bool = False) -> list:
+    """Bộ 10 mẩu mật thư của học viên này.
+
+    Mặc định trả bộ đã lưu. sinh_moi=True thì bốc bộ hoàn toàn mới — gọi ở MỖI lần nộp 9.17,
+    đúng như web tham khảo (đã đo: nộp hai lần liên tiếp cho ra hai bộ toạ độ/mã khác nhau).
+    """
     with get_db() as conn:
         payload, _ = _gws_payload(conn, user_id, "9.23")
-        if payload and payload.get("pieces"):
+        if payload and payload.get("pieces") and not sinh_moi:
             return payload["pieces"]
         cells = random.sample(
             [(r, c) for r in range(1, gsheets.SECRET_SHEET_ROWS + 1) for c in range(gsheets.SECRET_SHEET_COLS)],
             CAU923_PIECES,
         )
         cells.sort()  # thứ tự đọc: trên xuống, trái sang phải
-        pieces = [
-            {
-                "cell": "%s%d" % (_col_letters(c + 1), r),
-                "code": "".join(secrets.choice(GWS_CAU917_GOLD_ALPHABET) for _ in range(CAU923_CODE_LEN)),
-            }
-            for r, c in cells
-        ]
-        _gws_save_payload(conn, user_id, "9.23", {"pieces": pieces, "written": False})
+        def _ma():
+            return "".join(secrets.choice(GWS_CAU917_GOLD_ALPHABET) for _ in range(CAU923_CODE_LEN))
+
+        pieces = [{"cell": "%s%d" % (_col_letters(c + 1), r), "code": _ma()} for r, c in cells]
+        # Mẩu GIẢ: cùng bộ ký tự, cùng độ dài, chỉ khác màu chữ (đen thay vì trắng). Không có
+        # chúng thì Agent xuất CSV ra thấy đúng 10 ô có chữ là xong bài.
+        da_dung = set(cells)
+        gia_cells = []
+        while len(gia_cells) < CAU923_DECOYS:
+            r = random.randint(1, gsheets.SECRET_SHEET_ROWS)
+            c = random.randint(0, gsheets.SECRET_SHEET_COLS - 1)
+            if (r, c) in da_dung:
+                continue
+            da_dung.add((r, c))
+            gia_cells.append((r, c))
+        decoys = [{"cell": "%s%d" % (_col_letters(c + 1), r), "code": _ma()} for r, c in gia_cells]
+        _gws_save_payload(conn, user_id, "9.23",
+                          {"pieces": pieces, "decoys": decoys, "written": False})
     return pieces
+
+
+def _cau923_decoys(user_id: int) -> list:
+    with get_db() as conn:
+        payload, _ = _gws_payload(conn, user_id, "9.23")
+    return (payload or {}).get("decoys", [])
 
 
 def _cau923_answer(user_id: int) -> str:
@@ -3182,15 +3207,16 @@ def _cau923_written(user_id: int) -> bool:
 def _cau923_deliver(user_id: int, spreadsheet_id: str) -> dict:
     """Ghi mật thư vào bảng tính của học viên. Không bao giờ làm hỏng việc chấm 9.17:
     ghi hụt thì chỉ ghi nhận lại để thử lại sau, học viên vẫn qua 9.17 bình thường."""
-    pieces = _cau923_secrets(user_id)
+    pieces = _cau923_secrets(user_id, sinh_moi=True)
     try:
-        gsheets.write_secret_sheet(spreadsheet_id, pieces)
+        gsheets.write_secret_sheet(spreadsheet_id, pieces, _cau923_decoys(user_id))
     except Exception as e:  # noqa: BLE001 — lỗi mạng/quyền/cấu hình đều chỉ ghi log
         print("[9.23] chưa gửi được mật thư cho user %s: %s" % (user_id, e))
         return {"ok": False, "loi": str(e)[:200]}
     with get_db() as conn:
-        _gws_save_payload(conn, user_id, "9.23", {"pieces": pieces, "written": True,
-                                                  "spreadsheet_id": spreadsheet_id})
+        _gws_save_payload(conn, user_id, "9.23",
+                          {"pieces": pieces, "decoys": _cau923_decoys(user_id), "written": True,
+                           "spreadsheet_id": spreadsheet_id})
     return {"ok": True}
 
 
@@ -3984,15 +4010,33 @@ def admin_diag_gsheets(request: Request, sheet_url: str = ""):
     sheet_id = _extract_gdoc_id(sheet_url, "sheet")
     if not sheet_id:
         raise HTTPException(status_code=400, detail="Không phải link Google Sheet.")
+    # Ghi thử ĐÚNG như lúc chấm thật: 10 mẩu chữ trắng trộn giữa CAU923_DECOYS mẩu chữ đen,
+    # xoá sạch trang cũ trước khi ghi. Nhờ vậy kiểm được cả phần chia đợt lẫn phần xoá.
+    def _ma():
+        return "".join(secrets.choice(GWS_CAU917_GOLD_ALPHABET) for _ in range(CAU923_CODE_LEN))
+
+    dung = set()
+    def _o():
+        while True:
+            r = random.randint(1, gsheets.SECRET_SHEET_ROWS)
+            c = random.randint(0, gsheets.SECRET_SHEET_COLS - 1)
+            if (r, c) not in dung:
+                dung.add((r, c))
+                return "%s%d" % (_col_letters(c + 1), r)
+
+    that = [{"cell": _o(), "code": _ma()} for _ in range(CAU923_PIECES)]
+    gia = [{"cell": _o(), "code": _ma()} for _ in range(CAU923_DECOYS)]
     try:
-        gsheets.write_secret_sheet(sheet_id, [{"cell": "Z191", "code": "ALGTEST" + secrets.token_hex(2).upper()}])
+        gsheets.write_secret_sheet(sheet_id, that, gia)
     except Exception as e:  # noqa: BLE001
         out["ghi_duoc"] = False
         out["loi"] = str(e)[:400]
         out["ket_luan"] = "KHÔNG ghi được — kiểm tra sheet đã share \"Bất kỳ ai có đường liên kết\" + \"Người chỉnh sửa\" chưa."
         return out
     out["ghi_duoc"] = True
-    out["ket_luan"] = "Ghi được. Mở sheet, xem trang Sheet2 ô Z191 (chữ trắng — bôi đen mới thấy)."
+    out["so_manh_that"] = len(that)
+    out["so_manh_gia"] = len(gia)
+    out["ket_luan"] = "Ghi được. Mở trang Sheet2: thấy một đống mã chữ đen, còn 10 mẩu thật là chữ trắng."
     return out
 
 

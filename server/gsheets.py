@@ -104,11 +104,16 @@ def _cell_to_index(cell: str):
     return int(digits) - 1, col - 1
 
 
-def write_secret_sheet(spreadsheet_id: str, entries: list) -> dict:
-    """Tạo (hoặc dùng lại) trang Sheet2 rồi ghi từng mẩu mật thư bằng chữ trắng.
+def write_secret_sheet(spreadsheet_id: str, entries: list, decoys: list = ()) -> dict:
+    """Tạo (hoặc dùng lại) trang Sheet2 rồi rải mật thư vào đó.
 
-    entries: [{"cell": "B3", "code": "62m27OCf"}, ...]
-    Trả {"ok": True} hoặc ném RuntimeError kèm lý do đọc được.
+    entries: 10 mẩu THẬT — ghi bằng chữ TRẮNG, nhìn thẳng không thấy.
+    decoys:  hàng trăm mẩu GIẢ cùng định dạng — ghi bằng chữ đen bình thường.
+
+    Vì sao cần mẩu giả: chữ trắng chỉ giấu được với MẮT NGƯỜI. Agent xuất sheet ra CSV là
+    thấy ngay đúng 10 ô có chữ — lộ hết. Trộn thêm vài trăm mẩu giả y hệt về hình thức thì
+    bản CSV (vốn không mang định dạng) cho ra một đống mã không phân biệt được; muốn lọc ra
+    đúng 10 mẩu thật thì phải đọc tới MÀU CHỮ, tức phải xuất XLSX hoặc hỏi API định dạng.
     """
     token = _access_token()
     with httpx.Client(timeout=40.0) as client:
@@ -130,21 +135,31 @@ def write_secret_sheet(spreadsheet_id: str, entries: list) -> dict:
             )
             sheet_id = created["replies"][0]["addSheet"]["properties"]["sheetId"]
 
-        requests = []
-        for e in entries:
-            row, col = _cell_to_index(e["cell"])
-            requests.append({
+        def o(cell: str, code: str, mau: dict) -> dict:
+            row, col = _cell_to_index(cell)
+            return {
                 "updateCells": {
                     "start": {"sheetId": sheet_id, "rowIndex": row, "columnIndex": col},
                     "rows": [{"values": [{
-                        "userEnteredValue": {"stringValue": e["code"]},
-                        # Chữ trắng trên nền trắng — mắt thường không thấy, bôi đen mới hiện.
-                        "userEnteredFormat": {"textFormat": {
-                            "foregroundColor": {"red": 1, "green": 1, "blue": 1}
-                        }},
+                        "userEnteredValue": {"stringValue": code},
+                        "userEnteredFormat": {"textFormat": {"foregroundColor": mau}},
                     }]}],
                     "fields": "userEnteredValue,userEnteredFormat.textFormat.foregroundColor",
                 }
-            })
-        _call(client, "POST", f"{API}/{spreadsheet_id}:batchUpdate", token, {"requests": requests})
-    return {"ok": True, "so_manh": len(entries)}
+            }
+
+        TRANG = {"red": 1, "green": 1, "blue": 1}
+        DEN = {"red": 0, "green": 0, "blue": 0}
+        # Xoá sạch trang trước khi ghi lại: mỗi lần nộp 9.17 là một bộ mã hoàn toàn mới, không
+        # để sót mã cũ nằm lẫn vào (web tham khảo cũng làm vậy — ô thử của lần trước biến mất).
+        requests = [{"updateCells": {
+            "range": {"sheetId": sheet_id},
+            "fields": "userEnteredValue,userEnteredFormat",
+        }}]
+        requests += [o(d["cell"], d["code"], DEN) for d in decoys]
+        requests += [o(e["cell"], e["code"], TRANG) for e in entries]
+        # Ghi theo từng đợt: vài trăm yêu cầu trong một lần gọi dễ chạm giới hạn của Google.
+        for i in range(0, len(requests), 200):
+            _call(client, "POST", f"{API}/{spreadsheet_id}:batchUpdate", token,
+                  {"requests": requests[i:i + 200]})
+    return {"ok": True, "so_manh": len(entries), "so_manh_gia": len(decoys)}
