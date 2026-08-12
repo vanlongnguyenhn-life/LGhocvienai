@@ -3811,6 +3811,40 @@ def admin_diag_storage(request: Request):
     return _storage_usage()
 
 
+@app.get("/api/admin/diag/gsheets")
+def admin_diag_gsheets(request: Request, sheet_url: str = ""):
+    """Kiểm tra máy chủ có ghi được vào Google Sheet của học viên hay không (câu 9.23).
+
+    Không truyền sheet_url thì chỉ báo tình trạng cấu hình. Có truyền thì thử ghi THẬT một
+    ô nhỏ ở góc xa (Sheet2!Z191) rồi báo kết quả — dùng để chắc chắn service account có quyền
+    trên file share "Bất kỳ ai có đường liên kết" + "Người chỉnh sửa".
+    """
+    current_admin(request)
+    out = {
+        "da_cau_hinh": gsheets.is_configured(),
+        "tai_khoan_ghi": gsheets.service_account_email(),
+    }
+    if not out["da_cau_hinh"]:
+        out["ket_luan"] = "Chưa có GOOGLE_SERVICE_ACCOUNT_JSON — máy chủ sẽ bỏ qua bước gửi mật thư."
+        return out
+    if not sheet_url:
+        out["ket_luan"] = "Đã cấu hình. Thêm ?sheet_url=<link sheet share quyền chỉnh sửa> để thử ghi thật."
+        return out
+    sheet_id = _extract_gdoc_id(sheet_url, "sheet")
+    if not sheet_id:
+        raise HTTPException(status_code=400, detail="Không phải link Google Sheet.")
+    try:
+        gsheets.write_secret_sheet(sheet_id, [{"cell": "Z191", "code": "ALGTEST" + secrets.token_hex(2).upper()}])
+    except Exception as e:  # noqa: BLE001
+        out["ghi_duoc"] = False
+        out["loi"] = str(e)[:400]
+        out["ket_luan"] = "KHÔNG ghi được — kiểm tra sheet đã share \"Bất kỳ ai có đường liên kết\" + \"Người chỉnh sửa\" chưa."
+        return out
+    out["ghi_duoc"] = True
+    out["ket_luan"] = "Ghi được. Mở sheet, xem trang Sheet2 ô Z191 (chữ trắng — bôi đen mới thấy)."
+    return out
+
+
 @app.get("/api/admin/diag/ai-health")
 def admin_diag_ai_health(request: Request):
     """Phát hiện sớm việc AI chấm bài hỏng (hết hạn mức, sai API key, Anthropic lỗi).
