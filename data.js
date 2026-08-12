@@ -1711,9 +1711,8 @@ const LESSONS = [
         title: "Câu 9.23 - Mật thư",
         type: "code",
         prompt:
-          "Trong suốt Bài 9, cô đã lặng lẽ gửi cho bạn một MẬT THƯ — nó được giấu trong một trong những dữ liệu mà Agent của bạn từng chạm tới trong bài này. Bạn có nhận ra không?\n\nHãy nhờ Agent quay lại \"thăm\" những nơi nó từng đi qua để tìm mật thư, rồi điền mã xác nhận kèm theo mật thư vào ô dưới.",
-        secretNote: "🔒 Gợi ý nhỏ: món quà bạn gửi đi ở Câu 9.12 có thể đã mang theo một điều gì đó quay về.",
-        answer: "DUNG-CU-DUNG-LUC-FCD1",
+          "Sau chuỗi nhiệm vụ Google Workspace vừa rồi, một MẬT THƯ đã được gửi tới bạn. Bạn có nhận ra không?\n\nMật thư gồm 10 mẩu nằm rải rác. Mỗi mẩu là một mã ngắn, và điều cần điền là TOẠ ĐỘ Ô chứa mã đó ghép với chính mã đó — ví dụ ô B3 chứa mã 62m27OCf thì mẩu ấy là B362m27OCf.\n\nGhép đủ 10 mẩu theo thứ tự từ trên xuống, từ trái sang phải, rồi điền vào ô dưới. Ngăn cách kiểu gì cũng được.",
+        secretNote: "🔒 Mật thư nằm trong một sản phẩm bạn đã tạo ra ở Bài 9 — chỗ mà bạn chưa từng nhìn tới. Mắt thường không thấy được đâu, thử bôi đen xem.",
         points: 8,
       },
       {

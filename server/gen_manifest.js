@@ -103,6 +103,10 @@ for (const lesson of LESSONS) {
         entry.icons = q.items.map((it) => it.icon);
         entry.iconByText = Object.fromEntries(q.items.map((it) => [it.text, it.icon]));
       } else if (q.type === "code") {
+        // Câu nhập mã KHÔNG khai `answer` là loại đáp án riêng từng học viên (ví dụ 9.23 —
+        // mật thư sinh riêng, máy chủ tự chấm ở nhánh khác). Đưa vào bảng đáp án tĩnh thì nó
+        // sẽ bị chấm sai với đáp án rỗng, nên bỏ qua hẳn.
+        if (q.answer === undefined) continue;
         entry.answer = q.answer;
       } else if (q.type === "token_scope_check") {
         entry.requiredScopes = q.requiredScopes || [];

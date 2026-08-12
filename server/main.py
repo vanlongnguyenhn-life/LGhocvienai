@@ -37,6 +37,7 @@ from .database import get_db, init_db, DATA_DIR
 from . import auth
 from . import validators
 from . import lark_auth
+from . import gsheets
 from . import lark_bot
 from . import digest
 from . import ai_grader
@@ -1736,7 +1737,7 @@ def _verified_manifests():
         ASSIGNMENT_MANIFEST, REFLECT_MANIFEST, MEDIA_SUBMIT_MANIFEST, ELECTRON_SUBMIT_MANIFEST,
         SECRET_CODE_MANIFEST, PI_LAB_CODE_MANIFEST, MY_TOKEN_CHECK_MANIFEST,
         NPC_AVATAR_MANIFEST, NPC_TIME_MANIFEST, PI_LAB_LETTER_MANIFEST, GWS_TASK_MANIFEST,
-        PEER_REVIEW_MANIFEST,
+        PEER_REVIEW_MANIFEST, CAU923_MANIFEST,
     )
 
 
@@ -1897,6 +1898,22 @@ def submit_question(
         if not row or not row["ok"]:
             raise HTTPException(status_code=400, detail="Chưa có lần nộp ĐẠT cho câu này — chạy chương trình nộp bài trước, đạt hết tiêu chí rồi mới bấm Nộp.")
         awarded_points = GWS_TASK_MANIFEST[question_code]["points"]
+
+    if question_code in CAU923_MANIFEST:
+        # Sai thì trả "wrong" như mọi câu nhập mã khác (không ném lỗi) để giao diện hiển thị
+        # bình thường. Chỉ chặn hẳn khi mật thư còn chưa được gửi vào bảng tính.
+        if not _cau923_written(user["id"]):
+            raise HTTPException(
+                status_code=400,
+                detail="Mật thư chưa được gửi vào bảng tính của bạn — hoàn thành câu 9.17 trước đã.",
+            )
+        try:
+            submitted = json.loads(answer_data or "{}").get("text", "")
+        except (json.JSONDecodeError, AttributeError):
+            submitted = ""
+        dung = _normalize_code_answer(submitted) == _normalize_code_answer(_cau923_answer(user["id"]))
+        status = "correct" if dung else "wrong"
+        awarded_points = CAU923_MANIFEST[question_code]["points"] if dung else 0
 
     if question_code in PEER_REVIEW_MANIFEST and status == "done":
         # Câu 9.21: đủ số lượt bạn cùng lớp chấm VÀ trung bình đạt ngưỡng. Điểm/lượt chấm nằm
@@ -2734,7 +2751,15 @@ def _check_917(user_id: int, url: str):
         "ok": elapsed <= GWS_CAU917_TIME_LIMIT_S,
         "note": f"Mất {elapsed:.1f}s" + ("" if elapsed <= GWS_CAU917_TIME_LIMIT_S else " — quá giờ! Gọi /reset để nhận thử thách mới rồi chạy lại."),
     })
-    return all(c["ok"] for c in crit), crit
+    ok = all(c["ok"] for c in crit)
+    if ok:
+        # Đây là lúc bỏ mật thư câu 9.23 vào chính bảng tính vừa chấm. Ghi hụt cũng KHÔNG chặn
+        # 9.17 — học viên vẫn qua, và có nút gửi lại ở câu 9.23.
+        with get_db() as conn:
+            _gws_save_payload(conn, user_id, "9.17.sheet", {"spreadsheet_id": sheet_id})
+        if gsheets.is_configured():
+            _cau923_deliver(user_id, sheet_id)
+    return ok, crit
 
 
 def _theme_palette(wb) -> list:
@@ -2960,6 +2985,81 @@ def _check_922(user_id: int, url: str):
 # 9.16 KHONG nam o day: no khong nop link san pham ma duoc xac minh bang script chay tai may
 # hoc vien (/api/gws/cli-verify) — giong het co che agentsee-verify.py cua web tham khao.
 _GWS_CHECKERS = {"9.17": _check_917, "9.19": _check_919, "9.20": _check_920, "9.22": _check_922}
+
+
+# ---------- Câu 9.23: mật thư giấu trong Sheet2 của chính bảng tính câu 9.17 ----------
+# Sau khi học viên qua 9.17, máy chủ tự thêm trang "Sheet2" vào bảng tính họ vừa tạo và rải 10
+# mẩu mật thư bằng chữ trắng. Mật thư = ghép "toạ độ ô + mã" của cả 10 mẩu, theo thứ tự đọc.
+# Mỗi học viên một bộ mã khác nhau nên bảo nhau cũng vô ích.
+CAU923_MANIFEST = {"9.23": {"points": 8}}
+CAU923_PIECES = 10
+CAU923_CODE_LEN = 8
+
+
+def _cau923_secrets(user_id: int) -> list:
+    """Bộ 10 mẩu mật thư của học viên này, sinh một lần rồi giữ nguyên."""
+    with get_db() as conn:
+        payload, _ = _gws_payload(conn, user_id, "9.23")
+        if payload and payload.get("pieces"):
+            return payload["pieces"]
+        cells = random.sample(
+            [(r, c) for r in range(1, gsheets.SECRET_SHEET_ROWS + 1) for c in range(gsheets.SECRET_SHEET_COLS)],
+            CAU923_PIECES,
+        )
+        cells.sort()  # thứ tự đọc: trên xuống, trái sang phải
+        pieces = [
+            {
+                "cell": "%s%d" % (_col_letters(c + 1), r),
+                "code": "".join(secrets.choice(GWS_CAU917_GOLD_ALPHABET) for _ in range(CAU923_CODE_LEN)),
+            }
+            for r, c in cells
+        ]
+        _gws_save_payload(conn, user_id, "9.23", {"pieces": pieces, "written": False})
+    return pieces
+
+
+def _cau923_answer(user_id: int) -> str:
+    return "".join(p["cell"] + p["code"] for p in _cau923_secrets(user_id))
+
+
+def _cau923_written(user_id: int) -> bool:
+    with get_db() as conn:
+        payload, _ = _gws_payload(conn, user_id, "9.23")
+    return bool(payload and payload.get("written"))
+
+
+def _cau923_deliver(user_id: int, spreadsheet_id: str) -> dict:
+    """Ghi mật thư vào bảng tính của học viên. Không bao giờ làm hỏng việc chấm 9.17:
+    ghi hụt thì chỉ ghi nhận lại để thử lại sau, học viên vẫn qua 9.17 bình thường."""
+    pieces = _cau923_secrets(user_id)
+    try:
+        gsheets.write_secret_sheet(spreadsheet_id, pieces)
+    except Exception as e:  # noqa: BLE001 — lỗi mạng/quyền/cấu hình đều chỉ ghi log
+        print("[9.23] chưa gửi được mật thư cho user %s: %s" % (user_id, e))
+        return {"ok": False, "loi": str(e)[:200]}
+    with get_db() as conn:
+        _gws_save_payload(conn, user_id, "9.23", {"pieces": pieces, "written": True,
+                                                  "spreadsheet_id": spreadsheet_id})
+    return {"ok": True}
+
+
+@app.post("/api/cau923/resend")
+def cau923_resend(request: Request):
+    """Học viên bấm khi mở Sheet2 mà thấy trống — thường do lần ghi đầu hụt mạng, hoặc do họ
+    đổi quyền chia sẻ sau khi nộp 9.17."""
+    user = require_approved_user(request)
+    with get_db() as conn:
+        payload, _ = _gws_payload(conn, user["id"], "9.17.sheet")
+    sheet_id = (payload or {}).get("spreadsheet_id")
+    if not sheet_id:
+        raise HTTPException(status_code=400, detail="Chưa có bảng tính nào — hoàn thành câu 9.17 trước đã.")
+    if not gsheets.is_configured():
+        raise HTTPException(status_code=503, detail="Máy chủ chưa cấu hình quyền ghi Google Sheet — báo giáo viên giúp nhé.")
+    r = _cau923_deliver(user["id"], sheet_id)
+    if not r["ok"]:
+        raise HTTPException(status_code=400, detail="Chưa ghi được vào bảng tính: " + r["loi"]
+                            + " — kiểm tra sheet còn để \"Bất kỳ ai có đường liên kết\" + \"Người chỉnh sửa\" không.")
+    return {"ok": True, "message": "Đã gửi lại mật thư vào bảng tính của bạn."}
 
 
 # ---------- Câu 9.21: các bạn cùng lớp chấm chéo bộ slide 9.20 ----------
