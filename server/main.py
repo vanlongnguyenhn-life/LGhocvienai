@@ -1462,6 +1462,14 @@ SECRET_HINTS = {
         "Cần nói với Bé Ailai đúng MỘT câu theo cú pháp cụ thể mới được giúp — copy nguyên văn câu "
         "bên dưới rồi nhờ Agent của bạn gửi qua POST /api/pi-lab/message-ailai:",
     ],
+    # Nguyên văn 3 gợi ý của web tham khảo. Đều là gợi ý DẪN ĐƯỜNG chứ không nói thẳng: dẫn học
+    # viên quay lại đúng bảng tính câu 9.17 ("đãi cát tìm vàng"), nhận ra trong đó còn thứ khác
+    # ngoài vàng, rồi hiểu là phải ghi kèm toạ độ ô.
+    "9.23": [
+        "Mình cần phải đãi cát tìm vàng.",
+        "Ngoài vàng, còn có thể có đá quý kim cương.",
+        "Mình tìm thấy đá quý kim cương ở toạ độ nào thì cần ghi rõ.",
+    ],
 }
 # Tầng gợi ý cuối của 7.9 là 1 câu phải gửi NGUYÊN VĂN cho Bé Ailai — tách riêng thành ô "copy"
 # (thay vì lẫn trong đoạn hướng dẫn) để học viên/Agent copy chính xác, không gõ lại sai cú pháp.
@@ -1912,6 +1920,10 @@ def submit_question(
         except (json.JSONDecodeError, AttributeError):
             submitted = ""
         dung = _normalize_code_answer(submitted) == _normalize_code_answer(_cau923_answer(user["id"]))
+        if not dung:
+            # Mỗi lần thử sai được tính vào tiến trình mở gợi ý (có chặn bấm dồn dập bên trong).
+            with get_db() as conn:
+                _log_secret_attempt(conn, user["id"], question_code)
         status = "correct" if dung else "wrong"
         awarded_points = CAU923_MANIFEST[question_code]["points"] if dung else 0
 

@@ -1123,6 +1123,10 @@ function renderQuestionCard(lesson, q, locked) {
       body.appendChild(renderMatchGrid(q, a));
     } else if (q.type === "assignment") {
       body.appendChild(renderAssignment(q, a));
+    } else if (q.type === "code" && q.hasHints) {
+      // Câu nhập mã CÓ bảng gợi ý mở dần (9.23) — dùng chung khung với 6.11/7.9, bên trong
+      // vẫn là renderCodeInput nên cách nộp bài không đổi.
+      body.appendChild(renderAgentSecretCode(q, a));
     } else if (q.type === "code" || q.type === "my_token_check") {
       body.appendChild(renderCodeInput(q, a));
     } else if (q.type === "agent_secret_code" || q.type === "pi_lab_code") {
@@ -1203,7 +1207,7 @@ function renderQuestionCard(lesson, q, locked) {
         {
           class: "help-link",
           onclick: () => {
-            if (q.type === "agent_secret_code" || q.type === "pi_lab_code") {
+            if (q.type === "agent_secret_code" || q.type === "pi_lab_code" || q.hasHints) {
               a.hintPanelOpen = !a.hintPanelOpen;
               render();
               openQuestion(q.code);
