@@ -1508,19 +1508,28 @@ async function submitGrade() {
 }
 
 function scoreRow(label, key) {
+  // Thanh trượt 1-10 giống web tham khảo — kéo một cái là xong, chấm 9 bài không thấy mệt.
+  // KHÔNG gọi render() khi kéo: render() dựng lại cả trang, thanh trượt sẽ mất focus giữa
+  // chừng và nhảy giật. Chỉ cập nhật số hiển thị tại chỗ.
   const val = gradeState.form[key];
-  const row = el("div", { class: "grade-score-row" }, [el("span", { class: "grade-score-label" }, label)]);
-  const box = el("div", { class: "grade-score-btns" });
-  for (let n = 1; n <= 10; n++) {
-    box.appendChild(
-      el("button", {
-        class: "grade-score-btn" + (val === n ? " on" : ""),
-        onclick: () => { gradeState.form[key] = n; render(); },
-      }, [String(n)])
-    );
-  }
-  row.appendChild(box);
-  return row;
+  const num = el("span", { class: "grade-score-value" }, [String(val)]);
+  const slider = el("input", {
+    class: "grade-slider",
+    type: "range",
+    min: "1",
+    max: "10",
+    step: "1",
+    value: String(val),
+  });
+  slider.addEventListener("input", (e) => {
+    gradeState.form[key] = Number(e.target.value);
+    num.textContent = e.target.value;
+  });
+  return el("div", { class: "grade-score-row" }, [
+    el("span", { class: "grade-score-label" }, label),
+    slider,
+    num,
+  ]);
 }
 
 function renderGradePage() {
@@ -1566,14 +1575,6 @@ function renderGradePage() {
   form.appendChild(scoreRow("Thông tin", "info"));
   form.appendChild(scoreRow("Ảnh đại diện", "avatars"));
   form.appendChild(scoreRow("Trình bày", "design"));
-  const ta = el("textarea", {
-    class: "reflect-input",
-    rows: "3",
-    placeholder: "Nhận xét cho bạn ấy (tối thiểu 30 ký tự) — điều gì tốt, điều gì nên sửa?",
-  });
-  ta.value = gradeState.form.comment;
-  ta.addEventListener("input", (e) => { gradeState.form.comment = e.target.value; });
-  form.appendChild(ta);
   form.appendChild(
     el("button", { class: "submit-btn", disabled: gradeState.saving ? "disabled" : null, onclick: () => submitGrade() },
       [gradeState.saving ? "Đang gửi..." : d.diem_cua_toi ? "Cập nhật điểm" : "Gửi điểm"])

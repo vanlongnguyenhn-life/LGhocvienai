@@ -2437,7 +2437,6 @@ GWS_CAU917_RAMP_W = [2, 5, 18, 68, 7]
 GWS_CAU917_JITTER_P = 0.10  # dao động quanh mức gốc; cao hơn là bar bị rối, không còn giống bản gốc
 GWS_CAU917_GOLD_ALPHABET = string.ascii_letters + string.digits
 CAU921_PASS_THRESHOLD = 7.0   # điểm trung bình tối thiểu để câu 9.21 được tính ĐẠT
-CAU921_MIN_COMMENT = 30       # độ dài tối thiểu của nhận xét — chặn chấm cho có
 
 
 def _current_question_of(conn, user_id: int) -> dict:
@@ -3058,12 +3057,9 @@ def cau921_grade(
     for label, v in (("Thông tin", info_score), ("Ảnh đại diện", avatars_score), ("Trình bày", design_score)):
         if not (1 <= v <= 10):
             raise HTTPException(status_code=400, detail="Điểm %s phải từ 1 đến 10." % label)
-    comment = (comment or "").strip()
-    if len(comment) < CAU921_MIN_COMMENT:
-        raise HTTPException(
-            status_code=400,
-            detail="Hãy viết nhận xét ít nhất %d ký tự — bạn ấy cần biết vì sao được điểm đó." % CAU921_MIN_COMMENT,
-        )
+    # Không bắt buộc nhận xét: mục tiêu là để 9 bạn chấm cho nhanh. Cột vẫn giữ để ai muốn
+    # viết thêm thì có chỗ, nhưng không chặn.
+    comment = (comment or "").strip()[:500]
     with get_db() as conn:
         conn.execute(
             "INSERT INTO peer_reviews"
