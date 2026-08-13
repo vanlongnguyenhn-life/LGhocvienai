@@ -8,3 +8,4 @@ Pillow==11.3.0
 openpyxl==3.1.5
 python-pptx==1.0.2
 google-auth==2.56.3
+numpy==2.3.4

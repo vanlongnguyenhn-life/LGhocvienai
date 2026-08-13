@@ -1,10 +1,12 @@
 services:
   - type: web
     name: ailg
-    runtime: python
+    # docker (thay vì python) chỉ để có ffmpeg cho câu 10.26 — xem Dockerfile.
+    runtime: docker
     plan: starter
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn server.main:app --host 0.0.0.0 --port $PORT
+    # Chỉ chuyển lưu lượng khi bản mới đã trả lời được: build hay khởi động hỏng thì bản cũ
+    # vẫn phục vụ, học viên không bị gián đoạn.
+    healthCheckPath: /
     envVars:
       - key: DATA_DIR
         value: /var/data

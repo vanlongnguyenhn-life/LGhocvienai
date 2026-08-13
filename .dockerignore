@@ -1,0 +1,16 @@
+# Không đưa vào image: dữ liệu chạy thật, bí mật, rác dev.
+.git
+.gitignore
+.claude
+server/.env
+server/agentsee.db
+server/agentsee.db-wal
+server/agentsee.db-shm
+server/uploads
+server/__pycache__
+__pycache__
+*.pyc
+node_modules
+.DS_Store
+Dockerfile
+.dockerignore
