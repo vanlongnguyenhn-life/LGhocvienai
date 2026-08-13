@@ -11,6 +11,7 @@ import random
 import secrets
 import shutil
 import string
+import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -3994,6 +3995,24 @@ def _storage_usage() -> dict:
 def admin_diag_storage(request: Request):
     current_admin(request)
     return _storage_usage()
+
+
+@app.get("/api/admin/diag/ffmpeg")
+def admin_diag_ffmpeg(request: Request):
+    """Máy chủ có ffmpeg/ffprobe không — câu 10.26 chấm video dựa hoàn toàn vào hai công cụ này."""
+    current_admin(request)
+    out = {}
+    for ten in ("ffmpeg", "ffprobe"):
+        duong = shutil.which(ten)
+        out[ten] = {"co": bool(duong), "duong_dan": duong or ""}
+        if duong:
+            try:
+                r = subprocess.run([duong, "-version"], capture_output=True, text=True, timeout=20)
+                out[ten]["phien_ban"] = (r.stdout or r.stderr).splitlines()[0][:120]
+            except Exception as e:  # noqa: BLE001
+                out[ten]["phien_ban"] = "lỗi khi chạy: %s" % str(e)[:100]
+    out["san_sang"] = all(v["co"] for v in out.values() if isinstance(v, dict))
+    return out
 
 
 @app.get("/api/admin/diag/gsheets")
