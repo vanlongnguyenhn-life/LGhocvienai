@@ -1203,11 +1203,17 @@ def _electron_latest(user_id: int, question_code: str):
         # "write_file" là lệnh mang bằng chứng listener thật (đồng thời giao mã bí mật cho câu
         # 6.11) — dùng đúng lệnh này để xét tiêu chí, không lấy "latest" chung chung vì mỗi lần
         # verify giờ gửi kèm nhiều lệnh (write_file + set_wallpaper) cùng lúc.
+        # Ưu tiên lệnh ĐÃ ĐƯỢC PHẢN HỒI THÀNH CÔNG, chỉ khi chưa từng có mới lấy lệnh mới nhất.
+        # Lý do: main.js mẫu gọi clearInterval ngay khi cả batch đầu tiên chạy xong, nên app
+        # NGỪNG hỏi lệnh vĩnh viễn sau lần nộp thành công. Học viên bấm Nộp bài lần nữa (muốn
+        # làm lại) thì server đẩy thêm một lệnh mới, app không còn nghe nên lệnh treo mãi ở
+        # trạng thái chờ — tiêu chí đang xanh bị đá về đỏ và không cách nào xanh lại. Đã có
+        # học viên báo đúng hiện tượng này: "nút kiểm tra không hoạt động, muốn làm lại không được".
         cmd = conn.execute(
             """
             SELECT * FROM electron_commands
             WHERE user_id = ? AND question_code = ? AND action = 'write_file'
-            ORDER BY id DESC LIMIT 1
+            ORDER BY (status = 'acked_ok') DESC, id DESC LIMIT 1
             """,
             (user_id, question_code),
         ).fetchone()
@@ -1263,7 +1269,9 @@ def _electron_criteria(sub, cmd):
                 if cmd and cmd["status"] == "acked_ok"
                 else "App đã phản hồi lệnh kiểm tra nhưng bị lỗi — thử lại."
                 if cmd and cmd["status"] == "acked_fail"
-                else "Đã gửi lệnh kiểm tra, đang chờ app phản hồi — giữ app chạy nền, đợi vài giây rồi Kiểm tra lại."
+                else "Đã gửi lệnh kiểm tra, đang chờ app phản hồi. Đợi vài giây rồi Kiểm tra lại. "
+                "Nếu chờ mãi vẫn không xanh: app Electron đã tự ngừng nghe lệnh sau lần chạy trước — "
+                "hãy TẮT HẲN app (chuột phải biểu tượng khay hệ thống → Thoát) rồi mở lại, nó sẽ nhận lệnh ngay."
                 if cmd
                 else "Chưa có lệnh kiểm tra nào được gửi — bấm Nộp bài trong app Electron trước."
             ),
