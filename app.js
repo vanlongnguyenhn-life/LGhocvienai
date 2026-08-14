@@ -1783,15 +1783,24 @@ function renderGwsTask(q, a) {
         "Chưa có lần nộp nào — copy đề bài phía trên cho Agent chạy. Khi chương trình nộp xong, quay lại đây bấm Kiểm tra.")
     );
   } else {
+    // Trình bày theo đúng kiểu web tham khảo: tên tiêu chí in đậm, dấu Đạt/Chưa đạt ngay sau,
+    // rồi một dòng chi tiết chữ nhỏ màu xám bên dưới nói rõ đo được cái gì.
     const list = el("div", { class: "gws-criteria" });
     (st.criteria || []).forEach((c) => {
       list.appendChild(
         el("div", { class: "gws-criterion " + (c.ok ? "ok" : "fail") }, [
-          el("span", {}, (c.ok ? "✅ " : "❌ ") + c.label),
+          el("div", { class: "gws-criterion-head" }, [
+            el("strong", {}, c.label),
+            el("span", { class: "gws-criterion-badge" }, c.ok ? "✅ Đạt" : "❌ Chưa đạt"),
+          ]),
           c.note ? el("div", { class: "gws-criterion-note" }, c.note) : null,
         ])
       );
     });
+    const soDat = (st.criteria || []).filter((c) => c.ok).length;
+    list.appendChild(
+      el("div", { class: "gws-tong" }, [`Đạt ${soDat}/${(st.criteria || []).length} tiêu chí`])
+    );
     wrap.appendChild(list);
     wrap.appendChild(
       el("div", { class: "secret-note" },

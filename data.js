@@ -2166,6 +2166,7 @@ const LESSONS = [
         code: "10.26",
         title: "Câu 10.26 - Điệp vụ ALG",
         type: "gws_task",
+        video: "assets/demo-1026.mp4",
         prompt:
           "Bài cuối khoá — và cũng là bài nặng nhất.\n\nBạn sẽ không viết một dòng lệnh nào, không kéo thả một khung hình nào. Việc của bạn là ra đề cho Agent, rồi kiểm tra nó làm đúng chưa. Toàn bộ khâu dựng phim do Agent làm.\n\nMáy chấm sẽ tải video về, bóc từng khung hình và từng đoạn âm thanh ra để đo: chữ có hiện đúng giây không, nhạc có đúng đoạn quy định không, giọng đọc có đúng kịch bản không. Làm qua loa là biết ngay.",
         copyPrompt:
