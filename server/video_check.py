@@ -74,16 +74,37 @@ def khung_hinh(duong_dan: str, giay: float, rong: int = 1280) -> bytes:
             return f.read()
 
 
-def doan_tieng(duong_dan: str, bat_dau: float, dai: float) -> np.ndarray:
-    """Trích một đoạn âm thanh thành mảng float32 mono, đã chuẩn hoá biên độ."""
-    r = _chay([FFMPEG, "-v", "error", "-ss", "%.3f" % bat_dau, "-t", "%.3f" % dai,
-               "-i", duong_dan, "-ac", "1", "-ar", str(SR),
-               "-f", "s16le", "-acodec", "pcm_s16le", "-"])
-    if r.returncode != 0 or not r.stdout:
-        return np.zeros(0, dtype=np.float32)
-    x = np.frombuffer(r.stdout, dtype=np.int16).astype(np.float32) / 32768.0
+def _chuan_hoa(x: np.ndarray) -> np.ndarray:
     dinh = float(np.max(np.abs(x))) if x.size else 0.0
     return x / dinh if dinh > 1e-6 else x
+
+
+def toan_bo_tieng(duong_dan: str) -> np.ndarray:
+    """Giải mã TRỌN luồng tiếng thành mảng float32 mono.
+
+    Không dùng -ss để tua tới đoạn cần: gặp file có dấu thời gian không chuẩn (ví dụ ghép
+    nhiều mảnh bằng -c copy) thì ffmpeg tua ra sai chỗ và trả về nhiều hơn số giây yêu cầu —
+    đã đo thật: xin 13 giây nhận về 16.1 giây, khiến phép so nhạc kết báo lệch 0.98 dù nhạc
+    hoàn toàn đúng. Giải mã hết một lần rồi cắt bằng chỉ số mảng thì không bao giờ sai.
+    """
+    r = _chay([FFMPEG, "-v", "error", "-i", duong_dan, "-vn", "-ac", "1", "-ar", str(SR),
+               "-f", "s16le", "-acodec", "pcm_s16le", "-"], timeout=300)
+    if r.returncode != 0 or not r.stdout:
+        return np.zeros(0, dtype=np.float32)
+    return np.frombuffer(r.stdout, dtype=np.int16).astype(np.float32) / 32768.0
+
+
+def cat_tieng(song: np.ndarray, bat_dau: float, dai: float) -> np.ndarray:
+    """Cắt một đoạn từ mảng đã giải mã. bat_dau âm nghĩa là tính ngược từ cuối."""
+    if song.size == 0:
+        return song
+    i = int(bat_dau * SR) if bat_dau >= 0 else max(0, song.size + int(bat_dau * SR))
+    return _chuan_hoa(song[i:i + int(dai * SR)])
+
+
+def doan_tieng(duong_dan: str, bat_dau: float, dai: float) -> np.ndarray:
+    """Tiện dụng cho file nguồn chuẩn: giải mã rồi cắt luôn."""
+    return cat_tieng(toan_bo_tieng(duong_dan), bat_dau, dai)
 
 
 def tieng_ra_wav(duong_dan: str, bat_dau: float, dai: float, ra: str) -> bool:

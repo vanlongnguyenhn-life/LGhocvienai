@@ -11,6 +11,7 @@ import random
 import secrets
 import shutil
 import string
+import tempfile
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
@@ -39,6 +40,8 @@ from . import auth
 from . import validators
 from . import lark_auth
 from . import gsheets
+from . import video_check
+from . import gemini
 from . import lark_bot
 from . import digest
 from . import ai_grader
@@ -2467,6 +2470,7 @@ def pi_lab_letter_status(request: Request):
 # Chống copy bài nhau: mỗi bài phải nhúng personal_code (dấu vân tay dẫn xuất từ token cá nhân),
 # riêng 9.17 dữ liệu "vàng" sinh ngẫu nhiên theo từng học viên nên chia sẻ kết quả là vô nghĩa.
 GWS_TASK_MANIFEST = {
+    "10.26": {"points": 22},
     "9.16": {"points": 10},
     "9.17": {"points": 8},
     "9.19": {"points": 8},
@@ -3149,6 +3153,183 @@ def _check_922(user_id: int, url: str):
 # 9.16 KHONG nam o day: no khong nop link san pham ma duoc xac minh bang script chay tai may
 # hoc vien (/api/gws/cli-verify) — giong het co che agentsee-verify.py cua web tham khao.
 _GWS_CHECKERS = {"9.17": _check_917, "9.19": _check_919, "9.20": _check_920, "9.22": _check_922}
+# 10.26 đăng ký ở dưới, ngay sau khi hàm chấm của nó được định nghĩa.
+
+
+# ---------- Câu 10.26: dựng video theo kịch bản, chấm bằng ffmpeg + AI ----------
+# Câu nặng nhất khoá. Học viên nhờ Agent dùng Remotion dựng một video có mở đầu, thân và kết
+# theo đúng đặc tả từng giây, rồi nộp link Drive công khai. Máy chủ tải về, dùng ffmpeg bóc
+# khung hình và âm thanh, rồi đo từng tiêu chí một.
+CAU1026_MANIFEST = {"10.26": {"points": 22}}
+CAU1026_MAX_BYTES = 250 * 1024 * 1024
+CAU1026_TOI_THIEU_S = 30.0
+CAU1026_INTRO_S = 10.0
+CAU1026_OUTTRO_S = 13.0
+# Nhạc chuẩn lấy từ chính video giới thiệu của khoá: 10 giây đầu cho mở đầu, đoạn 55-68 giây
+# cho kết. Dùng nhạc của mình nên không vướng bản quyền như bài hát mà web tham khảo chỉ định.
+CAU1026_NHAC_CHUAN = BASE_DIR / "assets" / "intro.mp4"
+CAU1026_OUTTRO_BAT_DAU = 55.0
+CAU1026_NGUONG_NHAC = 0.20
+# Chữ bắt buộc thấy rõ ở 3 giây cuối phần mở đầu (đèn pin đã tắt ở giây 7).
+CAU1026_MOC_OCR = (7.5, 8.5, 9.0)
+CAU1026_CHU_LON = ("học viện", "ai life group")
+CAU1026_CHU_NHO = ("điệp vụ", "alg")
+# Credit ở phần kết.
+CAU1026_CREDIT = ("remotion",)
+# Từ khoá kịch bản — giọng đọc phải trúng tối thiểu ngần này.
+CAU1026_TU_KHOA = [
+    "bé ailai", "bạn mít", "mật thư", "tấm thiệp", "chữ trắng",
+    "agent", "google", "chấm chéo",
+]
+CAU1026_CAN_TRUNG = 4
+
+
+def _1026_khong_dau(s: str) -> str:
+    """Bỏ dấu tiếng Việt + đưa về chữ thường, để so từ khoá không phụ thuộc cách gõ dấu."""
+    import unicodedata
+    s = unicodedata.normalize("NFD", (s or "").lower())
+    s = "".join(c for c in s if unicodedata.category(c) != "Mn")
+    return s.replace("đ", "d")
+
+
+def _1026_co_tu(chuoi: str, tu_khoa) -> list:
+    kho = _1026_khong_dau(chuoi)
+    return [t for t in tu_khoa if _1026_khong_dau(t) in kho]
+
+
+def _1026_tai_video(file_id: str, ra: str):
+    """Tải video từ Drive về đĩa. Trả (ok, lỗi). Stream xuống file để không ngốn bộ nhớ."""
+    url = "https://drive.google.com/uc?export=download&id=%s" % file_id
+    try:
+        with httpx.Client(timeout=180.0, follow_redirects=True) as client:
+            with client.stream("GET", url) as resp:
+                if resp.status_code in (401, 403) or "accounts.google.com" in str(resp.url):
+                    return False, "Chưa share công khai — bật \"Bất kỳ ai có đường liên kết\"."
+                if resp.status_code != 200:
+                    return False, "Không tải được file (HTTP %s)." % resp.status_code
+                tong = 0
+                with open(ra, "wb") as f:
+                    for chunk in resp.iter_bytes(1024 * 256):
+                        tong += len(chunk)
+                        if tong > CAU1026_MAX_BYTES:
+                            return False, "Video lớn hơn %d MB — hãy xuất bản nhẹ hơn." % (CAU1026_MAX_BYTES // 1048576)
+                        f.write(chunk)
+        return True, ""
+    except Exception as e:  # noqa: BLE001
+        return False, "Lỗi khi tải: %s" % str(e)[:150]
+
+
+def _check_1026(user_id: int, url: str):
+    """Chín tiêu chí, dừng sớm ngay tại tiêu chí hỏng đầu tiên."""
+    with get_db() as conn:
+        row = conn.execute("SELECT display_name FROM users WHERE id = ?", (user_id,)).fetchone()
+    ho_ten = (row["display_name"] if row else "") or ""
+
+    file_id = _extract_gdoc_id(url, "drive")
+    crit = [{"label": "Có file ở Drive", "ok": bool(file_id),
+             "note": "" if file_id else "URL không phải link Google Drive dạng /file/d/..."}]
+    if not file_id:
+        return False, crit, {}
+    if not video_check.san_sang():
+        crit.append({"label": "Máy chủ sẵn sàng chấm video", "ok": False,
+                     "note": "Chưa có ffmpeg trên máy chủ — báo giáo viên giúp nhé."})
+        return False, crit, {}
+
+    tmp = tempfile.mkdtemp(prefix="v1026-")
+    duong_dan = os.path.join(tmp, "bai.mp4")
+    try:
+        ok, loi = _1026_tai_video(file_id, duong_dan)
+        crit.append({"label": "Share công khai, tải được file", "ok": ok, "note": loi})
+        if not ok:
+            return False, crit, {}
+
+        info = video_check.thong_tin(duong_dan)
+        la_video = bool(info) and info.get("co_hinh")
+        crit.append({"label": "File là video", "ok": la_video,
+                     "note": "" if la_video else "Không đọc được luồng hình trong file."})
+        if not la_video:
+            return False, crit, {}
+
+        dai = info["thoi_luong"]
+        du_dai = dai >= CAU1026_TOI_THIEU_S
+        crit.append({"label": "Thời lượng ≥ %g giây" % CAU1026_TOI_THIEU_S, "ok": du_dai,
+                     "note": "Thời lượng = %.1fs" % dai})
+        crit.append({"label": "Có tiếng (nhạc nền + giọng đọc)", "ok": bool(info.get("co_tieng")),
+                     "note": "" if info.get("co_tieng") else "File chưa có luồng âm thanh."})
+        if not du_dai or not info.get("co_tieng"):
+            return False, crit, {}
+
+        # --- 5. Chữ ở phần mở đầu (đọc 3 khung sau khi đèn pin đã tắt) ---
+        lon_thay, nho_thay, mo_ta = set(), set(), []
+        for giay in CAU1026_MOC_OCR:
+            anh = video_check.khung_hinh(duong_dan, giay)
+            chu = ai_grader.doc_chu_trong_anh(anh) if anh else ""
+            lon_thay |= set(_1026_co_tu(chu, CAU1026_CHU_LON))
+            nho_thay |= set(_1026_co_tu(chu, CAU1026_CHU_NHO))
+            mo_ta.append("%.1fs:%d/%d" % (giay, len(_1026_co_tu(chu, CAU1026_CHU_LON)),
+                                          len(_1026_co_tu(chu, CAU1026_CHU_NHO))))
+        chu_ok = len(lon_thay) == len(CAU1026_CHU_LON) and len(nho_thay) == len(CAU1026_CHU_NHO)
+        crit.append({
+            "label": "Mở đầu hiện rõ tên khoá + tên phim", "ok": chu_ok,
+            "note": "Đọc khung %s (lớn %d/%d, nhỏ %d/%d)" % (
+                ", ".join(mo_ta), len(lon_thay), len(CAU1026_CHU_LON), len(nho_thay), len(CAU1026_CHU_NHO)),
+        })
+
+        # --- 6+7. Nhạc mở đầu và nhạc kết ---
+        # Giải mã trọn luồng tiếng MỘT LẦN rồi cắt bằng chỉ số mảng. Tua bằng -ss trên video
+        # có dấu thời gian không chuẩn cho ra sai đoạn (đã đo: xin 13 giây nhận 16.1 giây).
+        song = video_check.toan_bo_tieng(duong_dan)
+        chuan_intro = video_check.doan_tieng(str(CAU1026_NHAC_CHUAN), 0, CAU1026_INTRO_S)
+        d_intro = video_check.khoang_cach_tieng(
+            chuan_intro, video_check.cat_tieng(song, 0, CAU1026_INTRO_S))
+        crit.append({"label": "Nhạc mở đầu đúng đoạn quy định", "ok": d_intro < CAU1026_NGUONG_NHAC,
+                     "note": "Độ lệch %.3f (dưới %.2f mới đạt)" % (d_intro, CAU1026_NGUONG_NHAC)})
+
+        chuan_outtro = video_check.doan_tieng(str(CAU1026_NHAC_CHUAN),
+                                              CAU1026_OUTTRO_BAT_DAU, CAU1026_OUTTRO_S)
+        d_outtro = video_check.khoang_cach_tieng(
+            chuan_outtro, video_check.cat_tieng(song, -CAU1026_OUTTRO_S, CAU1026_OUTTRO_S))
+        crit.append({"label": "Nhạc kết đúng đoạn quy định", "ok": d_outtro < CAU1026_NGUONG_NHAC,
+                     "note": "Độ lệch %.3f (dưới %.2f mới đạt)" % (d_outtro, CAU1026_NGUONG_NHAC)})
+
+        # --- 8. Credit ở phần kết ---
+        chu_cuoi = ""
+        for lui in (4.0, 7.0, 2.0):
+            anh = video_check.khung_hinh(duong_dan, max(0.0, dai - lui))
+            if anh:
+                chu_cuoi += "\n" + ai_grader.doc_chu_trong_anh(anh)
+        can = list(CAU1026_CREDIT) + ([ho_ten] if ho_ten else [])
+        thieu = [t for t in can if not _1026_co_tu(chu_cuoi, [t])]
+        crit.append({"label": "Phần kết có credit (họ tên bạn + Remotion)", "ok": not thieu,
+                     "note": "" if not thieu else "Chưa thấy: " + ", ".join(thieu)})
+
+        # --- 9. Giọng đọc đúng kịch bản ---
+        if not gemini.is_configured():
+            crit.append({"label": "Giọng đọc đúng nội dung kịch bản", "ok": False,
+                         "note": "Máy chủ chưa cấu hình nhận giọng nói — báo giáo viên giúp nhé."})
+        else:
+            wav = os.path.join(tmp, "tieng.wav")
+            # Bỏ phần mở đầu và phần kết (chỉ có nhạc), chỉ nghe phần thân.
+            than_dai = max(5.0, dai - CAU1026_INTRO_S - CAU1026_OUTTRO_S)
+            if video_check.tieng_ra_wav(duong_dan, CAU1026_INTRO_S, min(than_dai, 240.0), wav):
+                loi_doc, err = gemini.nhan_giong(wav)
+                trung = _1026_co_tu(loi_doc, CAU1026_TU_KHOA)
+                crit.append({
+                    "label": "Giọng đọc đúng nội dung kịch bản", "ok": len(trung) >= CAU1026_CAN_TRUNG,
+                    "note": ("Trúng %d/%d từ khoá (cần ≥ %d) — nghe được: %s"
+                             % (len(trung), len(CAU1026_TU_KHOA), CAU1026_CAN_TRUNG, (loi_doc or "")[:160]))
+                    if not err else err,
+                })
+            else:
+                crit.append({"label": "Giọng đọc đúng nội dung kịch bản", "ok": False,
+                             "note": "Không tách được tiếng từ video."})
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+    return all(c["ok"] for c in crit), crit, {}
+
+
+_GWS_CHECKERS["10.26"] = _check_1026
 
 
 # ---------- Câu 9.23: mật thư giấu trong Sheet2 của chính bảng tính câu 9.17 ----------

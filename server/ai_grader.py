@@ -219,3 +219,36 @@ def grade_url(context: str, rubric: str, url: str):
     except Exception as e:
         print(f"[ai_grader parse error] {e!r}")
         return None
+
+
+# ===================== ĐỌC CHỮ TRONG KHUNG HÌNH (câu 10.26) =====================
+
+DOC_CHU_SYSTEM = (
+    "Bạn là công cụ OCR. Người dùng đưa một khung hình cắt ra từ video. "
+    "Nhiệm vụ DUY NHẤT: chép lại mọi dòng chữ NHÌN THẤY ĐƯỢC trong ảnh, mỗi dòng một dòng. "
+    "Không mô tả hình ảnh, không bình luận, không suy đoán chữ bị che khuất hoàn toàn. "
+    "Nếu ảnh không có chữ nào thì trả về đúng: (không có chữ)"
+)
+
+
+def doc_chu_trong_anh(image_bytes: bytes, media_type: str = "image/png") -> str:
+    """Trả về chữ đọc được trong khung hình. Chuỗi rỗng nếu gọi AI hụt.
+
+    Chỉ CHÉP LẠI chữ, việc đối chiếu từ khoá do máy chủ tự làm — để kết quả chấm không phụ
+    thuộc vào việc mô hình có 'rộng lượng' hay không.
+    """
+    if not image_bytes:
+        return ""
+    content = [
+        {"type": "text", "text": "Chép lại toàn bộ chữ nhìn thấy trong khung hình này."},
+        {"type": "image", "source": {"type": "base64", "media_type": media_type,
+                                     "data": base64.b64encode(image_bytes).decode("ascii")}},
+    ]
+    data = _post([{"role": "user", "content": content}], system=DOC_CHU_SYSTEM, max_tokens=600)
+    if not data:
+        return ""
+    try:
+        return "\n".join(b.get("text", "") for b in data.get("content", []) if b.get("type") == "text").strip()
+    except Exception as e:  # noqa: BLE001
+        print(f"[ai_grader doc_chu error] {e!r}")
+        return ""
