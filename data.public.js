@@ -1983,11 +1983,11 @@ const LESSONS = [
         "chatLog": [
           {
             "who": "user",
-            "text": "Mở trình duyệt và truy cập trangden.vn"
+            "text": "Mở trình duyệt và truy cập ailg.onrender.com"
           },
           {
             "who": "agent",
-            "text": "Đã truy cập thành công trang trangden.vn. Bạn muốn làm gì tiếp theo?"
+            "text": "Đã truy cập thành công trang ailg.onrender.com. Bạn muốn làm gì tiếp theo?"
           },
           {
             "who": "user",
@@ -2637,7 +2637,7 @@ const LESSONS = [
         "title": "Câu 10.16",
         "type": "reflect",
         "prompt": "Hãy xem xét ví dụ sau đây. Giả sử chúng ta cần làm một ứng dụng tự động lấy tin bài từ một trang báo chỉ định trước, sau đó tóm tắt lấy ý chính quan trọng, viết lại thành một bài recap ngắn, rồi chuyển định dạng thành video.\n\nTheo thói quen thông thường, bạn có thể ra lệnh cho Coding Agent thực hiện bằng prompt đại khái như sau:",
-        "copyPrompt": "Truy cập bài báo sau https://vnexpress.net/gia-roi-ai-nuoi-minh-5072169.html, tóm tắt lấy 9 ý chính quan trọng nhất, viết lại thành 1 bài văn ngắn hoàn chỉnh dài khoảng 200 chữ, sau đó dùng remotion để làm thành video sử dụng tông màu xanh lá mạ, đen và trắng của Trăng Đen. Khi hoàn thành, mở video thành phẩm lên cho tôi xem.\n\nSau đó, dùng gws cli để upload lên Google Drive, chia sẻ ở chế độ công khai rồi gửi link lại cho tôi.",
+        "copyPrompt": "Truy cập bài báo sau https://vnexpress.net/gia-roi-ai-nuoi-minh-5072169.html, tóm tắt lấy 9 ý chính quan trọng nhất, viết lại thành 1 bài văn ngắn hoàn chỉnh dài khoảng 200 chữ, sau đó dùng remotion để làm thành video sử dụng tông màu xanh lá mạ, đen và trắng của Học Viện AI Life Group. Khi hoàn thành, mở video thành phẩm lên cho tôi xem.\n\nSau đó, dùng gws cli để upload lên Google Drive, chia sẻ ở chế độ công khai rồi gửi link lại cho tôi.",
         "instructions": "Khi hoàn thành, dán link Google Drive của video vào ô dưới.",
         "minLength": 20,
         "points": 20
