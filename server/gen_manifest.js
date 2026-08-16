@@ -108,6 +108,8 @@ for (const lesson of LESSONS) {
         // sẽ bị chấm sai với đáp án rỗng, nên bỏ qua hẳn.
         if (q.answer === undefined) continue;
         entry.answer = q.answer;
+        // exact: buộc gõ đúng cả dấu tiếng Việt (bộ chuẩn hoá thường cắt sạch dấu).
+        if (q.exact) entry.exact = true;
       } else if (q.type === "token_scope_check") {
         entry.requiredScopes = q.requiredScopes || [];
       }

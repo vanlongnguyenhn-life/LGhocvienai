@@ -1666,6 +1666,18 @@ def _normalize_code_answer(s: str) -> str:
     return re.sub(r"[^A-Z0-9]", "", (s or "").upper())
 
 
+def _chuan_dap_an_chinh_xac(s: str) -> str:
+    """Dùng cho câu khai `exact: true` — đáp án phải gõ đúng cả DẤU tiếng Việt.
+
+    Bộ chuẩn hoá thường ở trên cắt sạch ký tự ngoài A-Z0-9, nên "Tiêu chuẩn cộng đồng" biến
+    thành "TIUCHUNCNGNG": gõ có dấu hay sai dấu đều ra một kết quả méo như nhau. Ở đây chỉ gom
+    khoảng trắng và bỏ phân biệt hoa/thường (gõ đúng chữ mà lỡ viết hoa thì không nên bị đánh
+    rớt), còn dấu thì giữ nguyên. Đưa về NFC để "ề" gõ một ký tự và "ề" gõ ghép là như nhau.
+    """
+    import unicodedata
+    return re.sub(r"\s+", " ", unicodedata.normalize("NFC", (s or "")).strip()).lower()
+
+
 def _verify_answer_manifest_entry(entry: dict, ad: dict) -> bool:
     """Tự tính lại đúng/sai cho các loại câu có đáp án cố định (trắc nghiệm/nối/sắp xếp/nhập
     mã/token scope/gate) từ answer_data client gửi — KHÔNG bao giờ tin status client tự báo,
@@ -1739,7 +1751,10 @@ def _verify_answer_manifest_entry(entry: dict, ad: dict) -> bool:
             return False
         return list(tagState) == list(icons)
     if t == "code":
-        return _normalize_code_answer(ad.get("text") or "") == _normalize_code_answer(entry.get("answer") or "")
+        goc, dap = ad.get("text") or "", entry.get("answer") or ""
+        if entry.get("exact"):
+            return _chuan_dap_an_chinh_xac(goc) == _chuan_dap_an_chinh_xac(dap)
+        return _normalize_code_answer(goc) == _normalize_code_answer(dap)
     if t == "token_scope_check":
         token = ad.get("text") or ""
         required = set(entry.get("requiredScopes") or [])

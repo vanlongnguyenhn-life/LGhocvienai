@@ -1749,7 +1749,8 @@
   "10.0": {
     "type": "code",
     "points": 6,
-    "answer": "TOI DONG Y"
+    "answer": "TÔI ĐỒNG Ý",
+    "exact": true
   },
   "10.1": {
     "type": "single",
@@ -1984,7 +1985,8 @@
   "10.12": {
     "type": "code",
     "points": 10,
-    "answer": "TIEU CHUAN CONG DONG"
+    "answer": "Tiêu chuẩn cộng đồng",
+    "exact": true
   },
   "10.13": {
     "type": "match",

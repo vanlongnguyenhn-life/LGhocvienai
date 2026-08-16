@@ -229,6 +229,23 @@ function el(tag, attrs = {}, children = []) {
   return node;
 }
 
+// Đề bài trước đây là chữ trơn nên không nhấn mạnh được chỗ nào quan trọng. Cho phép ba dấu
+// gọn nhẹ ngay trong chuỗi: **đậm**, _nghiêng_, `mã`. Luôn thoát HTML TRƯỚC rồi mới đổi dấu,
+// nên nội dung không thể chèn thẻ lạ vào trang.
+function dinhDangChu(s) {
+  const thoat = (s || "")
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  return thoat
+    .replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>")
+    .replace(/(^|[\s(“"])_([^_\n]+)_(?=$|[\s)„".,;:!?])/g, "$1<em>$2</em>")
+    .replace(/`([^`\n]+)`/g, "<code>$1</code>")
+    .replace(/\n/g, "<br>");
+}
+
+function coDinhDang(s) {
+  return /\*\*|`|(^|[\s(“"])_[^_\n]+_/.test(s || "");
+}
+
 function renderBrandLogo(className, src) {
   const wrap = el("div", { class: "brand-logo " + (className || "") });
   wrap.appendChild(el("img", { class: "brand-logo-img", src: src || "assets/logo.png", alt: "Life Group" }));
@@ -1112,7 +1129,12 @@ function renderQuestionCard(lesson, q, locked) {
     const body = el("div", { class: "q-card-body" });
     if (q.videoLabel) body.appendChild(el("p", { class: "q-prompt" }, q.videoLabel));
     if (q.video) body.appendChild(renderQuestionVideo(q.video));
-    body.appendChild(el("p", { class: "q-prompt" }, resolveAgentPlaceholders(q.prompt, q.code)));
+    const loiDe = resolveAgentPlaceholders(q.prompt, q.code);
+    body.appendChild(
+      coDinhDang(loiDe)
+        ? el("p", { class: "q-prompt", html: dinhDangChu(loiDe) })
+        : el("p", { class: "q-prompt" }, loiDe)
+    );
     if (q.image) body.appendChild(el("img", { class: "q-image", src: q.image, alt: "" }));
     if (q.chatLog) body.appendChild(renderChatLog(q.chatLog));
     if (q.copyPrompt) body.appendChild(renderCopyPromptBox(resolveAgentPlaceholders(q.copyPrompt, q.code)));
@@ -2522,13 +2544,13 @@ async function submitAnswer(lesson, q) {
 
   if (q.type === "single" || q.type === "multi") {
     if (a.selected.length === 0) {
-      showToast("Em hãy chọn ít nhất 1 đáp án trước khi nộp bài");
+      showToast("Bạn hãy chọn ít nhất 1 đáp án trước khi nộp bài");
       return;
     }
     await submitForServerVerdict(q, a);
   } else if (q.type === "match") {
     if (a.matchSelected.length < q.leftItems.length || a.matchSelected.some((v) => v == null || v < 0)) {
-      showToast("Em hãy nối đủ tất cả các mục trước khi nộp bài");
+      showToast("Bạn hãy nối đủ tất cả các mục trước khi nộp bài");
       return;
     }
     await submitForServerVerdict(q, a);
@@ -2603,13 +2625,13 @@ async function submitAnswer(lesson, q) {
     }
   } else if (q.type === "code") {
     if (!a.text || a.text.trim().length === 0) {
-      showToast("Em hãy nhập mã xác nhận trước khi nộp bài");
+      showToast("Bạn hãy nhập mã xác nhận trước khi nộp bài");
       return;
     }
     await submitForServerVerdict(q, a, "Mã chưa đúng, em đọc lại mật thư nhé");
   } else if (q.type === "pi_lab_code") {
     if (!a.text || a.text.trim().length === 0) {
-      showToast("Em hãy nhập mã xác nhận trước khi nộp bài");
+      showToast("Bạn hãy nhập mã xác nhận trước khi nộp bài");
       return;
     }
     const fd = new FormData();
@@ -2649,7 +2671,7 @@ async function submitAnswer(lesson, q) {
     }
   } else if (q.type === "my_token_check") {
     if (!a.text || a.text.trim().length === 0) {
-      showToast("Em hãy dán token của bạn trước khi nộp bài");
+      showToast("Bạn hãy dán token của bạn trước khi nộp bài");
       return;
     }
     const fd = new FormData();
@@ -2728,7 +2750,7 @@ async function submitAnswer(lesson, q) {
     }
   } else if (q.type === "npc_time") {
     if (!a.text || a.text.trim().length === 0) {
-      showToast("Em hãy nhập giờ hoàn thành (HH:MM:SS DD/MM/YYYY) trước khi nộp bài");
+      showToast("Bạn hãy nhập giờ hoàn thành (HH:MM:SS DD/MM/YYYY) trước khi nộp bài");
       return;
     }
     // Server tự chấm theo giờ của CHÍNH người bạn được ghép cho học viên này.
@@ -2819,7 +2841,7 @@ async function submitAnswer(lesson, q) {
     }
   } else if (q.type === "token_scope_check") {
     if (!a.text || a.text.trim().length === 0) {
-      showToast("Em hãy dán token vừa tạo trước khi nộp bài");
+      showToast("Bạn hãy dán token vừa tạo trước khi nộp bài");
       return;
     }
     showToast("Đang kiểm tra scope của token...");

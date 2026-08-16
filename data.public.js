@@ -2322,21 +2322,20 @@ const LESSONS = [
     "code": "10",
     "title": "Bài 10 - Tự động hoá với AI Agent",
     "points": 370,
-    "intro": "Từ bài này, bạn phải tự làm \"bằng tay\", đọc kỹ đề, nếu nhờ Agent thì phải hỏi lại cho tới khi tự làm lại được. Bài học xoay quanh câu chuyện chấm điểm ở Bài 9 (slide, video), từ đó rút ra mindset: chia việc thành \"phần máy tính làm chắc chắn đúng\" và \"phần cần AI suy luận\", rồi tự động hoá đúng chỗ.",
     "questions": [
       {
         "code": "10.0",
+        "exact": true,
         "title": "Câu 10.0 - Cam kết",
         "type": "code",
-        "prompt": "Kể từ bài này trở đi, các bạn PHẢI đọc thật kỹ đề bài, tự làm \"bằng tay\" trên App/web. Nếu nhờ Agent ở khâu nào đó mà nó tự làm hết bài luôn, thì PHẢI: yêu cầu giải thích kỹ đề bài, yêu cầu giải thích cách làm nếu Agent lanh chanh tự submit, phải hỏi sâu và phản biện đến khi hiểu rõ và TỰ LÀM LẠI ĐƯỢC.\n\nCác nhiệm vụ từ bài này trở đi tập trung vào mindset giải quyết vấn đề — cần các bạn động não làm bài.",
-        "secretNote": "🔒 Hãy gõ TOI DONG Y (không dấu) vào ô phía dưới.",
+        "prompt": "Kể từ bài này trở đi, các bạn **PHẢI đọc thật kỹ đề bài, tự làm \"bằng tay\"** trên App/web. Nếu nhờ Agent ở khâu nào đó mà nó tự làm hết bài luôn, thì **PHẢI**:\n• Yêu cầu giải thích kỹ đề bài\n• Yêu cầu giải thích cách làm nếu Agent lanh chanh tự submit\n• Phải hỏi sâu và phản biện đến khi hiểu rõ và **TỰ LÀM LẠI ĐƯỢC**\n\nCác nhiệm vụ từ bài này trở đi tập trung rất nhiều vào **mindset giải quyết vấn đề**. Vì vậy cần các bạn động não làm bài. Sau này, mọi thứ Agent đã làm giúp, chúng ta chỉ còn mỗi việc _suy nghĩ, thảo luận và định hướng_. Nếu phần này cũng lười không làm thì mình thành vô dụng.\n\nCòn nếu các bạn làm đúng, và hiểu rõ _(cái gì không hiểu cứ hỏi trong nhóm lớp để được giải đáp)_ logic làm bài thì các bạn sẽ **x10 hiệu suất công việc**.\n\nChúc các bạn học tốt 🌱\n\n**Hãy ghi chữ `TÔI ĐỒNG Ý` vào ô phía dưới**",
         "points": 6
       },
       {
         "code": "10.1",
         "title": "Câu 10.1",
         "type": "single",
-        "prompt": "Tại sao nhiệm vụ dùng GWS làm slide (Câu 9.21 — Tình bạn diệu kỳ) tôi lại yêu cầu bạn nhờ 9 người bạn cùng chấm điểm?",
+        "prompt": "Tại sao nhiệm vụ dùng GWS làm slide **(Câu 9.21 — Tình bạn diệu kỳ)** tôi lại yêu cầu bạn nhờ 9 người bạn cùng chấm điểm?",
         "options": [
           "Vì tôi muốn bạn thấy việc chấm điểm \"bằng cơm\" rất mất thời gian",
           "Vì Agent không thể tự chấm bài",
@@ -2348,7 +2347,7 @@ const LESSONS = [
         "code": "10.2",
         "title": "Câu 10.2",
         "type": "single",
-        "prompt": "Về lý, việc đánh giá slide xấu hay đẹp phụ thuộc thẩm mỹ mỗi người. Có thể thay 9 người bằng 9 Agent khác nhau để đánh giá không?",
+        "prompt": "Về lý, việc đánh giá slide xấu hay đẹp phụ thuộc thẩm mỹ mỗi người. **Có thể thay 9 người bằng 9 Agent khác nhau để đánh giá không?**",
         "options": [
           "Không làm được",
           "Được chứ. Thậm chí nếu muốn dùng 9 Agent với 9 model hoàn toàn khác nhau luôn càng tốt."
@@ -2359,7 +2358,7 @@ const LESSONS = [
         "code": "10.3",
         "title": "Câu 10.3",
         "type": "single",
-        "prompt": "Trong thực tế, tới nhiệm vụ dùng Remotion làm video (Câu 9.22), việc chấm điểm do ai thực hiện?",
+        "prompt": "Trong thực tế, tới nhiệm vụ dùng Remotion làm video **(Câu 9.22)**, **việc chấm điểm do ai thực hiện?**",
         "options": [
           "Nhờ bạn học chấm",
           "Do con người chấm",
@@ -2372,7 +2371,7 @@ const LESSONS = [
         "code": "10.4",
         "title": "Câu 10.4",
         "type": "match",
-        "prompt": "Việc chấm điểm bài Slide dễ hơn bài Video rất nhiều. Vì sao vậy?",
+        "prompt": "Việc chấm điểm bài Slide **dễ hơn** bài Video rất nhiều. **Vì sao vậy?**",
         "leftItems": [
           "Chấm slide dễ hơn nhiều",
           "Chấm video khó hơn vì"
@@ -2387,7 +2386,7 @@ const LESSONS = [
         "code": "10.5",
         "title": "Câu 10.5",
         "type": "match",
-        "prompt": "Bạn có biết 9 tiêu chí chấm điểm video được thực hiện thế nào không? Ghép mỗi ý với cách kiểm tra tương ứng.",
+        "prompt": "**Bạn có biết 9 tiêu chí chấm điểm video được thực hiện thế nào không?** Ghép mỗi ý với cách kiểm tra tương ứng.",
         "leftItems": [
           "Có file ở Drive",
           "File phải là video",
@@ -2495,17 +2494,21 @@ const LESSONS = [
       },
       {
         "code": "10.12",
+        "videoLabel": "Đó là lý do vì sao tất cả các nền tảng công nghệ lớn đều sử dụng chung một cơ chế \"chấm điểm\" từ số đông người dùng.",
+        "exact": true,
+        "video": "assets/tieu-chuan-cong-dong.mp4",
         "title": "Câu 10.12",
         "type": "code",
-        "prompt": "Đó là lý do vì sao tất cả các nền tảng công nghệ lớn đều sử dụng chung một cơ chế \"chấm điểm\" từ số đông người dùng. Họ gọi đó là gì?",
-        "secretNote": "🔒 Gợi ý: cụm từ hay xuất hiện trong điều khoản sử dụng của mạng xã hội. Gõ không dấu vào ô dưới.",
+        "prompt": "Họ gọi đó là:",
         "points": 10
       },
       {
         "code": "10.13",
+        "copyPromptTrailing": "Ghép đúng từng phần với phương án xử lý phù hợp:",
+        "image": "assets/mindset-tu-dong-hoa.png",
         "title": "Câu 10.13",
         "type": "match",
-        "prompt": "Tóm lại, mindset cần ghi nhớ: để tự động hoá công việc, hãy chia nó thành 2 phần rồi ghép đúng từng phần với phương án xử lý phù hợp.",
+        "prompt": "Tóm lại, mindset cần ghi nhớ ở đây là:\n\n**Để tự động hoá công việc, hãy chia nó thành 2 phần:**",
         "leftItems": [
           "Phần có logic rõ ràng, quy tắc cố định",
           "Phần cần suy luận, ngôn ngữ, cảm nhận ngữ cảnh"
@@ -2520,7 +2523,7 @@ const LESSONS = [
         "code": "10.14",
         "title": "Câu 10.14",
         "type": "tag-mark",
-        "prompt": "Hãy phân loại từng tình huống sau: bấm \"Máy tính\" nếu Máy tính xử lý tốt hơn, bấm \"AI\" nếu AI xử lý tốt hơn.",
+        "prompt": "Hãy phân loại từng tình huống sau: bấm **\"Máy tính\"** nếu _Máy tính_ xử lý tốt hơn, bấm **\"AI\"** nếu _AI_ xử lý tốt hơn.",
         "iconOptions": [
           "🖥️ Máy tính",
           "🤖 AI"
@@ -2623,7 +2626,7 @@ const LESSONS = [
         "code": "10.15",
         "title": "Câu 10.15",
         "type": "single",
-        "prompt": "Coding Agent rất thông minh, đặc biệt với các model tiên tiến nhất hiện nay. Nhưng nếu \"nghiện\" để mặc Agent làm mọi thứ, các bạn sẽ bỏ lỡ một sự thật: 99% việc nhờ Agent làm thực ra máy tính (code) có thể làm toàn bộ. Và đó chính là bí mật để...",
+        "prompt": "Coding Agent rất thông minh, đặc biệt là với các model tiên tiến nhất hiện nay bao gồm **Opus 5** (Anthropic), **GPT-5.5** (OpenAI), **Gemini 3.1 Pro** (Google), **DeepSeek-V4 Pro**, **Kimi K2.6** và **Grok 4.3** (xAI).\n_(Số liệu ở thời điểm soạn giáo án tháng 8/2026)_\n\nVì vậy, khi \"nghiện\" làm việc với Coding Agent, các bạn dễ rơi vào thói quen \"để mặc\" cho Agent làm mọi thứ. Nhưng nếu ngồi xuống phân tích một cách logic, các bạn sẽ nhận thấy rằng **99% tasks công việc** đang nhờ Agent làm có thể để máy tính làm toàn bộ. Và với 1% tasks công việc còn lại, cũng sẽ có 99% các tasks nhỏ trong đó có thể tách ra để máy tính làm.\n\nVà đó chính là bí mật để...",
         "options": [
           "Giảm thiểu sai xót",
           "Cả 3 ý trên đều đúng",
@@ -2636,7 +2639,7 @@ const LESSONS = [
         "code": "10.16",
         "title": "Câu 10.16",
         "type": "reflect",
-        "prompt": "Hãy xem xét ví dụ sau đây. Giả sử chúng ta cần làm một ứng dụng tự động lấy tin bài từ một trang báo chỉ định trước, sau đó tóm tắt lấy ý chính quan trọng, viết lại thành một bài recap ngắn, rồi chuyển định dạng thành video.\n\nTheo thói quen thông thường, bạn có thể ra lệnh cho Coding Agent thực hiện bằng prompt đại khái như sau:",
+        "prompt": "Hãy xem xét ví dụ sau đây. Giả sử chúng ta cần làm một ứng dụng **tự động lấy tin bài từ một trang báo chỉ định trước, sau đó tóm tắt lấy ý chính quan trọng, viết lại thành một bài recap ngắn, rồi chuyển định dạng thành video**.\n\nTheo thói quen thông thường, bạn có thể ra lệnh cho Coding Agent thực hiện bằng prompt đại khái như sau:",
         "copyPrompt": "Truy cập bài báo sau https://vnexpress.net/gia-roi-ai-nuoi-minh-5072169.html, tóm tắt lấy 9 ý chính quan trọng nhất, viết lại thành 1 bài văn ngắn hoàn chỉnh dài khoảng 200 chữ, sau đó dùng remotion để làm thành video sử dụng tông màu xanh lá mạ, đen và trắng của Học Viện AI Life Group. Khi hoàn thành, mở video thành phẩm lên cho tôi xem.\n\nSau đó, dùng gws cli để upload lên Google Drive, chia sẻ ở chế độ công khai rồi gửi link lại cho tôi.",
         "instructions": "Khi hoàn thành, dán link Google Drive của video vào ô dưới.",
         "minLength": 20,
@@ -2646,7 +2649,7 @@ const LESSONS = [
         "code": "10.17",
         "title": "Câu 10.17",
         "type": "order",
-        "prompt": "Hãy hỏi AI Chat (đừng hỏi Coding Agent, vì câu trả lời sẽ bị ảnh hưởng bởi phần mềm có sẵn trong máy): với yêu cầu ở câu trước, Coding Agent sẽ thực hiện qua bao nhiêu bước, bước nào dùng code, bước nào cần LLM. Dựa trên giải thích của AI Chat, hãy sắp xếp 5 giai đoạn lớn theo đúng thứ tự thực hiện.",
+        "prompt": "Hãy hỏi AI Chat (đừng hỏi Coding Agent, vì câu trả lời của nó sẽ bị ảnh hưởng bởi những phần mềm có sẵn trong máy tính của bạn) câu sau:\n\nNếu tôi ra lệnh cho Coding Agent như sau: “Truy cập bài báo sau https://vnexpress.net/gia-roi-ai-nuoi-minh-5072169.html, tóm tắt lấy 9 ý chính quan trọng nhất, viết lại thành 1 bài văn ngắn hoàn chỉnh dài khoảng 200 chữ, sau đó dùng **remotion** để làm thành video sử dụng tông màu xanh lá mạ, đen và trắng của Học Viện AI Life Group. Khi hoàn thành, mở video thành phẩm lên cho tôi xem. Sau đó, dùng **gws cli** để upload lên Google Drive, chia sẻ ở chế độ công khai rồi gửi link lại cho tôi”.\n\nThì về căn bản, Coding Agent của tôi sẽ thực hiện qua bao nhiêu bước, bước nào dùng ngôn ngữ lập trình làm được, bước nào phải dùng tới khả năng xử lý ngôn ngữ tự nhiên và năng lực suy luận của LLM? Kết quả trình bày dạng bảng.\n\nDựa trên phần giải thích của AI Chat, hãy sắp xếp **5 giai đoạn lớn** theo đúng thứ tự thực hiện:",
         "items": [
           "Lấy dữ liệu bài báo",
           "Viết lại thành kịch bản 200 chữ",
@@ -2660,7 +2663,7 @@ const LESSONS = [
         "code": "10.18",
         "title": "Câu 10.18",
         "type": "order-tag",
-        "prompt": "Giai đoạn 1 — Lấy dữ liệu bài báo: sắp xếp các bước con theo đúng thứ tự và cho biết mỗi bước dùng Code, LLM hay Semi-AI.",
+        "prompt": "Giai đoạn 1 — **Lấy dữ liệu bài báo**: sắp xếp các bước con theo đúng thứ tự và cho biết mỗi bước dùng Code, LLM hay Semi-AI.",
         "tagOptions": [
           "Code (logic rõ ràng, quy tắc cố định)",
           "LLM / AI (suy luận, ngôn ngữ, cảm nhận ngữ cảnh)",
@@ -2683,7 +2686,7 @@ const LESSONS = [
         "code": "10.19",
         "title": "Câu 10.19",
         "type": "order-tag",
-        "prompt": "Giai đoạn 2 — Viết lại thành kịch bản 200 chữ: sắp xếp các bước con theo đúng thứ tự và cho biết mỗi bước dùng Code, LLM hay Semi-AI.",
+        "prompt": "Giai đoạn 2 — **Viết lại thành kịch bản 200 chữ**: sắp xếp các bước con theo đúng thứ tự và cho biết mỗi bước dùng Code, LLM hay Semi-AI.",
         "tagOptions": [
           "Code (logic rõ ràng, quy tắc cố định)",
           "LLM / AI (suy luận, ngôn ngữ, cảm nhận ngữ cảnh)",
@@ -2712,7 +2715,7 @@ const LESSONS = [
         "code": "10.20",
         "title": "Câu 10.20",
         "type": "order-tag",
-        "prompt": "Giai đoạn 3 — Chuẩn bị để render video: sắp xếp các bước con theo đúng thứ tự và cho biết mỗi bước dùng Code, LLM hay Semi-AI.",
+        "prompt": "Giai đoạn 3 — **Chuẩn bị để render video**: sắp xếp các bước con theo đúng thứ tự và cho biết mỗi bước dùng Code, LLM hay Semi-AI.",
         "tagOptions": [
           "Code (logic rõ ràng, quy tắc cố định)",
           "LLM / AI (suy luận, ngôn ngữ, cảm nhận ngữ cảnh)",
@@ -2744,7 +2747,7 @@ const LESSONS = [
         "code": "10.21",
         "title": "Câu 10.21",
         "type": "order-tag",
-        "prompt": "Giai đoạn 4 — Render video thành phẩm: sắp xếp các bước con theo đúng thứ tự và cho biết mỗi bước dùng Code, LLM hay Semi-AI.",
+        "prompt": "Giai đoạn 4 — **Render video thành phẩm**: sắp xếp các bước con theo đúng thứ tự và cho biết mỗi bước dùng Code, LLM hay Semi-AI.",
         "tagOptions": [
           "Code (logic rõ ràng, quy tắc cố định)",
           "LLM / AI (suy luận, ngôn ngữ, cảm nhận ngữ cảnh)",
@@ -2773,7 +2776,7 @@ const LESSONS = [
         "code": "10.22",
         "title": "Câu 10.22",
         "type": "order-tag",
-        "prompt": "Giai đoạn 5 — Gửi video thành phẩm qua Google Drive: sắp xếp các bước con theo đúng thứ tự và cho biết mỗi bước dùng Code, LLM hay Semi-AI.",
+        "prompt": "Giai đoạn 5 — **Gửi video thành phẩm qua Google Drive**: sắp xếp các bước con theo đúng thứ tự và cho biết mỗi bước dùng Code, LLM hay Semi-AI.",
         "tagOptions": [
           "Code (logic rõ ràng, quy tắc cố định)",
           "LLM / AI (suy luận, ngôn ngữ, cảm nhận ngữ cảnh)",
@@ -2802,7 +2805,7 @@ const LESSONS = [
         "code": "10.23",
         "title": "Câu 10.23",
         "type": "tag-mark",
-        "prompt": "Cùng xem lại toàn bộ quy trình. Có những khâu do LLM/AI đảm nhận — vốn từng bị coi là \"nút thắt cổ chai\" cần con người can thiệp. Hãy đánh dấu 🧑 vào những bước đó, các bước thuần code thì để 💻.",
+        "prompt": "Cùng xem lại, đây là những bước để chúng ta tự động hoá việc tạo video từ một bài báo bất kỳ. Trong đó, có những khâu do **LLM/AI** đảm nhận — vốn là những việc mà ngày xưa bị coi là _\"nút thắt cổ chai\"_, làm gián đoạn quy trình tự động hoá vì cần con người can thiệp.\n\nHãy **đánh dấu 🧑** vào những bước này, các bước thuần code thì để 💻.",
         "iconOptions": [
           "💻",
           "🧑"
@@ -2885,9 +2888,11 @@ const LESSONS = [
       },
       {
         "code": "10.24",
+        "videoLabel": "Xem video dưới:",
+        "video": "https://www.youtube.com/embed/ev__gPDkCgo",
         "title": "Câu 10.24",
         "type": "order",
-        "prompt": "Xem video minh hoạ một dạng nội dung phổ biến: video kể chuyện tự động (có voice, hình minh hoạ, nhạc nền, phụ đề). Để tạo ra video kiểu này, cần thiết lập automation gồm những bước thế nào? Sắp xếp theo đúng trình tự.",
+        "prompt": "Để tạo ra **1 video kiểu này**, bạn cần thiết lập một quy trình tự động hoá gồm những bước thế nào? **Sắp xếp** các bước dưới đây theo đúng trình tự.",
         "items": [
           "Nhận yêu cầu / chủ đề truyện từ người dùng",
           "Phân tích yêu cầu thành workflow chi tiết",
@@ -2908,7 +2913,7 @@ const LESSONS = [
         "code": "10.25",
         "title": "Câu 10.25",
         "type": "tag-mark",
-        "prompt": "Trong quy trình trên, hãy đánh dấu 🧠 vào những bước cần đến LLM/AI (suy luận, ngôn ngữ, cảm nhận ngữ cảnh). Các bước thuần thao tác code thì để 💻.",
+        "prompt": "Trong quy trình trên, hãy **đánh dấu 🧠** vào những bước cần đến **LLM / AI** (suy luận, ngôn ngữ, cảm nhận ngữ cảnh). Các bước thuần thao tác code thì để 💻.",
         "iconOptions": [
           "💻",
           "🧠"
