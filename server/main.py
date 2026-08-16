@@ -3175,7 +3175,7 @@ _GWS_CHECKERS = {"9.17": _check_917, "9.19": _check_919, "9.20": _check_920, "9.
 # Câu nặng nhất khoá. Học viên nhờ Agent dùng Remotion dựng một video có mở đầu, thân và kết
 # theo đúng đặc tả từng giây, rồi nộp link Drive công khai. Máy chủ tải về, dùng ffmpeg bóc
 # khung hình và âm thanh, rồi đo từng tiêu chí một.
-CAU1026_MANIFEST = {"10.26": {"points": 22}}
+# (Câu này nằm trong GWS_TASK_MANIFEST cùng các câu 9.x — không cần bảng riêng.)
 CAU1026_MAX_BYTES = 250 * 1024 * 1024
 CAU1026_TOI_THIEU_S = 30.0
 CAU1026_INTRO_S = 10.0
@@ -4812,6 +4812,22 @@ def _is_public_asset(rel_path: str) -> bool:
     if rel_path in _PUBLIC_ROOT_FILES:
         return True
     return any(rel_path.startswith(d) for d in _PUBLIC_DIRS)
+
+
+@app.get("/api/health/cham-video")
+def health_cham_video():
+    """Máy chủ có đủ đồ nghề để chấm câu 10.26 không.
+
+    Chỉ trả về đúng/sai, không trả về khoá hay đường dẫn. Cần cái này vì ba tiêu chí của 10.26
+    phụ thuộc ffmpeg và hai dịch vụ AI chỉ có trên máy chủ thật — không kiểm được từ máy cá nhân,
+    mà mở bài cho học viên khi thiếu một thứ thì cả lớp tắc ở câu cuối.
+    """
+    return {
+        "ffmpeg": video_check.san_sang(),
+        "doc_chu_khung_hinh": ai_grader.is_configured(),
+        "nghe_giong_doc": gemini.is_configured(),
+        "nhac_chuan": CAU1026_NHAC_MO.exists() and CAU1026_NHAC_KET.exists(),
+    }
 
 
 @app.get("/admin")
