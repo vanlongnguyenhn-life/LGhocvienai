@@ -98,7 +98,7 @@ MEDIA_SUBMIT_MANIFEST = {
 }
 MEDIA_QUESTION_CODES = set(MEDIA_SUBMIT_RUBRICS) | CARO_COLLAGE_CODES
 
-# Bài 11: bốn câu bắt học viên chat thật với chatbot demo "Mầm Fake". Điểm chỉ được cộng khi
+# Bài 11: bốn câu bắt học viên chat thật với Chatbot Demo (V1-V4). Điểm chỉ được cộng khi
 # server tự soi dấu vết trong bảng demo_progress (xem agent_demo.dat_yeu_cau).
 DEMO_CHAT_MANIFEST = {
     "11.9": {"points": 12},
@@ -1945,7 +1945,7 @@ def demo_send(
     return {"conversation_id": cid, "reply": tra_loi, "extra": kem_theo, "exercise": trang_thai}
 
 
-# Câu 11.6: phải nhắn "/help <mã cá nhân>" cho Bé Mầm trong nhóm lớp, còn hạn 24 giờ.
+# Câu 11.6: phải nhắn "/help <mã cá nhân>" cho Bé Ailai trong nhóm lớp, còn hạn 24 giờ.
 HELP_PING_MANIFEST = {"11.6": {"points": 8}}
 HELP_PING_HAN_GIO = 24
 
@@ -1973,7 +1973,7 @@ def _co_help_ping(conn, user_id: int):
 
 # Câu 11.17 của bản gốc là một luồng thảo luận chung của lớp: viết xong mới đọc được bài bạn khác.
 # Chỉ mở đúng những câu khai ở đây, để không biến mọi câu tự luận thành nơi chép bài của nhau.
-DISCUSSION_CODES = {"11.17"}
+DISCUSSION_CODES = {"11.17", "11.26"}
 
 
 @app.get("/api/thao-luan")
@@ -2088,13 +2088,13 @@ def submit_question(
         status = "correct" if is_correct else "wrong"
         awarded_points = entry["points"] if is_correct else 0
 
-        # Chọn đúng đáp án thôi chưa đủ: câu 11.6 còn phải THẬT SỰ nhắn /help cho Bé Mầm.
+        # Chọn đúng đáp án thôi chưa đủ: câu 11.6 còn phải THẬT SỰ nhắn /help cho Bé Ailai.
         if question_code in HELP_PING_MANIFEST and is_correct:
             with get_db() as conn:
                 if not _co_help_ping(conn, user["id"]):
                     raise HTTPException(
                         status_code=400,
-                        detail=f"Chưa thấy tin nhắn /help của bạn trong {HELP_PING_HAN_GIO} giờ qua — nhắn cho Bé Mầm rồi nộp lại nhé.",
+                        detail=f"Chưa thấy tin nhắn /help của bạn trong {HELP_PING_HAN_GIO} giờ qua — nhắn cho Bé Ailai rồi nộp lại nhé.",
                     )
 
     if question_code in ASSIGNMENT_MANIFEST and status == "done":
@@ -5124,6 +5124,7 @@ def health_cham_video():
         "ffmpeg": video_check.san_sang(),
         "doc_chu_khung_hinh": ai_grader.is_configured(),
         "nghe_giong_doc": gemini.is_configured(),
+        "model_nghe": gemini.ten_model_dau(),
         "nhac_chuan": CAU1026_NHAC_MO.exists() and CAU1026_NHAC_KET.exists(),
     }
 
@@ -5135,7 +5136,7 @@ def admin_page():
 
 @app.get("/demo")
 def demo_page():
-    """Widget chatbot "Mầm Fake" của Bài 11 — mở trong khung nổi ngay tại câu hỏi."""
+    """Widget chatbot (V1-V4) của Bài 11 — mở trong khung nổi ngay tại câu hỏi."""
     return FileResponse(BASE_DIR / "demo" / "index.html", headers=_NO_CACHE_HTML)
 
 

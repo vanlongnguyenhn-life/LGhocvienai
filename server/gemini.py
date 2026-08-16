@@ -10,11 +10,44 @@ import os
 
 import httpx
 
-# Thử lần lượt từng model — Google khai tử model cũ khá thường xuyên (gemini-2.0-flash chết
-# tháng 8/2026, trả 404 giữa chừng dù trước đó vẫn chạy). Gặp 404 thì tự chuyển model kế tiếp
-# thay vì đánh rớt oan học viên.
-MODELS = ("gemini-2.5-flash", "gemini-flash-latest", "gemini-2.5-pro")
+# KHÔNG ghi cứng tên model: Google khai tử model liên tục (một buổi tối gặp đủ 404 của
+# gemini-2.0-flash lẫn 2.5-pro). Hỏi thẳng ListModels bằng chính khoá đang dùng, lọc model
+# gọi được generateContent, ưu tiên flash (rẻ, nhanh) đời mới nhất. Danh sách dưới chỉ là
+# phương án chót nếu ListModels cũng hỏng.
+MODELS_DU_PHONG = ("gemini-2.5-flash", "gemini-flash-latest", "gemini-2.0-flash")
 URL_MAU = "https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent"
+URL_DS = "https://generativelanguage.googleapis.com/v1beta/models"
+_cache_models: list = []
+
+
+def _uu_tien(ten: str) -> tuple:
+    """Khoá sắp xếp: flash trước pro, đời cao trước, bản chính trước bản -exp/-preview."""
+    import re
+    m = re.search(r"(\d+)\.(\d+)", ten)
+    doi = (int(m.group(1)), int(m.group(2))) if m else (0, 0)
+    return ("flash" not in ten, tuple(-x for x in doi), ("exp" in ten or "preview" in ten), len(ten))
+
+
+def _models(khoa: str) -> list:
+    if _cache_models:
+        return _cache_models
+    try:
+        with httpx.Client(timeout=30.0) as client:
+            r = client.get(URL_DS, params={"key": khoa, "pageSize": 200})
+        ds = []
+        for m in (r.json().get("models") or []):
+            ten = (m.get("name") or "").removeprefix("models/")
+            if ("gemini" in ten and "generateContent" in (m.get("supportedGenerationMethods") or [])
+                    and not any(x in ten for x in ("embedding", "image", "tts", "live", "thinking"))):
+                ds.append(ten)
+        ds.sort(key=_uu_tien)
+        if ds:
+            _cache_models.extend(ds[:4])
+    except Exception:  # noqa: BLE001 — ListModels hỏng thì dùng danh sách dự phòng
+        pass
+    return _cache_models or list(MODELS_DU_PHONG)
+
+
 TEN_BIEN = ("GEMINI_API_KEY", "GOOGLE_API_KEY", "GOOGLE_GEMINI_API_KEY", "GEMINI_KEY")
 GIOI_HAN_BYTES = 18 * 1024 * 1024   # Gemini nhận dữ liệu nhúng tối đa khoảng 20MB
 
@@ -29,6 +62,12 @@ def _khoa() -> str:
 
 def is_configured() -> bool:
     return bool(_khoa())
+
+
+def ten_model_dau() -> str:
+    """Model đứng đầu danh sách sẽ dùng — cho endpoint sức khoẻ, không lộ khoá."""
+    khoa = _khoa()
+    return _models(khoa)[0] if khoa else ""
 
 
 def nhan_giong(duong_dan_wav: str) -> tuple:
@@ -68,15 +107,17 @@ def nhan_giong(duong_dan_wav: str) -> tuple:
     # Đã gặp cả hai ngoài đời thật trong cùng một buổi: 2.0-flash chết 404, 2.5-flash 503.
     loi_cuoi = ""
     for vong in range(2):
-        for model in MODELS:
+        for model in _models(khoa):
             try:
                 with httpx.Client(timeout=180.0) as client:
                     r = client.post(URL_MAU % model, params={"key": khoa}, json=payload)
             except Exception as e:  # noqa: BLE001
                 loi_cuoi = "Lỗi mạng khi gọi Gemini: %s" % str(e)[:120]
                 continue
-            if r.status_code == 404:
-                loi_cuoi = "Model %s đã bị Gemini khai tử (404)." % model
+            if r.status_code in (400, 404):
+                # 404: model khai tử. 400: model từ chối cấu hình (vd bản pro không cho tắt
+                # suy nghĩ) — đều thử model kế tiếp.
+                loi_cuoi = "Model %s không dùng được (HTTP %s)." % (model, r.status_code)
                 continue
             if r.status_code in (429, 503):
                 loi_cuoi = "Gemini đang quá tải (HTTP %s) — thử nộp lại sau ít phút." % r.status_code
