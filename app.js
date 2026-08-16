@@ -1118,7 +1118,7 @@ function renderQuestionCard(lesson, q, locked) {
       body.appendChild(el("div", { class: "q-yeucau", html: resolveAgentPlaceholders(q.requirementsHtml, q.code) }));
     }
     if (q.submitPrompt) {
-      body.appendChild(el("p", { class: "q-prompt" }, q.submitLabel || "Cách nộp bài:"));
+      body.appendChild(el("p", { class: "q-prompt q-nhan-muc" }, q.submitLabel || "Cách nộp bài:"));
       if (q.submitIntro) body.appendChild(el("p", { class: "q-prompt" }, q.submitIntro));
       body.appendChild(renderCopyPromptBox(resolveAgentPlaceholders(q.submitPrompt, q.code)));
       if (q.submitNote) body.appendChild(el("p", { class: "q-prompt" }, q.submitNote));
@@ -1795,41 +1795,54 @@ function renderGwsTask(q, a) {
         "Chưa có lần nộp nào — copy đề bài phía trên cho Agent chạy. Khi chương trình nộp xong, quay lại đây bấm Kiểm tra.")
     );
   } else {
-    // Trình bày theo đúng kiểu web tham khảo: tiêu đề "Kết quả lần nộp gần nhất", liên kết mở
-    // video đã nộp, rồi từng tiêu chí (tên in đậm + dấu Đạt/Chưa đạt, dưới là dòng chi tiết
-    // chữ nhỏ màu xám), cuối cùng là một dòng kết luận Đạt / Chưa đạt.
-    wrap.appendChild(el("p", { class: "q-prompt gws-ket-qua-tieu-de" }, "📋 Kết quả lần nộp gần nhất"));
-    if (st.url) {
-      wrap.appendChild(
-        el("p", { class: "q-prompt" }, [
-          el("a", { href: st.url, target: "_blank", rel: "noopener", class: "gws-mo-video" }, "mở video"),
-        ])
-      );
-    }
+    // Dựng theo đúng kiểu web tham khảo: cả bảng chấm nằm trong một thẻ có khung. Đầu thẻ là
+    // tiêu đề bên trái và liên kết "mở video" nằm bên phải cùng dòng; giữa là từng tiêu chí
+    // trong ô nền nhạt (xanh nếu đạt, đỏ nếu rớt) với dấu ✅/❌ ngay sau tên; cuối là dòng
+    // "Kết quả: ...". Dòng "Video đã nộp" nằm NGOÀI thẻ, phía dưới.
+    const the = el("div", { class: "gws-ket-qua" });
+    the.appendChild(
+      el("div", { class: "gws-ket-qua-dau" }, [
+        el("span", { class: "gws-ket-qua-tieu-de" }, "📋 Kết quả lần nộp gần nhất"),
+        st.url
+          ? el("a", { href: st.url, target: "_blank", rel: "noopener", class: "gws-mo-video" }, "mở video")
+          : null,
+      ])
+    );
     const list = el("div", { class: "gws-criteria" });
     (st.criteria || []).forEach((c) => {
       list.appendChild(
         el("div", { class: "gws-criterion " + (c.ok ? "ok" : "fail") }, [
           el("div", { class: "gws-criterion-head" }, [
             el("strong", {}, c.label),
-            el("span", { class: "gws-criterion-badge" }, c.ok ? "✅ Đạt" : "❌ Chưa đạt"),
+            el("span", { class: "gws-criterion-badge" }, c.ok ? "✅" : "❌"),
           ]),
           c.note ? el("div", { class: "gws-criterion-note" }, c.note) : null,
         ])
       );
     });
+    the.appendChild(list);
     const soDat = (st.criteria || []).filter((c) => c.ok).length;
-    list.appendChild(
+    the.appendChild(
       el("div", { class: "gws-tong" }, [
         el("strong", {}, "Kết quả: " + (st.ok ? "ĐẠT" : "Chưa đạt")),
         el("span", { class: "gws-tong-phu" }, ` (${soDat}/${(st.criteria || []).length} tiêu chí)`),
       ])
     );
-    wrap.appendChild(list);
-    wrap.appendChild(
-      el("div", { class: "secret-note" },
-        st.ok ? "🎉 Lần nộp gần nhất ĐẠT mọi tiêu chí — bấm Nộp bài để chốt điểm." : "Lần nộp gần nhất chưa đạt — sửa theo tiêu chí rớt rồi cho Agent nộp lại.")
+    the.appendChild(
+      el("div", { class: "gws-loi-nhac" },
+        st.ok
+          ? "🎉 Đạt mọi tiêu chí — bấm Nộp bài ở dưới để chốt điểm."
+          : "⚠️ Sửa theo tiêu chí còn rớt rồi cho Agent nộp lại.")
     );
+    wrap.appendChild(the);
+    if (st.url) {
+      wrap.appendChild(
+        el("p", { class: "q-prompt gws-da-nop" }, [
+          "Video đã nộp: ",
+          el("a", { href: st.url, target: "_blank", rel: "noopener", class: "gws-mo-video" }, "mở link"),
+        ])
+      );
+    }
   }
   wrap.appendChild(
     el("button", { class: "help-link", onclick: () => refreshGwsStatus(q, a) }, ["🔄 Kiểm tra kết quả chấm"])
