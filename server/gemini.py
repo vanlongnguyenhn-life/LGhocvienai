@@ -59,23 +59,32 @@ def nhan_giong(duong_dan_wav: str) -> tuple:
         ]}],
         "generationConfig": {"temperature": 0, "maxOutputTokens": 4096},
     }
+    # 404 = model khai tử, 429/503 = quá tải tạm thời — cả hai đều KHÔNG phải lỗi của học
+    # viên, nên thử model kế tiếp (và đảo lại vòng nữa cho nhóm quá tải) thay vì đánh rớt.
+    # Đã gặp cả hai ngoài đời thật trong cùng một buổi: 2.0-flash chết 404, 2.5-flash 503.
     loi_cuoi = ""
-    for model in MODELS:
-        try:
-            with httpx.Client(timeout=180.0) as client:
-                r = client.post(URL_MAU % model, params={"key": khoa}, json=payload)
-        except Exception as e:  # noqa: BLE001
-            return "", "Lỗi mạng khi gọi Gemini: %s" % str(e)[:120]
-        if r.status_code == 404:
-            # Model này đã bị khai tử — thử model kế tiếp.
-            loi_cuoi = "Gemini báo lỗi HTTP 404 với model %s." % model
-            continue
-        if r.status_code != 200:
-            return "", "Gemini báo lỗi HTTP %s: %s" % (r.status_code, r.text[:200])
-        try:
-            d = r.json()
-            parts = d["candidates"][0]["content"]["parts"]
-            return " ".join(p.get("text", "") for p in parts).strip(), ""
-        except (KeyError, IndexError, ValueError):
-            return "", "Gemini trả về dữ liệu không đọc được."
+    for vong in range(2):
+        for model in MODELS:
+            try:
+                with httpx.Client(timeout=180.0) as client:
+                    r = client.post(URL_MAU % model, params={"key": khoa}, json=payload)
+            except Exception as e:  # noqa: BLE001
+                loi_cuoi = "Lỗi mạng khi gọi Gemini: %s" % str(e)[:120]
+                continue
+            if r.status_code == 404:
+                loi_cuoi = "Model %s đã bị Gemini khai tử (404)." % model
+                continue
+            if r.status_code in (429, 503):
+                loi_cuoi = "Gemini đang quá tải (HTTP %s) — thử nộp lại sau ít phút." % r.status_code
+                import time
+                time.sleep(3 * (vong + 1))
+                continue
+            if r.status_code != 200:
+                return "", "Gemini báo lỗi HTTP %s: %s" % (r.status_code, r.text[:200])
+            try:
+                d = r.json()
+                parts = d["candidates"][0]["content"]["parts"]
+                return " ".join(p.get("text", "") for p in parts).strip(), ""
+            except (KeyError, IndexError, ValueError):
+                return "", "Gemini trả về dữ liệu không đọc được."
     return "", loi_cuoi or "Không gọi được model Gemini nào."
