@@ -10,8 +10,11 @@ import os
 
 import httpx
 
-MODEL = "gemini-2.0-flash"
-URL = "https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent" % MODEL
+# Thử lần lượt từng model — Google khai tử model cũ khá thường xuyên (gemini-2.0-flash chết
+# tháng 8/2026, trả 404 giữa chừng dù trước đó vẫn chạy). Gặp 404 thì tự chuyển model kế tiếp
+# thay vì đánh rớt oan học viên.
+MODELS = ("gemini-2.5-flash", "gemini-flash-latest", "gemini-2.5-pro")
+URL_MAU = "https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent"
 TEN_BIEN = ("GEMINI_API_KEY", "GOOGLE_API_KEY", "GOOGLE_GEMINI_API_KEY", "GEMINI_KEY")
 GIOI_HAN_BYTES = 18 * 1024 * 1024   # Gemini nhận dữ liệu nhúng tối đa khoảng 20MB
 
@@ -56,16 +59,23 @@ def nhan_giong(duong_dan_wav: str) -> tuple:
         ]}],
         "generationConfig": {"temperature": 0, "maxOutputTokens": 4096},
     }
-    try:
-        with httpx.Client(timeout=180.0) as client:
-            r = client.post(URL, params={"key": khoa}, json=payload)
-    except Exception as e:  # noqa: BLE001
-        return "", "Lỗi mạng khi gọi Gemini: %s" % str(e)[:120]
-    if r.status_code != 200:
-        return "", "Gemini báo lỗi HTTP %s: %s" % (r.status_code, r.text[:200])
-    try:
-        d = r.json()
-        parts = d["candidates"][0]["content"]["parts"]
-        return " ".join(p.get("text", "") for p in parts).strip(), ""
-    except (KeyError, IndexError, ValueError):
-        return "", "Gemini trả về dữ liệu không đọc được."
+    loi_cuoi = ""
+    for model in MODELS:
+        try:
+            with httpx.Client(timeout=180.0) as client:
+                r = client.post(URL_MAU % model, params={"key": khoa}, json=payload)
+        except Exception as e:  # noqa: BLE001
+            return "", "Lỗi mạng khi gọi Gemini: %s" % str(e)[:120]
+        if r.status_code == 404:
+            # Model này đã bị khai tử — thử model kế tiếp.
+            loi_cuoi = "Gemini báo lỗi HTTP 404 với model %s." % model
+            continue
+        if r.status_code != 200:
+            return "", "Gemini báo lỗi HTTP %s: %s" % (r.status_code, r.text[:200])
+        try:
+            d = r.json()
+            parts = d["candidates"][0]["content"]["parts"]
+            return " ".join(p.get("text", "") for p in parts).strip(), ""
+        except (KeyError, IndexError, ValueError):
+            return "", "Gemini trả về dữ liệu không đọc được."
+    return "", loi_cuoi or "Không gọi được model Gemini nào."

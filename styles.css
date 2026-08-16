@@ -726,26 +726,36 @@ a { color: inherit; }
 .q-status-text.locked { color: var(--text-faint); }
 
 .match-grid { margin-bottom: 14px; display: flex; flex-direction: column; gap: 10px; }
-.match-row { display: flex; flex-direction: column; gap: 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; background: #fafafa; }
-.match-left { font-size: 13.5px; font-weight: 600; }
-.match-select { width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 8px; font-size: 13px; font-family: var(--sys-font); background: #fff; }
+/* Hàng nối cặp: nhãn ở trên, ô chọn ở dưới — cùng bố cục và cỡ chữ với web tham khảo. */
+.match-row { display: flex; flex-direction: column; gap: 8px; border: 1.5px solid var(--border); border-radius: 12px; padding: 10px 12px; background: #fff; }
+.match-left { font-size: 14px; font-weight: 600; line-height: 1.5; }
+.match-select { width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 14px; font-family: var(--sys-font); background: #fff; }
 
 .order-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
-.order-row { display: flex; align-items: center; gap: 10px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; background: #fafafa; }
-.order-row-tag { flex-wrap: wrap; }
+.order-row { display: flex; align-items: center; gap: 10px; border: 1.5px solid var(--border); border-radius: 12px; padding: 10px 12px; background: #fff; }
+/* Câu vừa sắp xếp vừa gắn thẻ: web tham khảo đặt thẻ XUỐNG DÒNG ngay dưới nội dung bước, không
+   nhét ngang hàng — nội dung dài mới không bị bóp lại còn một cột hẹp. */
+.order-row-tag { flex-wrap: wrap; align-items: flex-start; }
+.order-row-tag .order-text { flex: 1 1 100%; order: 2; }
+.order-row-tag .order-num { order: 1; }
+.order-row-tag .order-arrows { order: 1; margin-left: auto; }
+.order-row-tag .order-tag-btn { order: 3; margin-left: 32px; }
 .order-num { flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%; background: var(--gold); color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
-.order-text { flex: 1 1 auto; font-size: 13.5px; line-height: 1.4; min-width: 120px; }
+.order-text { flex: 1 1 auto; font-size: 14px; line-height: 1.5; min-width: 120px; }
 .order-arrows { flex: 0 0 auto; display: flex; gap: 4px; }
 .order-arrow-btn { border: 1.5px solid var(--border); background: #fff; border-radius: 8px; width: 30px; height: 30px; font-size: 14px; cursor: pointer; }
 .order-arrow-btn:disabled { opacity: 0.3; cursor: default; }
-.order-tag-btn { flex: 0 0 auto; border: 1.5px solid var(--brand-red); color: var(--brand-red); background: #fdeceb; border-radius: var(--radius-sm); padding: 6px 10px; font-size: 12.5px; font-weight: 600; cursor: pointer; max-width: 100%; }
+/* Thẻ phân loại: viền đứt + chấm tròn như web tham khảo, để nhìn là biết bấm đổi được. */
+.order-tag-btn { flex: 0 0 auto; border: 1.5px dashed var(--brand-red); color: var(--brand-red); background: #fff; border-radius: 14px; padding: 4px 12px; font-size: 13px; font-weight: 600; cursor: pointer; max-width: 100%; display: inline-flex; align-items: center; gap: 6px; }
+.order-tag-btn::before { content: ""; width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid currentColor; background: currentColor; flex: 0 0 auto; }
 
 .q-card-body { padding: 0 16px 18px; }
-.q-prompt { font-size: 15px; margin: 4px 0 14px; line-height: 1.5; }
+/* Cỡ chữ đề bài đo lại theo web tham khảo: đoạn 15px, giãn dòng ~1.64, danh sách 14px. */
+.q-prompt { font-size: 15px; margin: 4px 0 14px; line-height: 1.64; }
 .q-prompt code { font-size: 13.5px; background: #f1f1f1; border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; }
 /* Danh sách trong đề bài: thụt vào và giãn dòng như bản in, không dính sát lề chữ. */
 .q-danh-sach { margin: 8px 0 10px; padding-left: 22px; }
-.q-danh-sach li { margin: 3px 0; }
+.q-danh-sach li { margin: 3px 0; font-size: 14px; }
 
 /* Khối prompt nhiều màu (câu 11.25) — mỗi màu là một thành phần của prompt gửi lên LLM. */
 .prompt-khoi { display: flex; flex-direction: column; gap: 4px; }
@@ -755,6 +765,28 @@ a { color: inherit; }
 .prompt-dong.tools { background: #16a34a; }
 .prompt-dong.vai-tro { background: #ea580c; }
 .prompt-dong.yeu-cau { background: #dc2626; }
+
+/* Luồng thảo luận của lớp (câu 11.17) — dựng theo đúng khối bình luận của web tham khảo:
+   tiêu đề kèm số lượng, ảnh đại diện vuông bo góc 48px, tên đậm, thời gian ở dòng dưới. */
+.thao-luan { margin-top: 18px; }
+.thao-luan .tl-dau { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+.binh-luan { padding: 10px; margin: 10px 0 0; background: #fff; border-radius: 4px; }
+.bl-dau { display: flex; gap: 12px; margin-bottom: 5px; }
+.bl-avatar { width: 48px; height: 48px; border-radius: 0.5rem; object-fit: cover; background: #f0f0f0; flex: 0 0 auto; }
+.bl-cot { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.bl-ten { font-size: 13.5px; font-weight: 700; }
+.bl-luc { font-size: 12px; color: #666; }
+.bl-noi-dung { font-size: 14px; line-height: 1.55; white-space: pre-wrap; }
+
+/* Khung nổi chứa widget chatbot demo của Bài 11 (câu 11.9/11.11/11.15/11.18).
+   Nút mở lấy đúng dáng nút "mở khung" của web tham khảo: nền tím indigo, bo 10px. */
+.demo-mo-nut { margin-bottom: 12px; background: #6366f1; border: 1.5px solid #6366f1; border-radius: 10px; color: #fff; }
+.demo-mo-nut:hover { background: #4f52e0; border-color: #4f52e0; }
+.demo-nen { position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,0.55); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.demo-hop { background: #fff; border-radius: var(--radius-sm); width: min(980px, 100%); height: min(720px, 100%); display: flex; flex-direction: column; overflow: hidden; }
+.demo-thanh { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 13.5px; font-weight: 600; }
+.demo-nut-nhom { display: flex; gap: 10px; align-items: center; }
+.demo-khung { flex: 1; width: 100%; border: 0; }
 
 .chat-log { display: flex; flex-direction: column; gap: 2px; margin: 4px 0 16px; }
 .chat-turn { display: flex; flex-direction: column; max-width: 82%; margin: 4px 0; }

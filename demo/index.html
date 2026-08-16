@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mầm Fake · Chatbot Demo</title>
+  <link rel="icon" href="/assets/logo-icon.png">
+  <link rel="stylesheet" href="/demo/demo.css?v=1">
+</head>
+<body>
+  <div id="chan" class="chan" hidden>
+    <div class="chan-the">
+      <div class="chan-dau">◆</div>
+      <h1>Chatbot Demo · Mầm Fake</h1>
+      <p id="chan-loi">Widget này thuộc lớp ALG — hãy đăng nhập lớp học rồi mở lại.</p>
+      <a class="chan-link" href="/" target="_top">Về trang lớp học để đăng nhập →</a>
+    </div>
+  </div>
+
+  <div id="ung-dung" class="ung-dung" hidden>
+    <aside id="cot-trai" class="cot-trai">
+      <div class="cot-dau">
+        <span class="dau-hieu">◆</span>
+        <strong id="ten-ban">Mầm Fake</strong>
+        <button id="nut-cau-hinh" class="nut-nho" title="Cấu hình">⚙</button>
+      </div>
+
+      <div id="bang-cau-hinh" class="bang-cau-hinh" hidden>
+        <div class="ch-dong"><span>Phiên bản</span><b id="ch-ver">—</b></div>
+        <div class="ch-dong"><span>Cơ chế</span><b id="ch-mo-ta">—</b></div>
+        <div class="ch-dong"><span>model</span><b id="ch-model" class="ma">—</b></div>
+        <div class="ch-dong ch-doc"><span>Công cụ</span><b id="ch-tools" class="ma">—</b></div>
+      </div>
+
+      <button id="nut-moi" class="nut-chinh">+ Cuộc trò chuyện mới</button>
+      <nav id="ds-hoi-thoai" class="ds-hoi-thoai"></nav>
+      <div class="cot-chan" id="ten-hoc-vien">—</div>
+    </aside>
+
+    <main class="khung-chinh">
+      <header class="thanh-tren">
+        <button id="nut-menu" class="nut-nho">☰</button>
+        <span id="tieu-de-hoi-thoai">Cuộc trò chuyện mới</span>
+      </header>
+
+      <section id="bang-bai-tap" class="bang-bai-tap" hidden></section>
+
+      <div id="khung-chat" class="khung-chat"></div>
+
+      <form id="o-nhap" class="o-nhap">
+        <textarea id="tin-nhan" rows="1" placeholder="Nhắn cho Bé Mầm… (Enter để gửi)"></textarea>
+        <button id="nut-gui" type="submit">Gửi</button>
+      </form>
+    </main>
+  </div>
+
+  <script src="/demo/demo.js?v=1"></script>
+</body>
+</html>

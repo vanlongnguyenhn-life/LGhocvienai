@@ -106,6 +106,12 @@ for (const lesson of LESSONS) {
         // Câu nhập mã KHÔNG khai `answer` là loại đáp án riêng từng học viên (ví dụ 9.23 —
         // mật thư sinh riêng, máy chủ tự chấm ở nhánh khác). Đưa vào bảng đáp án tĩnh thì nó
         // sẽ bị chấm sai với đáp án rỗng, nên bỏ qua hẳn.
+        // Câu đòi kể đủ nhiều tên (11.19) chấm bằng "chứa đủ" chứ không so khớp một chuỗi.
+        if (Array.isArray(q.mustContain) && q.mustContain.length) {
+          entry.mustContain = q.mustContain;
+          answerManifest[q.code] = entry;
+          continue;
+        }
         if (q.answer === undefined) continue;
         entry.answer = q.answer;
         // exact: buộc gõ đúng cả dấu tiếng Việt (bộ chuẩn hoá thường cắt sạch dấu).
@@ -140,7 +146,7 @@ console.log(`Wrote ${Object.keys(answerManifest).length} fixed-answer questions 
 // data.js là file tĩnh gửi thẳng về máy học viên, nên MỌI thứ trong đó đều công khai. Trước đây
 // nó chứa cả đáp án (correct/answer/correctMap/tag/icon) — Agent của học viên đọc file là biết
 // hết. Bản public này bóc sạch các trường đó; server vẫn giữ bản đầy đủ để chấm.
-const STRIP_KEYS = new Set(["correct", "anyValid", "correctMap", "answer", "gradingNote"]);
+const STRIP_KEYS = new Set(["correct", "anyValid", "correctMap", "answer", "gradingNote", "mustContain"]);
 
 function stripQuestion(q, shuffleOptions) {
   const out = {};

@@ -2189,17 +2189,15 @@ const LESSONS = [
     code: "11",
     title: "Bài 11 - Đại phẫu một Agent",
     points: 280,
-    intro:
-      "\"Mổ xẻ\" một Agent đơn giản do tôi tự viết (Mầm Fake) để hiểu rõ bên trong nó có gì: từ chatbot kịch bản có sẵn (V1), tới chatbot dùng LLM (V2-V3), tới Agent biết gọi tool thật (V4) — và cách một prompt đơn giản có thể sinh ra được cả một Agent.\n\nGhi chú: một số câu ở bài gốc dùng chatbot demo tương tác trực tiếp (Mầm Fake V1-V4) và diễn đàn bình luận thật của lớp — những phần này đã được đơn giản hoá thành câu hỏi/bài tự luận tương đương.",
     questions: [
       {
         code: "11.1",
         title: "Câu 11.1",
         type: "multi",
         prompt:
-          "Coding Agent thật có thể làm gần như mọi thứ, dựa trên 3 năng lực: suy luận vô hạn, thực thi dựa trên tool có sẵn, và tự viết phần mềm mới để làm việc lặp lại định kỳ. Vì các Coding Agent thật (OpenCode, Gemini CLI...) quá phức tạp, tôi tạo ra một Agent Demo giới hạn tính năng để học từng bước. Việc tìm hiểu Agent Demo này mang lại lợi ích nào?",
+          "Đến bây giờ, bạn đã biết rõ năng lực của Coding Agent mình đang sử dụng. Nó có thể làm gần như mọi thứ, dựa trên **3 công cụ vô cùng quan trọng**:\n1. Khả năng suy luận vô hạn\n2. Khả năng thực thi dựa trên tool được cung cấp sẵn\n3. Khả năng làm việc định kỳ lặp lại dựa trên việc tự viết (coding) ra các phần mềm mới\n\nMục tiêu dài hạn mà chúng ta hướng tới là **tự xây dựng Agent**. Có nhiều cách để làm việc này, ví dụ như \"mở tung\" mã nguồn các Coding Agent hiện có (như OpenCode, Gemini CLI...).\n\nNhưng đó là những hệ thống cực kỳ phức tạp.\n\nĐể giúp bạn dễ hiểu hơn và tiếp thu từng bước một, tôi đã tạo ra một **Agent Demo** giới hạn tính năng. Theo bạn, việc tìm hiểu Agent Demo này thay vì Coding Agent cồng kềnh mang lại những lợi ích nào? _(Chọn tất cả đáp án đúng)_",
         options: [
-          "Học xong Agent Demo là đủ, các bạn sẽ không cần tìm hiểu các Coding Agent thật nữa",
+          "Học xong Agent Demo là đủ, các bạn sẽ không cần tìm hiểu các Coding Agent thật (OpenCode, Gemini CLI...) nữa",
           "Vì do tôi tự viết nên Agent Demo mạnh hơn và chạy nhanh hơn mọi Coding Agent mã nguồn mở",
           "Không bị ngộp thở trong hàng tá tính năng của Coding Agent",
           "Dễ hiểu hơn vì nó cực kỳ đơn giản",
@@ -2213,7 +2211,7 @@ const LESSONS = [
         title: "Câu 11.2",
         type: "order",
         prompt:
-          "Nhắc lại định nghĩa Agent ngắn gọn: AI Agent là một Chatbot được nâng cấp qua từng cấp độ. Hãy sắp xếp 4 cấp độ sau theo đúng thứ tự nâng cấp (từ thấp đến cao):",
+          "Nhắc lại về định nghĩa Agent một cách ngắn gọn và đơn giản. **AI Agent** là một Chatbot được nâng cấp qua từng cấp độ.\n\nHãy sắp xếp 4 cấp độ sau theo đúng thứ tự nâng cấp (từ thấp đến cao):",
         items: ["Biết dùng Công cụ", "Biết định hình Danh tính", "Biết Lưu trữ trải nghiệm", "Biết Tự tư duy để đạt mục tiêu"],
         points: 10,
       },
@@ -2222,31 +2220,32 @@ const LESSONS = [
         title: "Câu 11.3",
         type: "code",
         prompt:
-          "AI Agent là một Chatbot được nâng cấp qua từng cấp độ: biết dùng Công cụ, biết định hình Danh tính, biết Lưu trữ trải nghiệm và biết Tự tư duy để đạt mục tiêu. Vậy thì trước hết, nó phải là một ______",
-        secretNote: "🔒 Gợi ý: chương trình máy tính được thiết kế để trò chuyện với con người.",
+          "Đúng rồi, **AI Agent** là một Chatbot được nâng cấp qua từng cấp độ: biết dùng Công cụ, biết định hình Danh tính, biết Lưu trữ trải nghiệm và biết Tự tư duy để đạt mục tiêu.\n\nVậy thì trước hết, nó phải là một ______",
         answer: "chatbot",
         points: 6,
       },
       {
         code: "11.4",
         title: "Câu 11.4",
-        type: "single",
+        type: "match",
         prompt:
-          "AI Agent là một Chatbot được nâng cấp qua từng cấp độ: biết dùng Công cụ, biết định hình Danh tính, biết Lưu trữ trải nghiệm và biết Tự tư duy để đạt mục tiêu.\n\nVậy thì trước hết, nó phải là một chatbot! Chatbot là một chương trình máy tính được thiết kế để trò chuyện với con người. Đầu vào và đầu ra của nó là dạng thức gì?",
-        options: [
+          "**AI Agent** là một Chatbot được nâng cấp qua từng cấp độ: biết dùng Công cụ, biết định hình Danh tính, biết Lưu trữ trải nghiệm và biết Tự tư duy để đạt mục tiêu.\n\nVậy thì trước hết, nó phải là một **chatbot**!\n\nChatbot là một chương trình máy tính được thiết kế để trò chuyện với con người. Hãy cho biết đầu vào và đầu ra của nó:",
+        leftItems: ["Đầu vào của nó là", "Đầu ra của nó là"],
+        rightOptions: [
           "Ngôn ngữ, dưới các dạng thức khác nhau như text, audio, video, âm thanh...",
           "Những con số / dữ liệu nhị phân",
           "Mã nguồn lập trình",
           "Chỉ hình ảnh tĩnh",
         ],
-        correct: [0],
+        correctMap: [0, 0],
         points: 6,
       },
       {
         code: "11.5",
         title: "Câu 11.5",
         type: "multi",
-        prompt: "Chatbot có đầu vào/đầu ra đều là ngôn ngữ. Vậy dựa vào đâu chatbot có thể đọc hiểu câu hỏi để trả lời?",
+        prompt:
+          "Chatbot là một chương trình máy tính được thiết kế để trò chuyện với con người. Đầu vào của nó là **Ngôn ngữ** (dưới các dạng thức khác nhau như text, audio, video, âm thanh...) và đầu ra cũng chỉ là **Ngôn ngữ**.\n\nVậy dựa vào đâu chatbot có thể đọc hiểu câu hỏi để trả lời? _(chọn tất cả đáp án đúng)_",
         options: [
           "Chatbot phải gọi điện hỏi lập trình viên mỗi khi gặp câu hỏi mới",
           "Chatbot được cài đặt sẵn các kịch bản mẫu để trả lời",
@@ -2262,16 +2261,26 @@ const LESSONS = [
       {
         code: "11.6",
         title: "Câu 11.6",
-        type: "gate",
+        type: "single",
+        helpPing: true,
         prompt:
-          "Câu này cần nhắn /help kèm mã cá nhân cho bot \"Bé Mầm\" thật trong nhóm Zalo của lớp và chờ phản hồi trong thời hạn — cần tích hợp Zalo Official Account thật, hạ tầng đang được xây dựng, sẽ mở khoá sớm.",
+          "Nhắn cho **Bé Mầm** trong nhóm lớp (hoặc nhắn riêng cho Bé) đúng tin nhắn sau — mỗi học viên có một mã riêng:",
+        copyPrompt: "/help {{help_code}}",
+        copyPromptTrailing:
+          "Lưu ý: phải gõ kèm đúng mã của bạn; tin nhắn còn hạn trong 24 giờ trước khi bấm Kiểm tra. Nếu đã gửi từ lâu thì gửi lại cho mới. Bạn sẽ nhận được tin nhắn hướng dẫn từ Bé Mầm — theo bạn, nội dung đó là:",
+        options: [
+          "Chatbot được cài đặt sẵn các kịch bản mẫu để trả lời",
+          "Chatbot sử dụng mô hình ngôn ngữ lớn để tự suy nghĩ và trả lời",
+        ],
+        correct: [0],
         points: 8,
       },
       {
         code: "11.7",
         title: "Câu 11.7",
         type: "single",
-        prompt: "Nếu gõ /giup hoặc /giup-do hoặc /giup-toi hoặc /tro-giup (thay vì đúng từ khoá /help) thì bot \"Bé Mầm\" (kiểu kịch bản mẫu) có phản hồi không?",
+        prompt:
+          "Nếu bạn không gõ `/help` khi tag Bé Mầm mà gõ `/giup` hoặc `/giup-do` hoặc `/giup-toi` hoặc `/tro-giup` thì Bé Mầm có phản hồi không?",
         options: ["Có phản hồi bình thường", "Không phản hồi"],
         correct: [1],
         points: 8,
@@ -2280,7 +2289,8 @@ const LESSONS = [
         code: "11.8",
         title: "Câu 11.8",
         type: "single",
-        prompt: "Để Bé Mầm phản hồi thêm cả /giup, /giup-do, /giup-toi, /tro-giup, tôi cần làm gì?",
+        prompt:
+          "Theo bạn, cần cấu hình như thế nào để Bé Mầm phản hồi với những lệnh trên (`/giup`, `/giup-do`, `/giup-toi`, `/tro-giup`)?",
         options: [
           "Nhờ lập trình viên sửa mã nguồn rồi build lại app mỗi khi thêm lệnh",
           "Đổi tên nhóm Zalo thành \"/giup\" để bot nhận ra",
@@ -2295,20 +2305,17 @@ const LESSONS = [
       {
         code: "11.9",
         title: "Câu 11.9",
-        type: "assignment",
+        type: "agent_demo",
+        demoVer: "v1",
         prompt:
-          "(Bản gốc: mở widget \"Mầm Fake V1\" thật trên trang và test ≥15 câu chat xoay quanh 3 chủ đề Chào hỏi/Sức khoẻ/Nghề nghiệp — cần widget demo thật nên được đơn giản hoá lại.) Hãy tự viết ra ít nhất 5 câu chat mẫu cho MỖI chủ đề (Chào hỏi, Sức khoẻ, Nghề nghiệp) mà một chatbot kiểu \"kịch bản mẫu, dò từ khoá\" có thể nhận diện và trả lời được.",
-        instructions: "Liệt kê các câu chat mẫu theo từng chủ đề.",
-        criteria: [
-          { key: "text", label: "Câu chat mẫu 3 chủ đề", desc: "Ít nhất 5 câu mỗi chủ đề: Chào hỏi, Sức khoẻ, Nghề nghiệp.", placeholder: "Chào hỏi: Xin chào, Chào bạn, ...\nSức khoẻ: Dạo này khoẻ không, ...\nNghề nghiệp: Bạn làm nghề gì, ..." },
-        ],
+          "Bấm vào nút bên dưới để mở **Chatbot Demo (Bé Mầm Fake)**. Thực hiện **ít nhất 15 câu chat** mà chatbot có thể trả lời, xoay quanh 3 chủ đề **Chào hỏi**, **Sức khoẻ** và **Nghề nghiệp**. Mỗi chủ đề có **ít nhất 5 câu chat**.\n\nĐịnh nghĩa _\"câu chat mà chatbot có thể trả lời\"_ được hiểu là những câu chat có chứa từ khoá nằm trong danh sách đã được cấu hình sẵn, dựa theo đó, chatbot sẽ phát hiện từ khoá và trả lời theo mẫu cài đặt trước.",
         points: 12,
       },
       {
         code: "11.10",
         title: "Câu 11.10",
         type: "single",
-        prompt: "Theo bạn, Mầm Fake (V1) là chatbot kiểu gì?",
+        prompt: "Theo bạn, **Mầm Fake (V1)** là chatbot kiểu gì?",
         options: ["Chatbot được cài đặt sẵn các kịch bản mẫu để trả lời", "Chatbot sử dụng mô hình ngôn ngữ lớn để tự suy nghĩ và trả lời"],
         correct: [0],
         points: 8,
@@ -2316,20 +2323,18 @@ const LESSONS = [
       {
         code: "11.11",
         title: "Câu 11.11",
-        type: "assignment",
+        type: "agent_demo",
+        demoVer: "v2",
+        demoLabel: "Mở Chatbot Mầm Fake (V2)",
         prompt:
-          "(Bản gốc: mở widget \"Mầm Fake V2\" thật, chat 1 câu mỗi chủ đề trong 3 chủ đề Chào hỏi/Sức khoẻ/Nghề nghiệp — cần widget demo thật nên được đơn giản hoá lại.) So với V1 (dò từ khoá cố định), V2 dùng mô hình ngôn ngữ lớn để tự suy nghĩ và trả lời linh hoạt hơn. Hãy viết 1 câu chat cho mỗi chủ đề (Chào hỏi/Sức khoẻ/Nghề nghiệp) mà bạn nghĩ V2 sẽ trả lời tự nhiên hơn V1 rất nhiều, và giải thích ngắn vì sao.",
-        instructions: "Viết 3 câu chat + giải thích.",
-        criteria: [
-          { key: "text", label: "3 câu chat + giải thích", desc: "Mỗi chủ đề 1 câu, kèm lý do vì sao V2 trả lời tốt hơn V1.", placeholder: "..." },
-        ],
+          "Mở **Chatbot Mầm Fake (V2)**. Thực hiện **đủ 3 câu chat** xoay quanh 3 chủ đề **Chào hỏi**, **Sức khoẻ** và **Nghề nghiệp** — mỗi chủ đề **1 câu**.",
         points: 10,
       },
       {
         code: "11.12",
         title: "Câu 11.12",
         type: "single",
-        prompt: "Theo bạn, Mầm Fake (V2) là chatbot kiểu gì?",
+        prompt: "Theo bạn, **Mầm Fake (V2)** là chatbot kiểu gì?",
         options: ["Chatbot được cài đặt sẵn các kịch bản mẫu để trả lời", "Chatbot sử dụng mô hình ngôn ngữ lớn để tự suy nghĩ và trả lời"],
         correct: [1],
         points: 8,
@@ -2339,16 +2344,17 @@ const LESSONS = [
         title: "Câu 11.13",
         type: "code",
         prompt:
-          "(Bản gốc: đọc tên mã model hiển thị trong thông tin kỹ thuật của widget Mầm Fake V3 thật — cần widget demo thật nên được đơn giản hoá lại.) Giả sử màn hình \"thông tin kỹ thuật\" của Mầm Fake (V3) hiển thị dòng chữ sau: model: Jackrong/Qwopus3.5-9B-Coder-MTP-GGUF. Bạn hãy ghi lại chính xác tên mã model đó vào ô dưới.",
-        secretNote: "🔒 Chép chính xác chuỗi: Jackrong/Qwopus3.5-9B-Coder-MTP-GGUF",
-        answer: "Jackrong/Qwopus3.5-9B-Coder-MTP-GGUF",
+          "Vậy mô hình ngôn ngữ lớn mà **Mầm Fake (V3)** sử dụng là gì? Bạn ghi **chính xác tên mã** của nó vào ô dưới nhé.",
+        secretNote: "🔒 Gợi ý: mở lại widget Mầm Fake (V3) ở câu trước, bấm nút ⚙ cạnh tên chatbot để xem phần Cấu hình.",
+        answer: "claude-haiku-4-5-20251001",
         points: 10,
       },
       {
         code: "11.14",
         title: "Câu 11.14",
         type: "match",
-        prompt: "Mô hình ngôn ngữ (LLM) dạng text thuần này ngoài việc tạo sinh văn bản, thì nó có thể tạo sinh hình ảnh và tạo sinh video hay không?",
+        prompt:
+          "Mô hình ngôn ngữ lớn (LLM) này ngoài việc tạo sinh văn bản, thì nó có thể tạo sinh **hình ảnh** và tạo sinh **video** hay không?",
         leftItems: ["Tạo sinh hình ảnh", "Tạo sinh video"],
         rightOptions: ["Không"],
         correctMap: [0, 0],
@@ -2357,20 +2363,19 @@ const LESSONS = [
       {
         code: "11.15",
         title: "Câu 11.15",
-        type: "assignment",
+        type: "agent_demo",
+        demoVer: "v3",
+        demoLabel: "Mở Chatbot Mầm Fake (V3)",
         prompt:
-          "(Bản gốc: mở widget \"Mầm Fake V3\" thật, yêu cầu 7 việc: liệt kê/đếm hình, thử xoá hình, liệt kê/đếm văn bản, thử xoá văn bản, thống kê tuổi học viên — cần widget demo thật nên được đơn giản hoá lại.) Hãy tưởng tượng bạn đang chat với Mầm Fake V3 và lần lượt yêu cầu 7 việc: (1) liệt kê danh sách hình, (2) đếm hình, (3) thử xoá hình, (4) liệt kê danh sách file văn bản, (5) đếm văn bản, (6) thử xoá 1 văn bản, (7) thống kê độ tuổi học viên trong lớp. Viết lại 7 câu lệnh bạn sẽ gõ.",
-        instructions: "Viết 7 câu lệnh tương ứng 7 việc trên.",
-        criteria: [
-          { key: "text", label: "7 câu lệnh", desc: "Mỗi câu tương ứng với 1 trong 7 việc liệt kê ở trên.", placeholder: "1. Liệt kê hình...\n2. Đếm hình...\n..." },
-        ],
+          "Mở **Chatbot Mầm Fake (V3)**. Hỏi Bé Mầm **tổng cộng 7 việc**:\n1. Liệt kê danh sách hình\n2. Đếm hình\n3. Thử xoá hình\n4. Liệt kê danh sách file văn bản\n5. Đếm văn bản\n6. Thử xoá 1 văn bản\n7. Thống kê độ tuổi học viên trong lớp",
         points: 10,
       },
       {
         code: "11.16",
         title: "Câu 11.16",
         type: "match",
-        prompt: "Trong 7 việc ở câu trước, việc nào Bé Mầm Fake (V3) làm được, việc nào báo không làm được?",
+        prompt:
+          "Trong 7 việc bạn vừa yêu cầu ở câu trước, **việc nào Bé Mầm Fake (V3) làm được, việc nào báo không làm được**?",
         leftItems: [
           "Liệt kê danh sách hình",
           "Đếm hình",
@@ -2387,25 +2392,23 @@ const LESSONS = [
       {
         code: "11.17",
         title: "Câu 11.17",
-        type: "assignment",
+        type: "reflect",
+        thaoLuan: true,
+        minLength: 80,
         prompt:
-          "(Bản gốc: viết bình luận thảo luận công khai trong diễn đàn thật của lớp, được AI chấm chủ đề — cần diễn đàn thật nên được đơn giản hoá lại.) Theo bạn, tại sao các việc liệt kê hình, đếm hình, liệt kê văn bản, đếm văn bản thì Mầm Fake (V3) làm được; còn xoá hình, xoá văn bản, thống kê tuổi học viên thì không làm được? Viết suy nghĩ của bạn (ít nhất 80 ký tự).",
-        instructions: "Viết ít nhất 80 ký tự giải thích suy nghĩ của bạn.",
-        criteria: [
-          { key: "text", label: "Suy nghĩ của bạn", desc: "Ít nhất 80 ký tự.", placeholder: "Bạn nghĩ rằng..." },
-        ],
+          "Theo bạn, **tại sao** các việc _liệt kê hình, đếm hình, liệt kê file văn bản, đếm file văn bản_ thì **Mầm Fake (V3) làm được**; còn các việc _xoá hình, xoá file văn bản, thống kê độ tuổi học viên lớp ALG_ thì **không làm được**? Hãy chia sẻ suy nghĩ để cả lớp cùng thảo luận.",
+        gradingNote:
+          "Bình luận ĐẠT nếu giải thích đúng theo hướng: 4 việc đầu Mầm Fake (V3) có công cụ tương ứng (count_images / show_images / count_docs / show_docs) nên làm được; 3 việc sau không có công cụ (hoặc công cụ delete_image / delete_doc / get_class_age_stats luôn báo hỏng) nên chịu. Bình luận quá ngắn, lạc đề, troll hoặc spam ký tự thì KHÔNG đạt.",
         points: 10,
       },
       {
         code: "11.18",
         title: "Câu 11.18",
-        type: "assignment",
+        type: "agent_demo",
+        demoVer: "v4",
+        demoLabel: "Mở Mầm Fake (V4)",
         prompt:
-          "(Bản gốc: mở widget \"Mầm Fake V4\" thật và tìm cách khiến nó gọi tool tạo card visit — cần widget demo thật nên được đơn giản hoá lại.) V4 được trang bị thêm tool tạo card visit (danh thiếp) từ thông tin cá nhân. Hãy viết câu lệnh bạn sẽ gõ để yêu cầu V4 tạo card visit cho mình.",
-        instructions: "Viết câu lệnh yêu cầu tạo card visit.",
-        criteria: [
-          { key: "text", label: "Câu lệnh", desc: "Câu lệnh yêu cầu tạo card visit.", placeholder: "Tạo cardvisit cho tôi..." },
-        ],
+          "Mở **Mầm Fake (V4)** bên dưới và tìm cách khiến nó **tạo card visit** (danh thiếp) cho chính bạn — từ thông tin cá nhân của bạn trong lớp học ALG.",
         points: 8,
       },
       {
@@ -2413,16 +2416,21 @@ const LESSONS = [
         title: "Câu 11.19",
         type: "code",
         prompt:
-          "Để thực hiện các việc như tạo danh thiếp, liệt kê/đếm hình ảnh, liệt kê/đếm văn bản, tính tuổi trung bình học viên..., Mầm Fake phải được trang bị các tool với tên mã cụ thể. Một trong các tool đó có tên mã là gì (tool dùng để lấy thống kê độ tuổi lớp học)?",
-        secretNote: "🔒 Tên mã dạng snake_case, ví dụ tương tự: count_images, show_images, count_docs, show_docs, delete_image, delete_doc, create_business_card.",
-        answer: "get_class_age_stats",
+          "Để có thể thực hiện các nhiệm vụ như:\n- Tạo danh thiếp\n- Hiển thị danh sách hình ảnh (JPG, PNG...) trong máy chủ\n- Hiển thị danh sách văn bản (file docs, pdfs...) trong máy chủ\n- Tính độ tuổi trung bình học viên\n- ...\n\nthì Mầm Fake phải được trang bị rất nhiều công cụ. Hãy kể tên **mã chính xác** các công cụ đó là gì?\n\n_(Ví dụ nếu có công cụ kiểm tra RAM tên là_ `ram-check.sh` _thì phải nhập_ `ram-check.sh` _thay vì \"công cụ kiểm tra RAM\")_",
+        secretNote: "🔒 Gợi ý: mở lại widget Mầm Fake (V4) rồi hỏi thẳng nó \"em có những công cụ gì?\".",
+        mustContain: [
+          "count_images", "show_images", "count_docs", "show_docs",
+          "delete_image", "delete_doc", "get_class_age_stats", "create_business_card",
+        ],
+        wrongHint: "Chưa đủ — kể thiếu ít nhất một công cụ, hỏi lại Mầm Fake xem nó có những gì nhé",
         points: 10,
       },
       {
         code: "11.20",
         title: "Câu 11.20",
         type: "multi",
-        prompt: "Để Mầm Fake \"gọi được\" các tool này để hoàn tất công việc được giao, thì nó phải có gì?",
+        prompt:
+          "Để Mầm Fake \"gọi được\" các tool này để hoàn tất công việc được giao, thì nó phải có gì? _(chọn tất cả đáp án đúng)_",
         options: [
           "Phải được huấn luyện lại (train) toàn bộ mô hình LLM mỗi khi bổ sung một tool mới",
           "Có kết nối Internet để tải tool từ trên mạng về máy mỗi lần được người dùng yêu cầu",
@@ -2439,7 +2447,7 @@ const LESSONS = [
         code: "11.21",
         title: "Câu 11.21",
         type: "match",
-        prompt: "Vậy ai là người đã \"giúp sức\" cho Agent Mầm Fake? (chọn nguồn giúp sức cho mỗi việc)",
+        prompt: "Vậy ai là người đã \"giúp sức\" cho Agent Mầm Fake? _(chọn nguồn giúp sức cho mỗi việc)_",
         leftItems: [
           "Trang bị tools (các phần mềm trong máy)",
           "Cung cấp tài liệu mô tả tính năng / tham số / cách dùng tool",
@@ -2454,18 +2462,18 @@ const LESSONS = [
         title: "Câu 11.22",
         type: "order-tag",
         prompt:
-          "Khi bạn gõ \"Tạo cardvisit cho tôi\" vào ô chat của Mầm Fake V4, từng bước \"bếp núc\" đằng sau hậu trường diễn ra thế nào? Sắp xếp đúng thứ tự và cho biết mỗi bước do Mầm Fake (chương trình) hay Mô hình ngôn ngữ lớn (LLM) thực hiện.",
+          "Khi bạn gõ _Tạo cardvisit cho tôi_ vào ô chat của Mầm Fake V4, thì từng bước \"bếp núc\" đằng sau hậu trường diễn ra các bước thế nào?\n\nSắp xếp đúng thứ tự, và cho biết mỗi bước do **Mầm Fake (chương trình)** hay **Mô hình ngôn ngữ lớn (LLM)** thực hiện.",
         tagOptions: ["Mầm Fake (chương trình)", "Mô hình ngôn ngữ lớn (LLM)"],
         items: [
           { text: "Nhận prompt \"Tạo cardvisit cho tôi\" từ người dùng, gọi là user_prompt", tag: 0 },
-          { text: "Lấy danh sách tools gồm tên, mô tả, tham số, gọi là tools_list", tag: 0 },
-          { text: "\"Cộng gộp\" user_prompt và tools_list thành system_prompt", tag: 0 },
+          { text: "Lấy danh sách tools bao gồm tên, mô tả, danh sách tham số gom vào một chỗ, gọi là tools_list (create_business_card, get_class_age_stats, delete_doc...)", tag: 0 },
+          { text: "\"Cộng gộp\" user_prompt và tools_list lại với nhau, cùng với một số thông tin khác thành system_prompt (Bạn là trợ lý AI của Life Group, có các tool count_images, show_images, count_docs, show_docs, delete_image, delete_doc, get_class_age_stats, hãy giúp tôi trả lời prompt sau từ người dùng: Tạo cardvisit cho tôi)", tag: 0 },
           { text: "Gửi system_prompt lên Mô hình ngôn ngữ lớn", tag: 0 },
-          { text: "Tạo câu trả lời hợp lý: response_text và hướng dẫn gọi tool (toolcall_instruction)", tag: 1 },
-          { text: "Vừa hiện response_text vừa âm thầm chạy tool theo toolcall_instruction để có tool_result", tag: 0 },
-          { text: "Tiếp tục \"cộng gộp\" user_prompt, tools_list, tool_result thành system_prompt_v2", tag: 0 },
+          { text: "Tạo câu trả lời hợp lý, bao gồm cả nội dung phản hồi (response_text) và hướng dẫn gọi tool (toolcall_instruction)", tag: 1 },
+          { text: "Vừa hiện nội dung response_text cho người dùng xem, vừa âm thầm chạy các tool cần thiết theo hướng dẫn từ toolcall_instruction để có kết quả trả về từ tool (tool_result)", tag: 0 },
+          { text: "Tiếp tục \"Cộng gộp\" user_prompt, tools_list, tool_result sau vòng 1 lại với nhau, cùng với một số thông tin khác thành system_prompt_v2", tag: 0 },
           { text: "Gửi system_prompt_v2 lên Mô hình ngôn ngữ lớn", tag: 0 },
-          { text: "Tạo câu trả lời cho system_prompt_v2: response_text, toolcall_instruction hoặc done_signal", tag: 1 },
+          { text: "Tạo câu trả lời hợp lý cho system_prompt_v2, bao gồm cả nội dung phản hồi (response_text), hướng dẫn gọi tool (toolcall_instruction) hoặc thông báo chu trình kết thúc (done_signal)", tag: 1 },
         ],
         points: 22,
       },
@@ -2473,7 +2481,7 @@ const LESSONS = [
         code: "11.23",
         title: "Câu 11.23",
         type: "single",
-        prompt: "Vậy khi người dùng gõ \"Tạo cardvisit cho tôi\" thì:",
+        prompt: "Vậy khi người dùng gõ _\"Tạo cardvisit cho tôi\"_ thì:",
         options: [
           "Mầm Fake \"chuyển tiếp\" đúng câu prompt này lên Mô hình ngôn ngữ lớn LLM",
           "Mầm Fake tạo ra một prompt khác phức tạp hơn nhiều",
@@ -2485,7 +2493,8 @@ const LESSONS = [
         code: "11.24",
         title: "Câu 11.24",
         type: "single",
-        prompt: "Prompt phức tạp cuối cùng mà Mầm Fake tạo ra để gửi lên LLM trông giống mẫu nào nhất?",
+        prompt:
+          "Prompt phức tạp cuối cùng mà Mầm Fake tạo ra (khi người dùng gõ _\"Tạo cardvisit cho tôi\"_) để gửi lên LLM trông giống mẫu nào nhất?",
         options: [
           "Người dùng gõ \"Tạo cardvisit cho tôi\". Bạn là Agent thông minh siêu cấp vũ trụ, hãy hoàn thành mục tiêu phù hợp với prompt người dùng gõ vào.",
           "Người dùng gõ \"Tạo cardvisit cho tôi\", hãy soạn câu trả lời",
@@ -2498,11 +2507,19 @@ const LESSONS = [
         code: "11.25",
         title: "Câu 11.25",
         type: "match",
-        prompt: "3 mẫu prompt sau ứng với 3 loại khác nhau (không chính xác tuyệt đối, nhưng hiểu nôm na). Hãy ghép mỗi mẫu với loại tương ứng.",
+        prompt:
+          "Mô tả dưới đây không chính xác tuyệt đối, nhưng hiểu nôm na thì 3 mẫu prompt sau ứng với 3 loại khác nhau. Hãy ghép mỗi mẫu với loại tương ứng.",
         leftItems: [
           "\"Làm sao để tạo cardvisit\" — không có lịch sử chat, không có tool",
           "Có lịch sử chat cũ, nhưng không có tool — chỉ \"hãy tạo câu trả lời phù hợp tiếp theo\"",
           "Có lịch sử chat + danh sách tool + vai trò \"chuyên gia giải quyết vấn đề, hãy hướng dẫn hoàn thành mục tiêu\"",
+        ],
+        // Mỗi màu là một thành phần của prompt gửi lên LLM: xanh dương = câu người dùng gõ,
+        // tím = lịch sử chat, xanh lá = danh sách tool, cam = vai trò, đỏ = yêu cầu cuối.
+        leftItemsHtml: [
+          "<div class=\"prompt-khoi\"><div class=\"prompt-dong nguoi-dung\">Làm sao để tạo cardvisit</div></div>",
+          "<div class=\"prompt-khoi\"><div class=\"prompt-dong nguoi-dung\">Người dùng gõ \"Làm sao để tạo cardvisit\".</div><div class=\"prompt-dong lich-su\">Lịch sử chat cũ hơn của họ là: \"Xin chào\", tôi rep \"Chào bạn\"; Họ nói \"Tôi chuẩn bị đi gặp đối tác\", tôi rep \"Bạn hãy ăn mặc lịch sự, và nhớ đặt nhà hàng phù hợp nhé\"; Họ nói tiếp \"Nhưng tôi chưa có cardvisit\", tôi rep \"Bạn nên có đấy. Bạn muốn đi tìm chỗ in ấn hay tự thiết kế?\".</div><div class=\"prompt-dong yeu-cau\">Hãy tạo câu trả lời phù hợp tiếp theo tôi nhé.</div></div>",
+          "<div class=\"prompt-khoi\"><div class=\"prompt-dong nguoi-dung\">Người dùng gõ \"Tạo cardvisit cho tôi\".</div><div class=\"prompt-dong lich-su\">Lịch sử chat cũ hơn của họ là...</div><div class=\"prompt-dong tools\">Tôi có một số tool (count_images, show_images, cardvisit_create, show_docs...).</div><div class=\"prompt-dong vai-tro\">Bạn là chuyên gia giải quyết vấn đề. Bạn luôn trả lời với ngôn ngữ tận tâm và dễ hiểu.</div><div class=\"prompt-dong yeu-cau\">Hãy hướng dẫn tôi hoàn thành mục tiêu phù hợp với prompt người dùng gõ vào.</div></div>",
         ],
         rightOptions: ["Lời gọi LLM", "Chatbot", "AI Agent đơn giản"],
         correctMap: [0, 1, 2],
@@ -2513,11 +2530,16 @@ const LESSONS = [
         title: "Câu 11.26",
         type: "assignment",
         prompt:
-          "Nhờ một Coding Agent bất kỳ lập trình tạo ra... một Agent khác: một Agent đơn giản với 3 tool (liệt kê hình ảnh dạng gallery, kiểm tra RAM và liệt kê process chiếm nhiều RAM nhất, kiểm tra dung lượng ổ cứng và liệt kê top 10 file lớn nhất), có trang web localhost để chat với Agent này qua trình duyệt.\n\nSau khi làm xong, hãy suy ngẫm và trả lời: (1) Tại sao Agent vốn phức tạp mà lại có thể tạo ra qua một prompt đơn giản như vậy? (2) Học làm AI Agent có còn cần thiết không? (3) Đến giờ, bạn cho rằng học AI Agent là học cái gì?",
-        instructions: "Chụp ảnh Agent bạn vừa tạo đang chạy, và viết câu trả lời cho 3 câu hỏi suy ngẫm.",
+          "Copy prompt dưới đây, nhờ một **Coding Agent** bất kỳ lập trình tạo ra... một Agent khác.",
+        copyPrompt:
+          "Tạo cho tôi một Agent đơn giản, sẽ luôn spawn OpenCode dạng JSON lên để làm LLM Proxy. Agent này có 3 tool là: \"Liệt kê hình ảnh trong máy dưới dạng gallery\", \"Kiểm tra RAM và liệt kê những process chiếm RAM nhiều nhất\", và \"Kiểm tra dung lượng ổ cứng và chỉ ra top 10 file có dung lượng lớn nhất\". Tạo trang web localhost bằng GO/NodeJS hoặc Python (tuỳ trong máy có sẵn stack nào) để tôi có thể giao tiếp với agent qua web chat. Sau khi làm xong thì mở nó lên trong trình duyệt để tôi test thử.",
+        requirementsHtml:
+          "<p><strong>Hãy chia sẻ suy nghĩ của bạn:</strong></p>\n<ol>\n<li>Tại sao Agent vốn là một thứ rất phức tạp, đầy sức mạnh, mà việc tạo ra nó lại có thể hoàn thành qua một prompt đơn giản như vậy?</li>\n<li>Thế thì, học làm AI Agent có còn cần thiết nữa hay không?</li>\n<li>Và cuối cùng thì, đến giờ phút này, bạn cho rằng học AI Agent là học cái gì?</li>\n</ol>",
+        instructions:
+          "Chụp ảnh Agent bạn vừa tạo đang chạy, và viết câu trả lời cho 3 câu hỏi: (1) Tại sao Agent vốn là một thứ rất phức tạp, đầy sức mạnh, mà việc tạo ra nó lại có thể hoàn thành qua một prompt đơn giản như vậy? (2) Thế thì, học làm AI Agent có còn cần thiết nữa hay không? (3) Và cuối cùng thì, đến giờ phút này, bạn cho rằng học AI Agent là học cái gì?",
         criteria: [
           { key: "image", label: "Ảnh minh chứng", desc: "Chọn ảnh chụp màn hình Agent 3-tool đang chạy trên web." },
-          { key: "text", label: "Trả lời 3 câu hỏi suy ngẫm", desc: "Trả lời cả 3 câu hỏi.", placeholder: "1) ...\n2) ...\n3) ..." },
+          { key: "text", label: "Trả lời 3 câu hỏi thảo luận", desc: "Trả lời cả 3 câu hỏi ở trên.", placeholder: "1) ...\n2) ...\n3) ..." },
         ],
         points: 20,
       },

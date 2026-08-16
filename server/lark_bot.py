@@ -762,7 +762,58 @@ async def smart_answer(text: str, open_id: str | None, prog: dict | None, is_tea
 
 # ===================== ĐỊNH TUYẾN Ý ĐỊNH (tiếp) =====================
 
-async def build_reply(text: str, open_id: str | None) -> str:
+# ===================== LỆNH /help CỦA BÀI 11 =====================
+
+# Đúng một lệnh được khai báo: /help kèm mã cá nhân. Mọi lệnh gạch chéo khác (/giup, /tro-giup...)
+# Bé KHÔNG trả lời — chính là bài học của câu 11.7/11.8: chatbot kiểu kịch bản chỉ hiểu đúng
+# những từ khoá đã cài sẵn. Tin nhắn thường (không mở đầu bằng "/") vẫn đi vào trợ lý AI như cũ.
+_MA_HELP = re.compile(r"^/help\s+(\d+)\s*-\s*([A-Za-z0-9]{6,})\s*$", re.I)
+
+TRA_LOI_HO_TRO = (
+    "Dạ em là Bé Mầm, trợ lý lớp ALG ạ 🌱\n"
+    "Khi gặp khó, anh/chị làm theo thứ tự này giúp em nhé:\n"
+    "1. Đọc lại kỹ đề bài trên trang lớp học, làm đúng từng bước một.\n"
+    "2. Hỏi chính Coding Agent của mình trước — phần lớn vướng mắc nó gỡ được ngay.\n"
+    "3. Vẫn tắc thì nhắn vào nhóm lớp, ghi rõ đang ở câu nào và đã thử những gì.\n"
+    "Chúc anh/chị học vui ạ!"
+)
+
+
+def _ghi_help_ping(ma_hoc_vien: str, ma_token: str, open_id: str | None) -> bool:
+    """Ghi nhận một lệnh /help hợp lệ. Mã cá nhân = <id học viên>-<8 ký tự đầu api_token>, nên
+    ai nhắn hộ bằng nick nào cũng được — điểm vẫn về đúng chủ nhân của mã."""
+    try:
+        user_id = int(ma_hoc_vien)
+    except ValueError:
+        return False
+    with get_db() as conn:
+        row = conn.execute("SELECT api_token FROM users WHERE id = ?", (user_id,)).fetchone()
+        if not row or not row["api_token"]:
+            return False
+        if not row["api_token"].lower().startswith(ma_token.lower()[:8]) or len(ma_token) < 8:
+            return False
+        conn.execute(
+            "INSERT INTO help_pings (user_id, lark_open_id) VALUES (?, ?)", (user_id, open_id)
+        )
+    return True
+
+
+def _tra_loi_lenh(text: str, open_id: str | None):
+    """Trả về câu trả lời cho lệnh gạch chéo, hoặc None nếu Bé cố tình im lặng."""
+    m = _MA_HELP.match(text.strip())
+    if m:
+        if _ghi_help_ping(m.group(1), m.group(2), open_id):
+            return TRA_LOI_HO_TRO
+        return "Dạ mã cá nhân này em tra không ra ạ. Anh/chị mở lại câu 11.6 trên trang lớp học để chép đúng mã nhé."
+    if text.strip().lower().startswith("/help"):
+        return "Dạ anh/chị nhắn theo mẫu `/help <mã cá nhân>` giúp em nhé (mã lấy ở câu 11.6 trên trang lớp học)."
+    return None
+
+
+async def build_reply(text: str, open_id: str | None) -> str | None:
+    if text.strip().startswith("/"):
+        return _tra_loi_lenh(text, open_id)
+
     low = text.lower()
     prog = get_progress_summary(open_id)
     is_teacher = bool(prog and prog.get("is_teacher"))
@@ -861,6 +912,10 @@ async def handle_message_event(event: dict):
 
     try:
         reply = await build_reply(text, open_id)
+        if reply is None:
+            # Lệnh lạ (/giup, /tro-giup...) → im lặng có chủ đích, xem chú thích ở _tra_loi_lenh.
+            log_activity(chat_type, open_id, text, reply="(không phản hồi: lệnh chưa được cài)")
+            return
         if message_id:
             await reply_text(message_id, reply)
         elif chat_id:

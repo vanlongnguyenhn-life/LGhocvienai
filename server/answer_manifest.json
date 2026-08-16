@@ -2346,7 +2346,7 @@
       "Dễ hiểu hơn vì nó cực kỳ đơn giản"
     ],
     "optionsOriginal": [
-      "Học xong Agent Demo là đủ, các bạn sẽ không cần tìm hiểu các Coding Agent thật nữa",
+      "Học xong Agent Demo là đủ, các bạn sẽ không cần tìm hiểu các Coding Agent thật (OpenCode, Gemini CLI...) nữa",
       "Vì do tôi tự viết nên Agent Demo mạnh hơn và chạy nhanh hơn mọi Coding Agent mã nguồn mở",
       "Không bị ngộp thở trong hàng tá tính năng của Coding Agent",
       "Dễ hiểu hơn vì nó cực kỳ đơn giản",
@@ -2374,20 +2374,21 @@
     "answer": "chatbot"
   },
   "11.4": {
-    "type": "single",
+    "type": "match",
     "points": 6,
-    "anyValid": false,
-    "correctTexts": [
-      "Ngôn ngữ, dưới các dạng thức khác nhau như text, audio, video, âm thanh..."
-    ],
-    "optionsOriginal": [
-      "Ngôn ngữ, dưới các dạng thức khác nhau như text, audio, video, âm thanh...",
-      "Những con số / dữ liệu nhị phân",
-      "Mã nguồn lập trình",
-      "Chỉ hình ảnh tĩnh"
-    ],
-    "correct": [
+    "correctMap": [
+      0,
       0
+    ],
+    "correctPairs": [
+      [
+        "Đầu vào của nó là",
+        "Ngôn ngữ, dưới các dạng thức khác nhau như text, audio, video, âm thanh..."
+      ],
+      [
+        "Đầu ra của nó là",
+        "Ngôn ngữ, dưới các dạng thức khác nhau như text, audio, video, âm thanh..."
+      ]
     ]
   },
   "11.5": {
@@ -2413,8 +2414,19 @@
     ]
   },
   "11.6": {
-    "type": "gate",
-    "points": 8
+    "type": "single",
+    "points": 8,
+    "anyValid": false,
+    "correctTexts": [
+      "Chatbot được cài đặt sẵn các kịch bản mẫu để trả lời"
+    ],
+    "optionsOriginal": [
+      "Chatbot được cài đặt sẵn các kịch bản mẫu để trả lời",
+      "Chatbot sử dụng mô hình ngôn ngữ lớn để tự suy nghĩ và trả lời"
+    ],
+    "correct": [
+      1
+    ]
   },
   "11.7": {
     "type": "single",
@@ -2428,7 +2440,7 @@
       "Không phản hồi"
     ],
     "correct": [
-      1
+      0
     ]
   },
   "11.8": {
@@ -2462,7 +2474,7 @@
       "Chatbot sử dụng mô hình ngôn ngữ lớn để tự suy nghĩ và trả lời"
     ],
     "correct": [
-      0
+      1
     ]
   },
   "11.12": {
@@ -2477,13 +2489,13 @@
       "Chatbot sử dụng mô hình ngôn ngữ lớn để tự suy nghĩ và trả lời"
     ],
     "correct": [
-      1
+      0
     ]
   },
   "11.13": {
     "type": "code",
     "points": 10,
-    "answer": "Jackrong/Qwopus3.5-9B-Coder-MTP-GGUF"
+    "answer": "claude-haiku-4-5-20251001"
   },
   "11.14": {
     "type": "match",
@@ -2549,7 +2561,16 @@
   "11.19": {
     "type": "code",
     "points": 10,
-    "answer": "get_class_age_stats"
+    "mustContain": [
+      "count_images",
+      "show_images",
+      "count_docs",
+      "show_docs",
+      "delete_image",
+      "delete_doc",
+      "get_class_age_stats",
+      "create_business_card"
+    ]
   },
   "11.20": {
     "type": "multi",
@@ -2615,25 +2636,25 @@
     ],
     "orderTexts": [
       "Nhận prompt \"Tạo cardvisit cho tôi\" từ người dùng, gọi là user_prompt",
-      "Lấy danh sách tools gồm tên, mô tả, tham số, gọi là tools_list",
-      "\"Cộng gộp\" user_prompt và tools_list thành system_prompt",
+      "Lấy danh sách tools bao gồm tên, mô tả, danh sách tham số gom vào một chỗ, gọi là tools_list (create_business_card, get_class_age_stats, delete_doc...)",
+      "\"Cộng gộp\" user_prompt và tools_list lại với nhau, cùng với một số thông tin khác thành system_prompt (Bạn là trợ lý AI của Life Group, có các tool count_images, show_images, count_docs, show_docs, delete_image, delete_doc, get_class_age_stats, hãy giúp tôi trả lời prompt sau từ người dùng: Tạo cardvisit cho tôi)",
       "Gửi system_prompt lên Mô hình ngôn ngữ lớn",
-      "Tạo câu trả lời hợp lý: response_text và hướng dẫn gọi tool (toolcall_instruction)",
-      "Vừa hiện response_text vừa âm thầm chạy tool theo toolcall_instruction để có tool_result",
-      "Tiếp tục \"cộng gộp\" user_prompt, tools_list, tool_result thành system_prompt_v2",
+      "Tạo câu trả lời hợp lý, bao gồm cả nội dung phản hồi (response_text) và hướng dẫn gọi tool (toolcall_instruction)",
+      "Vừa hiện nội dung response_text cho người dùng xem, vừa âm thầm chạy các tool cần thiết theo hướng dẫn từ toolcall_instruction để có kết quả trả về từ tool (tool_result)",
+      "Tiếp tục \"Cộng gộp\" user_prompt, tools_list, tool_result sau vòng 1 lại với nhau, cùng với một số thông tin khác thành system_prompt_v2",
       "Gửi system_prompt_v2 lên Mô hình ngôn ngữ lớn",
-      "Tạo câu trả lời cho system_prompt_v2: response_text, toolcall_instruction hoặc done_signal"
+      "Tạo câu trả lời hợp lý cho system_prompt_v2, bao gồm cả nội dung phản hồi (response_text), hướng dẫn gọi tool (toolcall_instruction) hoặc thông báo chu trình kết thúc (done_signal)"
     ],
     "tagByText": {
       "Nhận prompt \"Tạo cardvisit cho tôi\" từ người dùng, gọi là user_prompt": 0,
-      "Lấy danh sách tools gồm tên, mô tả, tham số, gọi là tools_list": 0,
-      "\"Cộng gộp\" user_prompt và tools_list thành system_prompt": 0,
+      "Lấy danh sách tools bao gồm tên, mô tả, danh sách tham số gom vào một chỗ, gọi là tools_list (create_business_card, get_class_age_stats, delete_doc...)": 0,
+      "\"Cộng gộp\" user_prompt và tools_list lại với nhau, cùng với một số thông tin khác thành system_prompt (Bạn là trợ lý AI của Life Group, có các tool count_images, show_images, count_docs, show_docs, delete_image, delete_doc, get_class_age_stats, hãy giúp tôi trả lời prompt sau từ người dùng: Tạo cardvisit cho tôi)": 0,
       "Gửi system_prompt lên Mô hình ngôn ngữ lớn": 0,
-      "Tạo câu trả lời hợp lý: response_text và hướng dẫn gọi tool (toolcall_instruction)": 1,
-      "Vừa hiện response_text vừa âm thầm chạy tool theo toolcall_instruction để có tool_result": 0,
-      "Tiếp tục \"cộng gộp\" user_prompt, tools_list, tool_result thành system_prompt_v2": 0,
+      "Tạo câu trả lời hợp lý, bao gồm cả nội dung phản hồi (response_text) và hướng dẫn gọi tool (toolcall_instruction)": 1,
+      "Vừa hiện nội dung response_text cho người dùng xem, vừa âm thầm chạy các tool cần thiết theo hướng dẫn từ toolcall_instruction để có kết quả trả về từ tool (tool_result)": 0,
+      "Tiếp tục \"Cộng gộp\" user_prompt, tools_list, tool_result sau vòng 1 lại với nhau, cùng với một số thông tin khác thành system_prompt_v2": 0,
       "Gửi system_prompt_v2 lên Mô hình ngôn ngữ lớn": 0,
-      "Tạo câu trả lời cho system_prompt_v2: response_text, toolcall_instruction hoặc done_signal": 1
+      "Tạo câu trả lời hợp lý cho system_prompt_v2, bao gồm cả nội dung phản hồi (response_text), hướng dẫn gọi tool (toolcall_instruction) hoặc thông báo chu trình kết thúc (done_signal)": 1
     }
   },
   "11.23": {
@@ -2702,7 +2723,7 @@
       "Chưa làm được"
     ],
     "correct": [
-      0
+      1
     ]
   },
   "12.2": {
@@ -2717,7 +2738,7 @@
       "Đã làm được"
     ],
     "correct": [
-      1
+      0
     ]
   },
   "12.4": {
@@ -2732,7 +2753,7 @@
       "Đã làm được"
     ],
     "correct": [
-      0
+      1
     ]
   },
   "12.5": {
@@ -2792,7 +2813,7 @@
       "Đã làm được"
     ],
     "correct": [
-      1
+      0
     ]
   },
   "12.9": {
@@ -2822,7 +2843,7 @@
       "Đã làm được"
     ],
     "correct": [
-      0
+      1
     ]
   },
   "12.11": {
@@ -2837,7 +2858,7 @@
       "Đã làm được"
     ],
     "correct": [
-      1
+      0
     ]
   },
   "12.12": {
@@ -2882,7 +2903,7 @@
       "Đã làm được"
     ],
     "correct": [
-      0
+      1
     ]
   },
   "12.15": {
@@ -2912,7 +2933,7 @@
       "Chưa làm được"
     ],
     "correct": [
-      1
+      0
     ]
   },
   "13.1": {
@@ -2927,7 +2948,7 @@
       "Chưa làm được"
     ],
     "correct": [
-      0
+      1
     ]
   },
   "13.2": {
@@ -2957,7 +2978,7 @@
       "Chưa làm được"
     ],
     "correct": [
-      1
+      0
     ]
   },
   "gate14.1": {

@@ -231,6 +231,52 @@ CREATE TABLE IF NOT EXISTS peer_reviews (
     FOREIGN KEY (subject_user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (grader_user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+-- Bài 11: chatbot demo "Mầm Fake" (4 phiên bản). Lịch sử chat lưu server để học viên quay lại
+-- vẫn thấy hội thoại cũ, giống hệt widget của web tham khảo.
+CREATE TABLE IF NOT EXISTS demo_conversations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    ver TEXT NOT NULL,
+    title TEXT NOT NULL DEFAULT 'Cuộc trò chuyện mới',
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS demo_messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    conversation_id INTEGER NOT NULL,
+    role TEXT NOT NULL,
+    content TEXT NOT NULL,
+    extra TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (conversation_id) REFERENCES demo_conversations(id) ON DELETE CASCADE
+);
+
+-- Dấu vết học viên THỰC SỰ đã làm gì trong widget: từ khoá đã thử (V1), chủ đề đã chat (V2),
+-- tool đã kích hoạt (V3/V4). Đây là căn cứ duy nhất để chấm 11.9/11.11/11.15/11.18 — máy chủ tự
+-- ghi khi xử lý tin nhắn, trình duyệt không khai hộ được.
+-- Câu 11.6: học viên nhắn "/help <mã cá nhân>" cho Bé Mầm trong nhóm lớp. Mỗi lần nhắn đúng mã
+-- ghi một dòng ở đây; câu chỉ mở khi có lệnh trong vòng 24 giờ (nhắn lâu rồi thì nhắn lại).
+CREATE TABLE IF NOT EXISTS help_pings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    lark_open_id TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS demo_progress (
+    user_id INTEGER NOT NULL,
+    ver TEXT NOT NULL,
+    kind TEXT NOT NULL,
+    name TEXT NOT NULL,
+    count INTEGER NOT NULL DEFAULT 0,
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    PRIMARY KEY (user_id, ver, kind, name),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 """
 
 

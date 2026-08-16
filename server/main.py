@@ -45,6 +45,7 @@ from . import gemini
 from . import lark_bot
 from . import digest
 from . import ai_grader
+from . import agent_demo
 
 BASE_DIR = Path(__file__).parent.parent
 UPLOADS_DIR = DATA_DIR / "uploads"
@@ -96,6 +97,15 @@ MEDIA_SUBMIT_MANIFEST = {
     "9.9": {"points": 14},
 }
 MEDIA_QUESTION_CODES = set(MEDIA_SUBMIT_RUBRICS) | CARO_COLLAGE_CODES
+
+# Bài 11: bốn câu bắt học viên chat thật với chatbot demo "Mầm Fake". Điểm chỉ được cộng khi
+# server tự soi dấu vết trong bảng demo_progress (xem agent_demo.dat_yeu_cau).
+DEMO_CHAT_MANIFEST = {
+    "11.9": {"points": 12},
+    "11.11": {"points": 10},
+    "11.15": {"points": 10},
+    "11.18": {"points": 8},
+}
 
 _CARO_QUAD_LABELS = {
     "tl": "Góc trên-trái",
@@ -1752,6 +1762,12 @@ def _verify_answer_manifest_entry(entry: dict, ad: dict) -> bool:
         return list(tagState) == list(icons)
     if t == "code":
         goc, dap = ad.get("text") or "", entry.get("answer") or ""
+        # Câu đòi KỂ ĐỦ nhiều thứ (11.19: đủ 8 tên tool) — chấm theo "có mặt đủ", không theo thứ
+        # tự và không bắt gõ thêm dấu câu gì. Học viên viết kiểu nào cũng được miễn đủ tên.
+        can_co = entry.get("mustContain")
+        if can_co:
+            da_go = _normalize_code_answer(goc)
+            return all(_normalize_code_answer(tu) in da_go for tu in can_co)
         if entry.get("exact"):
             return _chuan_dap_an_chinh_xac(goc) == _chuan_dap_an_chinh_xac(dap)
         return _normalize_code_answer(goc) == _normalize_code_answer(dap)
@@ -1774,8 +1790,272 @@ def _verified_manifests():
         ASSIGNMENT_MANIFEST, REFLECT_MANIFEST, MEDIA_SUBMIT_MANIFEST, ELECTRON_SUBMIT_MANIFEST,
         SECRET_CODE_MANIFEST, PI_LAB_CODE_MANIFEST, MY_TOKEN_CHECK_MANIFEST,
         NPC_AVATAR_MANIFEST, NPC_TIME_MANIFEST, PI_LAB_LETTER_MANIFEST, GWS_TASK_MANIFEST,
-        PEER_REVIEW_MANIFEST, CAU923_MANIFEST,
+        PEER_REVIEW_MANIFEST, CAU923_MANIFEST, DEMO_CHAT_MANIFEST,
     )
+
+
+# ===================== CHATBOT DEMO "MẦM FAKE" (Bài 11) =====================
+
+
+def _demo_ver(ver: str) -> str:
+    if ver not in ("v1", "v2", "v3", "v4"):
+        raise HTTPException(status_code=400, detail="Phiên bản chatbot không hợp lệ.")
+    return ver
+
+
+def _demo_conversation(conn, user_id: int, ver: str, conversation_id: int | None):
+    """Lấy đúng cuộc trò chuyện của CHÍNH học viên này ở CHÍNH phiên bản này, hoặc mở cuộc mới.
+
+    Luôn ràng cả user_id lẫn ver: thiếu ràng buộc thì chỉ cần đổi số id trên URL là đọc được
+    hội thoại của bạn khác.
+    """
+    if conversation_id:
+        row = conn.execute(
+            "SELECT id FROM demo_conversations WHERE id = ? AND user_id = ? AND ver = ?",
+            (conversation_id, user_id, ver),
+        ).fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Không tìm thấy cuộc trò chuyện.")
+        return conversation_id
+    cur = conn.execute(
+        "INSERT INTO demo_conversations (user_id, ver) VALUES (?, ?)", (user_id, ver)
+    )
+    return cur.lastrowid
+
+
+@app.get("/api/agent-demo/me")
+def demo_me(request: Request, ver: str = "v1"):
+    user = require_approved_user(request)
+    ver = _demo_ver(ver)
+    info = agent_demo.thong_tin_phien_ban(ver)
+    info["ho_ten"] = user.get("display_name") or user.get("username")
+    info["avatar_url"] = user.get("avatar_url") or ""
+    # V1 chạy bằng luật, không cần khoá API; các bản sau thì có.
+    info["san_sang"] = True if ver == "v1" else agent_demo.san_sang()
+    return info
+
+
+@app.get("/api/agent-demo/conversations")
+def demo_conversations(request: Request, ver: str = "v1"):
+    user = require_approved_user(request)
+    ver = _demo_ver(ver)
+    with get_db() as conn:
+        rows = conn.execute(
+            """
+            SELECT id, title, updated_at FROM demo_conversations
+            WHERE user_id = ? AND ver = ? ORDER BY updated_at DESC LIMIT 40
+            """,
+            (user["id"], ver),
+        ).fetchall()
+    return {"conversations": [dict(r) for r in rows]}
+
+
+@app.get("/api/agent-demo/conversations/{conversation_id}")
+def demo_conversation_detail(request: Request, conversation_id: int, ver: str = "v1"):
+    user = require_approved_user(request)
+    ver = _demo_ver(ver)
+    with get_db() as conn:
+        _demo_conversation(conn, user["id"], ver, conversation_id)
+        rows = conn.execute(
+            "SELECT role, content, extra FROM demo_messages WHERE conversation_id = ? ORDER BY id",
+            (conversation_id,),
+        ).fetchall()
+    tin = []
+    for r in rows:
+        tin.append({"role": r["role"], "content": r["content"], "extra": json.loads(r["extra"]) if r["extra"] else None})
+    return {"id": conversation_id, "messages": tin}
+
+
+@app.delete("/api/agent-demo/conversations/{conversation_id}")
+def demo_conversation_delete(request: Request, conversation_id: int, ver: str = "v1"):
+    user = require_approved_user(request)
+    ver = _demo_ver(ver)
+    with get_db() as conn:
+        _demo_conversation(conn, user["id"], ver, conversation_id)
+        conn.execute("DELETE FROM demo_conversations WHERE id = ?", (conversation_id,))
+    return {"ok": True}
+
+
+@app.post("/api/agent-demo/send")
+def demo_send(
+    request: Request,
+    ver: str = Form("v1"),
+    message: str = Form(...),
+    conversation_id: int = Form(None),
+):
+    user = require_approved_user(request)
+    ver = _demo_ver(ver)
+    tin_nhan = (message or "").strip()
+    if not tin_nhan:
+        raise HTTPException(status_code=400, detail="Tin nhắn trống.")
+    if len(tin_nhan) > 2000:
+        tin_nhan = tin_nhan[:2000]
+
+    with get_db() as conn:
+        cid = _demo_conversation(conn, user["id"], ver, conversation_id)
+        conn.execute(
+            "INSERT INTO demo_messages (conversation_id, role, content) VALUES (?, 'user', ?)",
+            (cid, tin_nhan),
+        )
+        lich_su = [
+            {"role": r["role"], "content": r["content"]}
+            for r in conn.execute(
+                "SELECT role, content FROM demo_messages WHERE conversation_id = ? ORDER BY id DESC LIMIT 21",
+                (cid,),
+            ).fetchall()
+        ][::-1][:-1]  # bỏ chính tin vừa chèn, nó được gửi riêng bên dưới
+        ho_so = conn.execute(
+            "SELECT display_name, username, email, avatar_url FROM users WHERE id = ?", (user["id"],)
+        ).fetchone()
+
+    kem_theo = []
+    if ver == "v1":
+        tra_loi, trung = agent_demo.tra_loi_v1(tin_nhan)
+        with get_db() as conn:
+            for ma_chu_de, tu_khoa in trung:
+                agent_demo.ghi_tien_do(conn, user["id"], ver, "tu_khoa", f"{ma_chu_de}|{tu_khoa}")
+    else:
+        tra_loi, da_goi, kem_theo = agent_demo.tra_loi_llm(ver, lich_su, tin_nhan, dict(ho_so or {}))
+        if tra_loi is None:
+            raise HTTPException(status_code=503, detail="Chatbot demo chưa kết nối được mô hình ngôn ngữ, báo giáo viên giúp nhé.")
+        with get_db() as conn:
+            if ver == "v2":
+                ma_chu_de = agent_demo.phan_loai_chu_de(tin_nhan)
+                if ma_chu_de:
+                    agent_demo.ghi_tien_do(conn, user["id"], ver, "chu_de", ma_chu_de)
+            for ten_tool in da_goi:
+                agent_demo.ghi_tien_do(conn, user["id"], ver, "tool", ten_tool)
+
+    with get_db() as conn:
+        conn.execute(
+            "INSERT INTO demo_messages (conversation_id, role, content, extra) VALUES (?, 'assistant', ?, ?)",
+            (cid, tra_loi, json.dumps(kem_theo, ensure_ascii=False) if kem_theo else None),
+        )
+        conn.execute(
+            """
+            UPDATE demo_conversations
+            SET updated_at = datetime('now'),
+                title = CASE WHEN title = 'Cuộc trò chuyện mới' THEN ? ELSE title END
+            WHERE id = ?
+            """,
+            (tin_nhan[:60], cid),
+        )
+        trang_thai = agent_demo.trang_thai_bai_tap(conn, user["id"], ver)
+
+    return {"conversation_id": cid, "reply": tra_loi, "extra": kem_theo, "exercise": trang_thai}
+
+
+# Câu 11.6: phải nhắn "/help <mã cá nhân>" cho Bé Mầm trong nhóm lớp, còn hạn 24 giờ.
+HELP_PING_MANIFEST = {"11.6": {"points": 8}}
+HELP_PING_HAN_GIO = 24
+
+
+def _ma_ca_nhan_help(conn, user_id: int) -> str:
+    """Mã in trong đề câu 11.6: <id học viên>-<8 ký tự đầu api_token>. Cấp token nếu chưa có."""
+    row = conn.execute("SELECT api_token FROM users WHERE id = ?", (user_id,)).fetchone()
+    token = row["api_token"] if row else None
+    if not token:
+        token = secrets.token_urlsafe(32)
+        conn.execute("UPDATE users SET api_token = ? WHERE id = ?", (token, user_id))
+    return f"{user_id}-{token[:8]}"
+
+
+def _co_help_ping(conn, user_id: int):
+    return conn.execute(
+        f"""
+        SELECT created_at FROM help_pings
+        WHERE user_id = ? AND created_at > datetime('now', '-{HELP_PING_HAN_GIO} hours')
+        ORDER BY id DESC LIMIT 1
+        """,
+        (user_id,),
+    ).fetchone()
+
+
+# Câu 11.17 của bản gốc là một luồng thảo luận chung của lớp: viết xong mới đọc được bài bạn khác.
+# Chỉ mở đúng những câu khai ở đây, để không biến mọi câu tự luận thành nơi chép bài của nhau.
+DISCUSSION_CODES = {"11.17"}
+
+
+@app.get("/api/thao-luan")
+def thao_luan(request: Request, question_code: str):
+    """Bình luận của cả lớp cho một câu thảo luận.
+
+    CHỈ trả nội dung khi chính người hỏi đã nộp bài hợp lệ (hoặc là giáo viên) — nếu không thì
+    câu tự luận này thành kho đáp án chép sẵn cho người chưa làm.
+    """
+    user = require_approved_user(request)
+    if question_code not in DISCUSSION_CODES:
+        raise HTTPException(status_code=400, detail="Câu này không có luồng thảo luận.")
+
+    with get_db() as conn:
+        cua_toi = conn.execute(
+            "SELECT is_valid FROM reflect_grades WHERE user_id = ? AND question_code = ?",
+            (user["id"], question_code),
+        ).fetchone()
+        da_nop = bool(user.get("is_teacher")) or bool(cua_toi and cua_toi["is_valid"])
+        if not da_nop:
+            return {"da_nop": False, "comments": []}
+        rows = conn.execute(
+            """
+            SELECT r.answer_text, r.created_at, u.display_name, u.username, u.avatar_url
+            FROM reflect_grades r JOIN users u ON u.id = r.user_id
+            WHERE r.question_code = ? AND r.is_valid = 1 AND r.user_id != ?
+            ORDER BY r.created_at DESC LIMIT 30
+            """,
+            (question_code, user["id"]),
+        ).fetchall()
+    return {
+        "da_nop": True,
+        "comments": [
+            {
+                "ten": r["display_name"] or r["username"],
+                "avatar_url": r["avatar_url"] or "",
+                "noi_dung": r["answer_text"],
+                "luc": r["created_at"],
+            }
+            for r in rows
+        ],
+    }
+
+
+@app.get("/api/help-ping-status")
+def help_ping_status(request: Request):
+    user = require_approved_user(request)
+    with get_db() as conn:
+        ma = _ma_ca_nhan_help(conn, user["id"])
+        row = _co_help_ping(conn, user["id"])
+    return {
+        "ma_ca_nhan": ma,
+        "da_nhan": bool(row),
+        "luc": row["created_at"] if row else None,
+        "han_gio": HELP_PING_HAN_GIO,
+    }
+
+
+@app.get("/api/agent-demo/exercise-state")
+def demo_exercise_state(request: Request, ver: str = "v1"):
+    user = require_approved_user(request)
+    ver = _demo_ver(ver)
+    with get_db() as conn:
+        return agent_demo.trang_thai_bai_tap(conn, user["id"], ver)
+
+
+@app.get("/api/demo-status")
+def demo_status(request: Request, question_code: str):
+    """Bảng tiêu chí sống cho 4 câu Bài 11 — cùng dáng dữ liệu với /api/media-status nên giao
+    diện dùng lại nguyên bộ hiển thị sẵn có."""
+    user = require_approved_user(request)
+    ver = agent_demo.CAU_THEO_VER.get(question_code)
+    if not ver:
+        raise HTTPException(status_code=400, detail="Câu hỏi không dùng chatbot demo.")
+    with get_db() as conn:
+        trang_thai = agent_demo.trang_thai_bai_tap(conn, user["id"], ver)
+    return {
+        "has_attempt": any(c["ok"] for c in trang_thai["criteria"]),
+        "is_correct": trang_thai["is_correct"],
+        "criteria": trang_thai["criteria"],
+        "ver": ver,
+    }
 
 
 @app.post("/api/submit-question")
@@ -1807,6 +2087,15 @@ def submit_question(
         is_correct = _verify_answer_manifest_entry(entry, parsed_answer)
         status = "correct" if is_correct else "wrong"
         awarded_points = entry["points"] if is_correct else 0
+
+        # Chọn đúng đáp án thôi chưa đủ: câu 11.6 còn phải THẬT SỰ nhắn /help cho Bé Mầm.
+        if question_code in HELP_PING_MANIFEST and is_correct:
+            with get_db() as conn:
+                if not _co_help_ping(conn, user["id"]):
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"Chưa thấy tin nhắn /help của bạn trong {HELP_PING_HAN_GIO} giờ qua — nhắn cho Bé Mầm rồi nộp lại nhé.",
+                    )
 
     if question_code in ASSIGNMENT_MANIFEST and status == "done":
         if not _assignment_all_valid(user["id"], question_code):
@@ -1849,6 +2138,15 @@ def submit_question(
         if not all(c["ok"] for c in criteria):
             raise HTTPException(status_code=400, detail="Chưa đủ tiêu chí hợp lệ cho câu này — kiểm tra lại trạng thái Electron app.")
         awarded_points = ELECTRON_SUBMIT_MANIFEST[question_code]["points"]
+
+    if question_code in DEMO_CHAT_MANIFEST and status == "done":
+        with get_db() as conn:
+            if not agent_demo.dat_yeu_cau(conn, user["id"], question_code):
+                raise HTTPException(
+                    status_code=400,
+                    detail="Chưa đủ tiêu chí trong Chatbot Demo — mở widget chat tiếp rồi kiểm tra lại.",
+                )
+        awarded_points = DEMO_CHAT_MANIFEST[question_code]["points"]
 
     if question_code in SECRET_CODE_MANIFEST and status == "done":
         try:
@@ -4805,7 +5103,7 @@ _NO_CACHE_HTML = {"Cache-Control": "no-cache, must-revalidate"}
 # data.js (ban day du, CO dap an) KHONG nam trong danh sach nay — trinh duyet chi duoc nhan
 # data.public.js do server/gen_manifest.js sinh ra, da boc sach dap an.
 _PUBLIC_ROOT_FILES = {"index.html", "admin.html", "app.js", "admin.js", "data.public.js", "styles.css"}
-_PUBLIC_DIRS = ("assets/",)
+_PUBLIC_DIRS = ("assets/", "demo/")
 
 
 def _is_public_asset(rel_path: str) -> bool:
@@ -4833,6 +5131,12 @@ def health_cham_video():
 @app.get("/admin")
 def admin_page():
     return FileResponse(BASE_DIR / "admin.html", headers=_NO_CACHE_HTML)
+
+
+@app.get("/demo")
+def demo_page():
+    """Widget chatbot "Mầm Fake" của Bài 11 — mở trong khung nổi ngay tại câu hỏi."""
+    return FileResponse(BASE_DIR / "demo" / "index.html", headers=_NO_CACHE_HTML)
 
 
 @app.get("/{full_path:path}")

@@ -66,73 +66,8 @@
     ],
     "points": 30
   },
-  "11.9": {
-    "prompt": "(Bản gốc: mở widget \"Mầm Fake V1\" thật trên trang và test ≥15 câu chat xoay quanh 3 chủ đề Chào hỏi/Sức khoẻ/Nghề nghiệp — cần widget demo thật nên được đơn giản hoá lại.) Hãy tự viết ra ít nhất 5 câu chat mẫu cho MỖI chủ đề (Chào hỏi, Sức khoẻ, Nghề nghiệp) mà một chatbot kiểu \"kịch bản mẫu, dò từ khoá\" có thể nhận diện và trả lời được.\nLiệt kê các câu chat mẫu theo từng chủ đề.",
-    "criteria": [
-      {
-        "key": "text",
-        "optional": false,
-        "minLength": null,
-        "label": "Câu chat mẫu 3 chủ đề",
-        "desc": "Ít nhất 5 câu mỗi chủ đề: Chào hỏi, Sức khoẻ, Nghề nghiệp."
-      }
-    ],
-    "points": 12
-  },
-  "11.11": {
-    "prompt": "(Bản gốc: mở widget \"Mầm Fake V2\" thật, chat 1 câu mỗi chủ đề trong 3 chủ đề Chào hỏi/Sức khoẻ/Nghề nghiệp — cần widget demo thật nên được đơn giản hoá lại.) So với V1 (dò từ khoá cố định), V2 dùng mô hình ngôn ngữ lớn để tự suy nghĩ và trả lời linh hoạt hơn. Hãy viết 1 câu chat cho mỗi chủ đề (Chào hỏi/Sức khoẻ/Nghề nghiệp) mà bạn nghĩ V2 sẽ trả lời tự nhiên hơn V1 rất nhiều, và giải thích ngắn vì sao.\nViết 3 câu chat + giải thích.",
-    "criteria": [
-      {
-        "key": "text",
-        "optional": false,
-        "minLength": null,
-        "label": "3 câu chat + giải thích",
-        "desc": "Mỗi chủ đề 1 câu, kèm lý do vì sao V2 trả lời tốt hơn V1."
-      }
-    ],
-    "points": 10
-  },
-  "11.15": {
-    "prompt": "(Bản gốc: mở widget \"Mầm Fake V3\" thật, yêu cầu 7 việc: liệt kê/đếm hình, thử xoá hình, liệt kê/đếm văn bản, thử xoá văn bản, thống kê tuổi học viên — cần widget demo thật nên được đơn giản hoá lại.) Hãy tưởng tượng bạn đang chat với Mầm Fake V3 và lần lượt yêu cầu 7 việc: (1) liệt kê danh sách hình, (2) đếm hình, (3) thử xoá hình, (4) liệt kê danh sách file văn bản, (5) đếm văn bản, (6) thử xoá 1 văn bản, (7) thống kê độ tuổi học viên trong lớp. Viết lại 7 câu lệnh bạn sẽ gõ.\nViết 7 câu lệnh tương ứng 7 việc trên.",
-    "criteria": [
-      {
-        "key": "text",
-        "optional": false,
-        "minLength": null,
-        "label": "7 câu lệnh",
-        "desc": "Mỗi câu tương ứng với 1 trong 7 việc liệt kê ở trên."
-      }
-    ],
-    "points": 10
-  },
-  "11.17": {
-    "prompt": "(Bản gốc: viết bình luận thảo luận công khai trong diễn đàn thật của lớp, được AI chấm chủ đề — cần diễn đàn thật nên được đơn giản hoá lại.) Theo bạn, tại sao các việc liệt kê hình, đếm hình, liệt kê văn bản, đếm văn bản thì Mầm Fake (V3) làm được; còn xoá hình, xoá văn bản, thống kê tuổi học viên thì không làm được? Viết suy nghĩ của bạn (ít nhất 80 ký tự).\nViết ít nhất 80 ký tự giải thích suy nghĩ của bạn.",
-    "criteria": [
-      {
-        "key": "text",
-        "optional": false,
-        "minLength": null,
-        "label": "Suy nghĩ của bạn",
-        "desc": "Ít nhất 80 ký tự."
-      }
-    ],
-    "points": 10
-  },
-  "11.18": {
-    "prompt": "(Bản gốc: mở widget \"Mầm Fake V4\" thật và tìm cách khiến nó gọi tool tạo card visit — cần widget demo thật nên được đơn giản hoá lại.) V4 được trang bị thêm tool tạo card visit (danh thiếp) từ thông tin cá nhân. Hãy viết câu lệnh bạn sẽ gõ để yêu cầu V4 tạo card visit cho mình.\nViết câu lệnh yêu cầu tạo card visit.",
-    "criteria": [
-      {
-        "key": "text",
-        "optional": false,
-        "minLength": null,
-        "label": "Câu lệnh",
-        "desc": "Câu lệnh yêu cầu tạo card visit."
-      }
-    ],
-    "points": 8
-  },
   "11.26": {
-    "prompt": "Nhờ một Coding Agent bất kỳ lập trình tạo ra... một Agent khác: một Agent đơn giản với 3 tool (liệt kê hình ảnh dạng gallery, kiểm tra RAM và liệt kê process chiếm nhiều RAM nhất, kiểm tra dung lượng ổ cứng và liệt kê top 10 file lớn nhất), có trang web localhost để chat với Agent này qua trình duyệt.\n\nSau khi làm xong, hãy suy ngẫm và trả lời: (1) Tại sao Agent vốn phức tạp mà lại có thể tạo ra qua một prompt đơn giản như vậy? (2) Học làm AI Agent có còn cần thiết không? (3) Đến giờ, bạn cho rằng học AI Agent là học cái gì?\nChụp ảnh Agent bạn vừa tạo đang chạy, và viết câu trả lời cho 3 câu hỏi suy ngẫm.",
+    "prompt": "Copy prompt dưới đây, nhờ một **Coding Agent** bất kỳ lập trình tạo ra... một Agent khác.\nChụp ảnh Agent bạn vừa tạo đang chạy, và viết câu trả lời cho 3 câu hỏi: (1) Tại sao Agent vốn là một thứ rất phức tạp, đầy sức mạnh, mà việc tạo ra nó lại có thể hoàn thành qua một prompt đơn giản như vậy? (2) Thế thì, học làm AI Agent có còn cần thiết nữa hay không? (3) Và cuối cùng thì, đến giờ phút này, bạn cho rằng học AI Agent là học cái gì?",
     "criteria": [
       {
         "key": "image",
@@ -145,8 +80,8 @@
         "key": "text",
         "optional": false,
         "minLength": null,
-        "label": "Trả lời 3 câu hỏi suy ngẫm",
-        "desc": "Trả lời cả 3 câu hỏi."
+        "label": "Trả lời 3 câu hỏi thảo luận",
+        "desc": "Trả lời cả 3 câu hỏi ở trên."
       }
     ],
     "points": 20

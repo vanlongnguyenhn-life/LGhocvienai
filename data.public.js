@@ -2981,19 +2981,18 @@ const LESSONS = [
     "code": "11",
     "title": "Bài 11 - Đại phẫu một Agent",
     "points": 280,
-    "intro": "\"Mổ xẻ\" một Agent đơn giản do tôi tự viết (Mầm Fake) để hiểu rõ bên trong nó có gì: từ chatbot kịch bản có sẵn (V1), tới chatbot dùng LLM (V2-V3), tới Agent biết gọi tool thật (V4) — và cách một prompt đơn giản có thể sinh ra được cả một Agent.\n\nGhi chú: một số câu ở bài gốc dùng chatbot demo tương tác trực tiếp (Mầm Fake V1-V4) và diễn đàn bình luận thật của lớp — những phần này đã được đơn giản hoá thành câu hỏi/bài tự luận tương đương.",
     "questions": [
       {
         "code": "11.1",
         "title": "Câu 11.1",
         "type": "multi",
-        "prompt": "Coding Agent thật có thể làm gần như mọi thứ, dựa trên 3 năng lực: suy luận vô hạn, thực thi dựa trên tool có sẵn, và tự viết phần mềm mới để làm việc lặp lại định kỳ. Vì các Coding Agent thật (OpenCode, Gemini CLI...) quá phức tạp, tôi tạo ra một Agent Demo giới hạn tính năng để học từng bước. Việc tìm hiểu Agent Demo này mang lại lợi ích nào?",
+        "prompt": "Đến bây giờ, bạn đã biết rõ năng lực của Coding Agent mình đang sử dụng. Nó có thể làm gần như mọi thứ, dựa trên **3 công cụ vô cùng quan trọng**:\n1. Khả năng suy luận vô hạn\n2. Khả năng thực thi dựa trên tool được cung cấp sẵn\n3. Khả năng làm việc định kỳ lặp lại dựa trên việc tự viết (coding) ra các phần mềm mới\n\nMục tiêu dài hạn mà chúng ta hướng tới là **tự xây dựng Agent**. Có nhiều cách để làm việc này, ví dụ như \"mở tung\" mã nguồn các Coding Agent hiện có (như OpenCode, Gemini CLI...).\n\nNhưng đó là những hệ thống cực kỳ phức tạp.\n\nĐể giúp bạn dễ hiểu hơn và tiếp thu từng bước một, tôi đã tạo ra một **Agent Demo** giới hạn tính năng. Theo bạn, việc tìm hiểu Agent Demo này thay vì Coding Agent cồng kềnh mang lại những lợi ích nào? _(Chọn tất cả đáp án đúng)_",
         "options": [
           "Vì do tôi tự viết nên Agent Demo mạnh hơn và chạy nhanh hơn mọi Coding Agent mã nguồn mở",
           "Agent Demo tuy đơn giản nhưng vẫn đủ sức thay thế hoàn toàn Coding Agent trong công việc thực tế",
           "Không bị ngộp thở trong hàng tá tính năng của Coding Agent",
           "Dễ hiểu hơn vì nó cực kỳ đơn giản",
-          "Học xong Agent Demo là đủ, các bạn sẽ không cần tìm hiểu các Coding Agent thật nữa"
+          "Học xong Agent Demo là đủ, các bạn sẽ không cần tìm hiểu các Coding Agent thật (OpenCode, Gemini CLI...) nữa"
         ],
         "points": 10
       },
@@ -3001,7 +3000,7 @@ const LESSONS = [
         "code": "11.2",
         "title": "Câu 11.2",
         "type": "order",
-        "prompt": "Nhắc lại định nghĩa Agent ngắn gọn: AI Agent là một Chatbot được nâng cấp qua từng cấp độ. Hãy sắp xếp 4 cấp độ sau theo đúng thứ tự nâng cấp (từ thấp đến cao):",
+        "prompt": "Nhắc lại về định nghĩa Agent một cách ngắn gọn và đơn giản. **AI Agent** là một Chatbot được nâng cấp qua từng cấp độ.\n\nHãy sắp xếp 4 cấp độ sau theo đúng thứ tự nâng cấp (từ thấp đến cao):",
         "items": [
           "Biết dùng Công cụ",
           "Biết định hình Danh tính",
@@ -3014,20 +3013,23 @@ const LESSONS = [
         "code": "11.3",
         "title": "Câu 11.3",
         "type": "code",
-        "prompt": "AI Agent là một Chatbot được nâng cấp qua từng cấp độ: biết dùng Công cụ, biết định hình Danh tính, biết Lưu trữ trải nghiệm và biết Tự tư duy để đạt mục tiêu. Vậy thì trước hết, nó phải là một ______",
-        "secretNote": "🔒 Gợi ý: chương trình máy tính được thiết kế để trò chuyện với con người.",
+        "prompt": "Đúng rồi, **AI Agent** là một Chatbot được nâng cấp qua từng cấp độ: biết dùng Công cụ, biết định hình Danh tính, biết Lưu trữ trải nghiệm và biết Tự tư duy để đạt mục tiêu.\n\nVậy thì trước hết, nó phải là một ______",
         "points": 6
       },
       {
         "code": "11.4",
         "title": "Câu 11.4",
-        "type": "single",
-        "prompt": "AI Agent là một Chatbot được nâng cấp qua từng cấp độ: biết dùng Công cụ, biết định hình Danh tính, biết Lưu trữ trải nghiệm và biết Tự tư duy để đạt mục tiêu.\n\nVậy thì trước hết, nó phải là một chatbot! Chatbot là một chương trình máy tính được thiết kế để trò chuyện với con người. Đầu vào và đầu ra của nó là dạng thức gì?",
-        "options": [
+        "type": "match",
+        "prompt": "**AI Agent** là một Chatbot được nâng cấp qua từng cấp độ: biết dùng Công cụ, biết định hình Danh tính, biết Lưu trữ trải nghiệm và biết Tự tư duy để đạt mục tiêu.\n\nVậy thì trước hết, nó phải là một **chatbot**!\n\nChatbot là một chương trình máy tính được thiết kế để trò chuyện với con người. Hãy cho biết đầu vào và đầu ra của nó:",
+        "leftItems": [
+          "Đầu vào của nó là",
+          "Đầu ra của nó là"
+        ],
+        "rightOptions": [
           "Ngôn ngữ, dưới các dạng thức khác nhau như text, audio, video, âm thanh...",
-          "Chỉ hình ảnh tĩnh",
           "Những con số / dữ liệu nhị phân",
-          "Mã nguồn lập trình"
+          "Mã nguồn lập trình",
+          "Chỉ hình ảnh tĩnh"
         ],
         "points": 6
       },
@@ -3035,7 +3037,7 @@ const LESSONS = [
         "code": "11.5",
         "title": "Câu 11.5",
         "type": "multi",
-        "prompt": "Chatbot có đầu vào/đầu ra đều là ngôn ngữ. Vậy dựa vào đâu chatbot có thể đọc hiểu câu hỏi để trả lời?",
+        "prompt": "Chatbot là một chương trình máy tính được thiết kế để trò chuyện với con người. Đầu vào của nó là **Ngôn ngữ** (dưới các dạng thức khác nhau như text, audio, video, âm thanh...) và đầu ra cũng chỉ là **Ngôn ngữ**.\n\nVậy dựa vào đâu chatbot có thể đọc hiểu câu hỏi để trả lời? _(chọn tất cả đáp án đúng)_",
         "options": [
           "Mỗi câu hỏi đều có một nhân viên trực tổng đài trả lời thay chatbot",
           "Chatbot sử dụng mô hình ngôn ngữ lớn để tự suy nghĩ và trả lời",
@@ -3050,18 +3052,25 @@ const LESSONS = [
       {
         "code": "11.6",
         "title": "Câu 11.6",
-        "type": "gate",
-        "prompt": "Câu này cần nhắn /help kèm mã cá nhân cho bot \"Bé Mầm\" thật trong nhóm Zalo của lớp và chờ phản hồi trong thời hạn — cần tích hợp Zalo Official Account thật, hạ tầng đang được xây dựng, sẽ mở khoá sớm.",
+        "type": "single",
+        "helpPing": true,
+        "prompt": "Nhắn cho **Bé Mầm** trong nhóm lớp (hoặc nhắn riêng cho Bé) đúng tin nhắn sau — mỗi học viên có một mã riêng:",
+        "copyPrompt": "/help {{help_code}}",
+        "copyPromptTrailing": "Lưu ý: phải gõ kèm đúng mã của bạn; tin nhắn còn hạn trong 24 giờ trước khi bấm Kiểm tra. Nếu đã gửi từ lâu thì gửi lại cho mới. Bạn sẽ nhận được tin nhắn hướng dẫn từ Bé Mầm — theo bạn, nội dung đó là:",
+        "options": [
+          "Chatbot sử dụng mô hình ngôn ngữ lớn để tự suy nghĩ và trả lời",
+          "Chatbot được cài đặt sẵn các kịch bản mẫu để trả lời"
+        ],
         "points": 8
       },
       {
         "code": "11.7",
         "title": "Câu 11.7",
         "type": "single",
-        "prompt": "Nếu gõ /giup hoặc /giup-do hoặc /giup-toi hoặc /tro-giup (thay vì đúng từ khoá /help) thì bot \"Bé Mầm\" (kiểu kịch bản mẫu) có phản hồi không?",
+        "prompt": "Nếu bạn không gõ `/help` khi tag Bé Mầm mà gõ `/giup` hoặc `/giup-do` hoặc `/giup-toi` hoặc `/tro-giup` thì Bé Mầm có phản hồi không?",
         "options": [
-          "Có phản hồi bình thường",
-          "Không phản hồi"
+          "Không phản hồi",
+          "Có phản hồi bình thường"
         ],
         "points": 8
       },
@@ -3069,7 +3078,7 @@ const LESSONS = [
         "code": "11.8",
         "title": "Câu 11.8",
         "type": "single",
-        "prompt": "Để Bé Mầm phản hồi thêm cả /giup, /giup-do, /giup-toi, /tro-giup, tôi cần làm gì?",
+        "prompt": "Theo bạn, cần cấu hình như thế nào để Bé Mầm phản hồi với những lệnh trên (`/giup`, `/giup-do`, `/giup-toi`, `/tro-giup`)?",
         "options": [
           "Không cần làm gì, Bé Mầm tự học được các lệnh đó",
           "Đưa /giup, /giup-do, /giup-toi, /tro-giup vào danh sách từ khoá kích hoạt câu trả lời \"Hỗ trợ\"",
@@ -3083,54 +3092,39 @@ const LESSONS = [
       {
         "code": "11.9",
         "title": "Câu 11.9",
-        "type": "assignment",
-        "prompt": "(Bản gốc: mở widget \"Mầm Fake V1\" thật trên trang và test ≥15 câu chat xoay quanh 3 chủ đề Chào hỏi/Sức khoẻ/Nghề nghiệp — cần widget demo thật nên được đơn giản hoá lại.) Hãy tự viết ra ít nhất 5 câu chat mẫu cho MỖI chủ đề (Chào hỏi, Sức khoẻ, Nghề nghiệp) mà một chatbot kiểu \"kịch bản mẫu, dò từ khoá\" có thể nhận diện và trả lời được.",
-        "instructions": "Liệt kê các câu chat mẫu theo từng chủ đề.",
-        "criteria": [
-          {
-            "key": "text",
-            "label": "Câu chat mẫu 3 chủ đề",
-            "desc": "Ít nhất 5 câu mỗi chủ đề: Chào hỏi, Sức khoẻ, Nghề nghiệp.",
-            "placeholder": "Chào hỏi: Xin chào, Chào bạn, ...\nSức khoẻ: Dạo này khoẻ không, ...\nNghề nghiệp: Bạn làm nghề gì, ..."
-          }
-        ],
+        "type": "agent_demo",
+        "demoVer": "v1",
+        "prompt": "Bấm vào nút bên dưới để mở **Chatbot Demo (Bé Mầm Fake)**. Thực hiện **ít nhất 15 câu chat** mà chatbot có thể trả lời, xoay quanh 3 chủ đề **Chào hỏi**, **Sức khoẻ** và **Nghề nghiệp**. Mỗi chủ đề có **ít nhất 5 câu chat**.\n\nĐịnh nghĩa _\"câu chat mà chatbot có thể trả lời\"_ được hiểu là những câu chat có chứa từ khoá nằm trong danh sách đã được cấu hình sẵn, dựa theo đó, chatbot sẽ phát hiện từ khoá và trả lời theo mẫu cài đặt trước.",
         "points": 12
       },
       {
         "code": "11.10",
         "title": "Câu 11.10",
         "type": "single",
-        "prompt": "Theo bạn, Mầm Fake (V1) là chatbot kiểu gì?",
+        "prompt": "Theo bạn, **Mầm Fake (V1)** là chatbot kiểu gì?",
         "options": [
-          "Chatbot được cài đặt sẵn các kịch bản mẫu để trả lời",
-          "Chatbot sử dụng mô hình ngôn ngữ lớn để tự suy nghĩ và trả lời"
+          "Chatbot sử dụng mô hình ngôn ngữ lớn để tự suy nghĩ và trả lời",
+          "Chatbot được cài đặt sẵn các kịch bản mẫu để trả lời"
         ],
         "points": 8
       },
       {
         "code": "11.11",
         "title": "Câu 11.11",
-        "type": "assignment",
-        "prompt": "(Bản gốc: mở widget \"Mầm Fake V2\" thật, chat 1 câu mỗi chủ đề trong 3 chủ đề Chào hỏi/Sức khoẻ/Nghề nghiệp — cần widget demo thật nên được đơn giản hoá lại.) So với V1 (dò từ khoá cố định), V2 dùng mô hình ngôn ngữ lớn để tự suy nghĩ và trả lời linh hoạt hơn. Hãy viết 1 câu chat cho mỗi chủ đề (Chào hỏi/Sức khoẻ/Nghề nghiệp) mà bạn nghĩ V2 sẽ trả lời tự nhiên hơn V1 rất nhiều, và giải thích ngắn vì sao.",
-        "instructions": "Viết 3 câu chat + giải thích.",
-        "criteria": [
-          {
-            "key": "text",
-            "label": "3 câu chat + giải thích",
-            "desc": "Mỗi chủ đề 1 câu, kèm lý do vì sao V2 trả lời tốt hơn V1.",
-            "placeholder": "..."
-          }
-        ],
+        "type": "agent_demo",
+        "demoVer": "v2",
+        "demoLabel": "Mở Chatbot Mầm Fake (V2)",
+        "prompt": "Mở **Chatbot Mầm Fake (V2)**. Thực hiện **đủ 3 câu chat** xoay quanh 3 chủ đề **Chào hỏi**, **Sức khoẻ** và **Nghề nghiệp** — mỗi chủ đề **1 câu**.",
         "points": 10
       },
       {
         "code": "11.12",
         "title": "Câu 11.12",
         "type": "single",
-        "prompt": "Theo bạn, Mầm Fake (V2) là chatbot kiểu gì?",
+        "prompt": "Theo bạn, **Mầm Fake (V2)** là chatbot kiểu gì?",
         "options": [
-          "Chatbot được cài đặt sẵn các kịch bản mẫu để trả lời",
-          "Chatbot sử dụng mô hình ngôn ngữ lớn để tự suy nghĩ và trả lời"
+          "Chatbot sử dụng mô hình ngôn ngữ lớn để tự suy nghĩ và trả lời",
+          "Chatbot được cài đặt sẵn các kịch bản mẫu để trả lời"
         ],
         "points": 8
       },
@@ -3138,15 +3132,15 @@ const LESSONS = [
         "code": "11.13",
         "title": "Câu 11.13",
         "type": "code",
-        "prompt": "(Bản gốc: đọc tên mã model hiển thị trong thông tin kỹ thuật của widget Mầm Fake V3 thật — cần widget demo thật nên được đơn giản hoá lại.) Giả sử màn hình \"thông tin kỹ thuật\" của Mầm Fake (V3) hiển thị dòng chữ sau: model: Jackrong/Qwopus3.5-9B-Coder-MTP-GGUF. Bạn hãy ghi lại chính xác tên mã model đó vào ô dưới.",
-        "secretNote": "🔒 Chép chính xác chuỗi: Jackrong/Qwopus3.5-9B-Coder-MTP-GGUF",
+        "prompt": "Vậy mô hình ngôn ngữ lớn mà **Mầm Fake (V3)** sử dụng là gì? Bạn ghi **chính xác tên mã** của nó vào ô dưới nhé.",
+        "secretNote": "🔒 Gợi ý: mở lại widget Mầm Fake (V3) ở câu trước, bấm nút ⚙ cạnh tên chatbot để xem phần Cấu hình.",
         "points": 10
       },
       {
         "code": "11.14",
         "title": "Câu 11.14",
         "type": "match",
-        "prompt": "Mô hình ngôn ngữ (LLM) dạng text thuần này ngoài việc tạo sinh văn bản, thì nó có thể tạo sinh hình ảnh và tạo sinh video hay không?",
+        "prompt": "Mô hình ngôn ngữ lớn (LLM) này ngoài việc tạo sinh văn bản, thì nó có thể tạo sinh **hình ảnh** và tạo sinh **video** hay không?",
         "leftItems": [
           "Tạo sinh hình ảnh",
           "Tạo sinh video"
@@ -3159,24 +3153,17 @@ const LESSONS = [
       {
         "code": "11.15",
         "title": "Câu 11.15",
-        "type": "assignment",
-        "prompt": "(Bản gốc: mở widget \"Mầm Fake V3\" thật, yêu cầu 7 việc: liệt kê/đếm hình, thử xoá hình, liệt kê/đếm văn bản, thử xoá văn bản, thống kê tuổi học viên — cần widget demo thật nên được đơn giản hoá lại.) Hãy tưởng tượng bạn đang chat với Mầm Fake V3 và lần lượt yêu cầu 7 việc: (1) liệt kê danh sách hình, (2) đếm hình, (3) thử xoá hình, (4) liệt kê danh sách file văn bản, (5) đếm văn bản, (6) thử xoá 1 văn bản, (7) thống kê độ tuổi học viên trong lớp. Viết lại 7 câu lệnh bạn sẽ gõ.",
-        "instructions": "Viết 7 câu lệnh tương ứng 7 việc trên.",
-        "criteria": [
-          {
-            "key": "text",
-            "label": "7 câu lệnh",
-            "desc": "Mỗi câu tương ứng với 1 trong 7 việc liệt kê ở trên.",
-            "placeholder": "1. Liệt kê hình...\n2. Đếm hình...\n..."
-          }
-        ],
+        "type": "agent_demo",
+        "demoVer": "v3",
+        "demoLabel": "Mở Chatbot Mầm Fake (V3)",
+        "prompt": "Mở **Chatbot Mầm Fake (V3)**. Hỏi Bé Mầm **tổng cộng 7 việc**:\n1. Liệt kê danh sách hình\n2. Đếm hình\n3. Thử xoá hình\n4. Liệt kê danh sách file văn bản\n5. Đếm văn bản\n6. Thử xoá 1 văn bản\n7. Thống kê độ tuổi học viên trong lớp",
         "points": 10
       },
       {
         "code": "11.16",
         "title": "Câu 11.16",
         "type": "match",
-        "prompt": "Trong 7 việc ở câu trước, việc nào Bé Mầm Fake (V3) làm được, việc nào báo không làm được?",
+        "prompt": "Trong 7 việc bạn vừa yêu cầu ở câu trước, **việc nào Bé Mầm Fake (V3) làm được, việc nào báo không làm được**?",
         "leftItems": [
           "Liệt kê danh sách hình",
           "Đếm hình",
@@ -3195,48 +3182,35 @@ const LESSONS = [
       {
         "code": "11.17",
         "title": "Câu 11.17",
-        "type": "assignment",
-        "prompt": "(Bản gốc: viết bình luận thảo luận công khai trong diễn đàn thật của lớp, được AI chấm chủ đề — cần diễn đàn thật nên được đơn giản hoá lại.) Theo bạn, tại sao các việc liệt kê hình, đếm hình, liệt kê văn bản, đếm văn bản thì Mầm Fake (V3) làm được; còn xoá hình, xoá văn bản, thống kê tuổi học viên thì không làm được? Viết suy nghĩ của bạn (ít nhất 80 ký tự).",
-        "instructions": "Viết ít nhất 80 ký tự giải thích suy nghĩ của bạn.",
-        "criteria": [
-          {
-            "key": "text",
-            "label": "Suy nghĩ của bạn",
-            "desc": "Ít nhất 80 ký tự.",
-            "placeholder": "Bạn nghĩ rằng..."
-          }
-        ],
+        "type": "reflect",
+        "thaoLuan": true,
+        "minLength": 80,
+        "prompt": "Theo bạn, **tại sao** các việc _liệt kê hình, đếm hình, liệt kê file văn bản, đếm file văn bản_ thì **Mầm Fake (V3) làm được**; còn các việc _xoá hình, xoá file văn bản, thống kê độ tuổi học viên lớp ALG_ thì **không làm được**? Hãy chia sẻ suy nghĩ để cả lớp cùng thảo luận.",
         "points": 10
       },
       {
         "code": "11.18",
         "title": "Câu 11.18",
-        "type": "assignment",
-        "prompt": "(Bản gốc: mở widget \"Mầm Fake V4\" thật và tìm cách khiến nó gọi tool tạo card visit — cần widget demo thật nên được đơn giản hoá lại.) V4 được trang bị thêm tool tạo card visit (danh thiếp) từ thông tin cá nhân. Hãy viết câu lệnh bạn sẽ gõ để yêu cầu V4 tạo card visit cho mình.",
-        "instructions": "Viết câu lệnh yêu cầu tạo card visit.",
-        "criteria": [
-          {
-            "key": "text",
-            "label": "Câu lệnh",
-            "desc": "Câu lệnh yêu cầu tạo card visit.",
-            "placeholder": "Tạo cardvisit cho tôi..."
-          }
-        ],
+        "type": "agent_demo",
+        "demoVer": "v4",
+        "demoLabel": "Mở Mầm Fake (V4)",
+        "prompt": "Mở **Mầm Fake (V4)** bên dưới và tìm cách khiến nó **tạo card visit** (danh thiếp) cho chính bạn — từ thông tin cá nhân của bạn trong lớp học ALG.",
         "points": 8
       },
       {
         "code": "11.19",
         "title": "Câu 11.19",
         "type": "code",
-        "prompt": "Để thực hiện các việc như tạo danh thiếp, liệt kê/đếm hình ảnh, liệt kê/đếm văn bản, tính tuổi trung bình học viên..., Mầm Fake phải được trang bị các tool với tên mã cụ thể. Một trong các tool đó có tên mã là gì (tool dùng để lấy thống kê độ tuổi lớp học)?",
-        "secretNote": "🔒 Tên mã dạng snake_case, ví dụ tương tự: count_images, show_images, count_docs, show_docs, delete_image, delete_doc, create_business_card.",
+        "prompt": "Để có thể thực hiện các nhiệm vụ như:\n- Tạo danh thiếp\n- Hiển thị danh sách hình ảnh (JPG, PNG...) trong máy chủ\n- Hiển thị danh sách văn bản (file docs, pdfs...) trong máy chủ\n- Tính độ tuổi trung bình học viên\n- ...\n\nthì Mầm Fake phải được trang bị rất nhiều công cụ. Hãy kể tên **mã chính xác** các công cụ đó là gì?\n\n_(Ví dụ nếu có công cụ kiểm tra RAM tên là_ `ram-check.sh` _thì phải nhập_ `ram-check.sh` _thay vì \"công cụ kiểm tra RAM\")_",
+        "secretNote": "🔒 Gợi ý: mở lại widget Mầm Fake (V4) rồi hỏi thẳng nó \"em có những công cụ gì?\".",
+        "wrongHint": "Chưa đủ — kể thiếu ít nhất một công cụ, hỏi lại Mầm Fake xem nó có những gì nhé",
         "points": 10
       },
       {
         "code": "11.20",
         "title": "Câu 11.20",
         "type": "multi",
-        "prompt": "Để Mầm Fake \"gọi được\" các tool này để hoàn tất công việc được giao, thì nó phải có gì?",
+        "prompt": "Để Mầm Fake \"gọi được\" các tool này để hoàn tất công việc được giao, thì nó phải có gì? _(chọn tất cả đáp án đúng)_",
         "options": [
           "Được cấp quyền quản trị (root/admin) tối cao trên toàn bộ máy chủ",
           "Tự có ý thức và cảm xúc như con người để tự hiểu việc cần làm",
@@ -3252,7 +3226,7 @@ const LESSONS = [
         "code": "11.21",
         "title": "Câu 11.21",
         "type": "match",
-        "prompt": "Vậy ai là người đã \"giúp sức\" cho Agent Mầm Fake? (chọn nguồn giúp sức cho mỗi việc)",
+        "prompt": "Vậy ai là người đã \"giúp sức\" cho Agent Mầm Fake? _(chọn nguồn giúp sức cho mỗi việc)_",
         "leftItems": [
           "Trang bị tools (các phần mềm trong máy)",
           "Cung cấp tài liệu mô tả tính năng / tham số / cách dùng tool",
@@ -3268,7 +3242,7 @@ const LESSONS = [
         "code": "11.22",
         "title": "Câu 11.22",
         "type": "order-tag",
-        "prompt": "Khi bạn gõ \"Tạo cardvisit cho tôi\" vào ô chat của Mầm Fake V4, từng bước \"bếp núc\" đằng sau hậu trường diễn ra thế nào? Sắp xếp đúng thứ tự và cho biết mỗi bước do Mầm Fake (chương trình) hay Mô hình ngôn ngữ lớn (LLM) thực hiện.",
+        "prompt": "Khi bạn gõ _Tạo cardvisit cho tôi_ vào ô chat của Mầm Fake V4, thì từng bước \"bếp núc\" đằng sau hậu trường diễn ra các bước thế nào?\n\nSắp xếp đúng thứ tự, và cho biết mỗi bước do **Mầm Fake (chương trình)** hay **Mô hình ngôn ngữ lớn (LLM)** thực hiện.",
         "tagOptions": [
           "Mầm Fake (chương trình)",
           "Mô hình ngôn ngữ lớn (LLM)"
@@ -3278,28 +3252,28 @@ const LESSONS = [
             "text": "Nhận prompt \"Tạo cardvisit cho tôi\" từ người dùng, gọi là user_prompt"
           },
           {
-            "text": "Lấy danh sách tools gồm tên, mô tả, tham số, gọi là tools_list"
+            "text": "Lấy danh sách tools bao gồm tên, mô tả, danh sách tham số gom vào một chỗ, gọi là tools_list (create_business_card, get_class_age_stats, delete_doc...)"
           },
           {
-            "text": "\"Cộng gộp\" user_prompt và tools_list thành system_prompt"
+            "text": "\"Cộng gộp\" user_prompt và tools_list lại với nhau, cùng với một số thông tin khác thành system_prompt (Bạn là trợ lý AI của Life Group, có các tool count_images, show_images, count_docs, show_docs, delete_image, delete_doc, get_class_age_stats, hãy giúp tôi trả lời prompt sau từ người dùng: Tạo cardvisit cho tôi)"
           },
           {
             "text": "Gửi system_prompt lên Mô hình ngôn ngữ lớn"
           },
           {
-            "text": "Tạo câu trả lời hợp lý: response_text và hướng dẫn gọi tool (toolcall_instruction)"
+            "text": "Tạo câu trả lời hợp lý, bao gồm cả nội dung phản hồi (response_text) và hướng dẫn gọi tool (toolcall_instruction)"
           },
           {
-            "text": "Vừa hiện response_text vừa âm thầm chạy tool theo toolcall_instruction để có tool_result"
+            "text": "Vừa hiện nội dung response_text cho người dùng xem, vừa âm thầm chạy các tool cần thiết theo hướng dẫn từ toolcall_instruction để có kết quả trả về từ tool (tool_result)"
           },
           {
-            "text": "Tiếp tục \"cộng gộp\" user_prompt, tools_list, tool_result thành system_prompt_v2"
+            "text": "Tiếp tục \"Cộng gộp\" user_prompt, tools_list, tool_result sau vòng 1 lại với nhau, cùng với một số thông tin khác thành system_prompt_v2"
           },
           {
             "text": "Gửi system_prompt_v2 lên Mô hình ngôn ngữ lớn"
           },
           {
-            "text": "Tạo câu trả lời cho system_prompt_v2: response_text, toolcall_instruction hoặc done_signal"
+            "text": "Tạo câu trả lời hợp lý cho system_prompt_v2, bao gồm cả nội dung phản hồi (response_text), hướng dẫn gọi tool (toolcall_instruction) hoặc thông báo chu trình kết thúc (done_signal)"
           }
         ],
         "points": 22
@@ -3308,7 +3282,7 @@ const LESSONS = [
         "code": "11.23",
         "title": "Câu 11.23",
         "type": "single",
-        "prompt": "Vậy khi người dùng gõ \"Tạo cardvisit cho tôi\" thì:",
+        "prompt": "Vậy khi người dùng gõ _\"Tạo cardvisit cho tôi\"_ thì:",
         "options": [
           "Mầm Fake tạo ra một prompt khác phức tạp hơn nhiều",
           "Mầm Fake \"chuyển tiếp\" đúng câu prompt này lên Mô hình ngôn ngữ lớn LLM"
@@ -3319,7 +3293,7 @@ const LESSONS = [
         "code": "11.24",
         "title": "Câu 11.24",
         "type": "single",
-        "prompt": "Prompt phức tạp cuối cùng mà Mầm Fake tạo ra để gửi lên LLM trông giống mẫu nào nhất?",
+        "prompt": "Prompt phức tạp cuối cùng mà Mầm Fake tạo ra (khi người dùng gõ _\"Tạo cardvisit cho tôi\"_) để gửi lên LLM trông giống mẫu nào nhất?",
         "options": [
           "Người dùng gõ \"Tạo cardvisit cho tôi\", hãy soạn câu trả lời",
           "Người dùng gõ \"Tạo cardvisit cho tôi\". Bạn là Agent thông minh siêu cấp vũ trụ, hãy hoàn thành mục tiêu phù hợp với prompt người dùng gõ vào.",
@@ -3331,11 +3305,16 @@ const LESSONS = [
         "code": "11.25",
         "title": "Câu 11.25",
         "type": "match",
-        "prompt": "3 mẫu prompt sau ứng với 3 loại khác nhau (không chính xác tuyệt đối, nhưng hiểu nôm na). Hãy ghép mỗi mẫu với loại tương ứng.",
+        "prompt": "Mô tả dưới đây không chính xác tuyệt đối, nhưng hiểu nôm na thì 3 mẫu prompt sau ứng với 3 loại khác nhau. Hãy ghép mỗi mẫu với loại tương ứng.",
         "leftItems": [
           "\"Làm sao để tạo cardvisit\" — không có lịch sử chat, không có tool",
           "Có lịch sử chat cũ, nhưng không có tool — chỉ \"hãy tạo câu trả lời phù hợp tiếp theo\"",
           "Có lịch sử chat + danh sách tool + vai trò \"chuyên gia giải quyết vấn đề, hãy hướng dẫn hoàn thành mục tiêu\""
+        ],
+        "leftItemsHtml": [
+          "<div class=\"prompt-khoi\"><div class=\"prompt-dong nguoi-dung\">Làm sao để tạo cardvisit</div></div>",
+          "<div class=\"prompt-khoi\"><div class=\"prompt-dong nguoi-dung\">Người dùng gõ \"Làm sao để tạo cardvisit\".</div><div class=\"prompt-dong lich-su\">Lịch sử chat cũ hơn của họ là: \"Xin chào\", tôi rep \"Chào bạn\"; Họ nói \"Tôi chuẩn bị đi gặp đối tác\", tôi rep \"Bạn hãy ăn mặc lịch sự, và nhớ đặt nhà hàng phù hợp nhé\"; Họ nói tiếp \"Nhưng tôi chưa có cardvisit\", tôi rep \"Bạn nên có đấy. Bạn muốn đi tìm chỗ in ấn hay tự thiết kế?\".</div><div class=\"prompt-dong yeu-cau\">Hãy tạo câu trả lời phù hợp tiếp theo tôi nhé.</div></div>",
+          "<div class=\"prompt-khoi\"><div class=\"prompt-dong nguoi-dung\">Người dùng gõ \"Tạo cardvisit cho tôi\".</div><div class=\"prompt-dong lich-su\">Lịch sử chat cũ hơn của họ là...</div><div class=\"prompt-dong tools\">Tôi có một số tool (count_images, show_images, cardvisit_create, show_docs...).</div><div class=\"prompt-dong vai-tro\">Bạn là chuyên gia giải quyết vấn đề. Bạn luôn trả lời với ngôn ngữ tận tâm và dễ hiểu.</div><div class=\"prompt-dong yeu-cau\">Hãy hướng dẫn tôi hoàn thành mục tiêu phù hợp với prompt người dùng gõ vào.</div></div>"
         ],
         "rightOptions": [
           "Lời gọi LLM",
@@ -3348,8 +3327,10 @@ const LESSONS = [
         "code": "11.26",
         "title": "Câu 11.26",
         "type": "assignment",
-        "prompt": "Nhờ một Coding Agent bất kỳ lập trình tạo ra... một Agent khác: một Agent đơn giản với 3 tool (liệt kê hình ảnh dạng gallery, kiểm tra RAM và liệt kê process chiếm nhiều RAM nhất, kiểm tra dung lượng ổ cứng và liệt kê top 10 file lớn nhất), có trang web localhost để chat với Agent này qua trình duyệt.\n\nSau khi làm xong, hãy suy ngẫm và trả lời: (1) Tại sao Agent vốn phức tạp mà lại có thể tạo ra qua một prompt đơn giản như vậy? (2) Học làm AI Agent có còn cần thiết không? (3) Đến giờ, bạn cho rằng học AI Agent là học cái gì?",
-        "instructions": "Chụp ảnh Agent bạn vừa tạo đang chạy, và viết câu trả lời cho 3 câu hỏi suy ngẫm.",
+        "prompt": "Copy prompt dưới đây, nhờ một **Coding Agent** bất kỳ lập trình tạo ra... một Agent khác.",
+        "copyPrompt": "Tạo cho tôi một Agent đơn giản, sẽ luôn spawn OpenCode dạng JSON lên để làm LLM Proxy. Agent này có 3 tool là: \"Liệt kê hình ảnh trong máy dưới dạng gallery\", \"Kiểm tra RAM và liệt kê những process chiếm RAM nhiều nhất\", và \"Kiểm tra dung lượng ổ cứng và chỉ ra top 10 file có dung lượng lớn nhất\". Tạo trang web localhost bằng GO/NodeJS hoặc Python (tuỳ trong máy có sẵn stack nào) để tôi có thể giao tiếp với agent qua web chat. Sau khi làm xong thì mở nó lên trong trình duyệt để tôi test thử.",
+        "requirementsHtml": "<p><strong>Hãy chia sẻ suy nghĩ của bạn:</strong></p>\n<ol>\n<li>Tại sao Agent vốn là một thứ rất phức tạp, đầy sức mạnh, mà việc tạo ra nó lại có thể hoàn thành qua một prompt đơn giản như vậy?</li>\n<li>Thế thì, học làm AI Agent có còn cần thiết nữa hay không?</li>\n<li>Và cuối cùng thì, đến giờ phút này, bạn cho rằng học AI Agent là học cái gì?</li>\n</ol>",
+        "instructions": "Chụp ảnh Agent bạn vừa tạo đang chạy, và viết câu trả lời cho 3 câu hỏi: (1) Tại sao Agent vốn là một thứ rất phức tạp, đầy sức mạnh, mà việc tạo ra nó lại có thể hoàn thành qua một prompt đơn giản như vậy? (2) Thế thì, học làm AI Agent có còn cần thiết nữa hay không? (3) Và cuối cùng thì, đến giờ phút này, bạn cho rằng học AI Agent là học cái gì?",
         "criteria": [
           {
             "key": "image",
@@ -3358,8 +3339,8 @@ const LESSONS = [
           },
           {
             "key": "text",
-            "label": "Trả lời 3 câu hỏi suy ngẫm",
-            "desc": "Trả lời cả 3 câu hỏi.",
+            "label": "Trả lời 3 câu hỏi thảo luận",
+            "desc": "Trả lời cả 3 câu hỏi ở trên.",
             "placeholder": "1) ...\n2) ...\n3) ..."
           }
         ],
@@ -3393,8 +3374,8 @@ const LESSONS = [
         "copyPrompt": "(function extractAndDownloadZalo() {\n    const items = [...document.querySelectorAll('.chat-item')];\n\n    const messages = items.map(item => {\n      const nameEl = item.querySelector('.message-sender-name-content');\n      const textEl = item.querySelector('[data-component=\"message-text-content\"]');\n      const qidEl  = item.querySelector('[data-qid]');\n      const imgEl  = item.querySelector('.zavatar img');\n      const timeEl = item.querySelector('.card-send-time__sendTime');\n\n      const qid = qidEl ? qidEl.getAttribute('data-qid') : null;\n      let userId = null, msgId = null, groupId = null;\n      if (qid) {\n        const [userPart, rest] = qid.split('@');\n        const parts = rest ? rest.split('_') : [];\n        userId  = userPart;\n        msgId   = parts[1] || null;\n        groupId = parts[2] || null;\n      }\n\n      return {\n        userId:    userId || '',\n        msgId:     msgId  || '',\n        groupId:   groupId || '',\n        name:      nameEl ? nameEl.innerText.trim() : '',\n        text:      textEl ? textEl.innerText.trim().replace(/\\n/g, ' ') : '',\n        avatarUrl: imgEl  ? imgEl.src : '',\n        time:      timeEl ? timeEl.innerText.trim() : '',\n      };\n    }).filter(m => m.text || m.msgId);\n\n    // Tạo CSV\n    const headers = ['userId','msgId','groupId','name','text','avatarUrl','time'];\n    const escape  = v => '\"' + String(v).replace(/\"/g, '\"\"') + '\"';\n    const rows    = [headers.join(','), ...messages.map(m => headers.map(h => escape(m[h])).join(','))];\n    const csv     = '\\uFEFF' + rows.join('\\r\\n'); // BOM để Excel đọc đúng UTF-8\n\n    // Tự download\n    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });\n    const url  = URL.createObjectURL(blob);\n    const a    = document.createElement('a');\n    a.href     = url;\n    a.download = 'zalo_messages_' + Date.now() + '.csv';\n    document.body.appendChild(a);\n    a.click();\n    document.body.removeChild(a);\n    URL.revokeObjectURL(url);\n\n    console.log(`✅ Đã export ${messages.length} tin nhắn`);\n  })();",
         "copyPromptTrailing": "Bạn đã làm được chưa?",
         "options": [
-          "Đã làm được",
-          "Chưa làm được"
+          "Chưa làm được",
+          "Đã làm được"
         ],
         "points": 10
       },
@@ -3406,8 +3387,8 @@ const LESSONS = [
         "copyPrompt": "# PROMPT ĐẦY ĐỦ — Xây dựng Zalo Web Chat (bản mở rộng)\n\n> **Mục đích file này:** Prompt gốc + toàn bộ yêu cầu bổ sung sau khi triển khai thực tế (avatar, thời gian, giữ lịch sử, ổn định server). Dùng prompt này để build lại app **trọn vẹn** từ đầu, không thiếu tính năng.\n\n---\n\n## PHẦN A — YÊU CẦU GỐC (giữ nguyên ý, mở rộng chi tiết)\n\n### Cài đặt thư viện\n\nCài đặt và cấu hình thư viện Zalo login từ repo:\n\n**https://github.com/RFS-ADRENO/zca-js**\n\n```bash\nmkdir zalo-web && cd zalo-web\nnpm init -y\n# package.json bắt buộc: \"type\": \"module\"\nnpm install zca-js express socket.io sqlite3\nnpm install --save-dev nodemon   # tùy chọn\n```\n\n- Node.js >= 18\n- Import ESM: `import { Zalo, LoginQRCallbackEventType, ThreadType, AvatarSize } from \"zca-js\"`\n- Khởi tạo: `const zalo = new Zalo({ logging: false, checkUpdate: true })`\n\n---\n\n### Tạo server localhost\n\nSau đó dùng **Node.js** tạo một trang web chạy **localhost**:\n\n- Server **ưu tiên port cố định** (khuyến nghị `3789`, set trong `package.json` script `\"start\": \"PORT=3789 node server.js\"`).\n- Nếu `PORT` đã set qua biến môi trường thì dùng biến đó.\n- Nếu port bận (`EADDRINUSE`) → tự chọn port trống (bind `0`).\n- **In ra console** dòng rõ ràng, ví dụ:\n  ```\n  Zalo Web Chat đang chạy\n  Mở trình duyệt: http://127.0.0.1:3789\n  ```\n- Phục vụ static từ thư mục `public/`.\n- **Code phải chạy được ngay**, không chỉ mô tả lý thuyết.\n\n---\n\n## 1. ĐĂNG NHẬP\n\n### 1.1 Giao diện chưa login\n\n- Nếu chưa login → chỉ hiển thị màn hình login với nút **LOGIN** (và vùng QR ẩn cho đến khi bấm).\n- Không hiển thị layout chat 2 cột khi `loggedIn === false`.\n\n### 1.2 Login bằng QR\n\n- Khi bấm **LOGIN** → gọi `zalo.loginQR(options, callback)`:\n  ```javascript\n  const api = await zalo.loginQR(\n    {\n      userAgent: \"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0\",\n      language: \"vi\",\n    },\n    handleLoginQREvent\n  );\n  ```\n- QR hiển thị trên web để user quét bằng **app Zalo** trên điện thoại.\n- Trong lúc đang login: disable nút LOGIN, hiện trạng thái \"Đang tạo mã QR…\".\n\n### 1.3 Lưu credential sau login thành công\n\nKhi login thành công, lưu credential vào file JSON:\n\n**`data/credentials.json`**\n\nCấu trúc (từ callback `GotLoginInfo` + imei generate):\n\n```json\n{\n  \"imei\": \"...\",\n  \"cookie\": [ /* SerializedCookie[] */ ],\n  \"userAgent\": \"...\",\n  \"language\": \"vi\"\n}\n```\n\n- Tạo thư mục `data/` nếu chưa có.\n- **Không** lưu credential vào SQLite.\n- Thêm `data/credentials.json` vào `.gitignore`.\n\n### 1.4 Tự đăng nhập lại lần sau\n\n- Khi server khởi động (`server.listen` callback), **tự động** gọi `tryLoginWithSavedCredentials()`:\n  1. `loadCredentials()` từ `data/credentials.json`\n  2. Nếu có đủ `imei`, `cookie`, `userAgent` → `zalo.login(credentials)`\n  3. Thành công → `finalizeLogin(api)` (listener, emit state, load threads từ DB)\n  4. Thất bại → log cảnh báo, giữ `loggedIn: false`, user bấm LOGIN quét QR lại\n- **Không** yêu cầu quét QR lại nếu credential còn hợp lệ.\n\n### 1.5 Sau khi login — load profile của mình\n\n- Gọi `api.getUserInfo(api.getOwnId())` → lưu `appState.displayName`, `appState.myAvatar`, `appState.uid`.\n- Trả các field này trong `GET /api/bootstrap` và Socket `state` để UI hiển thị tên user trên header và avatar tin gửi đi.\n\n---\n\n## 2. XỬ LÝ QR (BẮT BUỘC — TRÁNH LỖI KHÔNG HIỂN THỊ)\n\n### 2.1 Bản chất dữ liệu QR\n\n- `zca-js` trả QR trong callback `LoginQRCallbackEventType.QRCodeGenerated`.\n- Field **`event.data.image`** là chuỗi **base64 PNG thuần**, **KHÔNG** phải data URL đầy đủ (`data:image/png;base64,...`).\n\n### 2.2 Chuyển đổi bắt buộc trước khi hiển thị\n\nKhi gửi QR lên frontend (Socket.IO hoặc API), **bắt buộc**:\n\n```javascript\nconst qrImage = `data:image/png;base64,${event.data.image}`;\n```\n\nGán `qrImage` vào `img.src` hoặc field `state.qr.image`.\n\n**KHÔNG** gán trực tiếp `event.data.image` vào `img.src` — trình duyệt **sẽ không render được**.\n\n### 2.3 Đẩy QR realtime\n\n- Dùng **Socket.IO** event `state` mỗi khi QR/trạng thái đổi (khuyến nghị).\n- Hoặc API polling `GET /api/bootstrap` — ít ưu tiên hơn.\n- Frontend `socket.on(\"state\", applyState)` cập nhật QR ngay khi `QRCodeGenerated`.\n\n### 2.4 Xử lý đủ các trạng thái QR trong callback\n\nImplement `switch (event.type)` với `LoginQRCallbackEventType`:\n\n| `event.type` | `state.qr.status` | UI / hành vi |\n|--------------|-------------------|--------------|\n| `QRCodeGenerated` | `generated` | Hiển thị `<img src={data URL}>`, message: \"Quét mã QR bằng app Zalo\" |\n| `QRCodeExpired` | `expired` | Ẩn/xóa ảnh QR, message hết hạn, hiện nút **「Tạo lại QR」** gọi lại `POST /api/login/start` |\n| `QRCodeScanned` | `scanned` | Giữ hoặc ẩn QR, message: \"Đã quét — đang xác nhận trên điện thoại…\", có thể hiện `event.data.display_name` |\n| `QRCodeDeclined` | `declined` | Message từ chối trên điện thoại, cho phép tạo lại |\n| `GotLoginInfo` | `confirming` | **Lưu** `data/credentials.json` ngay (imei, cookie, userAgent), message: \"Đang hoàn tất đăng nhập…\" |\n\n- Sau `loginQR()` resolve thành công → `state.qr.status = 'done'`, `image = null`, chuyển sang giao diện chat (`loggedIn = true`).\n\n### 2.5 Cấu trúc state QR gợi ý (backend → frontend)\n\n```javascript\nqr: {\n  status: \"idle\" | \"loading\" | \"generated\" | \"scanned\" | \"confirming\" | \"expired\" | \"declined\" | \"error\" | \"done\",\n  image: null | \"data:image/png;base64,....\",\n  message: \"\",\n  scannedName: null | string,\n}\n```\n\n---\n\n## 3. LƯU TRỮ\n\n### 3.1 SQLite — file `data/zalo.db`\n\nDùng package `sqlite3`, khởi tạo trong `lib/db.js`, gọi `initDb()` trước khi start server.\n\n#### Bảng `threads` — danh sách cuộc chat\n\n```sql\nCREATE TABLE IF NOT EXISTS threads (\n  id TEXT PRIMARY KEY,\n  thread_type INTEGER NOT NULL DEFAULT 0,  -- 0 = User (DM), 1 = Group\n  title TEXT,\n  avatar TEXT,\n  last_message TEXT,\n  last_message_at INTEGER,\n  updated_at INTEGER NOT NULL\n);\n```\n\n- `thread_type` map với `ThreadType.User = 0`, `ThreadType.Group = 1` từ zca-js.\n- `title`: tên nhóm (`group.name`) hoặc tên bạn (`displayName` / alias).\n- `avatar`: URL ảnh đại diện cuộc chat.\n\n#### Bảng `messages` — nội dung tin nhắn\n\n```sql\nCREATE TABLE IF NOT EXISTS messages (\n  id TEXT PRIMARY KEY,\n  thread_id TEXT NOT NULL,\n  content TEXT NOT NULL,\n  is_self INTEGER NOT NULL DEFAULT 0,\n  sender_id TEXT,\n  sender_name TEXT,\n  sender_avatar TEXT,\n  msg_type TEXT,\n  ts INTEGER NOT NULL,\n  raw_json TEXT,\n  FOREIGN KEY (thread_id) REFERENCES threads(id)\n);\nCREATE INDEX IF NOT EXISTS idx_messages_thread_ts ON messages(thread_id, ts);\n```\n\n- `id`: `msgId` hoặc `cliMsgId` từ Zalo (string).\n- `is_self`: `1` nếu `message.isSelf === true`.\n- `sender_id`: `uidFrom` (người gửi).\n- `ts`: timestamp tin nhắn (chuẩn hóa: nếu < 1e12 thì nhân 1000).\n\n#### Migration an toàn\n\nKhi app đã chạy trước đó, thêm cột bằng `ALTER TABLE` trong try/catch (bỏ qua nếu đã có):\n\n- `threads.avatar`\n- `messages.sender_id`\n- `messages.sender_avatar`\n\n### 3.2 Credential — file JSON riêng\n\n- Đường dẫn: **`data/credentials.json`**\n- **Tuyệt đối không** nhét credential vào SQLite.\n- Module `lib/credentials.js`: `loadCredentials()`, `saveCredentials(obj)`.\n\n### 3.3 Quy tắc sidebar — CHỈ hiện cuộc có tin nhắn (quan trọng)\n\n**Lỗi thường gặp nếu không làm:** gọi `getAllFriends()` + `getAllGroups()` rồi insert hết vào `threads` → sidebar có **hàng nghìn** mục không có tin, user tưởng \"mất lịch sử\".\n\n**Bắt buộc:**\n\n- `listThreads({ recentOnly: true })` chỉ trả:\n  ```sql\n  WHERE last_message IS NOT NULL\n     OR id IN (SELECT DISTINCT thread_id FROM messages)\n  ORDER BY COALESCE(last_message_at, updated_at) DESC\n  ```\n- `getAllFriends` / `getAllGroups` chỉ dùng để **cache metadata** (tên, avatar) trong memory hoặc cập nhật thread **đã tồn tại**, **không** insert hàng loạt vào sidebar.\n- Hàm `rebuildThreadsFromMessages()`: sau login, gom `messages` theo `thread_id` → upsert `threads` để khôi phục danh sách cuộc đã chat.\n\n---\n\n## 4. LẮNG NGHE TIN NHẮN REALTIME\n\n### 4.1 Bật listener\n\nSau khi login thành công:\n\n```javascript\napi.listener.start({ retryOnClose: true });\n```\n\nChỉ **một** listener / tài khoản. Cảnh báo user: mở Zalo Web trên trình duyệt có thể ngắt listener.\n\n### 4.2 Sự kiện `message` — tin mới realtime\n\n```javascript\napi.listener.on(\"message\", async (message) => {\n  // xử lý...\n});\n```\n\nMỗi tin nhắn mới **bắt buộc**:\n\n1. **Chuẩn hóa** (`lib/message-utils.js` → `normalizeIncomingMessage`):\n   - `threadId` từ `message.threadId`\n   - `threadType` từ `message.type` (User / Group)\n   - `isSelf` từ `message.isSelf`\n   - `content`: nếu string dùng trực tiếp; object thì extract `title`/`description` hoặc fallback text\n   - `senderId` từ `message.data.uidFrom`\n   - `senderName` từ `message.data.dName`\n   - `ts` từ `message.data.ts`\n\n2. **Resolve avatar người gửi** (`resolveSenderAvatar`) — bọc **try/catch**, lỗi không được crash process.\n\n3. **Lưu SQLite:**\n   - `insertMessage(...)` — `INSERT OR IGNORE`\n   - `upsertThread(...)` — cập nhật `last_message`, `last_message_at`, `title`, `avatar`\n\n4. **Đẩy realtime frontend qua Socket.IO:**\n   - `new-message` — payload 1 tin (có `senderAvatar` nếu có)\n   - `thread-refresh` — cập nhật 1 dòng sidebar\n   - `threads` — emit lại full list (có thể throttle nếu cần)\n\n### 4.3 Sự kiện `old_messages` — lịch sử gần đây từ Zalo\n\n```javascript\napi.listener.on(\"old_messages\", async (messages, threadType) => { ... });\n```\n\n- Sau event `cipher_key` (websocket sẵn sàng), gọi **một lần** mỗi phiên:\n  ```javascript\n  api.listener.requestOldMessages(ThreadType.User);\n  api.listener.requestOldMessages(ThreadType.Group);\n  ```\n- **Debounce** lưu batch (~800ms): gom nhiều lần `old_messages` → `storeMessagesBatch` **một lần**.\n- **KHÔNG** gọi `getUserInfo` / `resolveSenderAvatar` cho **từng** tin trong batch (gây treo server). Chỉ lưu text + `is_self`; avatar enrich sau khi hiển thị.\n\n### 4.4 Đồng bộ lịch sử khi user mở một cuộc chat\n\n**Nhóm** — API chính thức trong zca-js:\n\n```javascript\nconst res = await api.getGroupChatHistory(groupId, 50);\n// res.groupMsgs — mảng GroupMessage\n```\n\n→ Lưu hết vào SQLite qua `storeMessagesBatch`.\n\n**Chat 1-1 (User):** zca-js **không** có API history đầy đủ per-thread. Chỉ:\n- Tin đã lưu trong SQLite từ lần chạy trước\n- Tin từ `old_messages` stream (best-effort, không đảm bảo đủ)\n\n**Cooldown:** mỗi `threadId` chỉ gọi sync Zalo tối đa **1 lần / 5 phút** (Map `historySyncAt`) để tránh spam khi user click liên tục.\n\n### 4.5 Giữ lịch sử khi tắt/mở lại app\n\n- Tin nhắn nằm trong **`data/zalo.db`** — không mất khi tắt server (trừ khi xóa file).\n- Khi server start + auto login → `rebuildThreadsFromMessages()` + `listThreads({ recentOnly: true })` → sidebar khôi phục các cuộc đã có tin.\n- Frontend: `GET /api/messages/:threadId` đọc từ DB; cache `messagesByThread` Map — chỉ fetch API **lần đầu** mở cuộc (không fetch lại mỗi lần click).\n\n---\n\n## 5. GIAO DIỆN WEB\n\n### 5.1 Layout tổng thể\n\n- **Layout 2 cột** full height (`100vh`):\n  - **Cột trái** (~300px): danh sách cuộc chat (`aside.thread-list`)\n  - **Cột phải** (flex 1): nội dung chat (`main.chat-main`)\n- Dark theme gợi ý: nền `#0f1419`, surface `#1a2332`, accent `#0068ff`.\n- Responsive: mobile thu nhỏ cột trái.\n\n### 5.2 Màn hình LOGIN (khi chưa đăng nhập)\n\n- Card giữa màn hình: tiêu đề \"Zalo Web\", nút **LOGIN**.\n- `#qr-panel` (ẩn ban đầu):\n  - `#qr-image` — img QR\n  - `#qr-status` — text trạng thái\n  - `#btn-retry-qr` — tạo lại khi expired/declined/error\n- Khi `loggingIn` hoặc có QR → ẩn nút LOGIN, hiện qr-panel.\n\n### 5.3 Cột trái — danh sách cuộc chat\n\nMỗi item (`li.thread-item`) **bắt buộc có:**\n\n- **Avatar tròn** (44px): ảnh URL từ `thread.avatar`, fallback chữ cái đầu tên nếu lỗi/load fail.\n- **Tên cuộc** (`thread.title`): tên nhóm hoặc tên bạn — **không** hiển thị raw `threadId` nếu đã có title.\n- **Preview** tin cuối (`thread.lastMessage`) — truncate 1 dòng.\n- Trạng thái `.active` khi đang chọn.\n\n**Ô tìm kiếm** (`#thread-search`):\n\n- Filter client-side theo: `title`, `lastMessage`, `id`.\n- Nếu không có kết quả: hint \"Chưa có cuộc trò chuyện…\"\n\n**Sắp xếp:** `last_message_at` giảm dần (cuộc mới nhất trên cùng).\n\n### 5.4 Cột phải — nội dung chat\n\n#### Header (`#chat-title`)\n\n- Avatar 36px + tên cuộc (`#chat-title-text`).\n- Lấy từ `thread` object khi `selectThread`.\n\n#### Vùng tin nhắn (`#messages`)\n\n**Bubble layout:**\n\n- Mỗi tin là `.bubble-row`:\n  - `.bubble-row.other` — `justify-content: flex-start`: **[avatar 32px] [bubble-wrap]**\n  - `.bubble-row.self` — `align-self: flex-end`: **[bubble-wrap] [avatar 32px]**\n- Trong `.bubble-wrap`:\n  - `.bubble` — nền xám (other) / xanh `#0068ff` (self)\n  - `.bubble-time` — **thời gian** dưới bubble (font 11px, màu muted)\n\n**Nhóm (`threadType === 1`):** tin người khác hiện thêm `.sender` (tên `senderName`) phía trên nội dung trong bubble.\n\n**Chat 1-1:** không cần dòng sender name (chỉ có 2 người).\n\n**Avatar trong bubble:**\n\n- Tin **của mình** (`isSelf`): `state.myAvatar` / `senderAvatar` từ profile login.\n- Tin **người khác**, DM: avatar cuộc (`thread.avatar`).\n- Tin **người khác**, nhóm: `senderAvatar` theo `senderId` (enrich từ `getUserInfo`, **cache Map** theo senderId — không gọi API lặp cho cùng 1 người).\n\n**Phân cách ngày** (`.date-divider` giữa các nhóm):\n\n- Cùng ngày với hôm nay → không chèn divider giữa mỗi tin, chỉ chèn khi **đổi ngày**.\n- Text divider: \"Hôm nay\" | \"Hôm qua\" | `\"Thứ ..., dd/mm/yyyy\"` (locale `vi-VN`).\n\n**Format thời gian dưới bubble** (`formatMessageTime(ts)`):\n\n- Hôm nay: `14:32`\n- Hôm qua: `Hôm qua, 14:32`\n- Cùng năm: `04/06, 14:32`\n- Khác năm: `04/06/2025, 14:32`\n- Chuẩn hóa `ts`: nếu số < 1e12 thì `* 1000` (Zalo hay trả giây).\n\n**Cuộn:** sau `renderMessages` → `messagesEl.scrollTop = messagesEl.scrollHeight`.\n\n#### Ô nhập tin (`#send-form`)\n\n- `#message-input` + nút **Gửi** (submit).\n- `POST /api/send` body: `{ threadId, text, threadType }`.\n- Optimistic UI: append tin vào list local với `isSelf: true` sau khi gửi thành công.\n- `threadType` lấy từ object thread đang chọn (`0` hoặc `1`).\n\n#### Trạng thái chưa chọn cuộc\n\n- `#chat-empty`: \"Chọn một cuộc trò chuyện để xem tin nhắn\".\n\n#### Đang tải lịch sử\n\n- Lần đầu mở cuộc: hiện \"Đang tải lịch sử…\" trong `#messages` cho đến khi API trả về.\n\n---\n\n## 6. API / LUỒNG BACKEND\n\n### 6.1 REST API\n\n#### `GET /api/bootstrap`\n\nTrả JSON:\n\n```javascript\n{\n  loggedIn: boolean,\n  loggingIn: boolean,\n  uid: string | null,\n  displayName: string | null,\n  myAvatar: string | null,\n  qr: { status, image, message, scannedName },\n  threads: Thread[]  // recentOnly\n}\n```\n\nGọi khi frontend load trang (`bootstrap()`).\n\n#### `POST /api/login/start`\n\n- Gọi `startQRLogin()`.\n- Trả `getPublicState()` hoặc `{ error, state }` nếu fail.\n\n#### `GET /api/messages/:threadId`\n\nLuồng:\n\n1. (Nếu logged in) `syncHistoryForThread(threadId)` — nhóm: getGroupChatHistory; cooldown 5 phút.\n2. `getThreadMessages(threadId, 500)` từ SQLite ORDER BY `ts ASC`.\n3. `enrichMessagesForDisplay(...)` — bổ sung avatar thiếu (cache senderId).\n4. Trả `{ messages, myAvatar }`.\n\n#### `POST /api/send`\n\nBody: `{ threadId, text, threadType }`\n\n- Gọi `api.sendMessage(text, threadId, threadType)`.\n- Lưu DB + emit socket như tin gửi đi.\n- Trả `{ ok: true, message: { id, threadId, content, isSelf, senderAvatar, ts, ... } }`.\n\n#### `POST /api/threads/refresh` (tùy chọn)\n\n- Sync metadata bạn/nhóm + `rebuildThreadsFromMessages`.\n- Trả `{ ok: true, threads }`.\n- **Không** gọi tự động mỗi lần login phía frontend (đã gây lag) — chỉ khi user cần hoặc server background.\n\n### 6.2 Socket.IO events\n\n| Event | Hướng | Payload gợi ý |\n|-------|--------|----------------|\n| `state` | server → client | `{ loggedIn, qr, uid, displayName, myAvatar, ... }` |\n| `threads` | server → client | `Thread[]` (recent only) |\n| `new-message` | server → client | `{ id, threadId, content, isSelf, senderName, senderAvatar, ts }` |\n| `thread-refresh` | server → client | `{ id, title, avatar, lastMessage, lastMessageAt, threadType }` |\n\nKhi client `connection`:\n\n- Emit ngay `state` hiện tại.\n- Emit `threads` từ `listThreads({ recentOnly: true })`.\n\n---\n\n## 7. KỸ THUẬT & CẤU TRÚC CODE\n\n### 7.1 Stack bắt buộc\n\n- **Node.js** (ES Modules, `\"type\": \"module\"`)\n- **Express** — HTTP + REST\n- **Socket.IO** — realtime\n- **sqlite3** — persistence\n- **zca-js** — Zalo API\n\n### 7.2 Cấu trúc thư mục `zalo-web/`\n\n```\nzalo-web/\n├── server.js                 # Express, Socket.IO, routes, findFreePort, auto login\n├── package.json\n├── .gitignore                # node_modules, data/credentials.json, *.db\n├── BUILD_PROMPT.md           # file này\n├── lib/\n│   ├── zalo-service.js       # Zalo instance, appState, login QR/cookie, listener, persist, emit\n│   ├── db.js                 # SQLite init, CRUD threads/messages, rebuildThreadsFromMessages\n│   ├── credentials.js        # load/save JSON credential\n│   ├── message-utils.js      # extractMessageText, normalizeIncomingMessage\n│   ├── thread-meta.js        # resolveThreadMeta, resolveSenderAvatar, syncThreadCatalog, enrich*\n│   └── chat-history.js       # storeMessagesBatch, fetchGroupHistory, old_messages debounce\n├── public/\n│   ├── index.html\n│   ├── style.css\n│   └── app.js                # UI, socket client, render threads/messages, format time\n└── data/\n    ├── .gitkeep\n    ├── credentials.json      # runtime, gitignored\n    └── zalo.db               # runtime, gitignored (optional)\n```\n\n### 7.3 Module responsibilities chi tiết\n\n**`zalo-service.js`**\n\n- Biến global: `api`, `zalo`, `io`, `appState`, `loginPromise`.\n- `tryLoginWithSavedCredentials()`, `startQRLogin()`, `handleLoginQREvent()`.\n- `finalizeLogin()`: load profile, `setupListener()`, `rebuildThreadsFromMessages`, delay `syncThreadCatalog`.\n- `persistAndBroadcastMessage()`: DB + socket.\n- `sendChatMessage()`, `getMessagesForThread()`, `getPublicState()`, `refreshThreads()`.\n\n**`db.js`**\n\n- `initDb()`, `listThreads({ recentOnly })`, `getThread()`, `getThreadMessages()`, `upsertThread()`, `insertMessage()`, `rebuildThreadsFromMessages()`.\n\n**`thread-meta.js`**\n\n- `resolveThreadMeta(api, threadId, threadType)` — cache 1h.\n- `resolveSenderAvatar` — DM vs Group logic.\n- `syncThreadCatalog` — getAliasList, getAllFriends, getAllGroups+getGroupInfo **chỉ update thread đã có**.\n- `enrichExistingThreads`, `enrichMessagesForDisplay` (sender cache Map).\n\n**`chat-history.js`**\n\n- `storeMessagesBatch` — fast path, no per-msg API.\n- `fetchGroupHistory`, `syncHistoryForThread` với cooldown.\n- `attachOldMessagesListener`, `requestInitialHistorySync` (flag `initialSyncDone`).\n- `resetHistorySyncState()` khi login mới.\n\n### 7.4 `findFreePort` logic\n\n```javascript\n// Ưu tiên preferred port (3789 hoặc process.env.PORT)\n// Nếu EADDRINUSE → listen(0) lấy port hệ thống cấp\n// Trả về port number cho server.listen\n```\n\n### 7.5 Scripts `package.json`\n\n```json\n{\n  \"type\": \"module\",\n  \"scripts\": {\n    \"start\": \"PORT=3789 node server.js\",\n    \"dev\": \"nodemon server.js\"\n  }\n}\n```\n\n---\n\n## 8. ỔN ĐỊNH SERVER (BẮT BUỘC — ĐÃ HỌC TỪ LỖI THỰC TẾ)\n\n### 8.1 Không được làm (gây treo/crash)\n\n- Gọi `getUserInfo` / `resolveThreadMeta` **cho từng tin** trong batch `old_messages` hoặc `getGroupChatHistory` 50 tin.\n- Gọi `requestInitialHistorySync` **hai lần** (cipher_key + setTimeout duplicate).\n- `syncThreadCatalog` insert **toàn bộ** bạn bè/nhóm vào `threads` làm sidebar.\n- `enrichMessagesForDisplay` gọi API **không cache** theo `senderId` trong nhóm 100+ tin.\n- Chạy **nhiều** `node server.js` cùng lúc (Zalo kick websocket / port conflict).\n- Frontend gọi `POST /api/threads/refresh` ngay mỗi lần `justLoggedIn` (lag UI).\n\n### 8.2 Bắt buộc làm\n\n```javascript\nprocess.on(\"unhandledRejection\", (err) => console.error(\"[server]\", err));\nprocess.on(\"uncaughtException\", (err) => console.error(\"[server]\", err));\n```\n\n- `resolveSenderAvatar` và `syncHistoryForThread` bọc **try/catch**.\n- `attachOldMessagesListener` debounce batch 800ms.\n- `initialSyncDone` flag — một lần sync old messages / phiên.\n- `historySyncAt` Map — cooldown 5 phút / threadId.\n- `syncThreadCatalog` chạy **sau 8 giây** login (background).\n- Port cố định **3789** in README/PROMPT để user không mở nhầm URL cũ.\n\n---\n\n## 9. METADATA TÊN & AVATAR (BỔ SUNG SAU PROMPT GỐC)\n\n### 9.1 Cột trái — tên nhóm / tên bạn\n\n- **Nhóm:** `api.getGroupInfo(groupId)` → `gridInfoMap[id].name`, avatar `fullAvt || avt`.\n- **Bạn:** `api.getUserInfo(userId)` → `displayName || zaloName`, avatar `avatar`.\n- **Alias:** `api.getAliasList()` → ưu tiên `alias` nếu có.\n\nKhi có tin mới → `resolveThreadMeta` → `upsertThread` với `title` + `avatar` đúng.\n\n### 9.2 Không dùng tên người gửi làm title cuộc\n\n**Sai:** `title = message.data.dName` (tên người vừa gửi tin trong nhóm).\n\n**Đúng:** `title` = tên nhóm hoặc tên đối phương (DM).\n\n---\n\n## 10. THỜI GIAN TIN NHẮN (BỔ SUNG)\n\n- Mỗi bubble có `<time class=\"bubble-time\">` dưới nội dung.\n- Hàm `normalizeTs(ts)` xử lý giây vs milliseconds.\n- Hàm `formatMessageTime(ts)` và `formatDateDivider(ts)` locale `vi-VN`.\n- `dayKey(ts)` để chèn divider khi đổi ngày trong loop `renderMessages`.\n\n---\n\n## 11. KẾT QUẢ MONG MUỐN (ACCEPTANCE — ĐẦY ĐỦ)\n\n### Luồng login\n\n- [ ] Mở `http://127.0.0.1:3789` → thấy nút **LOGIN** nếu chưa đăng nhập.\n- [ ] Bấm LOGIN → QR hiển thị **đúng** trên web (ảnh PNG rõ, không broken icon).\n- [ ] Quét QR thành công → file `data/credentials.json` được tạo.\n- [ ] Chuyển sang giao diện chat 2 cột, không còn màn hình QR.\n\n### Phiên sau\n\n- [ ] Tắt server, chạy `npm start` lại → **tự login** không cần QR.\n- [ ] Console log \"Đăng nhập lại bằng credential thành công\".\n\n### Sidebar\n\n- [ ] Chỉ thấy các cuộc **đã có tin nhắn**, không phải 500+ bạn bè trống.\n- [ ] Mỗi cuộc có **avatar + tên nhóm/bạn** đúng.\n- [ ] Preview tin cuối + sắp xếp mới nhất trên cùng.\n- [ ] Tìm kiếm theo tên hoạt động.\n\n### Khung chat phải\n\n- [ ] Bubble trái = người khác, bubble phải = tin mình.\n- [ ] **Avatar** cạnh mỗi bubble (trái/phải đúng chiều).\n- [ ] Nhóm: hiện tên người gửi trên bubble người khác.\n- [ ] Mỗi tin có **giờ**; đổi ngày có **divider**.\n\n### Tin nhắn\n\n- [ ] Nhận tin realtime khi có người gửi (listener + socket `new-message`).\n- [ ] Gửi tin từ ô nhập → đối phương nhận được trên Zalo.\n- [ ] **Tắt server, mở lại** → mở cùng cuộc → **lịch sử tin vẫn còn** (từ SQLite).\n- [ ] Mở cuộc **nhóm** → tải thêm tin cũ từ Zalo (≤50) nếu API trả về.\n\n### Ổn định\n\n- [ ] Login + mở 3–5 cuộc chat liên tiếp → server **không treo**.\n- [ ] Không cần mở đúng port random — dùng **3789** ổn định.\n\n---\n\n## 12. GIỚI HẠN & CẢNH BÁO\n\n- **zca-js** là API **không chính thức**, mô phỏng Zalo Web — có rủi ro khóa tài khoản.\n- Lịch sử **chat 1-1** trên Zalo không sync đủ 100% như app gốc; **nhóm** sync tốt hơn qua `getGroupChatHistory`.\n- Một tài khoản chỉ nên **một** listener; mở Zalo Web song song có thể disconnect.\n- Tin chỉ được lưu khi server đã chạy và listener nhận được (hoặc sync history khi mở cuộc) — không phải toàn bộ lịch sử đời đời của Zalo.\n\n---\n\n## 13. LỆNH CHẠY & KIỂM TRA NHANH\n\n```bash\ncd zalo-web\nnpm install\nnpm start\n# Mở http://127.0.0.1:3789\n```\n\nKiểm tra DB sau khi chat thử:\n\n```bash\nsqlite3 data/zalo.db \"SELECT COUNT(*) FROM messages; SELECT COUNT(*) FROM threads WHERE last_message IS NOT NULL;\"\n```\n\nHard refresh trình duyệt: **Cmd+Shift+R** (macOS) sau khi sửa `public/*.js|css`.\n\n---\n\n## 14. THỨ TỰ IMPLEMENT GỢI Ý CHO AGENT\n\n1. Scaffold `package.json`, `server.js`, `public/` tối thiểu.\n2. `lib/db.js` + `lib/credentials.js`.\n3. Login QR + callback + lưu credential + auto login.\n4. Socket `state` + UI login + QR data URL.\n5. `listener.on(\"message\")` + lưu DB + bubble cơ bản 2 cột.\n6. `listThreads({ recentOnly: true })` + không spam friends vào sidebar.\n7. `thread-meta.js` — tên + avatar sidebar + header.\n8. Avatar trong bubble + `enrichMessagesForDisplay` có cache.\n9. Format thời gian + date divider.\n10. `chat-history.js` — group history, old_messages debounce, rebuild threads.\n11. Ổn định: error handlers, cooldown, port 3789, bỏ duplicate sync.\n12. Test acceptance checklist phần 11.\n\n---\n\n*Kết thúc prompt. Phiên bản này dài hơn và đầy đủ hơn prompt lúc đầu, bao gồm toàn bộ yêu cầu gốc (mục 1–8) cộng avatar, thời gian, lịch sử bền vững, metadata, và ổn định server.*",
         "copyPromptTrailing": "Bạn đã làm được chưa?",
         "options": [
-          "Chưa làm được",
-          "Đã làm được"
+          "Đã làm được",
+          "Chưa làm được"
         ],
         "points": 12
       },
@@ -3429,8 +3410,8 @@ const LESSONS = [
         "copyPrompt": "Thêm vào app chat Zalo (đã tạo ở bài trước) tính năng TRẢ LỜI TỰ ĐỘNG theo quy tắc do người dùng cấu hình: hễ tin nhắn khớp lệnh /xxx thì bot tự gửi lại nội dung yyy. Yêu cầu chi tiết:\n\n1. Nút cấu hình & hệ thống Tab\n• Thêm một nút \"Cấu hình\" (icon bánh răng) trên giao diện web.\n• Bấm vào mở một panel/modal cấu hình, phía trên là một dải TAB.\n• Thiết kế tab theo kiểu mở rộng được: sau này thêm tab mới chỉ cần khai báo thêm, không phải đập lại layout.\n• Tab đầu tiên tên \"Trả lời tự động\".\n\n2. Tab \"Trả lời tự động\"\n• Hiển thị danh sách các quy tắc auto-reply hiện có; mỗi quy tắc cho thấy: Lệnh, các tuỳ chọn so khớp, và nội dung Trả lời. Có nút Sửa / Xoá cho từng quy tắc.\n• Nút \"Thêm quy tắc\" mở form nhập gồm:\n   - Lệnh: ô nhập có sẵn tiền tố \"/\" cố định, người dùng chỉ gõ phần sau (ví dụ: menu, giá, ship).\n   - Tuỳ chọn so khớp:\n        [ ] (checkbox) \"Không phân biệt chữ hoa/thường, có dấu/không dấu\" — khi bật thì chuẩn hoá cả lệnh lẫn tin nhắn về chữ thường + bỏ dấu tiếng Việt trước khi so sánh.\n        Nhóm radio (chọn 1 trong 2):\n           ( ) \"Lệnh này có thể nằm trong một câu hoàn chỉnh\" — chỉ cần tin nhắn CHỨA lệnh là khớp.\n           ( ) \"Phải gõ chính xác lệnh này\" — tin nhắn phải bằng đúng lệnh mới khớp.\n   - Trả lời: ô textarea nhiều dòng, nhập nội dung bot sẽ gửi lại.\n   - Nút Lưu / Huỷ.\n\n3. Lưu trữ\n• Lưu các quy tắc vào SQLite, bảng auto_reply_rules: id, command, match_anywhere (bool), normalize (bool), reply_text, created_at.\n• API CRUD:\n   - GET    /api/auto-reply        : lấy danh sách quy tắc\n   - POST   /api/auto-reply        : thêm quy tắc\n   - PUT    /api/auto-reply/:id    : sửa quy tắc\n   - DELETE /api/auto-reply/:id    : xoá quy tắc\n\n4. Xử lý tự động trả lời\n• Trong listener tin nhắn đến (message event đã có ở bài trước), với mỗi tin nhắn KHÔNG phải của mình (isSelf === false):\n   - Duyệt qua các quy tắc đang có.\n   - Áp dụng chuẩn hoá theo cấu hình của từng quy tắc (chữ thường + bỏ dấu nếu bật \"không phân biệt\").\n   - Nếu khớp theo chế độ đã chọn (chứa trong câu / bằng chính xác) thì gọi api.sendMessage() gửi reply_text về đúng thread vừa nhận.\n   - Nếu nhiều quy tắc cùng khớp, ưu tiên quy tắc có lệnh dài nhất (cụ thể nhất).\n• Tin do bot tự trả lời cũng được lưu vào SQLite và đẩy realtime lên frontend như tin thường.\n\n5. Chuẩn hoá tiếng Việt\n• Viết hàm normalize(text): chuyển chữ thường + bỏ dấu (chuẩn hoá NFD rồi xoá ký tự dấu U+0300–U+036F) + đ→d.\n• Dùng hàm này cho cả lệnh và tin nhắn khi tuỳ chọn \"không phân biệt\" được bật.\n\n6. Kết quả mong muốn\n• Mở Cấu hình → tab \"Trả lời tự động\".\n• Thêm quy tắc: lệnh /menu, bật \"không phân biệt\", chọn \"có thể nằm trong câu\", trả lời \"Đây là thực đơn của shop ạ...\".\n• Từ một nick khác nhắn thử \"cho mình xem /Menu với\" → bot tự trả lời đúng nội dung đã cấu hình.\n• Sửa/xoá quy tắc hoạt động đúng; cấu hình vẫn còn sau khi restart app.\n• Code chạy được ngay, không chỉ mô tả lý thuyết.",
         "copyPromptTrailing": "Bạn đã làm được chưa?",
         "options": [
-          "Đã làm được",
-          "Chưa làm được"
+          "Chưa làm được",
+          "Đã làm được"
         ],
         "points": 14
       },
@@ -3481,8 +3462,8 @@ const LESSONS = [
         "copyPrompt": "Thêm tính năng login vào app Zalo Web (Express + Socket.IO + sqlite3 + zca-js đã có).\n\nYÊU CẦU:\n\n1. Tài khoản mặc định: username \"admin\" / password \"admin\" (seed sẵn lần đầu khởi động vào SQLite).\n\n2. Mật khẩu lưu DB phải băm an toàn (bcrypt hoặc tương đương — KHÔNG lưu plain text).\n\n3. Cơ chế login:\n   • Trang `/login` (hoặc modal) với form username + password.\n   • Submit → POST /api/auth/login → tạo session (express-session + cookie httpOnly + sameSite).\n   • Middleware bảo vệ: TẤT CẢ route trang/app + tất cả API trừ /api/auth/login và static assets đều yêu cầu session hợp lệ. Chưa login → redirect /login (hoặc 401).\n   • Có nút \"Đăng xuất\" → POST /api/auth/logout → huỷ session.\n\n4. Đổi mật khẩu trong Settings:\n   • Thêm tab \"Tài khoản\" trong modal Cấu hình (theo pattern CONFIG_TABS hiện có).\n   • Form: mật khẩu hiện tại + mật khẩu mới + xác nhận mật khẩu mới.\n   • Validate: mật khẩu hiện tại đúng; mật khẩu mới và xác nhận trùng; mật khẩu mới ≥ 6 ký tự.\n   • API: POST /api/auth/change-password → cập nhật hash trong DB.\n\n5. SQLite — bảng `users`:\n```sql\nCREATE TABLE IF NOT EXISTS users (\n  id INTEGER PRIMARY KEY AUTOINCREMENT,\n  username TEXT NOT NULL UNIQUE,\n  password_hash TEXT NOT NULL,\n  updated_at INTEGER NOT NULL DEFAULT (strftime('%s','now'))\n);\n```\nSeed lần đầu: nếu chưa có user nào → INSERT admin/admin (đã hash).\n\n6. Khi chưa login: KHÔNG được phép xem QR Zalo, danh sách thread, tin nhắn, hay gọi bất kỳ API nào của app. Tất cả phải đứng sau cổng login.\n\n7. Hiển thị tên user đang đăng nhập ở header của giao diện chat (góc phải hoặc bên cạnh avatar).\n\nKIỂM THỬ:\n- Chạy lần đầu → /login → đăng nhập admin/admin → vào app như cũ.\n- Restart server → vẫn login bằng admin/admin (DB giữ).\n- Đổi password trong Settings → đăng xuất → đăng nhập lại bằng password mới → OK.\n- Truy cập /api/threads khi chưa login → 401.\n\nRÀNG BUỘC:\n- ES modules (`\"type\": \"module\"`).\n- Không commit password lên git.\n- Code chạy được ngay, không chỉ mô tả.",
         "copyPromptTrailing": "Bạn đã làm được chưa?",
         "options": [
-          "Chưa làm được",
-          "Đã làm được"
+          "Đã làm được",
+          "Chưa làm được"
         ],
         "points": 14
       },
@@ -3507,8 +3488,8 @@ const LESSONS = [
         "copyPrompt": "Mở rộng tính năng Cloudflare Tunnel hiện có (app Zalo Web — Express + Socket.IO + sqlite3 + zca-js + login admin + tunnel ON/OFF gửi tin 1-1 đã có). Thêm khả năng ĐỔI URL TỪ XA bằng lệnh chat Zalo.\n\nYÊU CẦU:\n\n1. SETTINGS — bổ sung mục \"Đổi URL từ xa\" trong tab Cloudflare Tunnel\n   • Toggle ON/OFF để bật/tắt tính năng đổi URL bằng lệnh chat.\n   • Ô nhập \"Lệnh đổi URL\" — text input, mặc định gợi ý `/reset`. Cho phép nhập 1 hoặc nhiều lệnh phân tách bằng dấu phẩy (ví dụ: `/start, /on, /reset`).\n   • Mô tả ngắn dưới ô: \"Khi chatbot nhận được tin nhắn khớp 1 trong các lệnh trên từ nick Zalo đã cấu hình (cả tin 1-1 lẫn tin trong nhóm), URL Cloudflare hiện tại sẽ bị gỡ và thay bằng URL mới.\"\n\n2. SQLite — mở rộng bảng `tunnel_config`\n```sql\nALTER TABLE tunnel_config ADD COLUMN remote_reset_enabled INTEGER NOT NULL DEFAULT 0;\nALTER TABLE tunnel_config ADD COLUMN remote_reset_commands TEXT NOT NULL DEFAULT '/reset';\n```\n   Lưu cờ bật/tắt + danh sách lệnh (CSV) khi user thay đổi.\n\n3. LẮNG NGHE TIN NHẮN\n   Trong listener Zalo (zalo-service.js) đã có sẵn, sau khi normalize message:\n   • Nếu `remote_reset_enabled === 1` VÀ `notify_zalo_id` đã cấu hình:\n     - Kiểm tra `message.data.uidFrom === notify_zalo_id` (nick đã cấu hình gửi).\n     - Match cả `ThreadType.User` (DM) lẫn `ThreadType.Group` (tin trong nhóm).\n     - Trích text từ `message.data.content`, normalize (lower + trim).\n     - So với danh sách lệnh `remote_reset_commands` (split bằng dấu phẩy, trim, lower).\n     - Nếu khớp 1 trong các lệnh → chạy luồng \"Đổi URL\".\n   • Luồng \"Đổi URL\" (idempotent, có lock chống chạy chồng):\n     a. Kill process cloudflared cũ (như khi tắt OFF), xoá URL khỏi state.\n     b. Spawn lại process cloudflared mới (như khi bật ON).\n     c. Chờ URL công khai mới xuất hiện (timeout 30s).\n     d. Khi có URL mới:\n        - Push Socket.IO `tunnel-state` cập nhật UI cho admin đang mở Settings.\n        - Gửi tin nhắn 1-1 đến nick admin (chính là `notify_zalo_id` đã cấu hình) nội dung:\n          \"🔄 URL Cloudflare đã được đổi qua lệnh `<lệnh vừa gõ>`!\n          🌐 URL mới: <URL_mới>\n          ⛔ URL cũ đã bị gỡ — link cũ không còn truy cập được.\"\n     e. Nếu timeout / lỗi → gửi tin 1-1 báo lỗi: \"❌ Đổi URL thất bại: <error>. URL hiện tại: <URL_cũ hoặc 'đang tắt'>.\"\n\n4. AN TOÀN\n   • CHỈ chấp nhận lệnh từ đúng `uidFrom` đã cấu hình — không xử lý nick khác kể cả gõ đúng lệnh.\n   • Lock chống spam: nếu vừa đổi URL cách đây < 10s thì bỏ qua tin tiếp theo, log warning.\n   • KHÔNG echo lệnh ngược lại nhóm (tránh để lộ cho thành viên khác biết app có cơ chế này).\n   • Khi tunnel đang OFF mà nhận lệnh đổi URL → bật ON luôn (coi như user muốn bật + đổi).\n\n5. API + Socket\n   • GET /api/tunnel/status → bổ sung field `remoteResetEnabled`, `remoteResetCommands`.\n   • PUT /api/tunnel/config → body có thể chứa `remoteResetEnabled` + `remoteResetCommands`.\n   • Socket event `tunnel-state` đẩy URL mới sau khi đổi thành công.\n\n6. UI HIỂN THỊ SAU KHI ĐỔI\n   • Banner xanh nhỏ trong tab Cloudflare Tunnel: \"🔄 URL vừa được đổi lúc <thời gian>\" — biến mất sau 30s.\n   • URL hiện tại trên UI tự cập nhật, nút Copy vẫn copy URL mới.\n\nKIỂM THỬ:\n- Cấu hình notify_zalo_id = UID của chính mình, bật tunnel, bật \"Đổi URL từ xa\", lệnh `/reset, /new`.\n- Từ chính nick đó nhắn `/reset` vào bot → URL cũ bị gỡ, URL mới sinh ra, nhận được tin 1-1 chứa URL mới.\n- Từ nick KHÁC nhắn `/reset` → bot bỏ qua (không đổi).\n- Nhắn `/reset` 2 lần liên tiếp trong 5s → lần 2 bị bỏ qua (chống spam).\n- Nhắn `/reset` trong nhóm có bot + chính chủ → vẫn đổi (chấp nhận tin nhóm), tin báo URL mới vẫn gửi 1-1.\n\nRÀNG BUỘC:\n- ES modules (`\"type\": \"module\"`).\n- Phải tận dụng lại hàm spawn/kill tunnel + hàm sendMessage 1-1 đã có ở câu trước, không viết lại từ đầu.\n- Log đầy đủ: ai gõ lệnh, lệnh gì, URL cũ, URL mới, ts — để debug khi có sự cố.",
         "copyPromptTrailing": "Bạn đã làm được chưa?",
         "options": [
-          "Đã làm được",
-          "Chưa làm được"
+          "Chưa làm được",
+          "Đã làm được"
         ],
         "points": 14
       },
@@ -3520,8 +3501,8 @@ const LESSONS = [
         "copyPrompt": "Refactor lại UI của App theo layout chia 2 cột: có sidebar bên trái và main content bên phải. Chiều rộng của 2 cột này có thể di chuột vào để nhấn giữ kéo và thay đổi.\n\nBiến nó trở thành App có nhiều phân hệ, mỗi phân hệ là một mục menu bên tay trái. Hiện nay có các mục là Chat Zalo và Note - Ghi chú (click vào hiện thông báo đang xây dựng).\n\nSidebar có phần top bar cố định có account kèm dropdown, có mục Thông tin cá nhân (đang xây dựng), Cấu hình (gắn vào mục Cấu hình hiện nay ở Zalo) và Logout ở dưới cùng.",
         "copyPromptTrailing": "Bạn đã làm được chưa?",
         "options": [
-          "Chưa làm được",
-          "Đã làm được"
+          "Đã làm được",
+          "Chưa làm được"
         ],
         "points": 12
       },
@@ -3559,8 +3540,8 @@ const LESSONS = [
         "copyPrompt": "Thêm vào phần cấu hình Đăng nhập một lựa chọn \"Chỉ cho phép đăng nhập khi cùng mạng Tailscale\".\n\nLàm tính năng này bằng cách tạo ra 1 endpoint kiểu /vpn-check sẽ trả về 1 TOKEN tồn tại trong 5 phút.\n\nSau đó sửa lại luồng đăng nhập để client phải gửi kèm TOKEN cùng account, password. Hệ thống check nếu TOKEN hợp lệ mới được vào.\n\nLưu ý: endpoint /vpn-check chỉ được gọi thông qua đường dẫn Tailscale (IP nội bộ Tailscale) thay vì URL công cộng.",
         "copyPromptTrailing": "Bạn đã làm được chưa?",
         "options": [
-          "Đã làm được",
-          "Chưa làm được"
+          "Chưa làm được",
+          "Đã làm được"
         ],
         "points": 16
       },
@@ -3585,8 +3566,8 @@ const LESSONS = [
         "copyPrompt": "Thêm vào tab Backup trong Settings tính năng cấu hình backup định kỳ, lưu log vào Database có thể CRUD và gửi thông báo qua email + Zalo cho admin khi hoàn thành, hoặc khi có sự cố bất thường.",
         "copyPromptTrailing": "Bạn đã làm được chưa?",
         "options": [
-          "Chưa làm được",
-          "Đã làm được"
+          "Đã làm được",
+          "Chưa làm được"
         ],
         "points": 16
       },
@@ -3617,8 +3598,8 @@ const LESSONS = [
         "copyPrompt": "Tích hợp module Quản lý thực đơn ở sidebar bên trái theo hướng dẫn dưới đây. Riêng phần Auth thì sử dụng hệ thống Auth có sẵn (account, OTP, VPN...).\n\n===========================================================\n\n# Loky Food — Product & Technical Spec (cho coding agent)\n\n> Mục đích: mô tả đủ chi tiết để agent **tự implement** app quản lý món ăn & thực đơn gia đình tương tự.\n> Không ràng buộc stack cụ thể — spec tham chiếu từ bản PHP + SQLite monolith đang chạy production.\n\n---\n\n## 1. Product summary\n\n**Loky Food** giúp gia đình:\n\n- Lưu **kho món** (tên, tags, nguyên liệu, cách làm)\n- Lên **thực đơn theo ngày × bữa** (Sáng / Trưa / Chiều)\n- Cho **người nấu / giúp việc** xem thực đơn + nguyên liệu (trang public, không cần login)\n- **Góp ý** món theo ngày (user đăng nhập)\n- **Thống kê** món hay dùng\n- (Tuỳ chọn) **Chat agent** đọc/ghi DB qua CLI hoặc API\n\n### Personas\n\n| Persona | Nhu cầu |\n|---------|---------|\n| Admin / chủ nhà | CRUD món, lên menu tuần, xem thống kê |\n| Người nấu (helper) | Xem hôm nay ăn gì, định lượng NL, in/ dark mode mobile |\n| Thành viên | Góp ý món, xác nhận đã xem menu |\n\n---\n\n## 2. Functional requirements\n\n### 2.1 Kho món (`dishes`)\n\n- CRUD món: `name`, `note`, `tags`, `cooking_method` (optional)\n- Mỗi món có **nhiều nguyên liệu** (`ingredients`): `name`, `quantity` (text tự do), `note`\n- **Tags** là chuỗi, token cách nhau bằng space, prefix `#`, ví dụ: `#man #rau #embe`\n\n**Tag nhóm bắt buộc cho bữa chính (Trưa/Chiều):**\n\n| Tag | Ý nghĩa |\n|-----|---------|\n| `#man` | Món mặn |\n| `#rau` | Rau / món xanh |\n| `#trangmieng` | Tráng miệng / trái cây |\n| `#embe` | Món em bé (tuỳ chọn) |\n| `#ba` | Món riêng (tuỳ chọn) |\n\n**Business rule:** Khi hiển thị hoặc validate bữa Trưa/Chiều, cảnh báo nếu thiếu nhóm `#man`, `#rau`, hoặc `#trangmieng`.\n\n### 2.2 Thực đơn (`menus`)\n\n- Một record = **một bữa** trong một ngày\n- `meal_time`: enum `Sáng` | `Trưa` | `Chiều`\n- `dish_ids`: JSON array integer, ví dụ `[12, 45, 78]`\n- `note`: ghi chú bữa (optional)\n- Upsert theo `(date, meal_time)` khi lưu từ automation/CLI; web có thể insert hoặc update tùy UX\n\n**Định lượng ghi đè theo bữa** (`menu_ingredients`):\n\n- Khi lên menu, admin có thể chỉnh NL khác món gốc\n- Khi hiển thị: **ưu tiên** `menu_ingredients`; không có thì fallback `ingredients` của món\n\n### 2.3 Trang public — xem thực đơn (`helper_menu`)\n\nKhông yêu cầu đăng nhập.\n\n- Param `date` (default: hôm nay)\n- Liệt kê bữa Sáng/Trưa/Chiều, món + NL\n- Dark/light theme (persist localStorage)\n- Nút prev/next ngày, link sang **weekly view**\n- In ấn: ẩn nav (`no-print`)\n\n**Shortcut routing:** `?act=today` → redirect server-side sang `helper_menu` với `date=hôm nay` (tránh client tính sai ngày).\n\n### 2.4 Weekly overview (`weekly_menu`)\n\n- Lưới 7 cột (T2–CN hoặc theo tuần chứa `date` param)\n- Hàng: Sáng / Trưa / Chiều\n- Ô click → `helper_menu` ngày đó\n- Prev/next tuần\n\n### 2.5 Góp ý (`menu_feedbacks`)\n\n- User **đã login** mới góp ý\n- Unique: `(dish_id, user_id, date)` — một góp ý / món / ngày / user\n- CRUD: create, update, delete (chủ góp ý hoặc admin)\n- Trang `view_feedbacks`: list tất cả, phân trang\n\n### 2.6 Xác nhận đã xem menu (`menu_confirmations`)\n\n- User login bấm xác nhận đã xem thực đơn ngày X\n- Unique `(date, user_id)` — **một chiều**, không hoàn tác (INSERT OR IGNORE / equivalent)\n\n### 2.7 Admin — trang chủ menu (`menus`)\n\n- Cần login\n- Filter: 7 / 14 / 30 ngày tới, hoặc tất cả ngày có data\n- Group theo ngày × bữa, link edit/delete\n\n### 2.8 Tạo/sửa menu (`create_menu`, `edit_menu`)\n\n- Chọn ngày, bữa\n- **Tìm món AJAX**: theo tên và/hoặc tag (`#man`, `#rau`, …)\n- Chọn nhiều món → build `dish_ids` JSON\n- Modal chỉnh định lượng NL → lưu `menu_ingredients`\n- Có thể thêm món mới inline rồi quay lại form menu\n\n### 2.9 Thống kê (`stats`)\n\n- Top N món xuất hiện nhiều nhất trong lịch sử `menus` (đếm qua `dish_ids` JSON)\n- Hiển thị bar chart hoặc list\n\n### 2.10 Auth & users\n\n- Session-based login (username + password hash)\n- Roles: `user`, `super_admin`\n- `super_admin`: quản lý user, copy link \"menu hôm nay\" (admin banner — optional)\n- Seed admin khi DB trống (migration/init)\n\n### 2.11 JSON API (optional nhưng nên có)\n\n| Endpoint | Params | Response |\n|----------|--------|----------|\n| `search` | `q` (tên hoặc `#tag`) | `Dish[]` |\n| `dish` | `id` | `Dish + ingredients[]` |\n| `stats` | — | `{ name, count }[]` top 10 |\n| `popular_tags` | — | `string[]` |\n| `menu_ingredients` | `menu_id` | map `dish_id → Ingredient[]` |\n\n### 2.12 CLI / automation layer (optional)\n\nScript đọc/ghi cùng DB, phục vụ chat agent:\n\n| Command | Behavior |\n|---------|----------|\n| `week [n]` | Bữa N ngày gần nhất |\n| `range <from> <to>` | Bữa trong khoảng |\n| `top [n]` | Top món |\n| `recent-dishes [n]` | Id món đã dùng (tránh lặp khi gợi ý) |\n| `pool [#tag]` | Kho món lọc tag |\n| `dish <id>` | Chi tiết món |\n| `stats` | Tổng quan |\n| `save-menu <date> <meal> <id,id,...> [note]` | Upsert bữa |\n| `add-dish` | JSON stdin → thêm món |\n\nFlags: `--json`, `--db=<path>`\n\n**Agent gợi ý menu (logic nghiệp vụ):**\n\n- Bữa Trưa/Chiều: 1–2 `#man` + 1 `#rau` + canh + 1 `#trangmieng` + (optional) `#embe`\n- Tránh món trong `recent-dishes` 14 ngày\n- Gợi ý ≠ lưu; chỉ `save-menu` khi user xác nhận\n\n---\n\n## 3. Routing model (reference)\n\nSingle entry `index.php` hoặc tương đương:\n\n| Query | Access | Page |\n|-------|--------|------|\n| `act=today` | Public | Redirect → helper_menu hôm nay |\n| `page=helper_menu&date=` | Public | Thực đơn 1 ngày |\n| `page=weekly_menu&date=` | Public | Lưới tuần |\n| `page=view_feedbacks&p=` | Public | Góp ý (read) |\n| `page=menus` | Auth | Lịch admin |\n| `page=dishes` | Auth | CRUD món |\n| `page=add_dish` / `edit_dish` | Auth | Form món |\n| `page=create_menu` / `edit_menu` | Auth | Form bữa |\n| `page=stats` | Auth | Thống kê |\n| `page=profile` | Auth | Hồ sơ |\n| `page=manage_users` | super_admin | Users |\n| `api=search|dish|stats|...` | Mixed | JSON |\n\n**Auth gate:** Public pages render và `exit` trước login form; admin pages require session.\n\n---\n\n## 4. Database schema (SQLite-compatible)\n\n### 4.1 ER diagram\n\n```mermaid\nerDiagram\n    dishes ||--o{ ingredients : has\n    dishes ||--o{ menu_ingredients : \"used in\"\n    menus ||--o{ menu_ingredients : overrides\n    users ||--o{ menu_feedbacks : writes\n    users ||--o{ menu_confirmations : confirms\n\n    dishes {\n        int id PK\n        text name\n        text cooking_method\n        text note\n        text tags\n        datetime created_at\n    }\n    ingredients {\n        int id PK\n        int dish_id FK\n        text name\n        text quantity\n        text note\n    }\n    menus {\n        int id PK\n        date date\n        text meal_time\n        text dish_ids\n        text note\n        datetime created_at\n    }\n    menu_ingredients {\n        int id PK\n        int menu_id FK\n        int dish_id FK\n        text ingredient_name\n        text quantity\n        text note\n    }\n    users {\n        int id PK\n        text username UK\n        text password_hash\n        text display_name\n        text role\n        datetime created_at\n    }\n    menu_feedbacks {\n        int id PK\n        text date\n        text meal_time\n        int dish_id\n        text dish_name\n        int user_id FK\n        text content\n        datetime created_at\n        datetime updated_at\n    }\n    menu_confirmations {\n        int id PK\n        text date\n        int user_id FK\n        datetime created_at\n    }\n```\n\n### 4.2 DDL reference\n\n```sql\nCREATE TABLE dishes (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    name TEXT NOT NULL,\n    cooking_method TEXT,\n    note TEXT,\n    tags TEXT,\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE TABLE ingredients (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    dish_id INTEGER NOT NULL,\n    name TEXT NOT NULL,\n    quantity TEXT,\n    note TEXT,\n    FOREIGN KEY(dish_id) REFERENCES dishes(id) ON DELETE CASCADE\n);\n\nCREATE TABLE menus (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    date DATE NOT NULL,\n    meal_time TEXT NOT NULL,\n    dish_ids TEXT,\n    note TEXT,\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE TABLE menu_ingredients (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    menu_id INTEGER NOT NULL,\n    dish_id INTEGER NOT NULL,\n    ingredient_name TEXT NOT NULL,\n    quantity TEXT,\n    note TEXT,\n    FOREIGN KEY(menu_id) REFERENCES menus(id) ON DELETE CASCADE,\n    FOREIGN KEY(dish_id) REFERENCES dishes(id) ON DELETE CASCADE\n);\n\nCREATE TABLE users (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    username TEXT NOT NULL UNIQUE,\n    password_hash TEXT NOT NULL,\n    display_name TEXT NOT NULL,\n    role TEXT NOT NULL DEFAULT 'user',\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE TABLE menu_feedbacks (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    date TEXT NOT NULL,\n    meal_time TEXT,\n    dish_id INTEGER NOT NULL,\n    dish_name TEXT NOT NULL DEFAULT '',\n    user_id INTEGER NOT NULL,\n    content TEXT NOT NULL,\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,\n    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,\n    UNIQUE(dish_id, user_id, date),\n    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE\n);\n\nCREATE TABLE menu_confirmations (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    date TEXT NOT NULL,\n    user_id INTEGER NOT NULL,\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,\n    UNIQUE(date, user_id),\n    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE\n);\n```\n\n**Indexes đề xuất:** `menus(date)`, `menus(date, meal_time)`, `ingredients(dish_id)`, `menu_ingredients(menu_id)`.\n\n**Legacy (có thể bỏ khi build mới):** cột `menus.html_content`; bảng `dish_feedbacks` nếu không migrate.\n\n---\n\n## 5. Core data flows\n\n### Save menu (web)\n\n```\nPOST save_menu\n  → validate date, meal_time, dish_ids JSON\n  → INSERT menus (+ menu_id)\n  → DELETE + INSERT menu_ingredients from custom_ingredients JSON\n```\n\n### Save menu (CLI)\n\n```\nsave-menu date meal ids note\n  → SELECT id FROM menus WHERE date AND meal_time\n  → UPDATE dish_ids OR INSERT\n```\n\n### Render helper_menu\n\n```\nGET date\n  → SELECT menus WHERE date ORDER BY meal (Sáng→Trưa→Chiều)\n  → FOR EACH dish_id IN JSON(dish_ids):\n        load dish\n        load menu_ingredients OR fallback ingredients\n  → load feedbacks for date, confirmations for user\n```\n\n---\n\n## 6. UX / UI notes\n\n- **Mobile-first** cho `helper_menu` (người nấu dùng điện thoại)\n- Bootstrap hoặc design system tương đương\n- Dark mode trên public pages\n- Print-friendly helper view\n- Admin: navbar Dishes | Create menu | Stats | Profile\n- Form tạo menu: search-as-you-type, chip tags, drag reorder món (nice-to-have)\n\n---\n\n## 7. Non-functional requirements\n\n| Area | Requirement |\n|------|-------------|\n| DB | SQLite file hoặc Postgres — schema tương đương |\n| Auth | Password hashing (bcrypt/argon2), session cookie httponly |\n| i18n | UI tiếng Việt; `meal_time` literal tiếng Việt |\n| Timezone | Server `date()` cho `act=today`; document TZ |\n| Security | Rate-limit API search nếu public; CSRF trên POST admin |\n| Backup | File DB copyable; export JSON optional |\n\n---\n\n## 8. Suggested project structure (agent tự chọn stack)\n\n```\napp/\n  public/index.php          # hoặc Next.js / FastAPI routes\n  src/\n    models/                   # Dish, Menu, User, ...\n    services/                 # MenuValidator, SuggestMenu, ...\n    repositories/             # SQLite/ORM\n  cli/menu-cli.php            # hoặc menu-cli.py\n  migrations/001_init.sql\n  seed/                       # sample dishes + admin user\ndocs/\n  API.md\n```\n\n**MVP scope (phase 1):**\n\n1. Schema + seed\n2. CRUD dishes + ingredients\n3. create/edit menu + helper_menu public\n4. Login + menus list admin\n5. `act=today` redirect\n\n**Phase 2:** weekly_menu, feedbacks, stats, CLI, dark mode\n\n**Phase 3:** Chat agent integration, suggest menu AI\n\n---\n\n## 9. Acceptance checklist\n\n- [ ] Public `helper_menu` hiển thị đúng món + NL theo ngày, không cần login\n- [ ] `act=today` luôn trỏ đúng ngày server\n- [ ] Trưa/Chiều cảnh báo thiếu `#man` / `#rau` / `#trangmieng`\n- [ ] `menu_ingredients` override NL món gốc khi có\n- [ ] Upsert menu theo `(date, meal_time)` từ CLI\n- [ ] Feedback unique per user/dish/date\n- [ ] Admin CRUD món + menu behind auth\n- [ ] Top stats đếm từ lịch sử menu\n\n---\n\n*Spec độc lập deployment — agent implement stack tùy chọn, giữ nguyên nghiệp vụ & schema ở trên.*",
         "copyPromptTrailing": "Bạn đã làm được chưa?",
         "options": [
-          "Đã làm được",
-          "Chưa làm được"
+          "Chưa làm được",
+          "Đã làm được"
         ],
         "points": 20
       },
@@ -3641,8 +3622,8 @@ const LESSONS = [
         "type": "single",
         "prompt": "Nếu loay hoay với LLM thuần mãi không làm Agent tư vấn món ăn đủ thông minh, bạn có thể \"triệu hồi\" hẳn một Coding Agent (ví dụ OpenCode) đứng sau làm bộ não: tạo session, đưa Soul + hướng dẫn nhiệm vụ + danh sách tool cho nó, rồi bơm prompt liên tục vào session đó để nó tự trả lời trong nhóm chat. Bạn đã thử cách này chưa?",
         "options": [
-          "Chưa làm được",
-          "Đã làm được"
+          "Đã làm được",
+          "Chưa làm được"
         ],
         "points": 16
       },

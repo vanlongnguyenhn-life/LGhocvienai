@@ -62,6 +62,8 @@ function resolveAgentPlaceholders(text, code) {
     .replace(/\{\{electron_cmd_queue_url\}\}/g, `${location.origin}/api/electron/cmd-queue`)
     .replace(/\{\{electron_cmd_ack_url\}\}/g, `${location.origin}/api/electron/cmd-ack`)
     .replace(/\{\{base_url\}\}/g, location.origin)
+    // Mã cá nhân của câu 11.6 — Bé Mầm dựa vào đây để biết lệnh /help là của ai.
+    .replace(/\{\{help_code\}\}/g, `${agentTokenInfo.uid}-${String(agentTokenInfo.token).slice(0, 8)}`)
     // Email Google giáo viên đã đăng ký cho học viên này (câu 9.16). Chưa đăng ký thì nói rõ
     // là tài khoản đăng nhập lần đầu sẽ bị khoá, thay vì để trống gây hoang mang.
     .replace(
@@ -99,6 +101,8 @@ function loadState() {
       if (parsed.answers) {
         Object.values(parsed.answers).forEach((a) => {
           if (a.mediaStatus === "loading") delete a.mediaStatus;
+          if (a.helpStatus === "loading") delete a.helpStatus;
+          if (a.thaoLuanStatus === "loading") delete a.thaoLuanStatus;
           if (a.hintStatus === "loading") delete a.hintStatus;
           if (a.letterStatus === "loading") delete a.letterStatus;
           if (a.gwsStatus === "loading") delete a.gwsStatus;
@@ -1170,6 +1174,7 @@ function renderQuestionCard(lesson, q, locked) {
     if (q.chatLog) body.appendChild(renderChatLog(q.chatLog));
     if (q.copyPrompt) body.appendChild(renderCopyPromptBox(resolveAgentPlaceholders(q.copyPrompt, q.code)));
     if (q.copyPromptTrailing) body.appendChild(el("p", { class: "q-prompt" }, q.copyPromptTrailing));
+    if (q.helpPing) body.appendChild(renderHelpPing(q, a));
     // Khối đặc tả dài có đánh số và có liên kết bấm được (câu 10.26). Nội dung do mình soạn
     // trong data.js chứ không lấy từ người dùng, nên dựng thẳng bằng html là an toàn.
     if (q.requirementsHtml) {
@@ -1201,6 +1206,8 @@ function renderQuestionCard(lesson, q, locked) {
       body.appendChild(renderCodeInput(q, a));
     } else if (q.type === "agent_secret_code" || q.type === "pi_lab_code") {
       body.appendChild(renderAgentSecretCode(q, a));
+    } else if (q.type === "agent_demo") {
+      body.appendChild(renderAgentDemo(q, a));
     } else if (q.type === "agent_media" || q.type === "agent_electron") {
       body.appendChild(renderAgentMediaStatus(q, a));
     } else if (q.type === "token_scope_check") {
@@ -1213,6 +1220,7 @@ function renderQuestionCard(lesson, q, locked) {
       body.appendChild(renderTagMark(q, a));
     } else if (q.type === "reflect") {
       body.appendChild(renderReflectInput(q, a));
+      if (q.thaoLuan) body.appendChild(renderThaoLuan(q, a));
     } else if (q.type === "pi_lab_letter") {
       body.appendChild(renderPiLabLetter(q, a));
       if (a.letterStatus === undefined) {
@@ -2106,7 +2114,180 @@ function normalizeCode(s) {
 const AGENT_TASK_STATUS_ENDPOINT = {
   agent_media: "/api/media-status",
   agent_electron: "/api/electron-status",
+  agent_demo: "/api/demo-status",
 };
+
+// Mở widget chatbot demo ngay trong trang (khung nổi), không đá học viên sang tab khác giữa bài.
+function moKhungDemo(ver) {
+  const nen = el("div", { class: "demo-nen" });
+  const hop = el("div", { class: "demo-hop" });
+  const thanh = el("div", { class: "demo-thanh" }, [
+    el("span", {}, "Chatbot Demo · Mầm Fake"),
+    el("div", { class: "demo-nut-nhom" }, [
+      el("a", { class: "help-link", href: `/demo?ver=${ver}`, target: "_blank", rel: "noopener" }, "Mở tab mới ↗"),
+      el("button", { class: "help-link", onclick: () => nen.remove() }, "✕ Đóng"),
+    ]),
+  ]);
+  hop.appendChild(thanh);
+  hop.appendChild(el("iframe", { class: "demo-khung", src: `/demo?ver=${ver}` }));
+  nen.appendChild(hop);
+  nen.addEventListener("click", (e) => {
+    if (e.target === nen) nen.remove();
+  });
+  document.body.appendChild(nen);
+}
+
+async function fetchThaoLuan(q, a) {
+  a.thaoLuanStatus = "loading";
+  try {
+    a.thaoLuanStatus = await API.request(`/api/thao-luan?question_code=${encodeURIComponent(q.code)}`);
+  } catch (err) {
+    a.thaoLuanStatus = { error: err.message };
+  }
+  render();
+  openQuestion(q.code);
+}
+
+// Luồng thảo luận của cả lớp (câu 11.17). Máy chủ chỉ trả bài của bạn khác SAU KHI mình đã nộp,
+// nên phần này trống cho tới lúc đó — cố ý, để không ai chép bài sẵn.
+function renderThaoLuan(q, a) {
+  const wrap = el("div", { class: "thao-luan" });
+
+  if (a.thaoLuanStatus === undefined) {
+    a.thaoLuanStatus = "loading";
+    setTimeout(() => fetchThaoLuan(q, a), 0);
+  }
+
+  const soBinhLuan =
+    a.thaoLuanStatus && a.thaoLuanStatus.comments ? a.thaoLuanStatus.comments.length : 0;
+  wrap.appendChild(
+    el("div", { class: "tl-dau" }, soBinhLuan ? `${soBinhLuan} bình luận của lớp` : "Thảo luận của lớp")
+  );
+
+  if (a.thaoLuanStatus === "loading") {
+    wrap.appendChild(el("div", { class: "secret-note" }, "Đang tải bình luận..."));
+  } else if (a.thaoLuanStatus && a.thaoLuanStatus.error) {
+    wrap.appendChild(el("div", { class: "secret-note" }, "Lỗi tải bình luận: " + a.thaoLuanStatus.error));
+  } else if (!a.thaoLuanStatus.da_nop) {
+    wrap.appendChild(
+      el("div", { class: "secret-note" }, "Viết và nộp bình luận của bạn xong, bạn sẽ đọc được bài của cả lớp ở đây.")
+    );
+  } else if (!(a.thaoLuanStatus.comments || []).length) {
+    wrap.appendChild(el("div", { class: "secret-note" }, "Bạn là người đầu tiên của lớp chia sẻ ở câu này 🎉"));
+  } else {
+    a.thaoLuanStatus.comments.forEach((c) => {
+      const the = el("div", { class: "binh-luan" });
+      const dau = el("div", { class: "bl-dau" });
+      dau.appendChild(
+        el("img", { class: "bl-avatar", src: c.avatar_url || "assets/logo-icon.png", alt: "" })
+      );
+      const cot = el("div", { class: "bl-cot" }, [el("span", { class: "bl-ten" }, c.ten)]);
+      if (c.luc) cot.appendChild(el("span", { class: "bl-luc" }, c.luc));
+      cot.appendChild(el("div", { class: "bl-noi-dung" }, c.noi_dung));
+      dau.appendChild(cot);
+      the.appendChild(dau);
+      wrap.appendChild(the);
+    });
+  }
+
+  wrap.appendChild(el("button", { class: "help-link", onclick: () => fetchThaoLuan(q, a) }, "🔄 Tải lại"));
+  return wrap;
+}
+
+async function fetchHelpStatus(q, a) {
+  a.helpStatus = "loading";
+  try {
+    a.helpStatus = await API.request("/api/help-ping-status");
+  } catch (err) {
+    a.helpStatus = { error: err.message };
+  }
+  render();
+  openQuestion(q.code);
+}
+
+// Câu 11.6: bảng theo dõi xem Bé Mầm đã nhận được lệnh /help của học viên chưa.
+function renderHelpPing(q, a) {
+  const wrap = el("div", { class: "media-status" });
+
+  if (a.helpStatus === undefined) {
+    a.helpStatus = "loading";
+    setTimeout(() => fetchHelpStatus(q, a), 0);
+  }
+
+  if (a.helpStatus === "loading") {
+    wrap.appendChild(el("div", { class: "secret-note" }, "Đang kiểm tra tin nhắn /help..."));
+  } else if (a.helpStatus && a.helpStatus.error) {
+    wrap.appendChild(el("div", { class: "secret-note" }, "Lỗi kiểm tra: " + a.helpStatus.error));
+  } else {
+    const box = el("div", { class: "assignment-box" });
+    box.appendChild(el("div", { class: "label" }, "Bé Mầm đã nhận lệnh /help của bạn chưa?"));
+    box.appendChild(
+      el(
+        "div",
+        { class: "req-text" },
+        a.helpStatus.da_nhan
+          ? `Đã nhận lúc ${a.helpStatus.luc} (còn hạn ${a.helpStatus.han_gio} giờ).`
+          : `Chưa nhận được. Nhắn đúng mẫu ở trên cho Bé Mầm trong nhóm lớp, rồi bấm Kiểm tra lại.`
+      )
+    );
+    box.appendChild(
+      el("div", { class: "criteria-list" }, [
+        el("li", { class: a.helpStatus.da_nhan ? "pass" : "fail" }, [
+          el("span", { class: "c-icon" }, a.helpStatus.da_nhan ? "✓" : "✗"),
+          el("span", {}, a.helpStatus.da_nhan ? "Kết quả: Đạt" : "Kết quả: Chưa đạt"),
+        ]),
+      ])
+    );
+    wrap.appendChild(box);
+  }
+
+  wrap.appendChild(
+    el("button", { class: "help-link", onclick: () => fetchHelpStatus(q, a) }, "🔄 Kiểm tra lại")
+  );
+  return wrap;
+}
+
+function renderAgentDemo(q, a) {
+  const wrap = el("div", { class: "media-status" });
+  const ver = q.demoVer || "v1";
+
+  wrap.appendChild(
+    el("button", { class: "submit-btn demo-mo-nut", onclick: () => moKhungDemo(ver) }, q.demoLabel || "Mở Chatbot Demo (Bé Mầm Fake)")
+  );
+
+  if (a.mediaStatus === undefined) {
+    // Hoãn sang tick sau: đang ở giữa một lượt render(), gọi render() lồng sẽ phá cây DOM dở.
+    a.mediaStatus = "loading";
+    setTimeout(() => fetchMediaStatus(q, a), 0);
+  }
+
+  if (a.mediaStatus === "loading") {
+    wrap.appendChild(el("div", { class: "secret-note" }, "Đang tải tiến độ bài tập trong widget..."));
+  } else if (a.mediaStatus && a.mediaStatus.error) {
+    wrap.appendChild(el("div", { class: "secret-note" }, "Lỗi tải tiến độ: " + a.mediaStatus.error));
+  } else {
+    wrap.appendChild(el("div", { class: "label" }, "Tiêu chí chấm"));
+    (a.mediaStatus.criteria || []).forEach((c) => {
+      const box = el("div", { class: "assignment-box" });
+      box.appendChild(el("div", { class: "label" }, c.title));
+      if (c.detail) box.appendChild(el("div", { class: "req-text" }, c.detail));
+      box.appendChild(
+        el("div", { class: "criteria-list" }, [
+          el("li", { class: c.ok ? "pass" : "fail" }, [
+            el("span", { class: "c-icon" }, c.ok ? "✓" : "✗"),
+            el("span", {}, c.ok ? "Kết quả: Đạt" : "Kết quả: Chưa đạt"),
+          ]),
+        ])
+      );
+      wrap.appendChild(box);
+    });
+  }
+
+  wrap.appendChild(
+    el("button", { class: "help-link", onclick: () => fetchMediaStatus(q, a) }, "🔄 Kiểm tra lại")
+  );
+  return wrap;
+}
 
 async function fetchMediaStatus(q, a) {
   a.mediaStatus = "loading";
@@ -2257,7 +2438,9 @@ function renderReflectInput(q, a) {
   const minLength = q.minLength || 20;
   const ta = el("textarea", {
     class: "reflect-input",
-    placeholder: "Dán nguyên văn câu trả lời của Agent...",
+    // Câu thảo luận là bình luận gửi cả lớp đọc, không phải chỗ dán lời Agent — lời nhắc trong
+    // ô phải nói đúng việc đang làm.
+    placeholder: q.thaoLuan ? "Viết bình luận..." : "Dán nguyên văn câu trả lời của Agent...",
   });
   ta.value = a.text || "";
   ta.addEventListener("input", (e) => {
@@ -2858,9 +3041,13 @@ async function submitAnswer(lesson, q) {
       showToast(err.message);
       return;
     }
-  } else if (q.type === "agent_media" || q.type === "agent_electron") {
+  } else if (q.type === "agent_media" || q.type === "agent_electron" || q.type === "agent_demo") {
     if (!a.mediaStatus || a.mediaStatus === "loading" || !a.mediaStatus.is_correct) {
-      showToast("Chưa thấy Agent nộp bài đạt đủ tiêu chí — bấm Kiểm tra lại sau khi Agent đã chạy xong.");
+      showToast(
+        q.type === "agent_demo"
+          ? "Chưa đủ tiêu chí trong widget — mở Chatbot Demo chat tiếp rồi bấm Kiểm tra lại."
+          : "Chưa thấy Agent nộp bài đạt đủ tiêu chí — bấm Kiểm tra lại sau khi Agent đã chạy xong."
+      );
       return;
     }
     // Server tự re-verify độc lập (không tin client) ở /api/submit-question trước khi cộng điểm.
