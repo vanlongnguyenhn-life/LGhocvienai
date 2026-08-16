@@ -2833,7 +2833,9 @@ def _class_friends(user_id: int) -> list:
     """9 người bạn của câu 9.20/9.21 = TOÀN BỘ các bạn còn lại trong lớp (lớp có 10 người).
 
     Không bốc ngẫu nhiên: ai cũng phải báo cáo về tất cả những người còn lại, và cũng chính
-    những người đó chấm bài cho mình. Loại giáo viên và tài khoản chưa được duyệt.
+    những người đó chấm bài cho mình. Loại giáo viên, tài khoản chưa được duyệt, và TÀI KHOẢN
+    KIỂM THỬ — tài khoản test không có người thật ngồi chấm, để nó trong danh sách là cả lớp
+    kẹt vĩnh viễn ở câu 9.21 vì không bao giờ đủ lượt chấm (đã xảy ra thật).
     Chỉ lấy tên, ảnh và vị trí học — KHÔNG lấy IP/email/Zalo như web tham khảo, vì những thứ đó
     chưa từng công khai trong lớp và không phục vụ gì cho bài học.
     """
@@ -2841,6 +2843,7 @@ def _class_friends(user_id: int) -> list:
         rows = conn.execute(
             """SELECT id, display_name, avatar_url FROM users
                WHERE id != ? AND approved = 1 AND COALESCE(is_teacher, 0) = 0
+                 AND COALESCE(tai_khoan_test, 0) = 0
                ORDER BY id""",
             (user_id,),
         ).fetchall()
@@ -4324,7 +4327,8 @@ def admin_students(request: Request):
         rows = conn.execute(
             """
             SELECT u.id, u.username, u.display_name, u.avatar_url, u.approved, u.tenant_key,
-                   u.email, u.gws_email, u.created_at,
+                   u.email, u.gws_email, u.created_at, u.is_teacher,
+                   COALESCE(u.tai_khoan_test, 0) AS tai_khoan_test,
                    COUNT(CASE WHEN qs.status IN ('done', 'correct') THEN 1 END) AS done_count,
                    COALESCE(SUM(qs.awarded_points), 0) AS total_points,
                    MAX(qs.updated_at) AS last_activity,
@@ -4417,6 +4421,24 @@ def admin_set_teacher(request: Request, user_id: int, is_teacher: int = Form(1))
             raise HTTPException(status_code=404, detail="Không tìm thấy học viên.")
         conn.execute("UPDATE users SET is_teacher = ? WHERE id = ?", (1 if is_teacher else 0, user_id))
     return {"ok": True, "is_teacher": 1 if is_teacher else 0}
+
+
+@app.post("/api/admin/students/{user_id}/tai-khoan-test")
+def admin_set_tai_khoan_test(request: Request, user_id: int, tai_khoan_test: int = Form(1)):
+    """Đánh dấu một tài khoản là tài khoản kiểm thử của giáo viên.
+
+    Tài khoản này vẫn học và nộp bài bình thường, chỉ bị loại khỏi danh sách "bạn cùng lớp" của
+    câu 9.20/9.21/9.22 — vì không có người thật ngồi sau nó để vào chấm bài cho các bạn.
+    """
+    current_admin(request)
+    with get_db() as conn:
+        row = conn.execute("SELECT id FROM users WHERE id = ?", (user_id,)).fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Không tìm thấy học viên.")
+        conn.execute(
+            "UPDATE users SET tai_khoan_test = ? WHERE id = ?", (1 if tai_khoan_test else 0, user_id)
+        )
+    return {"ok": True, "tai_khoan_test": 1 if tai_khoan_test else 0}
 
 
 @app.post("/api/admin/students/{user_id}/reset-codes")

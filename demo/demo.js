@@ -1,4 +1,4 @@
-// Chatbot demo "Mầm Fake" (Bài 11). Trang này chỉ vẽ và gửi tin; toàn bộ phần chấm bài tập nằm
+// Widget Chatbot Demo V1-V4 của Bài 11 (bot tên Bé Ailai). Trang này chỉ vẽ và gửi tin; toàn bộ phần chấm bài tập nằm
 // ở máy chủ (bảng demo_progress) — cố tình KHÔNG cho trình duyệt tự khai đã làm được gì.
 
 const VER = new URLSearchParams(location.search).get("ver") || "v1";
@@ -8,10 +8,28 @@ const $ = (id) => document.getElementById(id);
 let hoiThoaiHienTai = null;
 let dangGui = false;
 
-async function goi(duongDan, tuyChon = {}) {
-  const r = await fetch(duongDan, { credentials: "same-origin", ...tuyChon });
+async function goi(duongDan, tuyChon = {}, thuLai = true) {
+  let r;
+  try {
+    r = await fetch(duongDan, { credentials: "same-origin", ...tuyChon });
+  } catch (e) {
+    // Máy chủ đang khởi động lại thì thử thêm một lần trước khi kêu lỗi.
+    if (!thuLai) throw e;
+    await new Promise((ok) => setTimeout(ok, 500));
+    return goi(duongDan, tuyChon, false);
+  }
   if (r.status === 401 || r.status === 403) {
-    hienChan("Widget này thuộc lớp ALG — hãy đăng nhập lớp học rồi mở lại.");
+    // Thử lại 1 lần: phiên đăng nhập vừa được làm mới ở trang cha thì lần 2 là qua.
+    if (thuLai && !tuyChon.method) {
+      await new Promise((ok) => setTimeout(ok, 400));
+      return goi(duongDan, tuyChon, false);
+    }
+    const chiTiet = await r.text().catch(() => "");
+    hienChan(
+      `Máy chủ trả về ${r.status} khi kiểm tra đăng nhập` +
+        (chiTiet ? ` (${chiTiet.slice(0, 120)})` : "") +
+        ". Hãy đăng nhập lại ở trang lớp học rồi mở lại widget."
+    );
     throw new Error("chưa đăng nhập");
   }
   const d = await r.json().catch(() => ({}));
@@ -33,7 +51,7 @@ function theTin(vaiTro, noiDung, kemTheo) {
 
   const ai = document.createElement("div");
   ai.className = "ai-noi";
-  ai.textContent = vaiTro === "user" ? "Bạn" : "Bé Mầm";
+  ai.textContent = vaiTro === "user" ? "Bạn" : "Bé Ailai";
   luot.appendChild(ai);
 
   const bong = document.createElement("div");
@@ -203,7 +221,7 @@ async function gui(noiDung) {
 
   const khung = $("khung-chat");
   khung.appendChild(theTin("user", noiDung));
-  const cho = theTin("assistant", "Bé Mầm đang trả lời…");
+  const cho = theTin("assistant", "Bé Ailai đang trả lời…");
   cho.querySelector(".bong").classList.add("dang-go");
   khung.appendChild(cho);
   xuongCuoi();

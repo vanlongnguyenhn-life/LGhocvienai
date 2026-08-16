@@ -1,7 +1,7 @@
 """Trợ lý Lark cho Học Viện AI Life Group.
 
 - Nhận sự kiện tin nhắn từ Lark (webhook ở main.py) → xử lý ở đây.
-- Trả lời như một trợ lý AI thân thiện (giọng "Bé Mầm") bằng Claude.
+- Trả lời như một trợ lý AI thân thiện (giọng "Bé Ailai") bằng Claude.
 - Tra tiến độ học viên trong DB (đối chiếu qua lark_open_id).
 """
 
@@ -208,7 +208,7 @@ def get_class_stats() -> dict:
     return {"total": total, "started": started, "active_today": active_today}
 
 
-# ===================== TRẢ LỜI BẰNG AI (giọng Bé Mầm) =====================
+# ===================== TRẢ LỜI BẰNG AI (giọng Bé Ailai) =====================
 
 SYSTEM_PROMPT = (
     f"Bạn là {BOT_NAME}, một CHUYÊN VIÊN QUẢN LÝ LỚP HỌC XUẤT SẮC của khoá 'ALG - Biến AI thành "
@@ -770,7 +770,7 @@ async def smart_answer(text: str, open_id: str | None, prog: dict | None, is_tea
 _MA_HELP = re.compile(r"^/help\s+(\d+)\s*-\s*([A-Za-z0-9]{6,})\s*$", re.I)
 
 TRA_LOI_HO_TRO = (
-    "Dạ em là Bé Mầm, trợ lý lớp ALG ạ 🌱\n"
+    "Dạ em là Bé Ailai, trợ lý lớp ALG ạ 🌱\n"
     "Khi gặp khó, anh/chị làm theo thứ tự này giúp em nhé:\n"
     "1. Đọc lại kỹ đề bài trên trang lớp học, làm đúng từng bước một.\n"
     "2. Hỏi chính Coding Agent của mình trước — phần lớn vướng mắc nó gỡ được ngay.\n"

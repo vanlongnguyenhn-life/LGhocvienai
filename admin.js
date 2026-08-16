@@ -51,6 +51,11 @@ const ADMIN_API = {
     fd.append("is_teacher", isTeacher ? "1" : "0");
     return this._send(`/api/admin/students/${id}/teacher`, { method: "POST", body: fd });
   },
+  setTaiKhoanTest(id, laTest) {
+    const fd = new FormData();
+    fd.append("tai_khoan_test", laTest ? "1" : "0");
+    return this._send(`/api/admin/students/${id}/tai-khoan-test`, { method: "POST", body: fd });
+  },
   resetFromCode(id, codes) {
     const fd = new FormData();
     fd.append("codes", codes.join(","));
@@ -652,6 +657,30 @@ async function handleTeacher(id, isTeacher) {
   render();
 }
 
+async function handleTaiKhoanTest(id, laTest) {
+  if (
+    laTest &&
+    !confirm(
+      "Đánh dấu đây là TÀI KHOẢN KIỂM THỬ?\n\n" +
+        "Tài khoản này vẫn học bình thường, nhưng sẽ không còn được tính là bạn cùng lớp ở câu " +
+        "9.20 / 9.21 / 9.22 — các bạn khác không phải chờ nó vào chấm bài nữa."
+    )
+  ) {
+    return;
+  }
+  try {
+    await ADMIN_API.setTaiKhoanTest(id, laTest);
+    const u = state.students.find((s) => s.id === id);
+    if (u) u.tai_khoan_test = laTest ? 1 : 0;
+    if (state.detail && state.detail.user && state.detail.user.id === id) {
+      state.detail.user.tai_khoan_test = laTest ? 1 : 0;
+    }
+  } catch (err) {
+    alert(err.message || "Không cập nhật được nhãn tài khoản kiểm thử.");
+  }
+  render();
+}
+
 async function handleGrantGaps(userId, displayName, gapCodes) {
   if (!gapCodes || gapCodes.length === 0) return;
   const preview = gapCodes.slice(0, 12).join(", ") + (gapCodes.length > 12 ? `, … (+${gapCodes.length - 12})` : "");
@@ -1211,6 +1240,7 @@ function renderDashboard() {
             el("div", { class: "admin-student-name" }, [
               s.display_name,
               s.approved ? null : el("span", { class: "admin-pending-badge" }, ["Chờ duyệt"]),
+              s.tai_khoan_test ? el("span", { class: "admin-test-badge" }, ["Kiểm thử"]) : null,
             ]),
             el("div", { class: "admin-student-username" }, ["@" + s.username]),
           ]),
@@ -1322,6 +1352,7 @@ function renderStudentDetail() {
           user.display_name,
           user.approved ? null : el("span", { class: "admin-pending-badge" }, ["Chờ duyệt"]),
           user.is_teacher ? el("span", { class: "admin-teacher-badge" }, ["Giáo viên"]) : null,
+          user.tai_khoan_test ? el("span", { class: "admin-test-badge" }, ["Tài khoản kiểm thử"]) : null,
         ]),
         el("p", { class: "admin-student-username" }, ["@" + user.username + " · Tham gia " + fmtDate(user.created_at)]),
         user.tenant_key ? el("p", { class: "admin-tenant-key" }, ["Mã tổ chức (tenant_key): " + user.tenant_key]) : null,
@@ -1332,6 +1363,10 @@ function renderStudentDetail() {
           user.is_teacher
             ? el("button", { class: "admin-teacher-btn unteacher", onclick: () => handleTeacher(user.id, 0) }, ["Bỏ quyền giáo viên"])
             : el("button", { class: "admin-teacher-btn", onclick: () => handleTeacher(user.id, 1) }, ["★ Đặt làm giáo viên"]),
+          // Loại khỏi danh sách bạn cùng lớp của câu 9.20/9.21/9.22 mà vẫn giữ nguyên quyền học.
+          user.tai_khoan_test
+            ? el("button", { class: "admin-teacher-btn unteacher", onclick: () => handleTaiKhoanTest(user.id, 0) }, ["Bỏ nhãn kiểm thử"])
+            : el("button", { class: "admin-teacher-btn", onclick: () => handleTaiKhoanTest(user.id, 1) }, ["🧪 Đánh dấu tài khoản kiểm thử"]),
         ]),
         el("div", { class: "admin-reset-row" }, [
           el("span", { class: "admin-reset-label" }, ["Tài khoản Google (Bài 9)"]),

@@ -356,6 +356,11 @@ a { color: inherit; }
   display: inline-block; margin-left: 8px; padding: 1px 8px; border-radius: 999px;
   background: #e7f0ff; color: #1155cc; font-size: 11px; font-weight: 700; vertical-align: middle;
 }
+/* Tài khoản kiểm thử: không tính vào danh sách bạn cùng lớp của câu 9.20/9.21/9.22. */
+.admin-test-badge {
+  display: inline-block; margin-left: 8px; padding: 1px 8px; border-radius: 999px;
+  background: #fff3e0; color: #b26a00; font-size: 11px; font-weight: 700; vertical-align: middle;
+}
 .admin-teacher-btn {
   background: #1155cc; color: #fff; border: none; padding: 6px 12px; border-radius: var(--radius-sm);
   font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;

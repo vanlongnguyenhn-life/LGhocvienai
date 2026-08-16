@@ -62,7 +62,7 @@ function resolveAgentPlaceholders(text, code) {
     .replace(/\{\{electron_cmd_queue_url\}\}/g, `${location.origin}/api/electron/cmd-queue`)
     .replace(/\{\{electron_cmd_ack_url\}\}/g, `${location.origin}/api/electron/cmd-ack`)
     .replace(/\{\{base_url\}\}/g, location.origin)
-    // Mã cá nhân của câu 11.6 — Bé Mầm dựa vào đây để biết lệnh /help là của ai.
+    // Mã cá nhân của câu 11.6 — Bé Ailai dựa vào đây để biết lệnh /help là của ai.
     .replace(/\{\{help_code\}\}/g, `${agentTokenInfo.uid}-${String(agentTokenInfo.token).slice(0, 8)}`)
     // Email Google giáo viên đã đăng ký cho học viên này (câu 9.16). Chưa đăng ký thì nói rõ
     // là tài khoản đăng nhập lần đầu sẽ bị khoá, thay vì để trống gây hoang mang.
@@ -108,7 +108,11 @@ function loadState() {
           if (a.gwsStatus === "loading") delete a.gwsStatus;
           if (a.npcFriend === "loading") delete a.npcFriend;
           if (a.npcAvatar === "loading") delete a.npcAvatar;
-          if (a.peer === "loading") delete a.peer;
+          // Câu 9.21: XOÁ HẲN chứ không chỉ xoá lúc "loading". Bảng "ai đã chấm cho mình" là
+          // ảnh chụp tại một thời điểm, mà nó chỉ tự gọi lại khi giá trị là undefined — giữ bản
+          // cũ trong localStorage nghĩa là học viên tải lại trang vẫn thấy số cũ (bạn vừa chấm
+          // xong mà không hiện), phải bấm "Kiểm tra lại" mới thấy. Bỏ đi để mở trang là số mới.
+          delete a.peer;
           // Cờ "đang nộp" chỉ có nghĩa trong phiên đang chạy. Nếu trang bị tải lại đúng lúc
           // đang nộp mà không xoá, nút Nộp bài sẽ bị khoá VĨNH VIỄN ở lần mở sau.
           delete a.submitting;
@@ -1278,7 +1282,13 @@ function renderQuestionCard(lesson, q, locked) {
             });
           },
         },
-        a.submitting ? ["⏳ Đang nộp..."] : ["➤ ", a.status === "correct" || a.status === "done" ? "Nộp lại" : "Nộp bài"]
+        // Câu thảo luận: web tham khảo KHÔNG có nút "Nộp bài", chỉ có "Gửi bình luận" — bấm gửi
+        // là vừa gửi bài vừa nhờ AI đọc, đạt thì mới mở phần bình luận của cả lớp.
+        a.submitting
+          ? [q.thaoLuan ? "⏳ Đang gửi..." : "⏳ Đang nộp..."]
+          : q.thaoLuan
+            ? ["💬 ", a.status === "correct" || a.status === "done" ? "Gửi lại bình luận" : "Gửi bình luận"]
+            : ["➤ ", a.status === "correct" || a.status === "done" ? "Nộp lại" : "Nộp bài"]
       ),
       el(
         "button",
@@ -2122,7 +2132,7 @@ function moKhungDemo(ver) {
   const nen = el("div", { class: "demo-nen" });
   const hop = el("div", { class: "demo-hop" });
   const thanh = el("div", { class: "demo-thanh" }, [
-    el("span", {}, "Chatbot Demo · Mầm Fake"),
+    el("span", {}, `Chatbot Demo (${String(ver).toUpperCase()}) · Bé Ailai`),
     el("div", { class: "demo-nut-nhom" }, [
       el("a", { class: "help-link", href: `/demo?ver=${ver}`, target: "_blank", rel: "noopener" }, "Mở tab mới ↗"),
       el("button", { class: "help-link", onclick: () => nen.remove() }, "✕ Đóng"),
@@ -2205,7 +2215,7 @@ async function fetchHelpStatus(q, a) {
   openQuestion(q.code);
 }
 
-// Câu 11.6: bảng theo dõi xem Bé Mầm đã nhận được lệnh /help của học viên chưa.
+// Câu 11.6: bảng theo dõi xem Bé Ailai đã nhận được lệnh /help của học viên chưa.
 function renderHelpPing(q, a) {
   const wrap = el("div", { class: "media-status" });
 
@@ -2220,14 +2230,14 @@ function renderHelpPing(q, a) {
     wrap.appendChild(el("div", { class: "secret-note" }, "Lỗi kiểm tra: " + a.helpStatus.error));
   } else {
     const box = el("div", { class: "assignment-box" });
-    box.appendChild(el("div", { class: "label" }, "Bé Mầm đã nhận lệnh /help của bạn chưa?"));
+    box.appendChild(el("div", { class: "label" }, "Bé Ailai đã nhận lệnh /help của bạn chưa?"));
     box.appendChild(
       el(
         "div",
         { class: "req-text" },
         a.helpStatus.da_nhan
           ? `Đã nhận lúc ${a.helpStatus.luc} (còn hạn ${a.helpStatus.han_gio} giờ).`
-          : `Chưa nhận được. Nhắn đúng mẫu ở trên cho Bé Mầm trong nhóm lớp, rồi bấm Kiểm tra lại.`
+          : `Chưa nhận được. Nhắn đúng mẫu ở trên cho Bé Ailai trong nhóm lớp, rồi bấm Kiểm tra lại.`
       )
     );
     box.appendChild(
@@ -2252,7 +2262,7 @@ function renderAgentDemo(q, a) {
   const ver = q.demoVer || "v1";
 
   wrap.appendChild(
-    el("button", { class: "submit-btn demo-mo-nut", onclick: () => moKhungDemo(ver) }, q.demoLabel || "Mở Chatbot Demo (Bé Mầm Fake)")
+    el("button", { class: "submit-btn demo-mo-nut", onclick: () => moKhungDemo(ver) }, q.demoLabel || "Mở Chatbot Demo (V1)")
   );
 
   if (a.mediaStatus === undefined) {
@@ -3098,10 +3108,14 @@ async function submitAnswer(lesson, q) {
     const minLength = q.minLength || 20;
     const text = (a.text || "").trim();
     if (text.length < minLength) {
-      showToast(`Cần dán câu trả lời của Agent, tối thiểu ${minLength} ký tự`);
+      showToast(
+        q.thaoLuan
+          ? `Bình luận cần ít nhất ${minLength} ký tự`
+          : `Cần dán câu trả lời của Agent, tối thiểu ${minLength} ký tự`
+      );
       return;
     }
-    showToast("Đang chấm bài...");
+    showToast(q.thaoLuan ? "Đang gửi bình luận..." : "Đang chấm bài...");
     const fd = new FormData();
     fd.append("question_code", q.code);
     fd.append("answer", text);
@@ -3114,8 +3128,16 @@ async function submitAnswer(lesson, q) {
     }
     a.status = result.valid ? "done" : "wrong";
     a.awardedPoints = result.valid ? q.points : 0;
-    showToast(result.valid ? `Đã chấm đạt! +${q.points} điểm` : result.reason || "Câu trả lời chưa đạt, Bạn xem lại nhé");
+    showToast(
+      result.valid
+        ? q.thaoLuan
+          ? `Đã gửi bình luận! +${q.points} điểm — giờ bạn đọc được bài của cả lớp`
+          : `Đã chấm đạt! +${q.points} điểm`
+        : result.reason || "Câu trả lời chưa đạt, Bạn xem lại nhé"
+    );
     persistQuestionStatus(q, a);
+    // Gửi đạt rồi thì tải lại luồng bình luận — đây chính là lúc bài của cả lớp được mở ra.
+    if (q.thaoLuan && result.valid) a.thaoLuanStatus = undefined;
   } else if (q.type === "gate") {
     // Câu chặn có chủ đích — trang gốc chưa công bố nội dung thật, không thể vượt qua
     showToast("Nội dung chưa được mở, team đang chuẩn bị bài tập — quay lại sau nhé!");

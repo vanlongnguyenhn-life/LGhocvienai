@@ -232,7 +232,7 @@ CREATE TABLE IF NOT EXISTS peer_reviews (
     FOREIGN KEY (grader_user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Bài 11: chatbot demo "Mầm Fake" (4 phiên bản). Lịch sử chat lưu server để học viên quay lại
+-- Bài 11: Chatbot Demo (V1-V4) (4 phiên bản). Lịch sử chat lưu server để học viên quay lại
 -- vẫn thấy hội thoại cũ, giống hệt widget của web tham khảo.
 CREATE TABLE IF NOT EXISTS demo_conversations (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -257,7 +257,7 @@ CREATE TABLE IF NOT EXISTS demo_messages (
 -- Dấu vết học viên THỰC SỰ đã làm gì trong widget: từ khoá đã thử (V1), chủ đề đã chat (V2),
 -- tool đã kích hoạt (V3/V4). Đây là căn cứ duy nhất để chấm 11.9/11.11/11.15/11.18 — máy chủ tự
 -- ghi khi xử lý tin nhắn, trình duyệt không khai hộ được.
--- Câu 11.6: học viên nhắn "/help <mã cá nhân>" cho Bé Mầm trong nhóm lớp. Mỗi lần nhắn đúng mã
+-- Câu 11.6: học viên nhắn "/help <mã cá nhân>" cho Bé Ailai trong nhóm lớp. Mỗi lần nhắn đúng mã
 -- ghi một dòng ở đây; câu chỉ mở khi có lệnh trong vòng 24 giờ (nhắn lâu rồi thì nhắn lại).
 CREATE TABLE IF NOT EXISTS help_pings (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -346,6 +346,10 @@ def init_db():
             conn.execute("ALTER TABLE users ADD COLUMN pi_lab_friendship_code TEXT")
         if "pi_lab_phrase" not in user_cols:
             conn.execute("ALTER TABLE users ADD COLUMN pi_lab_phrase TEXT")
+        # Tài khoản kiểm thử của giáo viên: vẫn học bình thường nhưng KHÔNG được tính là bạn
+        # cùng lớp ở câu 9.20/9.21/9.22 — nếu tính, cả lớp phải chờ nó vào chấm bài mới xong câu.
+        if "tai_khoan_test" not in user_cols:
+            conn.execute("ALTER TABLE users ADD COLUMN tai_khoan_test INTEGER NOT NULL DEFAULT 0")
         ms_cols = [r["name"] for r in conn.execute("PRAGMA table_info(media_submissions)")]
         if ms_cols and "updated_at" not in ms_cols:
             conn.execute("ALTER TABLE media_submissions ADD COLUMN updated_at TEXT NOT NULL DEFAULT (datetime('now'))")

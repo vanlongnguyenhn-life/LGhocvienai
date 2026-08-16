@@ -65,25 +65,5 @@
       }
     ],
     "points": 30
-  },
-  "11.26": {
-    "prompt": "Copy prompt dưới đây, nhờ một **Coding Agent** bất kỳ lập trình tạo ra... một Agent khác.\nChụp ảnh Agent bạn vừa tạo đang chạy, và viết câu trả lời cho 3 câu hỏi: (1) Tại sao Agent vốn là một thứ rất phức tạp, đầy sức mạnh, mà việc tạo ra nó lại có thể hoàn thành qua một prompt đơn giản như vậy? (2) Thế thì, học làm AI Agent có còn cần thiết nữa hay không? (3) Và cuối cùng thì, đến giờ phút này, bạn cho rằng học AI Agent là học cái gì?",
-    "criteria": [
-      {
-        "key": "image",
-        "optional": false,
-        "minLength": null,
-        "label": "Ảnh minh chứng",
-        "desc": "Chọn ảnh chụp màn hình Agent 3-tool đang chạy trên web."
-      },
-      {
-        "key": "text",
-        "optional": false,
-        "minLength": null,
-        "label": "Trả lời 3 câu hỏi thảo luận",
-        "desc": "Trả lời cả 3 câu hỏi ở trên."
-      }
-    ],
-    "points": 20
   }
 }

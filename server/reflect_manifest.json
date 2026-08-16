@@ -138,10 +138,16 @@
     "gradingNote": null
   },
   "11.17": {
-    "prompt": "Theo bạn, **tại sao** các việc _liệt kê hình, đếm hình, liệt kê file văn bản, đếm file văn bản_ thì **Mầm Fake (V3) làm được**; còn các việc _xoá hình, xoá file văn bản, thống kê độ tuổi học viên lớp ALG_ thì **không làm được**? Hãy chia sẻ suy nghĩ để cả lớp cùng thảo luận.",
+    "prompt": "Theo bạn, **tại sao** các việc _liệt kê hình, đếm hình, liệt kê file văn bản, đếm file văn bản_ thì **Chatbot Demo (V3) làm được**; còn các việc _xoá hình, xoá file văn bản, thống kê độ tuổi học viên lớp ALG_ thì **không làm được**? Hãy chia sẻ suy nghĩ để cả lớp cùng thảo luận.",
     "minLength": 80,
     "points": 10,
-    "gradingNote": "Bình luận ĐẠT nếu giải thích đúng theo hướng: 4 việc đầu Mầm Fake (V3) có công cụ tương ứng (count_images / show_images / count_docs / show_docs) nên làm được; 3 việc sau không có công cụ (hoặc công cụ delete_image / delete_doc / get_class_age_stats luôn báo hỏng) nên chịu. Bình luận quá ngắn, lạc đề, troll hoặc spam ký tự thì KHÔNG đạt."
+    "gradingNote": "Bình luận ĐẠT nếu giải thích đúng theo hướng: 4 việc đầu Chatbot Demo (V3) có công cụ tương ứng (count_images / show_images / count_docs / show_docs) nên làm được; 3 việc sau không có công cụ (hoặc công cụ delete_image / delete_doc / get_class_age_stats luôn báo hỏng) nên chịu. Bình luận quá ngắn, lạc đề, troll hoặc spam ký tự thì KHÔNG đạt."
+  },
+  "11.26": {
+    "prompt": "Copy prompt dưới đây, nhờ một **Coding Agent** bất kỳ lập trình tạo ra... một Agent khác.\nTạo cho tôi một Agent đơn giản, sẽ luôn spawn OpenCode dạng JSON lên để làm LLM Proxy. Agent này có 3 tool là: \"Liệt kê hình ảnh trong máy dưới dạng gallery\", \"Kiểm tra RAM và liệt kê những process chiếm RAM nhiều nhất\", và \"Kiểm tra dung lượng ổ cứng và chỉ ra top 10 file có dung lượng lớn nhất\". Tạo trang web localhost bằng GO/NodeJS hoặc Python (tuỳ trong máy có sẵn stack nào) để tôi có thể giao tiếp với agent qua web chat. Sau khi làm xong thì mở nó lên trong trình duyệt để tôi test thử.",
+    "minLength": 80,
+    "points": 20,
+    "gradingNote": "Bình luận ĐẠT nếu học viên trả lời được cả 3 câu hỏi thảo luận: (1) vì sao tạo được Agent phức tạp chỉ bằng một prompt đơn giản (ý đúng: Coding Agent tự viết phần mềm, các mảnh ghép đã có sẵn, LLM lo phần suy luận); (2) học làm AI Agent còn cần thiết hay không; (3) học AI Agent thực chất là học gì. Trả lời quá ngắn, bỏ sót câu, lạc đề hoặc spam ký tự thì KHÔNG đạt."
   },
   "12.3": {
     "prompt": "Tuần học này được thiết kế dưới dạng gallery các gợi ý ứng dụng hữu ích để bạn copy & paste prompt theo kiểu \"mì ăn liền\" (ví dụ: hệ thống ghi chép đa nền tảng đồng bộ, ứng dụng ghi chép thời gian thực khi họp, bộ nhớ dài hạn xuyên phiên cho Agent, tự động đăng bài khi bạn comment một câu nhất định...).\n\nĐây là kiểu làm không đúng tinh thần học nguyên lý/mindset của khoá học — nó chỉ hỗ trợ bạn làm nhanh các ứng dụng phục vụ công việc thực tế, song song với quá trình học thay đổi mindset.\n\nĐể tiếp tục tuần học này, bạn cần: (1) đã hoàn thành toàn bộ Bài 10, (2) cam kết đã đọc hiểu và đồng ý với tính chất của tuần học này, (3) mô tả ít nhất 3 ứng dụng mà bạn thấy thực sự hữu ích cho bản thân trong đời sống/công việc/học tập, theo đúng mẫu:\n> Bối cảnh:\nTôi đang làm trong một công ty thương mại điện tử. Hằng ngày tôi phải...\n\n> Mong muốn:\n1. Tôi muốn tạo Agent có tính năng ... để ...\n2. Tôi muốn tạo Agent có tính năng ... để ...\n3. Tôi muốn tạo Agent có tính năng ... để ...",

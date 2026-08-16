@@ -2454,8 +2454,8 @@
       "Nhờ lập trình viên sửa mã nguồn rồi build lại app mỗi khi thêm lệnh",
       "Đổi tên nhóm Zalo thành \"/giup\" để bot nhận ra",
       "Tạo một con bot riêng cho mỗi lệnh /giup, /giup-do...",
-      "Không cần làm gì, Bé Mầm tự học được các lệnh đó",
-      "Cài đặt lại toàn bộ Bé Mầm từ đầu cho mỗi lệnh mới",
+      "Không cần làm gì, Bé Ailai tự học được các lệnh đó",
+      "Cài đặt lại toàn bộ Bé Ailai từ đầu cho mỗi lệnh mới",
       "Đưa /giup, /giup-do, /giup-toi, /tro-giup vào danh sách từ khoá kích hoạt câu trả lời \"Hỗ trợ\""
     ],
     "correct": [
@@ -2607,11 +2607,11 @@
     "correctPairs": [
       [
         "Trang bị tools (các phần mềm trong máy)",
-        "Chúng ta, người tạo ra Mầm Fake"
+        "Chúng ta, người tạo ra Chatbot Demo"
       ],
       [
         "Cung cấp tài liệu mô tả tính năng / tham số / cách dùng tool",
-        "Chúng ta, người tạo ra Mầm Fake"
+        "Chúng ta, người tạo ra Chatbot Demo"
       ],
       [
         "Chỉ dẫn chính xác dùng tool nào cho yêu cầu nào",
@@ -2662,11 +2662,11 @@
     "points": 10,
     "anyValid": false,
     "correctTexts": [
-      "Mầm Fake tạo ra một prompt khác phức tạp hơn nhiều"
+      "Chatbot Demo tạo ra một prompt khác phức tạp hơn nhiều"
     ],
     "optionsOriginal": [
-      "Mầm Fake \"chuyển tiếp\" đúng câu prompt này lên Mô hình ngôn ngữ lớn LLM",
-      "Mầm Fake tạo ra một prompt khác phức tạp hơn nhiều"
+      "Chatbot Demo \"chuyển tiếp\" đúng câu prompt này lên Mô hình ngôn ngữ lớn LLM",
+      "Chatbot Demo tạo ra một prompt khác phức tạp hơn nhiều"
     ],
     "correct": [
       0

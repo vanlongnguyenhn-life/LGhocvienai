@@ -1,4 +1,4 @@
-"""Chatbot demo "Mầm Fake" của Bài 11 — bốn phiên bản là bốn nấc tiến hoá của một Agent.
+"""Chatbot Demo (V1-V4) của Bài 11 — bot tên Bé Ailai — bốn phiên bản là bốn nấc tiến hoá của một Agent.
 
     V1  chatbot dò TỪ KHOÁ, không có mô hình ngôn ngữ — trả lời theo kịch bản cài sẵn.
     V2  chatbot gọi MÔ HÌNH NGÔN NGỮ LỚN, trả lời linh hoạt nhưng chưa có tay chân.
@@ -44,7 +44,7 @@ CHU_DE_V1 = [
         "ma": "chao_hoi",
         "chu_de": "Chào hỏi",
         "tu_khoa": ["hi", "hello", "chào", "chao", "xin chào", "xinchao", "alo"],
-        "tra_loi": "Em Mầm xin chào anh chị 👋",
+        "tra_loi": "Em Ailai xin chào anh chị 👋",
     },
     {
         "ma": "suc_khoe",
@@ -227,7 +227,7 @@ def _mo_ta_tool_cho_llm(ten: str) -> dict:
 # ===================== Gọi mô hình ngôn ngữ (V2 / V3 / V4) =====================
 
 LOI_NHAC_HE_THONG = (
-    "Bạn là \"Bé Mầm\", trợ lý AI của lớp học ALG - Học Viện AI Life Group. Bạn xưng \"em\" và gọi "
+    "Bạn là \"Bé Ailai\", trợ lý AI của lớp học ALG - Học Viện AI Life Group. Bạn xưng \"em\" và gọi "
     "người dùng là \"anh/chị\". Trả lời ngắn gọn, thân thiện, bằng tiếng Việt. "
     "Bạn CHỈ làm được những việc mà công cụ được trang bị cho phép: nếu người dùng nhờ một việc mà "
     "bạn không có công cụ, hoặc công cụ báo lỗi, hãy nói thật là chưa làm được và nêu rõ mình đang "
@@ -395,11 +395,11 @@ def dat_yeu_cau(conn, user_id: int, question_code: str) -> bool:
 
 def thong_tin_phien_ban(ver: str) -> dict:
     ten = {
-        "v1": ("Mầm Fake (V1)", "Chatbot dò từ khoá — chưa có mô hình ngôn ngữ"),
-        "v2": ("Mầm Fake (V2)", "Chatbot dùng mô hình ngôn ngữ lớn — chưa có công cụ"),
-        "v3": ("Mầm Fake (V3)", "Mô hình ngôn ngữ lớn + 7 công cụ"),
-        "v4": ("Mầm Fake (V4)", "Mô hình ngôn ngữ lớn + 8 công cụ (có tạo danh thiếp)"),
-    }.get(ver, ("Mầm Fake", ""))
+        "v1": ("Chatbot Demo (V1)", "Chatbot dò từ khoá — chưa có mô hình ngôn ngữ"),
+        "v2": ("Chatbot Demo (V2)", "Chatbot dùng mô hình ngôn ngữ lớn — chưa có công cụ"),
+        "v3": ("Chatbot Demo (V3)", "Mô hình ngôn ngữ lớn + 7 công cụ"),
+        "v4": ("Chatbot Demo (V4)", "Mô hình ngôn ngữ lớn + 8 công cụ (có tạo danh thiếp)"),
+    }.get(ver, ("Chatbot Demo", ""))
     return {
         "ver": ver,
         "ten": ten[0],
