@@ -3178,8 +3178,8 @@ CAU1026_CHU_NHO = ("điệp vụ", "alg")
 CAU1026_CREDIT = ("remotion",)
 # Từ khoá kịch bản — giọng đọc phải trúng tối thiểu ngần này.
 CAU1026_TU_KHOA = [
-    "bé ailai", "bạn mít", "mật thư", "tấm thiệp", "chữ trắng",
-    "agent", "google", "chấm chéo",
+    "gió đen", "tây nguyên", "ia grai", "phục kích",
+    "chiến sĩ", "cao nguyên", "đường dây", "tân sơn nhất",
 ]
 CAU1026_CAN_TRUNG = 4
 

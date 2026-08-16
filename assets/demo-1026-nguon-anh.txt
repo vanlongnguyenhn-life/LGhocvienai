@@ -1,0 +1,17 @@
+Nguồn ảnh dùng trong video mẫu câu 10.26 (assets/demo-1026.mp4)
+
+canh1  Gia Lai landscape
+    Giấy phép: CC0
+    Nguồn: https://commons.wikimedia.org/wiki/File:Bi%E1%BB%83n_H%E1%BB%93_-_Pleiku,_Gia_Lai,_Vi%E1%BB%87t_Nam.jpg
+
+canh2  File:Haneda airport International Terminal night.JPG
+    Giấy phép: Public domain
+    Nguồn: https://commons.wikimedia.org/wiki/File:Haneda_airport_International_Terminal_night.JPG
+
+canh3  forest at night long exposure
+    Giấy phép: CC BY 4.0
+    Nguồn: https://commons.wikimedia.org/wiki/File:Andaman_Islands,_Full_moon_night,_Forest_by_the_sea_at_night.jpg
+
+canh4  File:Fog Ocean Sunrise (26530071313).jpg
+    Giấy phép: Public domain
+    Nguồn: https://commons.wikimedia.org/wiki/File:Fog_Ocean_Sunrise_(26530071313).jpg
