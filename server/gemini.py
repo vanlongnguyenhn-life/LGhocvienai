@@ -57,7 +57,11 @@ def nhan_giong(duong_dan_wav: str) -> tuple:
                      "Nếu không nghe thấy lời nói nào thì trả về đúng chữ: (không có lời nói)"},
             {"inline_data": {"mime_type": "audio/wav", "data": base64.b64encode(data).decode()}},
         ]}],
-        "generationConfig": {"temperature": 0, "maxOutputTokens": 4096},
+        # Model 2.5 mặc định BẬT "suy nghĩ nội bộ" và token suy nghĩ TÍNH VÀO maxOutputTokens
+        # — nghĩ hết hạn mức là phần lời chép trả về rỗng (candidates[0].content không có
+        # parts). Tắt suy nghĩ + nới hạn mức. Model không hỗ trợ trường này thì bỏ qua nó.
+        "generationConfig": {"temperature": 0, "maxOutputTokens": 8192,
+                             "thinkingConfig": {"thinkingBudget": 0}},
     }
     # 404 = model khai tử, 429/503 = quá tải tạm thời — cả hai đều KHÔNG phải lỗi của học
     # viên, nên thử model kế tiếp (và đảo lại vòng nữa cho nhóm quá tải) thay vì đánh rớt.
@@ -83,8 +87,14 @@ def nhan_giong(duong_dan_wav: str) -> tuple:
                 return "", "Gemini báo lỗi HTTP %s: %s" % (r.status_code, r.text[:200])
             try:
                 d = r.json()
-                parts = d["candidates"][0]["content"]["parts"]
-                return " ".join(p.get("text", "") for p in parts).strip(), ""
-            except (KeyError, IndexError, ValueError):
-                return "", "Gemini trả về dữ liệu không đọc được."
+                parts = (d.get("candidates") or [{}])[0].get("content", {}).get("parts") or []
+                chu = " ".join(p.get("text", "") for p in parts if isinstance(p, dict)).strip()
+            except ValueError:
+                loi_cuoi = "Gemini trả về dữ liệu không đọc được (model %s)." % model
+                continue
+            if chu:
+                return chu, ""
+            # 200 nhưng không có chữ (hết hạn mức vì suy nghĩ, hoặc bị chặn) — thử model khác.
+            ly_do = (d.get("candidates") or [{}])[0].get("finishReason", "?")
+            loi_cuoi = "Gemini không trả về lời chép (model %s, finishReason=%s)." % (model, ly_do)
     return "", loi_cuoi or "Không gọi được model Gemini nào."
