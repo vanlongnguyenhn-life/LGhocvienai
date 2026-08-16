@@ -742,6 +742,19 @@ a { color: inherit; }
 
 .q-card-body { padding: 0 16px 18px; }
 .q-prompt { font-size: 15px; margin: 4px 0 14px; line-height: 1.5; }
+.q-prompt code { font-size: 13.5px; background: #f1f1f1; border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; }
+/* Danh sách trong đề bài: thụt vào và giãn dòng như bản in, không dính sát lề chữ. */
+.q-danh-sach { margin: 8px 0 10px; padding-left: 22px; }
+.q-danh-sach li { margin: 3px 0; }
+
+/* Khối prompt nhiều màu (câu 11.25) — mỗi màu là một thành phần của prompt gửi lên LLM. */
+.prompt-khoi { display: flex; flex-direction: column; gap: 4px; }
+.prompt-dong { color: #fff; padding: 7px 11px; border-radius: 8px; line-height: 1.45; font-size: 13px; font-weight: 500; }
+.prompt-dong.nguoi-dung { background: #2563eb; }
+.prompt-dong.lich-su { background: #7c3aed; }
+.prompt-dong.tools { background: #16a34a; }
+.prompt-dong.vai-tro { background: #ea580c; }
+.prompt-dong.yeu-cau { background: #dc2626; }
 
 .chat-log { display: flex; flex-direction: column; gap: 2px; margin: 4px 0 16px; }
 .chat-turn { display: flex; flex-direction: column; max-width: 82%; margin: 4px 0; }

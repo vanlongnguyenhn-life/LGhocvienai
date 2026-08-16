@@ -232,18 +232,49 @@ function el(tag, attrs = {}, children = []) {
 // Đề bài trước đây là chữ trơn nên không nhấn mạnh được chỗ nào quan trọng. Cho phép ba dấu
 // gọn nhẹ ngay trong chuỗi: **đậm**, _nghiêng_, `mã`. Luôn thoát HTML TRƯỚC rồi mới đổi dấu,
 // nên nội dung không thể chèn thẻ lạ vào trang.
+const SO_THU_TU = /^\s*\d+[.)]\s+/;
+const GACH_DAU = /^\s*[-•]\s+/;
+
 function dinhDangChu(s) {
   const thoat = (s || "")
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  return thoat
-    .replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>")
-    .replace(/(^|[\s(“"])_([^_\n]+)_(?=$|[\s)„".,;:!?])/g, "$1<em>$2</em>")
-    .replace(/`([^`\n]+)`/g, "<code>$1</code>")
-    .replace(/\n/g, "<br>");
+  const trongDong = (t) =>
+    t
+      .replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>")
+      .replace(/(^|[\s(“"])_([^_\n]+)_(?=$|[\s)„".,;:!?])/g, "$1<em>$2</em>")
+      .replace(/`([^`\n]+)`/g, "<code>$1</code>");
+
+  // Đề bài gốc hay liệt kê thành danh sách đánh số / gạch đầu dòng. Gom các dòng liền nhau
+  // cùng kiểu thành <ol>/<ul> thật, thay vì để mỗi dòng trôi tự do sau một <br>.
+  const dong = thoat.split("\n");
+  const khoi = [];
+  let i = 0;
+  while (i < dong.length) {
+    const mau = SO_THU_TU.test(dong[i]) ? SO_THU_TU : GACH_DAU.test(dong[i]) ? GACH_DAU : null;
+    if (mau) {
+      const the = mau === SO_THU_TU ? "ol" : "ul";
+      const muc = [];
+      while (i < dong.length && mau.test(dong[i])) {
+        muc.push("<li>" + trongDong(dong[i].replace(mau, "")) + "</li>");
+        i++;
+      }
+      khoi.push(`<${the} class="q-danh-sach">${muc.join("")}</${the}>`);
+    } else {
+      khoi.push(trongDong(dong[i]));
+      i++;
+    }
+  }
+  // Dòng trống quanh khối danh sách đã thành khoảng cách của chính khối đó, bỏ <br> thừa đi.
+  return khoi
+    .join("<br>")
+    .replace(/(?:<br>)+(<(?:ol|ul) )/g, "$1")
+    .replace(/(<\/(?:ol|ul)>)(?:<br>)+/g, "$1");
 }
 
+// Chuỗi nhiều dòng cũng phải đi qua bộ định dạng: thẻ <p> gộp hết xuống dòng thành một mạch,
+// đề bài mất sạch bố cục đoạn nếu chỉ đổ chữ trơn vào.
 function coDinhDang(s) {
-  return /\*\*|`|(^|[\s(“"])_[^_\n]+_/.test(s || "");
+  return /\*\*|`|\n|(^|[\s(“"])_[^_\n]+_/.test(s || "");
 }
 
 function renderBrandLogo(className, src) {
@@ -1058,7 +1089,7 @@ function renderQuestionVideo(src) {
 // thật nên không ảnh hưởng. Khoá này vốn cũng chỉ che giao diện: data.public.js đã chứa mọi
 // câu từ đầu, phần chặn thật nằm ở máy chủ.
 const CHAY_O_MAY = ["localhost", "127.0.0.1", "[::1]"].includes(location.hostname);
-const LOCKED_FROM_CODE = CHAY_O_MAY ? "" : "10.0";
+const LOCKED_FROM_CODE = CHAY_O_MAY ? "" : "11.1";
 const ALL_CODES_ORDERED = [];
 const QUESTION_BY_CODE = {};
 (typeof LESSONS !== "undefined" ? LESSONS : []).forEach((l) =>
@@ -1354,7 +1385,15 @@ function renderMatchGrid(q, a) {
   const wrap = el("div", { class: "match-grid" });
   q.leftItems.forEach((left, i) => {
     const row = el("div", { class: "match-row" });
-    row.appendChild(el("div", { class: "match-left" }, left));
+    // Vài câu (11.25) vế trái là các khối prompt nhiều màu chứ không phải một dòng chữ. Nội
+    // dung do mình soạn trong data.js nên dựng thẳng bằng html là an toàn; phần chấm điểm vẫn
+    // dùng `leftItems` dạng chuỗi nên bảng đáp án không đổi.
+    const nhanHtml = (q.leftItemsHtml || [])[i];
+    row.appendChild(
+      nhanHtml
+        ? el("div", { class: "match-left", html: nhanHtml })
+        : el("div", { class: "match-left" }, left)
+    );
     const select = el("select", { class: "match-select" });
     select.appendChild(el("option", { value: "-1" }, "— Chọn —"));
     q.rightOptions.forEach((opt, ri) => {

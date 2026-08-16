@@ -1890,6 +1890,7 @@ const LESSONS = [
       },
       {
         code: "10.12",
+        wrongHint: "Chưa đúng — nhớ gõ đủ dấu tiếng Việt nhé",
         videoLabel: "Đó là lý do vì sao tất cả các nền tảng công nghệ lớn đều sử dụng chung một cơ chế \"chấm điểm\" từ số đông người dùng.",
         exact: true,
         video: "assets/tieu-chuan-cong-dong.mp4",
