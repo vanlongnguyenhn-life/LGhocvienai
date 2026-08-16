@@ -1135,7 +1135,7 @@ input.reflect-input { min-height: unset; }
 .gws-criterion-head strong { font-weight: 700; line-height: 1.35; }
 .gws-criterion-badge { flex-shrink: 0; font-size: 12.5px; font-weight: 600; white-space: nowrap; }
 .gws-criterion-note { font-size: 12.5px; color: var(--text-grey); margin-top: 4px; line-height: 1.45; }
-.gws-tong { font-size: 13px; font-weight: 600; color: var(--text-grey); margin-top: 2px; text-align: right; }
+.gws-tong { font-size: 15px; margin-top: 10px; text-align: left; }
 
 /* Tranh ASCII chân dung người bạn (câu 9.11) */
 .ascii-avatar {
@@ -1172,3 +1172,8 @@ input.reflect-input { min-height: unset; }
                 background: var(--grey-bg); border-radius: var(--radius-sm); padding: 10px 12px;
                 margin: 6px 0; white-space: pre-wrap; overflow-wrap: anywhere; overflow-x: auto; }
 .q-yeucau a { color: var(--ios-blue); text-decoration: underline; }
+
+/* Khối kết quả chấm của câu 10.26, xếp theo kiểu web tham khảo. */
+.gws-ket-qua-tieu-de { font-weight: 700; margin: 16px 0 6px; }
+.gws-mo-video { color: var(--ios-blue); text-decoration: underline; }
+.gws-tong-phu { color: var(--text-grey); font-weight: 400; }

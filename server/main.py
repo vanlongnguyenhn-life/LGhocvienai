@@ -3222,7 +3222,7 @@ def _1026_tai_video(file_id: str, ra: str):
 
 
 def _check_1026(user_id: int, url: str):
-    """Chín tiêu chí, dừng sớm ngay tại tiêu chí hỏng đầu tiên."""
+    """Mười tiêu chí, dừng sớm ngay tại tiêu chí hỏng đầu tiên."""
     with get_db() as conn:
         row = conn.execute("SELECT display_name FROM users WHERE id = ?", (user_id,)).fetchone()
     ho_ten = (row["display_name"] if row else "") or ""
@@ -3875,7 +3875,9 @@ def gws_task_status(request: Request, code: str):
         ).fetchone()
     if not row:
         return {"attempted": False, "ok": False}
-    return {"attempted": True, "ok": bool(row["ok"]), "criteria": json.loads(row["detail"]), "checked_at": row["created_at"]}
+    # Trả kèm url đã nộp để trang lớp học đặt được liên kết "mở video" cạnh bảng chấm.
+    return {"attempted": True, "ok": bool(row["ok"]), "criteria": json.loads(row["detail"]),
+            "url": row["url"], "checked_at": row["created_at"]}
 
 
 # ===================== TOKEN SCOPE LAB (Câu 8.11 - 8.15) =====================

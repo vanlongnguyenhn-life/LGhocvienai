@@ -1119,7 +1119,9 @@ function renderQuestionCard(lesson, q, locked) {
     }
     if (q.submitPrompt) {
       body.appendChild(el("p", { class: "q-prompt" }, q.submitLabel || "Cách nộp bài:"));
+      if (q.submitIntro) body.appendChild(el("p", { class: "q-prompt" }, q.submitIntro));
       body.appendChild(renderCopyPromptBox(resolveAgentPlaceholders(q.submitPrompt, q.code)));
+      if (q.submitNote) body.appendChild(el("p", { class: "q-prompt" }, q.submitNote));
     }
     if (q.copyPrompt && q.copyPrompt.includes("{{") && !agentTokenInfo) {
       body.appendChild(
@@ -1793,8 +1795,17 @@ function renderGwsTask(q, a) {
         "Chưa có lần nộp nào — copy đề bài phía trên cho Agent chạy. Khi chương trình nộp xong, quay lại đây bấm Kiểm tra.")
     );
   } else {
-    // Trình bày theo đúng kiểu web tham khảo: tên tiêu chí in đậm, dấu Đạt/Chưa đạt ngay sau,
-    // rồi một dòng chi tiết chữ nhỏ màu xám bên dưới nói rõ đo được cái gì.
+    // Trình bày theo đúng kiểu web tham khảo: tiêu đề "Kết quả lần nộp gần nhất", liên kết mở
+    // video đã nộp, rồi từng tiêu chí (tên in đậm + dấu Đạt/Chưa đạt, dưới là dòng chi tiết
+    // chữ nhỏ màu xám), cuối cùng là một dòng kết luận Đạt / Chưa đạt.
+    wrap.appendChild(el("p", { class: "q-prompt gws-ket-qua-tieu-de" }, "📋 Kết quả lần nộp gần nhất"));
+    if (st.url) {
+      wrap.appendChild(
+        el("p", { class: "q-prompt" }, [
+          el("a", { href: st.url, target: "_blank", rel: "noopener", class: "gws-mo-video" }, "mở video"),
+        ])
+      );
+    }
     const list = el("div", { class: "gws-criteria" });
     (st.criteria || []).forEach((c) => {
       list.appendChild(
@@ -1809,7 +1820,10 @@ function renderGwsTask(q, a) {
     });
     const soDat = (st.criteria || []).filter((c) => c.ok).length;
     list.appendChild(
-      el("div", { class: "gws-tong" }, [`Đạt ${soDat}/${(st.criteria || []).length} tiêu chí`])
+      el("div", { class: "gws-tong" }, [
+        el("strong", {}, "Kết quả: " + (st.ok ? "ĐẠT" : "Chưa đạt")),
+        el("span", { class: "gws-tong-phu" }, ` (${soDat}/${(st.criteria || []).length} tiêu chí)`),
+      ])
     );
     wrap.appendChild(list);
     wrap.appendChild(
