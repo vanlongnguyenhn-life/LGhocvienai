@@ -1105,12 +1105,22 @@ function renderQuestionCard(lesson, q, locked) {
 
   if (expanded) {
     const body = el("div", { class: "q-card-body" });
+    if (q.videoLabel) body.appendChild(el("p", { class: "q-prompt" }, q.videoLabel));
     if (q.video) body.appendChild(renderQuestionVideo(q.video));
     body.appendChild(el("p", { class: "q-prompt" }, resolveAgentPlaceholders(q.prompt, q.code)));
     if (q.image) body.appendChild(el("img", { class: "q-image", src: q.image, alt: "" }));
     if (q.chatLog) body.appendChild(renderChatLog(q.chatLog));
     if (q.copyPrompt) body.appendChild(renderCopyPromptBox(resolveAgentPlaceholders(q.copyPrompt, q.code)));
     if (q.copyPromptTrailing) body.appendChild(el("p", { class: "q-prompt" }, q.copyPromptTrailing));
+    // Khối đặc tả dài có đánh số và có liên kết bấm được (câu 10.26). Nội dung do mình soạn
+    // trong data.js chứ không lấy từ người dùng, nên dựng thẳng bằng html là an toàn.
+    if (q.requirementsHtml) {
+      body.appendChild(el("div", { class: "q-yeucau", html: resolveAgentPlaceholders(q.requirementsHtml, q.code) }));
+    }
+    if (q.submitPrompt) {
+      body.appendChild(el("p", { class: "q-prompt" }, q.submitLabel || "Cách nộp bài:"));
+      body.appendChild(renderCopyPromptBox(resolveAgentPlaceholders(q.submitPrompt, q.code)));
+    }
     if (q.copyPrompt && q.copyPrompt.includes("{{") && !agentTokenInfo) {
       body.appendChild(
         el("div", { class: "secret-note" }, "Đang tải thông tin xác thực Agent... nếu prompt trên vẫn còn {{uid}}/{{token}}, tải lại trang.")

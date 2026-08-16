@@ -1159,3 +1159,16 @@ input.reflect-input { min-height: unset; }
 .grade-slider { flex: 1; min-width: 160px; accent-color: var(--gold); height: 28px; cursor: pointer; }
 .grade-score-value { min-width: 34px; text-align: center; font-weight: 700; font-size: 17px; color: var(--gold); }
 .peer-link { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; word-break: break-all; margin: 6px 0; }
+
+/* Khối "Yêu cầu tạo video" của câu 10.26: danh sách đánh số nhiều tầng, có link bấm được. */
+.q-yeucau { font-size: 15px; line-height: 1.6; margin: 0 0 14px; }
+.q-yeucau h4 { font-size: 15px; margin: 0 0 8px; }
+.q-yeucau ol, .q-yeucau ul { margin: 6px 0; padding-left: 22px; }
+.q-yeucau li { margin: 4px 0; }
+.q-yeucau ul { list-style: circle; }
+.q-yeucau code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13.5px;
+                 background: var(--grey-bg); border-radius: 4px; padding: 1px 5px; }
+.q-yeucau pre { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px;
+                background: var(--grey-bg); border-radius: var(--radius-sm); padding: 10px 12px;
+                margin: 6px 0; white-space: pre-wrap; overflow-wrap: anywhere; overflow-x: auto; }
+.q-yeucau a { color: var(--ios-blue); text-decoration: underline; }

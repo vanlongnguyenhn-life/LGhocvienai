@@ -3165,10 +3165,12 @@ CAU1026_MAX_BYTES = 250 * 1024 * 1024
 CAU1026_TOI_THIEU_S = 30.0
 CAU1026_INTRO_S = 10.0
 CAU1026_OUTTRO_S = 13.0
-# Nhạc chuẩn lấy từ chính video giới thiệu của khoá: 10 giây đầu cho mở đầu, đoạn 55-68 giây
-# cho kết. Dùng nhạc của mình nên không vướng bản quyền như bài hát mà web tham khảo chỉ định.
-CAU1026_NHAC_CHUAN = BASE_DIR / "assets" / "intro.mp4"
-CAU1026_OUTTRO_BAT_DAU = 55.0
+# Hai bản nhạc chuẩn, đúng hai đoạn mà đề bài chỉ định trên YouTube: 10 giây đầu của "video
+# tham khảo" và đoạn 1:05-1:18 của "Dòng sông phẳng lặng". Bản lưu ở đây đã cắt sẵn đúng đoạn
+# nên khi so chỉ cần lấy từ giây 0. Đo thử: cùng bản nhạc tải ở chất lượng rất thấp (opus 48k
+# mono) vẫn chỉ lệch 0.006-0.061, còn hai bản nhạc khác nhau lệch 0.943 — ngưỡng 0.20 an toàn.
+CAU1026_NHAC_MO = BASE_DIR / "assets" / "nhac-mo-dau.m4a"
+CAU1026_NHAC_KET = BASE_DIR / "assets" / "nhac-ket.m4a"
 CAU1026_NGUONG_NHAC = 0.20
 # Chữ bắt buộc thấy rõ ở 3 giây cuối phần mở đầu (đèn pin đã tắt ở giây 7).
 CAU1026_MOC_OCR = (7.5, 8.5, 9.0)
@@ -3279,14 +3281,13 @@ def _check_1026(user_id: int, url: str):
         # Giải mã trọn luồng tiếng MỘT LẦN rồi cắt bằng chỉ số mảng. Tua bằng -ss trên video
         # có dấu thời gian không chuẩn cho ra sai đoạn (đã đo: xin 13 giây nhận 16.1 giây).
         song = video_check.toan_bo_tieng(duong_dan)
-        chuan_intro = video_check.doan_tieng(str(CAU1026_NHAC_CHUAN), 0, CAU1026_INTRO_S)
+        chuan_intro = video_check.doan_tieng(str(CAU1026_NHAC_MO), 0, CAU1026_INTRO_S)
         d_intro = video_check.khoang_cach_tieng(
             chuan_intro, video_check.cat_tieng(song, 0, CAU1026_INTRO_S))
         crit.append({"label": "Nhạc mở đầu đúng đoạn quy định", "ok": d_intro < CAU1026_NGUONG_NHAC,
                      "note": "Độ lệch %.3f (dưới %.2f mới đạt)" % (d_intro, CAU1026_NGUONG_NHAC)})
 
-        chuan_outtro = video_check.doan_tieng(str(CAU1026_NHAC_CHUAN),
-                                              CAU1026_OUTTRO_BAT_DAU, CAU1026_OUTTRO_S)
+        chuan_outtro = video_check.doan_tieng(str(CAU1026_NHAC_KET), 0, CAU1026_OUTTRO_S)
         d_outtro = video_check.khoang_cach_tieng(
             chuan_outtro, video_check.cat_tieng(song, -CAU1026_OUTTRO_S, CAU1026_OUTTRO_S))
         crit.append({"label": "Nhạc kết đúng đoạn quy định", "ok": d_outtro < CAU1026_NGUONG_NHAC,
