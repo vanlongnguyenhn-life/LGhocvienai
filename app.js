@@ -2628,7 +2628,10 @@ async function submitAnswer(lesson, q) {
       showToast("Bạn hãy nhập mã xác nhận trước khi nộp bài");
       return;
     }
-    await submitForServerVerdict(q, a, "Mã chưa đúng, em đọc lại mật thư nhé");
+    // Câu dạng gõ chữ không phải câu nào cũng là mật thư (10.0 gõ cam kết, 10.12 gõ một cụm
+    // từ) — nói "đọc lại mật thư" ở những câu đó là sai chỗ. Câu nào cần lời nhắc riêng thì
+    // khai wrongHint trong data.js.
+    await submitForServerVerdict(q, a, q.wrongHint || "Chưa đúng, bạn kiểm tra lại rồi nộp lại nhé");
   } else if (q.type === "pi_lab_code") {
     if (!a.text || a.text.trim().length === 0) {
       showToast("Bạn hãy nhập mã xác nhận trước khi nộp bài");

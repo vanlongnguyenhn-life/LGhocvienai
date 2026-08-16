@@ -2308,6 +2308,7 @@ const LESSONS = [
       },
       {
         "code": "9.23",
+        "wrongHint": "Mã chưa đúng, bạn đọc lại mật thư nhé",
         "title": "Câu 9.23 - Mật thư",
         "type": "code",
         "hasHints": true,
