@@ -315,6 +315,10 @@ async function khoiDong() {
 
   await napDanhSach();
 
+  document.querySelectorAll(".ver-nut").forEach((n) => {
+    if (n.dataset.ver === VER) n.classList.add("dang-dung");
+  });
+
   $("nut-moi").onclick = hoiThoaiMoi;
   $("nut-menu").onclick = () => $("cot-trai").classList.toggle("mo");
   $("nut-cau-hinh").onclick = () => {

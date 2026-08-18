@@ -102,11 +102,16 @@ def phan_loai_chu_de(tin_nhan: str):
     """
     van_ban = _bo_dau(tin_nhan)
     bang = {
-        "chao_hoi": ["chao", "hi", "hello", "alo", "lam quen", "ban ten", "em ten", "gioi thieu"],
+        "chao_hoi": ["chao", "hi", "hello", "alo", "lam quen", "ban ten", "em ten", "gioi thieu",
+                     "ten gi", "la ai", "xin chao", "good morning"],
         "suc_khoe": ["suc khoe", "khoe", "benh", "met", "ngu", "an uong", "the duc", "the thao",
-                     "giam can", "dinh duong", "stress", "bac si", "health"],
+                     "giam can", "dinh duong", "stress", "bac si", "health", "gym", "tap luyen",
+                     "chay bo", "yoga", "an kieng", "vitamin", "dau lung", "mat ngu", "cang thang",
+                     "the luc", "song lau", "song khoe"],
         "nghe_nghiep": ["nghe nghiep", "cong viec", "nghe", "giao vien", "cong chuc", "ceo", "ky su",
-                        "tu van", "lam viec", "career", "job", "luong", "thang tien", "tuyen dung"],
+                        "tu van", "lam viec", "career", "job", "luong", "thang tien", "tuyen dung",
+                        "phong van", "cv", "sep", "cong ty", "doi nghe", "khoi nghiep", "chuc danh",
+                        "hoc nghe", "lam gi", "van phong"],
     }
     for ma, cac_tu in bang.items():
         if any(tu in van_ban for tu in cac_tu):
@@ -231,7 +236,14 @@ LOI_NHAC_HE_THONG = (
     "người dùng là \"anh/chị\". Trả lời ngắn gọn, thân thiện, bằng tiếng Việt. "
     "Bạn CHỈ làm được những việc mà công cụ được trang bị cho phép: nếu người dùng nhờ một việc mà "
     "bạn không có công cụ, hoặc công cụ báo lỗi, hãy nói thật là chưa làm được và nêu rõ mình đang "
-    "có những công cụ nào — TUYỆT ĐỐI không bịa kết quả, không tự nghĩ ra số liệu."
+    "có những công cụ nào — TUYỆT ĐỐI không bịa kết quả, không tự nghĩ ra số liệu. "
+    # Không có câu dưới đây thì mô hình hay tự phán \"việc này em không làm được\" mà KHÔNG hề gọi
+    # công cụ — ba tiêu chí xoá hình / xoá văn bản / thống kê tuổi của câu 11.15 sẽ không bao giờ
+    # được ghi nhận, học viên kẹt mà không hiểu vì sao.
+    "QUY TẮC BẮT BUỘC: hễ người dùng yêu cầu một việc mà DANH SÁCH CÔNG CỤ của bạn có tên tương ứng "
+    "thì bạn PHẢI gọi công cụ đó, kể cả khi bạn đoán nó sẽ lỗi hay cho rằng việc đó nguy hiểm — cứ "
+    "gọi rồi báo lại đúng kết quả nhận được. Đây là kho tệp mẫu của lớp học, không có dữ liệu thật "
+    "của ai, nên không việc gì phải từ chối trước."
 )
 
 LOI_NHAC_KHONG_TOOL = (
@@ -351,11 +363,15 @@ def trang_thai_bai_tap(conn, user_id: int, ver: str) -> dict:
     if ver == "v1":
         da_thu = td.get("tu_khoa", {})
         for nhom in CHU_DE_V1:
-            dem = sum(1 for tu in nhom["tu_khoa"] if f"{nhom['ma']}|{tu}" in da_thu)
+            trung = [tu for tu in nhom["tu_khoa"] if f"{nhom['ma']}|{tu}" in da_thu]
             can = min(TU_KHOA_MOI_CHU_DE, len(nhom["tu_khoa"]))
+            dem = len(trung)
+            chi_tiet = f"{min(dem, can)}/{can} từ khoá khác nhau đã thử"
+            if trung:
+                chi_tiet += " — đã trúng: " + ", ".join(trung)
             tieu_chi.append({
                 "title": f"Chủ đề {nhom['chu_de']}",
-                "detail": f"{min(dem, can)}/{can} từ khoá khác nhau đã thử",
+                "detail": chi_tiet,
                 "ok": dem >= can,
             })
     elif ver == "v2":

@@ -100,7 +100,7 @@ function loadState() {
       // bao giờ bị kẹt.
       if (parsed.answers) {
         Object.values(parsed.answers).forEach((a) => {
-          if (a.mediaStatus === "loading") delete a.mediaStatus;
+          delete a.mediaStatus;
           if (a.helpStatus === "loading") delete a.helpStatus;
           if (a.thaoLuanStatus === "loading") delete a.thaoLuanStatus;
           if (a.hintStatus === "loading") delete a.hintStatus;
@@ -2124,20 +2124,25 @@ const AGENT_TASK_STATUS_ENDPOINT = {
 };
 
 // Mở widget chatbot demo ngay trong trang (khung nổi), không đá học viên sang tab khác giữa bài.
-function moKhungDemo(ver) {
+function moKhungDemo(ver, q, a) {
   const nen = el("div", { class: "demo-nen" });
   const hop = el("div", { class: "demo-hop" });
   const thanh = el("div", { class: "demo-thanh" }, [
     el("span", {}, `Chatbot Demo (${String(ver).toUpperCase()}) · Bé Ailai`),
     el("div", { class: "demo-nut-nhom" }, [
       el("a", { class: "help-link", href: `/demo?ver=${ver}`, target: "_blank", rel: "noopener" }, "Mở tab mới ↗"),
-      el("button", { class: "help-link", onclick: () => nen.remove() }, "✕ Đóng"),
+      el("button", { class: "help-link", onclick: () => dongKhung() }, "✕ Đóng"),
     ]),
   ]);
   hop.appendChild(thanh);
   const khung = el("iframe", { class: "demo-khung", src: `/demo?ver=${ver}` });
   // Khung nhúng hỏi xin khoá phiên: trình duyệt nào chặn cookie trong iframe thì widget vẫn vào
   // được bằng cặp header của chính học viên. Chỉ trả lời đúng khung này và đúng nguồn của mình.
+  const dongKhung = () => {
+    nen.remove();
+    window.removeEventListener("message", traLoiKhoa);
+    if (q && a) fetchMediaStatus(q, a); // vừa chat xong thì tiêu chí phải cập nhật ngay
+  };
   const traLoiKhoa = (e) => {
     if (e.origin !== location.origin || e.source !== khung.contentWindow) return;
     if (!e.data || e.data.loai !== "ags-demo-xin-khoa") return;
@@ -2151,11 +2156,10 @@ function moKhungDemo(ver) {
     );
   };
   window.addEventListener("message", traLoiKhoa);
-  nen.addEventListener("remove", () => window.removeEventListener("message", traLoiKhoa));
   hop.appendChild(khung);
   nen.appendChild(hop);
   nen.addEventListener("click", (e) => {
-    if (e.target === nen) nen.remove();
+    if (e.target === nen) dongKhung();
   });
   document.body.appendChild(nen);
 }
@@ -2275,7 +2279,7 @@ function renderAgentDemo(q, a) {
   const ver = q.demoVer || "v1";
 
   wrap.appendChild(
-    el("button", { class: "submit-btn demo-mo-nut", onclick: () => moKhungDemo(ver) }, q.demoLabel || "Mở Chatbot Demo (V1)")
+    el("button", { class: "submit-btn demo-mo-nut", onclick: () => moKhungDemo(ver, q, a) }, q.demoLabel || "Mở Chatbot Demo (V1)")
   );
 
   if (a.mediaStatus === undefined) {
