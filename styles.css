@@ -774,7 +774,18 @@ a { color: inherit; }
 /* Luồng thảo luận của lớp (câu 11.17) — dựng theo đúng khối bình luận của web tham khảo:
    tiêu đề kèm số lượng, ảnh đại diện vuông bo góc 48px, tên đậm, thời gian ở dòng dưới. */
 .thao-luan { margin-top: 18px; }
-.thao-luan .tl-dau { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+.tl-dau { font-size: 16px; font-weight: 700; margin: 14px 0 8px; }
+/* Nút gửi bình luận: dáng nút phụ, nằm nép phải ngay dưới ô nhập — cố ý KHÁC nút "Nộp bài"
+   (viên thuốc, màu thương hiệu) để học viên không tưởng bấm là qua bài. */
+.tl-gui-hang { display: flex; justify-content: flex-end; margin: -4px 0 4px; }
+.tl-gui {
+  background: #f2f2f5; color: var(--text); border: 1px solid var(--border);
+  border-radius: 6px; padding: 8px 16px; font-size: 14px; font-weight: 500;
+  font-family: var(--sys-font); cursor: pointer;
+}
+.tl-gui:hover { background: #e8e8ec; }
+.tl-gui:disabled { opacity: 0.55; cursor: default; }
+.bl-toi { margin-left: 6px; padding: 0 6px; border-radius: 999px; background: var(--green-bg); color: #1d7a34; font-size: 10.5px; font-weight: 700; }
 .binh-luan { padding: 10px; margin: 10px 0 0; background: #fff; border-radius: 4px; }
 .bl-dau { display: flex; gap: 12px; margin-bottom: 5px; }
 .bl-avatar { width: 48px; height: 48px; border-radius: 0.5rem; object-fit: cover; background: #f0f0f0; flex: 0 0 auto; }

@@ -1997,12 +1997,12 @@ def thao_luan(request: Request, question_code: str):
             return {"da_nop": False, "comments": []}
         rows = conn.execute(
             """
-            SELECT r.answer_text, r.created_at, u.display_name, u.username, u.avatar_url
+            SELECT r.user_id, r.answer_text, r.created_at, u.display_name, u.username, u.avatar_url
             FROM reflect_grades r JOIN users u ON u.id = r.user_id
-            WHERE r.question_code = ? AND r.is_valid = 1 AND r.user_id != ?
+            WHERE r.question_code = ? AND r.is_valid = 1
             ORDER BY r.created_at DESC LIMIT 30
             """,
-            (question_code, user["id"]),
+            (question_code,),
         ).fetchall()
     return {
         "da_nop": True,
@@ -2012,6 +2012,7 @@ def thao_luan(request: Request, question_code: str):
                 "avatar_url": r["avatar_url"] or "",
                 "noi_dung": r["answer_text"],
                 "luc": r["created_at"],
+                "la_toi": r["user_id"] == user["id"],
             }
             for r in rows
         ],

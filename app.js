@@ -1223,7 +1223,7 @@ function renderQuestionCard(lesson, q, locked) {
     } else if (q.type === "tag-mark") {
       body.appendChild(renderTagMark(q, a));
     } else if (q.type === "reflect") {
-      body.appendChild(renderReflectInput(q, a));
+      body.appendChild(renderReflectInput(q, a, lesson));
       if (q.thaoLuan) body.appendChild(renderThaoLuan(q, a));
     } else if (q.type === "pi_lab_letter") {
       body.appendChild(renderPiLabLetter(q, a));
@@ -1264,7 +1264,9 @@ function renderQuestionCard(lesson, q, locked) {
     }
 
     const actions = el("div", { class: "q-actions" }, [
-      el(
+      // Câu bình luận (11.17/11.26) KHÔNG có nút "Nộp bài" — giống web tham khảo, việc nộp do
+      // nút "Gửi bình luận" ngay dưới ô nhập lo, và chỉ AI chấm đạt mới tính là qua bài.
+      q.thaoLuan ? null : el(
         "button",
         {
           class: "submit-btn",
@@ -1282,13 +1284,7 @@ function renderQuestionCard(lesson, q, locked) {
             });
           },
         },
-        // Câu thảo luận: web tham khảo KHÔNG có nút "Nộp bài", chỉ có "Gửi bình luận" — bấm gửi
-        // là vừa gửi bài vừa nhờ AI đọc, đạt thì mới mở phần bình luận của cả lớp.
-        a.submitting
-          ? [q.thaoLuan ? "⏳ Đang gửi..." : "⏳ Đang nộp..."]
-          : q.thaoLuan
-            ? ["💬 ", a.status === "correct" || a.status === "done" ? "Gửi lại bình luận" : "Gửi bình luận"]
-            : ["➤ ", a.status === "correct" || a.status === "done" ? "Nộp lại" : "Nộp bài"]
+        a.submitting ? ["⏳ Đang nộp..."] : ["➤ ", a.status === "correct" || a.status === "done" ? "Nộp lại" : "Nộp bài"]
       ),
       el(
         "button",
@@ -2168,19 +2164,17 @@ function renderThaoLuan(q, a) {
     setTimeout(() => fetchThaoLuan(q, a), 0);
   }
 
-  const soBinhLuan =
-    a.thaoLuanStatus && a.thaoLuanStatus.comments ? a.thaoLuanStatus.comments.length : 0;
-  wrap.appendChild(
-    el("div", { class: "tl-dau" }, soBinhLuan ? `${soBinhLuan} bình luận của lớp` : "Thảo luận của lớp")
-  );
-
   if (a.thaoLuanStatus === "loading") {
     wrap.appendChild(el("div", { class: "secret-note" }, "Đang tải bình luận..."));
   } else if (a.thaoLuanStatus && a.thaoLuanStatus.error) {
     wrap.appendChild(el("div", { class: "secret-note" }, "Lỗi tải bình luận: " + a.thaoLuanStatus.error));
   } else if (!a.thaoLuanStatus.da_nop) {
     wrap.appendChild(
-      el("div", { class: "secret-note" }, "Viết và nộp bình luận của bạn xong, bạn sẽ đọc được bài của cả lớp ở đây.")
+      el(
+        "div",
+        { class: "secret-note" },
+        "Bình luận của các bạn khác chỉ hiện ra khi bình luận của bạn được chấm ĐẠT — gửi xong chưa chắc đã qua bài, hãy viết cho đủ ý."
+      )
     );
   } else if (!(a.thaoLuanStatus.comments || []).length) {
     wrap.appendChild(el("div", { class: "secret-note" }, "Bạn là người đầu tiên của lớp chia sẻ ở câu này 🎉"));
@@ -2191,7 +2185,9 @@ function renderThaoLuan(q, a) {
       dau.appendChild(
         el("img", { class: "bl-avatar", src: c.avatar_url || "assets/logo-icon.png", alt: "" })
       );
-      const cot = el("div", { class: "bl-cot" }, [el("span", { class: "bl-ten" }, c.ten)]);
+      const cot = el("div", { class: "bl-cot" }, [
+        el("span", { class: "bl-ten" }, [c.ten, c.la_toi ? el("span", { class: "bl-toi" }, "Bạn") : null]),
+      ]);
       if (c.luc) cot.appendChild(el("span", { class: "bl-luc" }, c.luc));
       cot.appendChild(el("div", { class: "bl-noi-dung" }, c.noi_dung));
       dau.appendChild(cot);
@@ -2443,9 +2439,16 @@ function renderTokenScopeCheck(q, a) {
   return wrap;
 }
 
-function renderReflectInput(q, a) {
+function renderReflectInput(q, a, lesson) {
   const wrap = el("div", {});
   const minLength = q.minLength || 20;
+
+  // Câu bình luận: tiêu đề "N bình luận" nằm TRÊN ô nhập, đúng thứ tự của web tham khảo.
+  if (q.thaoLuan) {
+    const st = a.thaoLuanStatus;
+    const soBl = st && st.comments ? st.comments.length : 0;
+    wrap.appendChild(el("div", { class: "tl-dau" }, soBl ? `${soBl} bình luận` : "Bình luận"));
+  }
   const ta = el("textarea", {
     class: "reflect-input",
     // Câu thảo luận là bình luận gửi cả lớp đọc, không phải chỗ dán lời Agent — lời nhắc trong
@@ -2462,6 +2465,33 @@ function renderReflectInput(q, a) {
   wrap.appendChild(
     el("div", { class: "char-count" }, `${len}/${minLength} ký tự`)
   );
+
+  // Nút gửi của câu bình luận nằm ngay dưới ô nhập và mang dáng nút phụ — cố ý KHÔNG giống nút
+  // "Nộp bài" của các câu khác: bấm gửi chỉ là đăng bình luận, chưa phải là qua bài.
+  if (q.thaoLuan) {
+    wrap.appendChild(
+      el("div", { class: "tl-gui-hang" }, [
+        el(
+          "button",
+          {
+            class: "tl-gui",
+            disabled: a.submitting ? "" : null,
+            onclick: (e) => {
+              if (a.submitting) return;
+              a.submitting = true;
+              e.currentTarget.disabled = true;
+              submitAnswer(lesson, q).finally(() => {
+                a.submitting = false;
+                render();
+                openQuestion(q.code);
+              });
+            },
+          },
+          a.submitting ? "Đang gửi..." : "Gửi bình luận"
+        ),
+      ])
+    );
+  }
   return wrap;
 }
 
