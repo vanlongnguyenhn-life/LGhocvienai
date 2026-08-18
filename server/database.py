@@ -234,6 +234,16 @@ CREATE TABLE IF NOT EXISTS peer_reviews (
 
 -- Bài 11: Chatbot Demo (V1-V4) (4 phiên bản). Lịch sử chat lưu server để học viên quay lại
 -- vẫn thấy hội thoại cũ, giống hệt widget của web tham khảo.
+-- Câu 12.17 / 13.4: sau khi bình luận được chấm đạt, Bé Ailai đăng bài đó vào nhóm Lark và tag
+-- người viết. Ghi lại để học viên nộp lại nhiều lần cũng chỉ đăng đúng một lần.
+CREATE TABLE IF NOT EXISTS lark_da_dang_binh_luan (
+    user_id INTEGER NOT NULL,
+    question_code TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    PRIMARY KEY (user_id, question_code),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS demo_conversations (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,

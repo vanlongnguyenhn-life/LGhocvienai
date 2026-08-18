@@ -759,6 +759,9 @@ a { color: inherit; }
 .q-prompt { font-size: 15px; margin: 4px 0 14px; line-height: 1.64; }
 .q-prompt code { font-size: 13.5px; background: #f1f1f1; border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; }
 /* Danh sách trong đề bài: thụt vào và giãn dòng như bản in, không dính sát lề chữ. */
+/* Tiêu đề trong đề bài dài — hai cỡ, bám cách bản gốc chia mục lớn / mục nhỏ. */
+.q-de-muc { font-size: 17px; font-weight: 700; margin: 16px 0 6px; padding-bottom: 5px; border-bottom: 1px solid var(--border); }
+.q-de-muc-nho { font-size: 15px; font-weight: 700; margin: 12px 0 4px; color: var(--gold); }
 .q-danh-sach { margin: 8px 0 10px; padding-left: 22px; }
 .q-danh-sach li { margin: 3px 0; font-size: 14px; }
 

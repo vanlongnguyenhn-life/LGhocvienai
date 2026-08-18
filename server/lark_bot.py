@@ -5,9 +5,11 @@
 - Tra tiến độ học viên trong DB (đối chiếu qua lark_open_id).
 """
 
+import asyncio
 import json
 import os
 import re
+import threading
 import time
 from datetime import datetime, timezone, timedelta
 
@@ -761,6 +763,36 @@ async def smart_answer(text: str, open_id: str | None, prog: dict | None, is_tea
 
 
 # ===================== ĐỊNH TUYẾN Ý ĐỊNH (tiếp) =====================
+
+# ===================== ĐĂNG BÌNH LUẬN CỦA HỌC VIÊN VÀO NHÓM =====================
+
+def gui_nen(coro):
+    """Chạy một lượt gửi Lark ở luồng nền.
+
+    Chỗ gọi (/api/submit-question) là hàm đồng bộ, mà gửi tin thì phải chờ mạng — để học viên
+    ngồi đợi Lark trả lời mới thấy điểm là vô lý.
+    """
+    def chay():
+        try:
+            asyncio.run(coro)
+        except Exception as e:
+            print(f"[lark gui_nen] {e!r}")
+
+    threading.Thread(target=chay, daemon=True).start()
+
+
+async def dang_binh_luan_len_nhom(open_id: str | None, ten: str, tieu_de: str, noi_dung: str):
+    """Đăng nguyên văn bình luận của học viên vào nhóm lớp, có tag đích danh người viết."""
+    chat_id = get_group_chat_id()
+    if not chat_id:
+        print("[lark] chưa biết nhóm lớp, bỏ qua việc đăng bình luận")
+        return
+    # Chặn học viên nhét thẻ tag vào bài để gọi tên người khác trong nhóm.
+    sach = re.sub(r"</?at[^>]*>", "", noi_dung or "").strip()
+    ai = f'<at user_id="{open_id}">{ten}</at>' if open_id else ten
+    than = "💬 " + ai + " vừa chia sẻ cảm nhận ở " + tieu_de + ":\n\n" + sach
+    await send_text(chat_id, than)
+
 
 # ===================== LỆNH /help CỦA BÀI 11 =====================
 

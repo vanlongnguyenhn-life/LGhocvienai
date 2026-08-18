@@ -242,6 +242,9 @@ function el(tag, attrs = {}, children = []) {
 // nên nội dung không thể chèn thẻ lạ vào trang.
 const SO_THU_TU = /^\s*\d+[.)]\s+/;
 const GACH_DAU = /^\s*[-•]\s+/;
+// Đề bài dài (Bài 12/13) có tiêu đề nhiều cấp như bản in: "## " là mục lớn, "### " là mục nhỏ.
+const TIEU_DE_LON = /^##\s+(.+)$/;
+const TIEU_DE_NHO = /^###\s+(.+)$/;
 
 function dinhDangChu(s) {
   const thoat = (s || "")
@@ -267,6 +270,12 @@ function dinhDangChu(s) {
         i++;
       }
       khoi.push(`<${the} class="q-danh-sach">${muc.join("")}</${the}>`);
+    } else if (TIEU_DE_NHO.test(dong[i])) {
+      khoi.push(`<h5 class="q-de-muc-nho">${trongDong(dong[i].replace(TIEU_DE_NHO, "$1"))}</h5>`);
+      i++;
+    } else if (TIEU_DE_LON.test(dong[i])) {
+      khoi.push(`<h4 class="q-de-muc">${trongDong(dong[i].replace(TIEU_DE_LON, "$1"))}</h4>`);
+      i++;
     } else {
       khoi.push(trongDong(dong[i]));
       i++;
@@ -276,7 +285,9 @@ function dinhDangChu(s) {
   return khoi
     .join("<br>")
     .replace(/(?:<br>)+(<(?:ol|ul) )/g, "$1")
-    .replace(/(<\/(?:ol|ul)>)(?:<br>)+/g, "$1");
+    .replace(/(<\/(?:ol|ul)>)(?:<br>)+/g, "$1")
+    .replace(/(?:<br>)+(<h[45] )/g, "$1")
+    .replace(/(<\/h[45]>)(?:<br>)+/g, "$1");
 }
 
 // Chuỗi nhiều dòng cũng phải đi qua bộ định dạng: thẻ <p> gộp hết xuống dòng thành một mạch,
@@ -1097,7 +1108,7 @@ function renderQuestionVideo(src) {
 // thật nên không ảnh hưởng. Khoá này vốn cũng chỉ che giao diện: data.public.js đã chứa mọi
 // câu từ đầu, phần chặn thật nằm ở máy chủ.
 const CHAY_O_MAY = ["localhost", "127.0.0.1", "[::1]"].includes(location.hostname);
-const LOCKED_FROM_CODE = CHAY_O_MAY ? "" : "12.1";
+const LOCKED_FROM_CODE = CHAY_O_MAY ? "" : "gate.1";
 const ALL_CODES_ORDERED = [];
 const QUESTION_BY_CODE = {};
 (typeof LESSONS !== "undefined" ? LESSONS : []).forEach((l) =>

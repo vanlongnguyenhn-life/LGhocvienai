@@ -1985,9 +1985,38 @@ def _co_help_ping(conn, user_id: int):
     ).fetchone()
 
 
+# Hai câu này, sau khi bình luận được chấm ĐẠT, Bé Ailai đăng nguyên văn vào nhóm Lark và tag
+# đích danh người viết — để cả lớp đọc được ngay trong nhóm chứ không phải ai cũng mở web.
+LARK_CHIA_SE_BINH_LUAN = {"12.17", "13.4"}
+
+
+def _chia_se_binh_luan_len_lark(user_id: int, question_code: str, noi_dung: str):
+    """Đăng một lần duy nhất cho mỗi học viên mỗi câu — nộp lại không làm phiền nhóm thêm lần nào."""
+    if question_code not in LARK_CHIA_SE_BINH_LUAN or not lark_bot.is_configured():
+        return
+    with get_db() as conn:
+        moi = conn.execute(
+            "INSERT OR IGNORE INTO lark_da_dang_binh_luan (user_id, question_code) VALUES (?, ?)",
+            (user_id, question_code),
+        ).rowcount
+        if not moi:
+            return
+        u = conn.execute(
+            "SELECT display_name, username, lark_open_id FROM users WHERE id = ?", (user_id,)
+        ).fetchone()
+    if not u:
+        return
+    tieu_de = QUESTION_TITLE_BY_CODE.get(question_code, "Câu " + question_code)
+    lark_bot.gui_nen(
+        lark_bot.dang_binh_luan_len_nhom(
+            u["lark_open_id"], u["display_name"] or u["username"], tieu_de, noi_dung
+        )
+    )
+
+
 # Câu 11.17 của bản gốc là một luồng thảo luận chung của lớp: viết xong mới đọc được bài bạn khác.
 # Chỉ mở đúng những câu khai ở đây, để không biến mọi câu tự luận thành nơi chép bài của nhau.
-DISCUSSION_CODES = {"11.17", "11.26"}
+DISCUSSION_CODES = {"11.17", "11.26", "12.17", "13.4"}
 
 
 @app.get("/api/thao-luan")
@@ -2132,6 +2161,7 @@ def submit_question(
         if submitted_text.strip() != row["answer_text"].strip():
             raise HTTPException(status_code=400, detail="Nội dung đã thay đổi kể từ lúc chấm, hãy chấm lại trước khi nộp.")
         awarded_points = REFLECT_MANIFEST[question_code]["points"]
+        _chia_se_binh_luan_len_lark(user["id"], question_code, row["answer_text"])
 
     if question_code in MEDIA_SUBMIT_MANIFEST and status == "done":
         with get_db() as conn:
