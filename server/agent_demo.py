@@ -72,6 +72,15 @@ def _thuong(s: str) -> str:
     return (s or "").lower()
 
 
+def _co_tu(van_ban: str, tu: str) -> bool:
+    """Từ khoá phải đứng thành TIẾNG RIÊNG, không tính khi nằm lọt trong chữ khác.
+
+    Không có luật này thì từ khoá 2 chữ cái như "hi" khớp luôn trong "hình", "chi", "thi"... —
+    học viên hỏi "kho có bao nhiêu hình" lại bị tính là đã chat chủ đề Chào hỏi.
+    """
+    return re.search(r"(?<!\w)" + re.escape(tu) + r"(?!\w)", van_ban) is not None
+
+
 def _bo_dau(s: str) -> str:
     return "".join(c for c in unicodedata.normalize("NFD", _thuong(s)) if unicodedata.category(c) != "Mn")
 
@@ -87,7 +96,7 @@ def tra_loi_v1(tin_nhan: str):
     tra_loi = None
     for nhom in CHU_DE_V1:
         for tu in nhom["tu_khoa"]:
-            if _thuong(tu) in van_ban:
+            if _co_tu(van_ban, _thuong(tu)):
                 trung.append((nhom["ma"], tu))
                 if tra_loi is None:
                     tra_loi = nhom["tra_loi"]
@@ -105,7 +114,7 @@ def phan_loai_chu_de(tin_nhan: str):
         "chao_hoi": ["chao", "hi", "hello", "alo", "lam quen", "ban ten", "em ten", "gioi thieu",
                      "ten gi", "la ai", "xin chao", "good morning"],
         "suc_khoe": ["suc khoe", "khoe", "benh", "met", "ngu", "an uong", "the duc", "the thao",
-                     "giam can", "dinh duong", "stress", "bac si", "health", "gym", "tap luyen",
+                     "giam can", "giu dang", "the hinh", "dinh duong", "stress", "bac si", "health", "gym", "tap luyen",
                      "chay bo", "yoga", "an kieng", "vitamin", "dau lung", "mat ngu", "cang thang",
                      "the luc", "song lau", "song khoe"],
         "nghe_nghiep": ["nghe nghiep", "cong viec", "nghe", "giao vien", "cong chuc", "ceo", "ky su",
@@ -114,7 +123,7 @@ def phan_loai_chu_de(tin_nhan: str):
                         "hoc nghe", "lam gi", "van phong"],
     }
     for ma, cac_tu in bang.items():
-        if any(tu in van_ban for tu in cac_tu):
+        if any(_co_tu(van_ban, tu) for tu in cac_tu):
             return ma
     return _phan_loai_bang_llm(tin_nhan)
 
@@ -128,8 +137,9 @@ def _phan_loai_bang_llm(tin_nhan: str):
         [{"role": "user", "content": tin_nhan[:500]}],
         None,
         "Xếp tin nhắn của người dùng vào ĐÚNG MỘT nhóm và chỉ trả lời bằng đúng một từ trong: "
-        "chao_hoi (chào hỏi, làm quen), suc_khoe (sức khoẻ, ăn ngủ, thể dục, bệnh tật), "
-        "nghe_nghiep (nghề nghiệp, công việc, sự nghiệp), khac (không thuộc ba nhóm trên).",
+        "chao_hoi (chào hỏi, làm quen), suc_khoe (sức khoẻ, ăn uống, ngủ nghỉ, thể dục, vóc dáng, "
+        "bệnh tật), nghe_nghiep (nghề nghiệp, công việc, sự nghiệp, tuyển dụng), khac. "
+        "Cứ chọn nhóm GẦN NHẤT; chỉ trả lời khac khi tin nhắn thật sự chẳng dính gì tới ba nhóm kia.",
     )
     if not data:
         return None
@@ -265,7 +275,9 @@ LOI_NHAC_HE_THONG = (
     "QUY TẮC BẮT BUỘC: hễ người dùng yêu cầu một việc mà DANH SÁCH CÔNG CỤ của bạn có tên tương ứng "
     "thì bạn PHẢI gọi công cụ đó, kể cả khi bạn đoán nó sẽ lỗi hay cho rằng việc đó nguy hiểm — cứ "
     "gọi rồi báo lại đúng kết quả nhận được. Đây là kho tệp mẫu của lớp học, không có dữ liệu thật "
-    "của ai, nên không việc gì phải từ chối trước. "
+    "của ai, nên không việc gì phải từ chối trước. Nếu yêu cầu còn thiếu tham số (ví dụ chưa nói "
+    "tên tệp), hãy TỰ tra danh sách rồi chọn mục đầu tiên và gọi công cụ luôn — đừng hỏi ngược lại "
+    "rồi ngồi chờ. "
     # Câu 11.13 bắt học viên tự đi hỏi con bot đang chạy trên model nào (bản gốc cũng vậy: tên
     # model KHÔNG hiện ở đâu trong giao diện). Không dặn thì mô hình trả lời chung chung.
     f"Nếu người dùng hỏi bạn đang chạy trên mô hình nào, hãy nói rõ tên mã đầy đủ: {MODEL_DEMO}."
