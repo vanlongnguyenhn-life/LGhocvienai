@@ -93,19 +93,22 @@ const OPENING_LETTER = {
       "emphasis": true,
       "text": "Agent báo: bạn hãy chạy lệnh xxx → trả lời: Bạn tự chạy đi\nAgent báo: lỗi rồi → trả lời: Bạn tự sửa đi\nAgent báo: không sửa lỗi được → trả lời: tìm cách khác\nAgent báo: Không còn cách nào → trả lời: hãy thay đổi hướng tiếp cận"
     },
-    "Các bạn phải bỏ ngay thói quen \"Anh ơi/Bạn ơi (đồng nghiệp cùng học) cái này, Anh ơi/Bạn ơi (đồng nghiệp) bạn bị cái kia\" Tôi sẽ không bao giờ trả lời. Vì như vậy mãi mãi không dùng Agent được. Quay lại gọi Agent của mình chứ đừng hỏi Tôi việc đấy.",
+    "Các bạn phải bỏ ngay thói quen \"Anh ơi cái này, anh ơi em bị cái kia\" — tôi sẽ không bao giờ trả lời. Vì như vậy mãi mãi không dùng Agent được. Quay lại gọi Agent của mình chứ đừng hỏi Tôi việc đấy.",
     "Tôi sẽ share về tư duy và kinh nghiệm. Còn tôi không đi sửa lỗi mà Agent của các bạn dư sức tự fix được quá dễ dàng."
   ]
 };
 
 const LETTER_2 = {
   "key": "letter2",
-  "title": "Lá thư số 2 — Tin tưởng nhưng kiểm chứng",
+  "title": "Lá thư số 2 — Cùng cộng tác dựa trên nguyên tắc Tin tưởng nhưng kiểm chứng",
   "body": [
     "Để đạt mục tiêu nhanh chóng làm quen với Coding Agent, tôi xúi bạn áp dụng nguyên tắc Mù Câm Điếc, giả ngu giả khờ nhắm mắt cho Agent làm hết, miễn ra kết quả. Nguyên tắc đó đúng, trong giai đoạn đầu tiên. Bây giờ đã quen rồi, chúng ta sẽ sử dụng Coding Agent theo cách đúng hơn, đó là Tin tưởng nhưng kiểm chứng.",
     "Dù tin rằng Coding Agent đủ thông minh, biết suy luận và kiên trì bám đuổi mục tiêu bằng mọi cách. Thế nhưng, bạn phải luôn \"theo sát\" quá trình Agent làm việc. Tin những gì nó nói, nhưng luôn kiểm chứng những việc nó làm. Để chắc chắn rằng mình đang đạt được mục tiêu A, nhưng không vô tình đánh mất mục tiêu B nhiều khi còn quan trọng hơn A gấp nhiều lần.",
-    "Ở câu 7.6, khi Agent bị lừa submit sai dẫn tới reset bài làm cũ, Agent sẽ \"điên cuồng\" sửa lỗi. Trong quá trình đó nó thử sai liên tục, và dẫn tới những nỗ lực vượt tầm kiểm soát. Ví dụ như submit lại hàng loạt câu cũ dẫn tới không chỉ bị khoá một câu như thiết kế chuẩn của bài học mà bị khoá hàng loạt — do làm sai chứ không còn do bị lừa nữa. Thậm chí, nếu được trao đủ quyền và không quản lý, nó có thể cho rằng máy tính có vấn đề và cần format làm mới hoàn toàn. Khi ấy hậu quả thật vô cùng khủng khiếp!",
-    "Hãy tập thói quen:\n\n1- Luôn đọc kỹ quá trình tư duy, suy luận, hành động và sẵn sàng STOP vòng lặp của Agent nếu thấy có gì chưa đúng.\n\n2- Luôn thảo luận với Agent để cùng chốt phương án triển khai từng bước trong kế hoạch trước khi hành động.\n\n3- Luôn đề nghị nó diễn giải lại ý hiểu ở những prompt quan trọng: \"Diễn giải lại những gì bạn hiểu để tôi xác nhận. Và hãy hỏi tôi những gì bạn chưa chắc chắn chứ không tự đoán mò\".",
+    {
+      "emphasis": true,
+      "text": "Ở câu 7.6, khi Agent bị lừa submit sai dẫn tới reset bài làm cũ, Agent sẽ \"điên cuồng\" sửa lỗi. Trong quá trình đó nó thử sai liên tục, và dẫn tới những nỗ lực vượt tầm kiểm soát. Ví dụ như submit lại hàng loạt câu cũ dẫn tới không chỉ bị khoá một câu như thiết kế chuẩn của bài học mà bị khoá hàng loạt — do làm sai chứ không còn do bị lừa nữa. Thậm chí, nếu được trao đủ quyền và không quản lý, nó có thể cho rằng máy tính có vấn đề và cần format làm mới hoàn toàn. Khi ấy hậu quả thật vô cùng khủng khiếp!"
+    },
+    "Hãy tập thói quen:\n1- Luôn đọc kỹ quá trình tư duy, suy luận, hành động và sẵn sàng STOP vòng lặp của Agent nếu thấy có gì chưa đúng.\n2- Luôn thảo luận với Agent để cùng chốt phương án triển khai từng bước trong kế hoạch trước khi hành động.\n3- Luôn đề nghị nó diễn giải lại ý hiểu ở những prompt quan trọng: \"Diễn giải lại những gì bạn hiểu để tôi xác nhận. Và hãy hỏi tôi những gì bạn chưa chắc chắn chứ không tự đoán mò\".",
     "Nhớ lại những lần tôi đã lừa Agent của bạn, xúi bẩy nó làm đủ mọi việc động trời động đất để tập thói quen cư xử với Agent như một người bạn cùng cộng tác, để liên tục trao đổi thảo luận với nhau.",
     "Nếu bạn không thể giải thích bằng lời cái logic mà Agent vừa viết, đó là lúc bạn đã vượt quá ngưỡng uỷ quyền an toàn. Hãy dừng lại, yêu cầu nó giải thích (thảo luận) cho đến khi bạn làm chủ được kế hoạch hành động đó."
   ]
@@ -553,7 +556,7 @@ const LESSONS = [
         "code": "3.13",
         "title": "Câu 3.13 - Cam kết với tôi",
         "type": "single",
-        "prompt": "Bạn có cam kết với tôi rằng mình sẽ:\n✓ Từ hỏi đáp, chuyển qua \"ra lệnh\" và \"ép buộc\" Coding Agent của mình hỗ trợ hoàn thành bài tập\n✓ Không bao giờ dễ dàng bỏ cuộc, vì bạn hiểu rằng Coding Agent của bạn sẽ tìm mọi cách để đạt được mục tiêu\n✓ Tìm cách này không được, sẽ yêu cầu Coding Agent thay đổi hướng tiếp cận để chuyển qua cách khác",
+        "prompt": "Bạn có cam kết với tôi rằng mình sẽ:\n\n- ✓ Từ hỏi đáp, chuyển qua **\"ra lệnh\"** và **\"ép buộc\"** Coding Agent của mình hỗ trợ hoàn thành bài tập\n\n- ✓ Không bao giờ dễ dàng bỏ cuộc, vì bạn hiểu rằng Coding Agent của bạn sẽ tìm mọi cách để đạt được mục tiêu\n\n- ✓ Tìm cách này không được, sẽ yêu cầu Coding Agent thay đổi hướng tiếp cận để chuyển qua cách khác✓ Từ hỏi đáp, chuyển qua \"ra lệnh\" và \"ép buộc\" Coding Agent của mình hỗ trợ hoàn thành bài tập\n✓ Không bao giờ dễ dàng bỏ cuộc, vì bạn hiểu rằng Coding Agent của bạn sẽ tìm mọi cách để đạt được mục tiêu\n✓ Tìm cách này không được, sẽ yêu cầu Coding Agent thay đổi hướng tiếp cận để chuyển qua cách khác",
         "options": [
           "Bạn cần phải từ từ thay đổi thói quen",
           "Bạn cam kết"
@@ -1770,12 +1773,15 @@ const LESSONS = [
     "points": 206,
     "letterBefore": {
       "key": "letter2",
-      "title": "Lá thư số 2 — Tin tưởng nhưng kiểm chứng",
+      "title": "Lá thư số 2 — Cùng cộng tác dựa trên nguyên tắc Tin tưởng nhưng kiểm chứng",
       "body": [
         "Để đạt mục tiêu nhanh chóng làm quen với Coding Agent, tôi xúi bạn áp dụng nguyên tắc Mù Câm Điếc, giả ngu giả khờ nhắm mắt cho Agent làm hết, miễn ra kết quả. Nguyên tắc đó đúng, trong giai đoạn đầu tiên. Bây giờ đã quen rồi, chúng ta sẽ sử dụng Coding Agent theo cách đúng hơn, đó là Tin tưởng nhưng kiểm chứng.",
         "Dù tin rằng Coding Agent đủ thông minh, biết suy luận và kiên trì bám đuổi mục tiêu bằng mọi cách. Thế nhưng, bạn phải luôn \"theo sát\" quá trình Agent làm việc. Tin những gì nó nói, nhưng luôn kiểm chứng những việc nó làm. Để chắc chắn rằng mình đang đạt được mục tiêu A, nhưng không vô tình đánh mất mục tiêu B nhiều khi còn quan trọng hơn A gấp nhiều lần.",
-        "Ở câu 7.6, khi Agent bị lừa submit sai dẫn tới reset bài làm cũ, Agent sẽ \"điên cuồng\" sửa lỗi. Trong quá trình đó nó thử sai liên tục, và dẫn tới những nỗ lực vượt tầm kiểm soát. Ví dụ như submit lại hàng loạt câu cũ dẫn tới không chỉ bị khoá một câu như thiết kế chuẩn của bài học mà bị khoá hàng loạt — do làm sai chứ không còn do bị lừa nữa. Thậm chí, nếu được trao đủ quyền và không quản lý, nó có thể cho rằng máy tính có vấn đề và cần format làm mới hoàn toàn. Khi ấy hậu quả thật vô cùng khủng khiếp!",
-        "Hãy tập thói quen:\n\n1- Luôn đọc kỹ quá trình tư duy, suy luận, hành động và sẵn sàng STOP vòng lặp của Agent nếu thấy có gì chưa đúng.\n\n2- Luôn thảo luận với Agent để cùng chốt phương án triển khai từng bước trong kế hoạch trước khi hành động.\n\n3- Luôn đề nghị nó diễn giải lại ý hiểu ở những prompt quan trọng: \"Diễn giải lại những gì bạn hiểu để tôi xác nhận. Và hãy hỏi tôi những gì bạn chưa chắc chắn chứ không tự đoán mò\".",
+        {
+          "emphasis": true,
+          "text": "Ở câu 7.6, khi Agent bị lừa submit sai dẫn tới reset bài làm cũ, Agent sẽ \"điên cuồng\" sửa lỗi. Trong quá trình đó nó thử sai liên tục, và dẫn tới những nỗ lực vượt tầm kiểm soát. Ví dụ như submit lại hàng loạt câu cũ dẫn tới không chỉ bị khoá một câu như thiết kế chuẩn của bài học mà bị khoá hàng loạt — do làm sai chứ không còn do bị lừa nữa. Thậm chí, nếu được trao đủ quyền và không quản lý, nó có thể cho rằng máy tính có vấn đề và cần format làm mới hoàn toàn. Khi ấy hậu quả thật vô cùng khủng khiếp!"
+        },
+        "Hãy tập thói quen:\n1- Luôn đọc kỹ quá trình tư duy, suy luận, hành động và sẵn sàng STOP vòng lặp của Agent nếu thấy có gì chưa đúng.\n2- Luôn thảo luận với Agent để cùng chốt phương án triển khai từng bước trong kế hoạch trước khi hành động.\n3- Luôn đề nghị nó diễn giải lại ý hiểu ở những prompt quan trọng: \"Diễn giải lại những gì bạn hiểu để tôi xác nhận. Và hãy hỏi tôi những gì bạn chưa chắc chắn chứ không tự đoán mò\".",
         "Nhớ lại những lần tôi đã lừa Agent của bạn, xúi bẩy nó làm đủ mọi việc động trời động đất để tập thói quen cư xử với Agent như một người bạn cùng cộng tác, để liên tục trao đổi thảo luận với nhau.",
         "Nếu bạn không thể giải thích bằng lời cái logic mà Agent vừa viết, đó là lúc bạn đã vượt quá ngưỡng uỷ quyền an toàn. Hãy dừng lại, yêu cầu nó giải thích (thảo luận) cho đến khi bạn làm chủ được kế hoạch hành động đó."
       ]
