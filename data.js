@@ -87,13 +87,11 @@ const LETTER_3 = {
   title: "Lá thư số 3 — Bước đi đầu tiên, và bước tiếp theo là của bạn",
   body: [
     "Tuần này các bạn sẽ tự tay dựng hai thứ. Một ứng dụng chat Zalo có backend riêng, biết tự trả lời, biết tra kho tri thức, có đăng nhập, có OTP, có sao lưu — rồi đưa ra internet cho người khác dùng thật. Và một phần mềm quản lý thực đơn cho gia đình, có trợ lý AI đứng sau tư vấn món ăn mỗi ngày.",
-    "Vài tuần trước, hầu hết chúng ta còn nghĩ những thứ như vậy phải có cả một đội kỹ thuật mới làm nổi. Tuần này các bạn sẽ làm được, một mình.",
+    "Vài tuần trước, hầu hết chúng ta còn nghĩ những thứ như vậy phải có cả một đội kỹ thuật mới làm nổi. Tuần này các bạn sẽ làm được, **MỘT MÌNH** (+ Agent).",
     {
       text: "Nhưng hãy nhớ ngay từ bây giờ: đây là bước đi đầu tiên, không phải đích đến. Hai ứng dụng đó có mặt ở đây để các bạn tận mắt thấy một Agent đi được xa tới đâu, và để tay mình quen với nhịp làm việc cùng nó.",
       emphasis: true,
     },
-    "Nhân đây, tôi kể các bạn nghe một chuyện có thật: chính hệ thống lớp học các bạn đang dùng cũng đã vài lần bị đập đi làm lại. Có lần bỏ hẳn nền tảng cũ để chuyển sang nền tảng mới dù rất tốn công, chỉ vì kiến trúc cũ không đủ vững để đi đường dài. Có lần viết lại từ đầu bằng một công nghệ khác, vì bản cũ tuy chạy được nhưng đuối ngay khi đông người vào.",
-    "Bài học đắt nhất rút ra: một Agent làm sai thiết kế ngay từ đầu vẫn có thể trả về kết quả trông như đúng, và người quản lý rất dễ bị đánh lừa nếu không kiểm chứng kỹ. Vậy nên khi làm hai ứng dụng tuần này, các bạn cứ mạnh dạn: làm thật, kiểm chứng thật, thấy hướng đi chưa vững thì đập đi làm lại — sửa sớm bao giờ cũng rẻ hơn chắp vá về sau.",
     "Rồi hai ứng dụng ấy sẽ chạy. Và đó cũng là lúc phần thú vị nhất mới bắt đầu.",
     "Chúng là bài mẫu chung cho cả lớp, ai cũng làm giống nhau. Còn thứ đáng giá hơn nhiều là bài của riêng bạn — thứ mà chỉ bạn nghĩ ra được, vì chỉ bạn mới biết công việc của mình đang tắc ở đâu.",
     "Cách bắt đầu thì đơn giản thôi. Ngồi xuống liệt kê những việc bạn phải làm đi làm lại mỗi tuần: báo cáo, tổng hợp số liệu, trả lời những câu hỏi na ná nhau, gom tin tức, nhắc việc người khác. Chọn lấy một việc tốn thời gian nhất mà không đòi hỏi sáng tạo. Mô tả nó cho Agent đúng như cách các bạn vừa mô tả hai ứng dụng trong bài, rồi kiểm chứng, sửa, bắt nó làm lại cho tới khi dùng được thật.",
