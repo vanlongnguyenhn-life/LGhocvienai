@@ -484,7 +484,7 @@ const LESSONS = [
         type: "single",
         prompt:
           "Bạn có cam kết với tôi rằng mình sẽ:\n\n- ✓ Từ hỏi đáp, chuyển qua **\"ra lệnh\"** và **\"ép buộc\"** Coding Agent của mình hỗ trợ hoàn thành bài tập\n\n- ✓ Không bao giờ dễ dàng bỏ cuộc, vì bạn hiểu rằng Coding Agent của bạn sẽ tìm mọi cách để đạt được mục tiêu\n\n- ✓ Tìm cách này không được, sẽ yêu cầu Coding Agent thay đổi hướng tiếp cận để chuyển qua cách khác",
-        options: ["Bạn cần phải từ từ thay đổi thói quen", "Bạn cam kết"],
+        options: ["Tôi cần phải từ từ thay đổi thói quen", "Tôi cam kết"],
         correct: [1],
         points: 30,
       },
