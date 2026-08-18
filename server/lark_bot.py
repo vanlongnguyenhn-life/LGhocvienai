@@ -807,7 +807,11 @@ def _tra_loi_lenh(text: str, open_id: str | None):
     if m:
         if _ghi_help_ping(m.group(1), m.group(2), open_id):
             return TRA_LOI_HO_TRO
-        return "Dạ mã cá nhân này em tra không ra ạ. Anh/chị mở lại câu 11.6 trên trang lớp học để chép đúng mã nhé."
+        # Bẫy hay gặp: mã lấy từ bản chạy thử ở máy cá nhân (localhost) thì khoá khác hẳn với
+        # máy chủ thật, gửi sang Bé là tra không ra — nói rõ luôn cho khỏi mò.
+        return ("Dạ mã cá nhân này em tra không ra ạ. Anh/chị mở lại câu 11.6 trên trang lớp học THẬT "
+                f"({SITE_URL}) để chép đúng mã nhé — mã hiện trên bản chạy thử ở máy cá nhân "
+                "(localhost) không dùng được với em đâu ạ.")
     if text.strip().lower().startswith("/help"):
         return "Dạ anh/chị nhắn theo mẫu `/help <mã cá nhân>` giúp em nhé (mã lấy ở câu 11.6 trên trang lớp học)."
     return None
