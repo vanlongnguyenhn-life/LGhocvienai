@@ -820,8 +820,13 @@ function markLetterRead(key) {
   render();
 }
 
+// Thân thư cũng đi qua bộ định dạng như đề bài: chỗ in đậm/nghiêng hiện ra đúng, và các
+// dòng xuống hàng trong khối nhấn mạnh không bị gộp lại thành một mạch.
 function renderLetterBody(p) {
-  return typeof p === "string" ? el("p", {}, p) : el("p", { class: p.emphasis ? "letter-emphasis" : "" }, p.text);
+  const chu = typeof p === "string" ? p : p.text;
+  const o = el("p", { class: typeof p !== "string" && p.emphasis ? "letter-emphasis" : "" });
+  o.innerHTML = dinhDangChu(chu);
+  return o;
 }
 
 function renderLetterCard(letter) {
