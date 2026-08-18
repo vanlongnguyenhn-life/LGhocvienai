@@ -1097,7 +1097,7 @@ function renderQuestionVideo(src) {
 // thật nên không ảnh hưởng. Khoá này vốn cũng chỉ che giao diện: data.public.js đã chứa mọi
 // câu từ đầu, phần chặn thật nằm ở máy chủ.
 const CHAY_O_MAY = ["localhost", "127.0.0.1", "[::1]"].includes(location.hostname);
-const LOCKED_FROM_CODE = CHAY_O_MAY ? "" : "11.1";
+const LOCKED_FROM_CODE = CHAY_O_MAY ? "" : "12.1";
 const ALL_CODES_ORDERED = [];
 const QUESTION_BY_CODE = {};
 (typeof LESSONS !== "undefined" ? LESSONS : []).forEach((l) =>
