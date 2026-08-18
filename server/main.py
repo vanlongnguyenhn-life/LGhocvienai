@@ -3503,6 +3503,10 @@ CAU1026_OUTTRO_S = 13.0
 CAU1026_NHAC_MO = BASE_DIR / "assets" / "nhac-mo-dau.m4a"
 CAU1026_NHAC_KET = BASE_DIR / "assets" / "nhac-ket.m4a"
 CAU1026_NGUONG_NHAC = 0.20
+# Chống nộp lại video mẫu: khác biệt tiếng phần thân so với bản mẫu phải từ mức này trở lên.
+# Đo thật: bản sao nén lại 0.015, tự dựng cùng giọng cùng kịch bản 0.966.
+CAU1026_VIDEO_MAU = BASE_DIR / "assets" / "demo-1026.mp4"
+CAU1026_NGUONG_SAO_CHEP = 0.10
 # Chữ bắt buộc thấy rõ ở 3 giây cuối phần mở đầu (đèn pin đã tắt ở giây 7).
 CAU1026_MOC_OCR = (7.5, 8.5, 9.0)
 CAU1026_CHU_LON = ("học viện", "ai life group")
@@ -3623,6 +3627,22 @@ def _check_1026(user_id: int, url: str):
             chuan_outtro, video_check.cat_tieng(song, -CAU1026_OUTTRO_S, CAU1026_OUTTRO_S))
         crit.append({"label": "Nhạc kết đúng đoạn quy định", "ok": d_outtro < CAU1026_NGUONG_NHAC,
                      "note": "Độ lệch %.3f (dưới %.2f mới đạt)" % (d_outtro, CAU1026_NGUONG_NHAC)})
+
+        # --- Chống nộp lại video mẫu ---
+        # Video mẫu công khai ngay trong đề: không có chốt này thì chỉ cần tải nó về, dựng lại
+        # 13 giây credit mang tên mình là qua mọi tiêu chí còn lại. So tiếng PHẦN THÂN với bản
+        # mẫu: bản sao (kể cả nén lại 48k mono) đo được 0.000-0.015, còn tự dựng thật — dù cùng
+        # giọng đọc, cùng kịch bản — thì timeline không thể trùng từng khung nên ≥ 0.9.
+        if CAU1026_VIDEO_MAU.exists():
+            mau_dai = video_check.thong_tin(str(CAU1026_VIDEO_MAU))["thoi_luong"]
+            than_mau = video_check.doan_tieng(
+                str(CAU1026_VIDEO_MAU), CAU1026_INTRO_S, mau_dai - CAU1026_INTRO_S - CAU1026_OUTTRO_S)
+            d_mau = video_check.khoang_cach_tieng(
+                than_mau, video_check.cat_tieng(song, CAU1026_INTRO_S, max(5.0, dai - CAU1026_INTRO_S - CAU1026_OUTTRO_S)))
+            tu_dung = d_mau >= CAU1026_NGUONG_SAO_CHEP
+            crit.append({"label": "Tự dựng, không nộp lại video mẫu của lớp", "ok": tu_dung,
+                         "note": "Khác biệt với video mẫu %.3f (từ %.2f trở lên mới đạt)"
+                                 % (d_mau, CAU1026_NGUONG_SAO_CHEP)})
 
         # --- 8. Credit ở phần kết ---
         chu_cuoi = ""

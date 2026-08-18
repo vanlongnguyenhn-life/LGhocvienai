@@ -2179,7 +2179,7 @@ const LESSONS = [
         submitLabel: "Cách nộp bài:",
         submitIntro: "Khi hoàn thành, paste link Google Drive (chia sẻ public) của video vào lệnh dưới đây để máy chấm chấm điểm:",
         submitPrompt: "# Submit: curl -X POST \"{{base_url}}/api/gws/task/10.26/submit/{{uid}}/{{token}}\" -H \"Content-Type: application/json\" -d '{\"drive_url\":\"<paste link Drive vào đây>\"}'\n# Reset (nếu chấm sai): curl -X POST \"{{base_url}}/api/gws/task/10.26/start/{{uid}}/{{token}}/reset\"",
-        submitNote: "Máy chủ sẽ kiểm tra 10 tiêu chí, trong đó 3 tiêu chí do AI đọc chữ trong khung hình và nghe giọng đọc. Khi tất cả đạt, bấm Nộp bài ở dưới.",
+        submitNote: "Máy chủ sẽ kiểm tra 11 tiêu chí, trong đó 3 tiêu chí do AI đọc chữ trong khung hình và nghe giọng đọc, và có tiêu chí đối chiếu với video mẫu — nộp lại video mẫu là bị phát hiện ngay. Khi tất cả đạt, bấm Nộp bài ở dưới.",
         points: 22,
       },
           ],
