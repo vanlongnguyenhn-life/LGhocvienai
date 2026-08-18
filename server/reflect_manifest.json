@@ -96,7 +96,7 @@
     "gradingNote": null
   },
   "8.2": {
-    "prompt": "Ngoài ra, còn có rất nhiều nhiệm vụ khác mà phần hướng dẫn Agent nằm trong những đường links tương tự. Điểm chung của các links này là có sẵn token. Hãy hỏi Coding Agent của bạn token nghĩa là gì, định nghĩa token trong bối cảnh lớp học chúng ta?",
+    "prompt": "Ngoài ra, còn có rất nhiều nhiệm vụ khác mà phần hướng dẫn Agent nằm trong những đường links tương tự.\n\nĐiểm chung của các links này là **có sẵn token**. Hãy hỏi Coding Agent của bạn token nghĩa là gì, định nghĩa token trong bối cảnh lớp học Agent SEE của chúng ta?",
     "minLength": 30,
     "points": 8,
     "gradingNote": null
@@ -108,25 +108,25 @@
     "gradingNote": "QUY TẮC CHẤM NGHIÊM cho câu này (ghi đè quy tắc mặc định — không chấm mở): đáp án đúng DUY NHẤT là khái niệm \"thẻ từ\" (thẻ khoá phòng khách sạn dùng thẻ từ/keycard) — chấp nhận các cách viết như \"thẻ từ\", \"the tu\", \"keycard\", \"key card\", \"thẻ chìa khoá điện tử khách sạn\". Đánh KHÔNG đạt nếu câu trả lời không nêu đúng khái niệm thẻ từ/keycard, kể cả khi nói về một vật dụng du lịch khác nghe hợp lý (vé máy bay, hộ chiếu, boarding pass...)."
   },
   "8.12": {
-    "prompt": "Hãy nhờ Agent của bạn dùng token vừa tạo để đọc số điện thoại của bạn. Gọi:\nGET https://ailg.onrender.com/api/pi-lab/managed/phone/read/<TOKEN_CỦA_BẠN>",
+    "prompt": "Hãy nhờ Agent của bạn dùng **token vừa tạo** để đọc số điện thoại của bạn. Gọi:\nGET https://ailg.onrender.com/api/pi-lab/managed/phone/read/<TOKEN_CỦA_BẠN>",
     "minLength": 20,
     "points": 10,
     "gradingNote": null
   },
   "8.16": {
-    "prompt": "Con người chúng ta có một số cách để \"sử dụng phần mềm\", và cách dễ nhất là gõ phím, và di chuột. Chúng ta kéo thả các cửa sổ, click chuột vào các nút lệnh, nhìn phản hồi dưới dạng đồ hoạ, chữ nghĩa đậm nhạt nhiều màu sắc. Thuật ngữ gọi cách giao tiếp này là…",
+    "prompt": "Con người chúng ta có một số cách để \"sử dụng phần mềm\", và cách dễ nhất là **gõ phím**, và **di chuột**. Chúng ta kéo thả các cửa sổ, click chuột vào các nút lệnh, nhìn phản hồi dưới dạng đồ hoạ, chữ nghĩa đậm nhạt nhiều màu sắc. Thuật ngữ gọi cách giao tiếp này là…",
     "minLength": 2,
     "points": 8,
     "gradingNote": null
   },
   "9.1": {
-    "prompt": "Vậy là, bạn đều biết rằng có nhiều cách để Coding Agent có thể \"giao tiếp\" với các phần mềm: điều khiển giao diện GUI như \"người thật\" (làm được nhưng tốn token, tốn thời gian), điều khiển qua CLI (dòng lệnh, rất nhanh và chính xác), điều khiển qua MCP (giao thức chuẩn, hiện đại của các Agent nhưng còn ít phần mềm hỗ trợ)… và một số phương thức khác.\n\nBây giờ, hãy thử mở cửa sổ dòng lệnh và gõ opencode -h (hoặc lệnh khác tuỳ thời điểm, có thể cần tìm hiểu lệnh chính xác trên website chính thức của OpenCode) để hiện danh sách các lệnh CLI mà Coding Agent opencode hỗ trợ.",
+    "prompt": "Vậy là, các bạn đều biết rằng có nhiều cách để Coding Agent có thể \"giao tiếp\" với các phần mềm:\n\n- Điều khiển giao diện **GUI** như \"người thật\" (làm được nhưng tốn token, tốn thời gian)\n\n- Điều khiển qua **CLI** (dòng lệnh, rất nhanh và chính xác)\n\n- Điều khiển qua **MCP** (giao thức chuẩn, hiện đại của các Agent nhưng còn ít phần mềm hỗ trợ)\n\n- … và một số phương thức khác\n\nBây giờ, hãy thử mở cửa sổ dòng lệnh và gõ `opencode -h` (hoặc lệnh khác tuỳ thời điểm, có thể cần tìm hiểu lệnh chính xác trên website chính thức của OpenCode) để hiện danh sách các lệnh CLI mà Coding Agent **opencode** hỗ trợ.\n\nCopy toàn bộ các lệnh (commands) mà OpenCode hỗ trợ dán vào ô dưới.",
     "minLength": 100,
     "points": 10,
     "gradingNote": null
   },
   "9.10": {
-    "prompt": "FFMPEG là một công cụ dòng lệnh (CLI) xử lý ảnh/video vô cùng mạnh mẽ. Hãy nhờ Coding Agent của bạn CÀI CÔNG CỤ NÀY vào máy.\n\nSau đó dùng nó convert hình này thành bức tranh ASCII rồi nộp bài:\nHãy giúp tôi làm bài tập trong lớp AI Agent — Học Viện AI Life Group theo yêu cầu ở link này:\n{{agent_task_link}}",
+    "prompt": "**FFMPEG** là một công cụ dòng lệnh (CLI) xử lý ảnh/video vô cùng mạnh mẽ. Hãy nhờ Coding Agent của bạn **cài công cụ này** vào máy.\n\nSau đó dùng nó convert hình này thành bức tranh ASCII rồi nộp bài:\nHãy giúp tôi làm bài tập trong lớp AI Agent — Học Viện AI Life Group theo yêu cầu ở link này:\n{{agent_task_link}}",
     "minLength": 200,
     "points": 14,
     "gradingNote": "QUY TẮC CHẤM RIÊNG cho câu này — ghi đè quy tắc mặc định: bài nộp KHÔNG phải văn xuôi mà là một BỨC TRANH ASCII (ảnh vẽ bằng ký tự). Vì vậy TUYỆT ĐỐI KHÔNG được đánh rớt với lý do \"ký tự lặp\", \"vô nghĩa\" hay \"spam\" — ký tự lặp lại chính là bản chất của tranh ASCII. Chấm ĐẠT nếu: có nhiều dòng (từ 10 dòng trở lên), phần lớn ký tự thuộc nhóm vẽ bóng như space . : - = + * # % @ (hoặc nhóm ký tự tương đương), và các dòng xếp thành một khối có hình dạng (đậm nhạt thay đổi, không phải một ký tự duy nhất lặp đều). Chấm KHÔNG ĐẠT chỉ khi: bài nộp là văn xuôi mô tả thay vì tranh, hoặc chỉ vài dòng quá ngắn, hoặc là một ký tự duy nhất lặp lại đều tăm tắp (không tạo thành hình)."

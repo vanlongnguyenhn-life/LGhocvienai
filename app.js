@@ -1188,7 +1188,14 @@ function renderQuestionCard(lesson, q, locked) {
     if (q.image) body.appendChild(el("img", { class: "q-image", src: q.image, alt: "" }));
     if (q.chatLog) body.appendChild(renderChatLog(q.chatLog));
     if (q.copyPrompt) body.appendChild(renderCopyPromptBox(resolveAgentPlaceholders(q.copyPrompt, q.code)));
-    if (q.copyPromptTrailing) body.appendChild(el("p", { class: "q-prompt" }, q.copyPromptTrailing));
+    if (q.copyPromptTrailing) {
+      // Dòng chữ dưới ô copy cũng phải đi qua bộ định dạng — câu 8.19 nhấn mạnh ngay ở dòng này.
+      body.appendChild(
+        coDinhDang(q.copyPromptTrailing)
+          ? el("p", { class: "q-prompt", html: dinhDangChu(q.copyPromptTrailing) })
+          : el("p", { class: "q-prompt" }, q.copyPromptTrailing)
+      );
+    }
     if (q.helpPing) body.appendChild(renderHelpPing(q, a));
     // Khối đặc tả dài có đánh số và có liên kết bấm được (câu 10.26). Nội dung do mình soạn
     // trong data.js chứ không lấy từ người dùng, nên dựng thẳng bằng html là an toàn.

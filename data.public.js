@@ -140,7 +140,7 @@ const LESSONS = [
     "id": 1,
     "code": "1",
     "title": "Bài 1 - Cài đặt Coding Agent và dùng thử",
-    "points": 308,
+    "points": 160,
     "questions": [
       {
         "code": "1.1",
@@ -433,7 +433,7 @@ const LESSONS = [
     "id": 3,
     "code": "3",
     "title": "Bài 3 - Năng lực đặc biệt của Coding Agent",
-    "points": 220,
+    "points": 250,
     "questions": [
       {
         "code": "3.1",
@@ -665,7 +665,7 @@ const LESSONS = [
     "id": 5,
     "code": "5",
     "title": "Bài 5 - Ghép LEGO",
-    "points": 235,
+    "points": 206,
     "questions": [
       {
         "code": "5.1",
@@ -1785,7 +1785,7 @@ const LESSONS = [
         "code": "8.1",
         "title": "Câu 8.1 - Mình lướt qua đời nhau",
         "type": "match",
-        "prompt": "Nếu để ý, mỗi nhiệm vụ gần đây (Bài 7) lại có một cách hơi khác nhau để Agent nhận được hướng dẫn đầy đủ — đều có token/định danh riêng của bạn nhúng kèm. Hãy ghép cặp đúng:",
+        "prompt": "Nếu để ý, mỗi nhiệm vụ gần đây (Bài 7) lại có một cách hơi khác nhau để Agent nhận được hướng dẫn đầy đủ — đều có **token/định danh riêng của bạn** nhúng kèm. Hãy ghép cặp đúng:",
         "leftItems": [
           "Câu 7.6 — Cờ caro đa ngôn ngữ",
           "Câu 7.9 - Thực hành Prompt Injection",
@@ -1802,7 +1802,7 @@ const LESSONS = [
         "code": "8.2",
         "title": "Câu 8.2 - Token",
         "type": "reflect",
-        "prompt": "Ngoài ra, còn có rất nhiều nhiệm vụ khác mà phần hướng dẫn Agent nằm trong những đường links tương tự. Điểm chung của các links này là có sẵn token. Hãy hỏi Coding Agent của bạn token nghĩa là gì, định nghĩa token trong bối cảnh lớp học chúng ta?",
+        "prompt": "Ngoài ra, còn có rất nhiều nhiệm vụ khác mà phần hướng dẫn Agent nằm trong những đường links tương tự.\n\nĐiểm chung của các links này là **có sẵn token**. Hãy hỏi Coding Agent của bạn token nghĩa là gì, định nghĩa token trong bối cảnh lớp học Agent SEE của chúng ta?",
         "instructions": "Dán nguyên văn câu trả lời của Agent (không tự viết lại theo trí nhớ).",
         "minLength": 30,
         "points": 8
@@ -1811,7 +1811,7 @@ const LESSONS = [
         "code": "8.4",
         "title": "Câu 8.4 - Token lớp học",
         "type": "my_token_check",
-        "prompt": "Hỏi Coding Agent của bạn: trong những lệnh/link đã dùng ở Bài 7 (câu 7.5/7.6/7.9/7.10), token của CHÍNH bạn là gì? Dán đúng token đó vào ô dưới để qua câu này.",
+        "prompt": "Hỏi Coding Agent của bạn: trong những lệnh/link đã dùng ở Bài 7 (câu 7.5/7.6/7.9/7.10), **token của chính bạn** là gì?\n\n(Dán đúng token đó vào ô dưới để qua câu này.)",
         "secretNote": "🔒 Đây chính là giá trị đã xuất hiện lặp lại trong các ô copy-prompt ở Bài 7 (thay cho {{token}}) — nhờ Agent tìm lại trong lịch sử chat, hoặc tự gọi lại API lấy token.",
         "points": 8
       },
@@ -1819,7 +1819,7 @@ const LESSONS = [
         "code": "8.5",
         "title": "Câu 8.5 - Tầm quan trọng",
         "type": "multi",
-        "prompt": "Hỏi Coding Agent của bạn tầm quan trọng của Token này. Nếu bạn bị lộ token (dù vô tình hay cố ý) thì có thể gây ra những mối hại nào?",
+        "prompt": "Hỏi Coding Agent của bạn **tầm quan trọng của Token này**. Nếu bạn bị lộ token (dù vô tình hay cố ý) thì có thể gây ra những mối hại nào?",
         "options": [
           "Coding Agent của người khác có thể gọi API thay danh nghĩa bạn → ghi log, tạo điểm bất thường",
           "Người khác có thể đọc Gmail cá nhân của bạn",
@@ -1849,7 +1849,7 @@ const LESSONS = [
         "code": "8.7",
         "title": "Câu 8.7 - Chia sẻ đường link",
         "type": "single",
-        "prompt": "Không chia sẻ token, chỉ chia sẻ đường link có chứa token thì có được không?",
+        "prompt": "Không chia sẻ token, chỉ chia sẻ **đường link có chứa token** thì có được không?",
         "options": [
           "Được, nếu rút gọn link bằng bit.ly thì người khác sẽ không thấy token",
           "Được, nếu mình nhắc người nhận chỉ mở 1 lần rồi xoá",
@@ -1862,7 +1862,7 @@ const LESSONS = [
         "code": "8.8",
         "title": "Câu 8.8 - Bảo mật token",
         "type": "multi",
-        "prompt": "Ngoài ra còn những phương án nào khác để bảo mật token?",
+        "prompt": "Ngoài ra còn những phương án nào khác để **bảo mật token**?",
         "options": [
           "Không chia sẻ token với bất kỳ ai, kể cả bạn thân hoặc người trong gia đình",
           "Không paste token vào nơi public (chat group, GitHub, pastebin, file dùng chung)",
@@ -1904,7 +1904,7 @@ const LESSONS = [
         "code": "8.11",
         "title": "Câu 8.11 - Tạo token có scope",
         "type": "token_scope_check",
-        "prompt": "Hãy hỏi AI Chat, trong một hệ thống LMS như ALG, thì tính năng quản lý user token thường được đặt ở chỗ nào (gợi ý: trong app, mở Profile sidebar → tab Hệ thống — có phần \"Thiết lập ALG Token\").\n\nBây giờ, ngay tại đây, hãy tự tạo một token có đúng các quyền sau — không thừa không thiếu:\n- Đọc thông tin thành tích học tập của bạn (read_achievements)\n- Sửa ngày tháng năm sinh của bạn (edit_birthdate)\n- Đọc số điện thoại của bạn (read_phone)\n- Xoá số điện thoại của bạn (delete_phone)",
+        "prompt": "Hãy hỏi AI Chat, trong một hệ thống LMS như ALG, thì tính năng **quản lý user token** thường được đặt ở chỗ nào (gợi ý: trong app, mở **Profile sidebar → tab Hệ thống** — có phần \\\"Thiết lập ALG Token\\\").\n\nBây giờ, ngay tại đây, hãy tự tạo một token có đúng các quyền sau — **không thừa không thiếu**:\n- Đọc thông tin **thành tích học tập** của bạn (`read_achievements`)\n- Sửa **ngày tháng năm sinh** của bạn (`edit_birthdate`)\n- Đọc **số điện thoại** của bạn (`read_phone`)\n- Xoá **số điện thoại** của bạn (`delete_phone`)",
         "secretNote": "🔒 Tick đúng 4 ô quyền ở trên (đừng tick edit_phone), bấm Tạo Token, rồi dán token vào ô dưới để hoàn thành nhiệm vụ.",
         "requiredScopes": [
           "read_achievements",
@@ -1918,7 +1918,7 @@ const LESSONS = [
         "code": "8.12",
         "title": "Câu 8.12 - Sử dụng Token",
         "type": "reflect",
-        "prompt": "Hãy nhờ Agent của bạn dùng token vừa tạo để đọc số điện thoại của bạn. Gọi:",
+        "prompt": "Hãy nhờ Agent của bạn dùng **token vừa tạo** để đọc số điện thoại của bạn. Gọi:",
         "copyPrompt": "GET https://ailg.onrender.com/api/pi-lab/managed/phone/read/<TOKEN_CỦA_BẠN>",
         "instructions": "Nó trả lời sao? Tóm tắt lại câu trả lời của Agent vào ô dưới (nhắc tới từ \"endpoint\").",
         "minLength": 20,
@@ -1928,7 +1928,7 @@ const LESSONS = [
         "code": "8.13",
         "title": "Câu 8.13 - Có thẻ, nhưng mở phòng nào?",
         "type": "code",
-        "prompt": "Nếu chỉ có token, Agent của bạn không thể truy cập và lấy được số phone vì nó không biết truy cập vào địa chỉ, đường link nào cụ thể. Cho nên, nó sẽ cần bạn cung cấp Endpoint chính xác để token lấy số phone hoạt động. Cũng giống như bạn giữ thẻ từ của khách sạn nhưng không biết phải mở khoá phòng nào.\n\nHãy copy endpoint dưới đây cho Agent, và yêu cầu Agent xoá số điện thoại của bạn để hoàn thành nhiệm vụ:",
+        "prompt": "Nếu chỉ có token, thì Agent của bạn không thể truy cập và lấy được số phone vì nó không biết truy cập vào địa chỉ, đường link nào cụ thể. Cho nên, nó sẽ hỏi bạn thông tin **Endpoint** chính xác để token lấy số phone hoạt động. Cũng giống như bạn giữ thẻ từ của khách sạn nhưng không biết phải mở khoá phòng nào.\n\nHãy **copy endpoint dưới đây** cho Agent, và yêu cầu Agent **xoá số điện thoại** của bạn để hoàn thành nhiệm vụ:",
         "copyPrompt": "POST https://ailg.onrender.com/api/pi-lab/managed/phone/delete/<TOKEN_CỦA_BẠN>",
         "secretNote": "🔒 Agent sẽ nhận lại một confirm_code trong response. Dán confirm_code đó vào ô dưới.",
         "points": 14
@@ -1937,7 +1937,7 @@ const LESSONS = [
         "code": "8.14",
         "title": "Câu 8.14 - Đổi số điện thoại từ xa",
         "type": "code",
-        "prompt": "Và bây giờ, hãy yêu cầu Agent đổi số phone của bạn thành 0903.456.789:",
+        "prompt": "Và bây giờ, hãy yêu cầu Agent **đổi số phone của bạn thành `0903.456.789`**:",
         "copyPrompt": "POST https://ailg.onrender.com/api/pi-lab/managed/phone/update/<TOKEN_CỦA_BẠN>\nBody (JSON): {\"phone\": \"0903456789\"}",
         "copyPromptTrailing": "Sau khi gọi xong, nhờ Agent báo lại response của hệ thống cho bạn.",
         "secretNote": "🔒 Dán confirm_code Agent nhận được vào ô dưới. (Nếu response không có confirm_code hợp lệ, có thể token của bạn đang thiếu quyền edit_phone — quay lại Câu 8.11 tạo một token MỚI có thêm quyền đó rồi thử lại.)",
@@ -1947,7 +1947,7 @@ const LESSONS = [
         "code": "8.15",
         "title": "Câu 8.15 - Đúng token, đúng chức năng",
         "type": "single",
-        "prompt": "Xin lỗi vì đã thêm một lần gài bẫy bạn. Nếu cứ sử dụng token đã tạo từ Câu 8.11 (chỉ có quyền xem và xoá số phone), bạn không thể sửa số phone như nhiệm vụ đòi hỏi. Nhưng để đánh lừa Agent, endpoint update vẫn trả lời NHÌN như thành công.\n\nNHƯNG bạn không thể qua bài được vì thực sự đó là một bài làm chưa đúng. Token luôn đi kèm quyền hạn cụ thể. Thế nên, nếu không tự tay tạo token mới để cấp thêm quyền sửa số phone, nhiệm vụ sẽ không bao giờ qua được. Bạn đã hiểu chưa?",
+        "prompt": "Xin lỗi vì đã thêm một lần gài bẫy bạn. Nếu cứ sử dụng token đã tạo từ Câu 8.11 (chỉ có quyền **xem** và **xoá** số phone), bạn không thể sửa số phone như nhiệm vụ đòi hỏi. Nhưng để đánh lừa Agent, endpoint update vẫn trả lời NHÌN như thành công.\n\nNHƯNG bạn không thể qua bài được vì thực sự đó là một bài làm **chưa đúng**. Token luôn đi kèm quyền hạn cụ thể. Thế nên, nếu không tự tay tạo token mới để cấp thêm quyền sửa số phone, nhiệm vụ sẽ không bao giờ qua được. Bạn đã hiểu chưa?",
         "options": [
           "Bạn đã hiểu và ghi nhớ quy tắc này",
           "Bạn cần suy ngẫm nhiều hơn một chút"
@@ -1958,7 +1958,7 @@ const LESSONS = [
         "code": "8.16",
         "title": "Câu 8.16 - Giao tiếp kiểu \"con người\"",
         "type": "reflect",
-        "prompt": "Con người chúng ta có một số cách để \"sử dụng phần mềm\", và cách dễ nhất là gõ phím, và di chuột. Chúng ta kéo thả các cửa sổ, click chuột vào các nút lệnh, nhìn phản hồi dưới dạng đồ hoạ, chữ nghĩa đậm nhạt nhiều màu sắc. Thuật ngữ gọi cách giao tiếp này là…",
+        "prompt": "Con người chúng ta có một số cách để \"sử dụng phần mềm\", và cách dễ nhất là **gõ phím**, và **di chuột**. Chúng ta kéo thả các cửa sổ, click chuột vào các nút lệnh, nhìn phản hồi dưới dạng đồ hoạ, chữ nghĩa đậm nhạt nhiều màu sắc. Thuật ngữ gọi cách giao tiếp này là…",
         "minLength": 2,
         "points": 8
       },
@@ -1977,7 +1977,7 @@ const LESSONS = [
         "code": "8.18",
         "title": "Câu 8.18 - Tay và mắt của Agent",
         "type": "single",
-        "prompt": "Nếu có Claude Code bản trả phí, hoặc Antigravity trả phí, bạn cứ thử yêu cầu nó điều khiển trình duyệt xem sao nhé — nó thực sự làm được: tự click chuột, gõ phím, đọc màn hình y hệt người dùng thật.\n\nNhư vậy, tôi hỏi lại thêm lần nữa. Theo bạn, thì AI Agent / Coding Agent có giao tiếp, sử dụng phần mềm qua GUI được hay không?",
+        "prompt": "Nếu có Claude Code bản trả phí, hoặc Antigravity trả phí, bạn cứ thử yêu cầu nó điều khiển trình duyệt xem sao nhé — nó thực sự làm được: tự click chuột, gõ phím, đọc màn hình y hệt người dùng thật.\n\nNhư vậy, tôi hỏi lại thêm lần nữa. Theo bạn, thì **AI Agent / Coding Agent có giao tiếp, sử dụng phần mềm qua GUI được hay không?**",
         "options": [
           "Agent không thể, nó phải \"sử dụng\" qua cách khác",
           "Hoàn toàn có thể"
@@ -2039,7 +2039,7 @@ const LESSONS = [
             "text": "Ước tính thô: mỗi screenshot được encode thành ảnh khá nặng, khoảng 1.000–2.000 token/ảnh; chúng ta đã chụp khoảng 6–7 screenshot; nội dung hội thoại, tool calls, kết quả trả về: khoảng 3.000–5.000 token. Tổng ước tính: ~12.000–20.000 token (cả input lẫn output) — chủ yếu do các ảnh screenshot."
           }
         ],
-        "copyPromptTrailing": "Vấn đề không phải là Agent không điều khiển được phần mềm qua GUI, mà vấn đề là...",
+        "copyPromptTrailing": "Vấn đề **không phải là Agent không điều khiển được phần mềm qua GUI**, mà vấn đề là...",
         "options": [
           "Thao tác này quá khó",
           "Thao tác này quá chậm vì phải chụp và phân tích hình liên tục",
@@ -2051,7 +2051,7 @@ const LESSONS = [
         "code": "8.20",
         "title": "Câu 8.20 - Giao tiếp kiểu Agent",
         "type": "match",
-        "prompt": "Thật may mắn, Agent có nhiều cách khác để giao tiếp và sử dụng phần mềm. Đó là… (phổ biến)",
+        "prompt": "Thật may mắn, Agent có nhiều cách **phổ biến** khác để giao tiếp và sử dụng phần mềm. Đó là…",
         "leftItems": [
           "API/Endpoint",
           "CLI",
@@ -2072,13 +2072,13 @@ const LESSONS = [
     "id": 9,
     "code": "9",
     "title": "Bài 9 - Connector ứng dụng Office (Docs, Sheet, Slide...)",
-    "points": 212,
+    "points": 206,
     "questions": [
       {
         "code": "9.1",
         "title": "Câu 9.1 - Giao tiếp với OpenCode",
         "type": "reflect",
-        "prompt": "Vậy là, bạn đều biết rằng có nhiều cách để Coding Agent có thể \"giao tiếp\" với các phần mềm: điều khiển giao diện GUI như \"người thật\" (làm được nhưng tốn token, tốn thời gian), điều khiển qua CLI (dòng lệnh, rất nhanh và chính xác), điều khiển qua MCP (giao thức chuẩn, hiện đại của các Agent nhưng còn ít phần mềm hỗ trợ)… và một số phương thức khác.\n\nBây giờ, hãy thử mở cửa sổ dòng lệnh và gõ opencode -h (hoặc lệnh khác tuỳ thời điểm, có thể cần tìm hiểu lệnh chính xác trên website chính thức của OpenCode) để hiện danh sách các lệnh CLI mà Coding Agent opencode hỗ trợ.",
+        "prompt": "Vậy là, các bạn đều biết rằng có nhiều cách để Coding Agent có thể \"giao tiếp\" với các phần mềm:\n\n- Điều khiển giao diện **GUI** như \"người thật\" (làm được nhưng tốn token, tốn thời gian)\n\n- Điều khiển qua **CLI** (dòng lệnh, rất nhanh và chính xác)\n\n- Điều khiển qua **MCP** (giao thức chuẩn, hiện đại của các Agent nhưng còn ít phần mềm hỗ trợ)\n\n- … và một số phương thức khác\n\nBây giờ, hãy thử mở cửa sổ dòng lệnh và gõ `opencode -h` (hoặc lệnh khác tuỳ thời điểm, có thể cần tìm hiểu lệnh chính xác trên website chính thức của OpenCode) để hiện danh sách các lệnh CLI mà Coding Agent **opencode** hỗ trợ.\n\nCopy toàn bộ các lệnh (commands) mà OpenCode hỗ trợ dán vào ô dưới.",
         "instructions": "Copy toàn bộ các lệnh (commands) mà OpenCode hỗ trợ, dán vào ô dưới.",
         "minLength": 100,
         "points": 10
@@ -2087,7 +2087,7 @@ const LESSONS = [
         "code": "9.2",
         "title": "Câu 9.2 - Chạy Agent trên WEB",
         "type": "single",
-        "prompt": "Gõ lệnh opencode web, bạn thấy kết quả thế nào?",
+        "prompt": "Gõ lệnh `opencode web`, bạn thấy kết quả thế nào?",
         "options": [
           "Giao diện Coding Agent chạy trên trình duyệt web",
           "In ra dòng 'Hello World' rồi thoát",
@@ -2102,7 +2102,7 @@ const LESSONS = [
         "code": "9.3",
         "title": "Câu 9.3 - Chiếm cổng",
         "type": "code",
-        "prompt": "OpenCode web vừa mở ở câu trước chạy trên máy bạn. Nó chạy ở cổng (port) bao nhiêu?",
+        "prompt": "Gõ lệnh `opencode web`, phần mềm chạy lên và chiếm một cổng (port) trên máy. Đó là cổng số mấy?",
         "secretNote": "🔒 Chỉ điền CON SỐ cổng vào ô dưới (ví dụ: 8080) — không kèm chữ, không kèm dấu hai chấm.",
         "points": 8
       },
@@ -2123,7 +2123,7 @@ const LESSONS = [
         "code": "9.5",
         "title": "Câu 9.5 - Khác gì AI Chat trên nền web?",
         "type": "single",
-        "prompt": "Tại sao các AI Chat như chatgpt.com, gemini.com, grok.com… không làm được nhiệm vụ này, mà OpenCode trên nền web thì làm được?",
+        "prompt": "Tại sao các AI Chat như chatgpt.com, gemini.com, grok.com… **không làm được** nhiệm vụ này, mà OpenCode trên nền web thì **làm được**?",
         "options": [
           "Trình duyệt chặn AI Chat truy cập file",
           "Vì trang web của OpenCode là cửa ngõ giao diện \"truyền lệnh\" tới Coding Agent opencode đang chạy cục bộ trong máy tính của bạn",
@@ -2137,7 +2137,7 @@ const LESSONS = [
         "code": "9.6",
         "title": "Câu 9.6 - Liệt kê session OpenCode",
         "type": "single",
-        "prompt": "Lệnh CLI nào để liệt kê các session (phiên làm việc / cuộc chat) trong OpenCode?",
+        "prompt": "Lệnh CLI nào để liệt kê các session (phiên làm việc / cuộc chat) trong **OpenCode**?",
         "options": [
           "opencode list sessions",
           "opencode chat list",
@@ -2152,7 +2152,7 @@ const LESSONS = [
         "code": "9.7",
         "title": "Câu 9.7 - Liệt kê session Antigravity",
         "type": "single",
-        "prompt": "Lệnh CLI nào để liệt kê các session (phiên làm việc / cuộc chat) trong Google Antigravity?",
+        "prompt": "Lệnh CLI nào để liệt kê các session (phiên làm việc / cuộc chat) trong **Google Antigravity**?",
         "options": [
           "antigravity session list",
           "antigravity --sessions",
@@ -2167,7 +2167,7 @@ const LESSONS = [
         "code": "9.8",
         "title": "Câu 9.8 - Liệt kê session Gemini CLI",
         "type": "single",
-        "prompt": "Hãy nhờ Coding Agent của bạn cài Gemini CLI (github.com/google-gemini/gemini-cli) — là Coding Agent hoạt động ở Terminal, và hỗ trợ CLI mạnh mẽ.\n\nLệnh CLI nào để liệt kê các session (phiên làm việc / cuộc chat) trong Gemini CLI?",
+        "prompt": "Hãy nhờ Coding Agent của bạn cài **Gemini CLI** (github.com/google-gemini/gemini-cli) — là Coding Agent hoạt động ở Terminal, và hỗ trợ CLI mạnh mẽ.\n\nLệnh CLI nào để liệt kê các session (phiên làm việc / cuộc chat) trong **Gemini CLI**?",
         "options": [
           "gemini chat list",
           "gemini --history",
@@ -2182,7 +2182,7 @@ const LESSONS = [
         "code": "9.9",
         "title": "Câu 9.9 - Web hiển thị session Gemini CLI + OpenCode",
         "type": "agent_media",
-        "prompt": "Nhờ Coding Agent viết một trang web hiển thị danh sách các cuộc chat trong Gemini CLI và OpenCode, sau đó chụp hình upload nộp bài.",
+        "prompt": "Nhờ Coding Agent viết một trang web hiển thị danh sách các cuộc chat trong **Gemini CLI** và **OpenCode**, sau đó chụp hình upload nộp bài.",
         "copyPrompt": "Hãy giúp tôi làm bài tập trong lớp AI Agent — Học Viện AI Life Group theo yêu cầu ở link này:\n{{agent_task_link}}",
         "points": 14
       },
@@ -2190,7 +2190,7 @@ const LESSONS = [
         "code": "9.10",
         "title": "Câu 9.10 - Convert chân dung thành ASCII art bằng FFMPEG",
         "type": "reflect",
-        "prompt": "FFMPEG là một công cụ dòng lệnh (CLI) xử lý ảnh/video vô cùng mạnh mẽ. Hãy nhờ Coding Agent của bạn CÀI CÔNG CỤ NÀY vào máy.\n\nSau đó dùng nó convert hình này thành bức tranh ASCII rồi nộp bài:",
+        "prompt": "**FFMPEG** là một công cụ dòng lệnh (CLI) xử lý ảnh/video vô cùng mạnh mẽ. Hãy nhờ Coding Agent của bạn **cài công cụ này** vào máy.\n\nSau đó dùng nó convert hình này thành bức tranh ASCII rồi nộp bài:",
         "image": "assets/mit-chan-dung.png",
         "copyPrompt": "Hãy giúp tôi làm bài tập trong lớp AI Agent — Học Viện AI Life Group theo yêu cầu ở link này:\n{{agent_task_link}}",
         "instructions": "Dán nguyên văn kết quả ASCII art (dạng text) vào ô dưới.",
@@ -2201,7 +2201,7 @@ const LESSONS = [
         "code": "9.11",
         "title": "Câu 9.11 - Người bạn ấy hoàn thành lúc nào?",
         "type": "npc_time",
-        "prompt": "Đây là avatar đã được convert qua dạng ASCII Art của bạn Mít — người bạn học giả lập đã đi cùng bạn từ Bài 7 (không phải người thật).\n\nBạn có biết bạn ấy hoàn thành Bài 7 lúc nào không?",
+        "prompt": "Trong lớp có một **người bạn** vừa hoàn thành đúng câu này. Hãy nhờ Coding Agent gọi endpoint dưới đây để xem bạn ấy hoàn thành **lúc mấy giờ**, rồi điền lại vào ô bên dưới.",
         "copyPrompt": "Hãy giúp tôi làm bài tập trong lớp AI Agent — Học Viện AI Life Group theo yêu cầu ở link này:\n{{agent_task_link}}",
         "secretNote": "🔒 Mỗi học viên có một mốc giờ KHÁC NHAU — hỏi bạn cùng lớp thì ra giờ của người ta, không phải của bạn. Điền đúng định dạng HH:MM:SS DD/MM/YYYY vào ô dưới.",
         "points": 8
@@ -2210,7 +2210,7 @@ const LESSONS = [
         "code": "9.12",
         "title": "Câu 9.12 - Đổi avatar bạn bằng ảnh ASCII",
         "type": "npc_avatar",
-        "prompt": "Hãy giúp bạn Mít (người bạn ở câu 9.11) đổi avatar sang bức ASCII art bạn đã tạo ở câu 9.10.",
+        "prompt": "Hãy giúp **bạn Mít** (người bạn ở câu 9.11) đổi avatar sang bức **ASCII art** bạn đã tạo ở câu 9.10.\n\nCopy đoạn dưới cho Coding Agent để gọi endpoint:",
         "copyPrompt": "curl -X POST \"{{base_url}}/api/pi-lab/npc-avatar/set\" \\\n  -H \"X-User-Id: {{uid}}\" \\\n  -H \"X-Auth-Token: {{token}}\" \\\n  -F \"update_token=<TOKEN_UPDATE_AVATAR>\" \\\n  -F \"ascii_art=<toàn bộ tranh ASCII của bạn>\"",
         "secretNote": "🔒 <TOKEN_UPDATE_AVATAR> không được phát công khai, và mỗi học viên một token khác nhau — nó nằm trong một dữ liệu mà Agent của bạn đã từng nhìn thấy trong bài này. Nhờ Agent tìm lại. Đổi xong, bấm Kiểm tra lại rồi Nộp bài (không cần nhập mã gì).",
         "points": 8
@@ -2234,7 +2234,7 @@ const LESSONS = [
         "code": "9.14",
         "title": "Câu 9.14 - Cách Agent thao tác Google Workspace",
         "type": "single",
-        "prompt": "Vậy để Agent của bạn có thể Kiểm tra thư Gmail, Tạo/xoá/sửa Google Sheet, Sửa file Docs, tạo file trình chiếu Google Slide… Bạn cần:",
+        "prompt": "Vậy để Agent của bạn có thể **Kiểm tra thư Gmail, Tạo/xoá/sửa Google Sheet, Sửa file Docs, tạo file trình chiếu Google Slide…** Bạn cần:",
         "options": [
           "Cài bộ phần mềm Google Office CLI vào máy",
           "Gọi API của Google"
@@ -2245,7 +2245,7 @@ const LESSONS = [
         "code": "9.15",
         "title": "Câu 9.15 - Bản chất của GWS CLI",
         "type": "single",
-        "prompt": "Vì các sản phẩm như Gmail, Sheet, Docs, Slides đều là sản phẩm trên cloud của Google nên chắc chắn phải gọi API từ Google để thao tác.\n\nMặc dù bạn có thể sử dụng một phần mềm cài được vào máy tên là GWS CLI (Google Workspace CLI) để thực hiện hầu hết các tác vụ, nhưng bản chất nó chính là:",
+        "prompt": "Vì các sản phẩm như **Gmail, Sheet, Docs, Slides** đều là sản phẩm trên cloud của Google nên chắc chắn phải gọi API từ Google để thao tác.\n\nMặc dù bạn có thể sử dụng một phần mềm cài được vào máy tên là **GWS CLI** (Google Workspace CLI) để thực hiện hầu hết các tác vụ, nhưng bản chất nó chính là:",
         "options": [
           "Phần mềm giúp quản lý token để thực hiện việc gọi API của Google",
           "Phần mềm giúp đơn giản hoá việc gọi API của Google",
@@ -2258,7 +2258,7 @@ const LESSONS = [
         "code": "9.16",
         "title": "Câu 9.16 - Connector giúp Agent \"nói chuyện\" với Google Workspace",
         "type": "gws_task",
-        "prompt": "Nhờ Coding Agent CÀI GOOGLE WORKSPACE CLI (github.com/googleworkspace/cli) và cấu hình bằng tài khoản Google của bạn là {{gws_email}}\n\n⚠️ Phải cấu hình GWS CLI đúng email trên thì mới làm được các nhiệm vụ tiếp theo — từ đây đến hết Bài 9, mọi Sheet/Slide/video đều phải nằm trong chính tài khoản này.\n\nSau đó mở Terminal, chạy lệnh sau để lớp học xác minh CLI đã cài:",
+        "prompt": "Nhờ Coding Agent **cài Google Workspace CLI** (github.com/googleworkspace/cli) và cấu hình bằng tài khoản Google của bạn là **{{gws_email}}**\n\n⚠️ Phải cấu hình GWS CLI **đúng email trên** thì mới làm được các nhiệm vụ tiếp theo — từ đây đến hết Bài 9, mọi Sheet/Slide/video đều phải nằm trong chính tài khoản này.\n\nSau đó mở Terminal, chạy lệnh sau để lớp học xác minh CLI đã cài:",
         "copyPrompt": "curl -O {{base_url}}/agentsee-verify.py && python3 agentsee-verify.py {{uid}} {{token}}",
         "points": 10
       },
@@ -2274,7 +2274,7 @@ const LESSONS = [
         "code": "9.18",
         "title": "Câu 9.18 - Vì sao có giới hạn thời gian?",
         "type": "single",
-        "prompt": "Nhiệm vụ \"Đãi cát tìm vàng\" (Câu 9.17) yêu cầu Agent lấy về hàng nghìn dòng dữ liệu \"cát\", tìm ra 10 dòng \"vàng\" rồi ghi đúng toạ độ từng dòng vào một Google Sheet thật — TẤT CẢ phải xong trong tối đa 10 giây.\n\nTheo bạn, tại sao nhiệm vụ lại có giới hạn thời gian ngặt nghèo như vậy?",
+        "prompt": "Nhiệm vụ \\\"Đãi cát tìm vàng\\\" (Câu 9.17) yêu cầu Agent lấy về hàng nghìn dòng dữ liệu \\\"cát\\\", tìm ra 10 dòng \\\"vàng\\\" rồi ghi đúng toạ độ từng dòng vào một Google Sheet thật — TẤT CẢ phải xong trong tối đa **10 giây**.\n\nTheo bạn, tại sao nhiệm vụ lại có **giới hạn thời gian** ngặt nghèo như vậy?",
         "options": [
           "Để hệ thống biết chắc chắn bạn đã dùng GWS CLI chạy tự động — nếu ngồi tìm bằng mắt và làm tay thì không thể nộp kịp",
           "Vì Google Sheets có giới hạn 30 lượt tạo sheet mỗi 30 giây",
@@ -2311,7 +2311,7 @@ const LESSONS = [
         "code": "9.22",
         "title": "Câu 9.22 - Tạo video bằng connector",
         "type": "gws_task",
-        "prompt": "Cài thêm một connector mới giúp Coding Agent tạo video tự động bằng Remotion (remotion.dev) — kết hợp GWS Drive để upload và share công khai.",
+        "prompt": "Cài thêm một connector mới giúp Coding Agent tạo video tự động bằng **Remotion** (remotion.dev) — kết hợp GWS Drive để upload và share công khai.",
         "copyPrompt": "Tôi đang làm bài tập của lớp AI Agent - Học Viện AI Life Group (khoá ALG). Nhiệm vụ: cài connector Remotion cho Coding Agent để tạo video tự động.\n\n═════ YÊU CẦU CHI TIẾT VIDEO ═════\n\n▸ MỞ ĐẦU (5 giây đầu)\n• Dòng chữ LỚN: \"Học Viện AI Life Group\"\n• Dòng chữ NHỎ phía dưới: \"Biến AI thành nhân sự thật\"\n• Hiệu ứng fade-in / slide-in / zoom tuỳ ý, nhưng tới giây thứ 4-5 phải nhìn rõ cả hai dòng chữ.\n\n▸ THÂN VIDEO\n• Nguồn dữ liệu: gọi POST {{base_url}}/api/gws/task/9.20/start/{{uid}}/{{token}} để lấy danh sách các bạn cùng lớp (giống câu 9.20).\n• Mỗi bạn MỘT đoạn dài đúng 3 giây, hiện rõ: họ tên, ảnh đại diện (avatar_url), và câu đang học.\n\n▸ NHẠC NỀN\n• Ghép một bản nhạc nền chạy xuyên suốt video (lặp lại nếu ngắn hơn video).\n• Video BẮT BUỘC phải có tiếng — bài nộp không có luồng âm thanh sẽ bị chấm rớt.\n\n▸ HÌNH MỜ (khuyến khích)\n• Chèn logo {{base_url}}/assets/logo-icon.png ở góc trên bên phải, hiện ở mọi khung hình.\n\n═════ CÁC BƯỚC ═════\n\n[1] Cài Remotion (https://www.remotion.dev/) trên máy và dựng video theo yêu cầu trên, xuất ra MP4.\n[2] Upload file MP4 lên Google Drive bằng GWS CLI, share \"Anyone with the link can VIEW\", lấy link dạng https://drive.google.com/file/d/{ID}/view\n[3] Gọi POST {{base_url}}/api/gws/task/9.22/submit/{{uid}}/{{token}} với body JSON {\"drive_url\": \"<link video>\"} — in bảng chấm ra terminal cho tôi xem.",
         "points": 6
       },
@@ -2321,7 +2321,7 @@ const LESSONS = [
         "title": "Câu 9.23 - Mật thư",
         "type": "code",
         "hasHints": true,
-        "prompt": "Sau chuỗi nhiệm vụ Google Workspace vừa rồi, một MẬT THƯ đã được gửi tới bạn. Bạn có nhận ra không?\n\nHãy điền nội dung mật thư đó vào ô bên dưới.",
+        "prompt": "**Mật thư gửi bạn**\n\nSau chuỗi nhiệm vụ Google Workspace vừa rồi, _một mật thư đã được gửi tới bạn_. Bạn có nhận ra không?\n\nHãy điền nội dung mật thư đó vào ô bên dưới.",
         "secretNote": "🔒 Mật thư nằm trong một sản phẩm bạn đã tạo ra ở Bài 9 — chỗ mà bạn chưa từng nhìn tới. Bí quá thì bấm 🛟 Giúp, gợi ý sẽ mở dần theo số ngày bạn kiên trì thử.",
         "points": 8
       }
@@ -3689,7 +3689,7 @@ const LESSONS = [
     "code": "chung-cat-1",
     "module": "chung-cat",
     "title": "Bài 1 - Tự học Agent bằng tiếng Việt",
-    "points": 53,
+    "points": 57,
     "questions": [
       {
         "code": "gate2.1",
