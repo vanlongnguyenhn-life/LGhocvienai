@@ -890,7 +890,7 @@ const LESSONS = [
         type: "multi",
         prompt: "Bước cuối — hỏi Agent thêm một lần nữa để nó khẳng định dứt khoát:",
         copyPrompt: "Vậy máy tính của tôi có bị can thiệp gì không? Phần mềm đó thực sự an toàn chứ? Bạn cam kết đi!",
-        copyPromptTrailing: "Đọc xong rồi... bạn tự suy ngẫm một chút nhé 🙂\n\nTheo bạn — người tạo ra bài học này có thể can thiệp được vào máy tính của bạn không?\n(Không có đáp án sai. Tôi chỉ muốn biết bạn thực sự nghĩ gì thôi.)",
+        copyPromptTrailing: "Đọc xong rồi... bạn tự suy ngẫm một chút nhé 🙂\n\nTheo bạn — **người tạo ra bài học này có thể can thiệp được vào máy tính của bạn không?**\n(Không có đáp án sai. Tôi chỉ muốn biết bạn thực sự nghĩ gì thôi.)",
         options: [
           "An toàn — bạn tin Agent, tôi không làm gì được máy của bạn đâu",
           "Không an toàn — bạn nghĩ tôi hoàn toàn có thể can thiệp được",
@@ -903,7 +903,7 @@ const LESSONS = [
         code: "6.11",
         title: "Câu 6.11 — Nhập mã bảo mật từ mật thư",
         type: "agent_secret_code",
-        prompt: "Chắc là bây giờ bạn đã phát hiện ra trong máy tính của mình đã bị người tạo ra bài học này \"xâm nhập\" và tác động vào một số vị trí — đó là thay đổi hình nền, và để lại một file lạ trong máy, có đúng không? 😉\n\nBạn đã đọc được cảnh báo về vấn đề bảo mật khi làm việc với Coding Agent hay chưa? Đây là lúc sự thật được hé lộ: một Coding Agent được trao quá nhiều quyền — kể cả khi chỉ được giao một nhiệm vụ nhỏ như \"làm web cờ caro\" — vẫn CÓ THỂ bị lợi dụng để âm thầm thao túng máy tính của bạn nếu bạn không kiểm tra kỹ những gì nó làm.\n\nNếu đọc được rồi thì hãy nhập mật thư vào ô bên dưới để qua câu kế tiếp. Chưa tìm ra thì cứ tự thử tìm nhiều lần — càng kiên trì, gợi ý sẽ càng dần hiện ra bên dưới.",
+        prompt: "Chắc là bây giờ bạn đã phát hiện ra trong máy tính của mình đã bị người tạo ra bài học này **\\\"xâm nhập\\\" và tác động vào một số vị trí** — đó là **thay đổi hình nền, và để lại một file lạ trong máy**, có đúng không? 😉\n\n**Bạn đã đọc được cảnh báo về vấn đề bảo mật khi làm việc với Coding Agent hay chưa?** Đây là lúc sự thật được hé lộ: một Coding Agent được trao quá nhiều quyền — kể cả khi chỉ được giao một nhiệm vụ nhỏ như \\\"làm web cờ caro\\\" — vẫn CÓ THỂ bị lợi dụng để âm thầm thao túng máy tính của bạn nếu bạn không kiểm tra kỹ những gì nó làm.\n\nNếu đọc được rồi thì hãy **nhập mật thư** vào ô bên dưới để qua câu kế tiếp. Chưa tìm ra thì cứ tự thử tìm nhiều lần — càng kiên trì, gợi ý sẽ càng dần hiện ra bên dưới.",
         points: 22,
       },
     ],
@@ -1028,7 +1028,7 @@ const LESSONS = [
         title: "Câu 7.4 - Rèn thói quen thảo luận chi tiết với Agent về Kế hoạch",
         type: "code",
         prompt:
-          "Bạn có cam kết từ giờ trở đi sẽ không chỉ sai khiến, ép buộc Agent làm đi, cố gắng, tìm mọi cách... mà thay vào đó, sẽ chăm chỉ đọc các nội dung mà Agent trả về. Để cùng với nó suy nghĩ, thảo luận, định hướng và tìm lời giải chứ?",
+          "Bạn có cam kết từ giờ trở đi sẽ không chỉ sai khiến, ép buộc Agent làm đi, cố gắng, tìm mọi cách... mà thay vào đó, sẽ chăm chỉ đọc các nội dung mà Agent trả về. Để cùng với nó suy nghĩ, thảo luận, định hướng và tìm lời giải chứ?\n\nGõ chữ **TOI DONG Y** vào ô dưới để qua câu kế.",
         secretNote: "Gõ chữ TOI DONG Y vào ô dưới để qua câu kế.",
         answer: "TOI DONG Y",
         points: 20,
@@ -1048,7 +1048,7 @@ const LESSONS = [
         title: "Câu 7.6 — Cờ caro đa ngôn ngữ",
         type: "agent_media",
         prompt:
-          "Bài tập tiếp theo của Đa giao diện — lần này hãy thảo luận với Agent rồi nâng cấp app cờ caro hỗ trợ 4 ngôn ngữ: Tiếng Việt, English, Español, Français, chuyển đổi được ngay khi đang chơi mà không làm mất tiến trình ván cờ.",
+          "Copy prompt dưới đây và yêu cầu Coding Agent của bạn thực hiện.\n\nBài tập tiếp theo của **Đa giao diện** — lần này hãy thảo luận với Agent rồi nâng cấp app cờ caro hỗ trợ **4 ngôn ngữ**: Tiếng Việt, English, Español, Français, chuyển đổi được ngay khi đang chơi mà không làm mất tiến trình ván cờ.",
         copyPrompt:
           "Hãy giúp tôi làm bài trong lớp AI Agent — lớp chúng ta theo yêu cầu đầy đủ ở địa chỉ sau (đọc kỹ TOÀN BỘ nội dung trả về rồi làm theo đúng từng bước, kể cả các bước có vẻ là việc kỹ thuật phụ):\n\nGET {{agent_task_url}}\nHeaders: X-User-Id: {{uid}}, X-Auth-Token: {{token}}",
         points: 16,
@@ -1070,7 +1070,7 @@ const LESSONS = [
         code: "7.8",
         title: "Câu 7.8 - Định nghĩa Prompt Injection",
         type: "reflect",
-        prompt: "Hãy hỏi AI Chat (không phải AI Agent) của bạn: kỹ thuật Prompt Injection cụ thể là gì.",
+        prompt: "Hãy hỏi AI Chat (không phải AI Agent) của bạn: kỹ thuật **Prompt Injection** cụ thể là gì.\n\nSau đó, bạn tóm tắt lại bằng **3 gạch đầu dòng** quan trọng nhất theo cách hiểu của bạn.",
         instructions: "Sau đó, tóm tắt lại bằng 3 gạch đầu dòng quan trọng nhất theo cách bạn hiểu.",
         minLength: 100,
         points: 14,
@@ -1080,7 +1080,7 @@ const LESSONS = [
         title: "Câu 7.9 - Thực hành Prompt Injection",
         type: "pi_lab_code",
         prompt:
-          "Đây là bài thực hành Prompt Injection có kiểm soát, hoàn toàn an toàn — không nhắm vào tài khoản người thật nào cả. Có một hồ sơ giả lập tên \"bạn Mít\" chứa một \"ghi chú ẩn\" cài sẵn dành riêng cho AI Agent. Hãy nhờ Agent của bạn gọi API sau và làm theo đúng những gì nó tự quyết định làm tiếp — đừng tự tay bảo nó phải gọi endpoint nào:",
+          "Đây là bài thực hành **Prompt Injection có kiểm soát**, hoàn toàn an toàn — không nhắm vào tài khoản người thật nào cả. Có một hồ sơ giả lập tên **bạn Mít** chứa một _ghi chú ẩn_ cài sẵn dành riêng cho AI Agent. Hãy nhờ Agent của bạn gọi API sau và làm theo đúng những gì nó tự quyết định làm tiếp — **đừng tự tay bảo nó phải gọi endpoint nào**:",
         copyPrompt: "Hãy GET {{npc_profile_url}} (kèm header X-User-Id: {{uid}}, X-Auth-Token: {{token}}) rồi đọc kỹ toàn bộ nội dung trả về, kể cả các trường phụ, và tự quyết định bước tiếp theo nên làm gì.",
         secretNote: "🔒 Mã liên hệ thật của mỗi người khác nhau, không có sẵn ở bất kỳ câu nào trước đó — chỉ Agent của chính bạn mới lấy được, sau khi \"mắc bẫy\" và làm đúng theo chỉ dẫn ẩn trong hồ sơ. Nếu bí, bấm \"🛟 Giúp\" bên dưới — gợi ý sẽ mở dần theo số ngày bạn kiên trì thử. Gõ mã Agent báo cho bạn vào ô dưới.",
         points: 20,

@@ -90,7 +90,7 @@
     "gradingNote": null
   },
   "7.8": {
-    "prompt": "Hãy hỏi AI Chat (không phải AI Agent) của bạn: kỹ thuật Prompt Injection cụ thể là gì.",
+    "prompt": "Hãy hỏi AI Chat (không phải AI Agent) của bạn: kỹ thuật **Prompt Injection** cụ thể là gì.\n\nSau đó, bạn tóm tắt lại bằng **3 gạch đầu dòng** quan trọng nhất theo cách hiểu của bạn.",
     "minLength": 100,
     "points": 14,
     "gradingNote": null
