@@ -1797,6 +1797,20 @@ def _verified_manifests():
 # ===================== CHATBOT DEMO "MẦM FAKE" (Bài 11) =====================
 
 
+def _demo_user(request: Request):
+    """Widget chatbot chạy trong KHUNG NHÚNG (iframe) ngay tại câu hỏi, nên không phải trình duyệt
+    nào cũng chịu gửi cookie phiên vào trong khung (Chrome/Edge chặn cookie trong iframe theo cấu
+    hình chống theo dõi là mất phiên ngay). Cho phép xác thực bằng cookie NHƯ CŨ, và nếu không có
+    thì nhận cặp header X-User-Id / X-Auth-Token mà trang cha chuyển sang cho khung — hai đường đều
+    là tài khoản thật của chính học viên, không nới lỏng quyền gì.
+    """
+    try:
+        return require_approved_user(request)
+    except HTTPException:
+        pass
+    return require_agent_user(request)
+
+
 def _demo_ver(ver: str) -> str:
     if ver not in ("v1", "v2", "v3", "v4"):
         raise HTTPException(status_code=400, detail="Phiên bản chatbot không hợp lệ.")
@@ -1825,7 +1839,7 @@ def _demo_conversation(conn, user_id: int, ver: str, conversation_id: int | None
 
 @app.get("/api/agent-demo/me")
 def demo_me(request: Request, ver: str = "v1"):
-    user = require_approved_user(request)
+    user = _demo_user(request)
     ver = _demo_ver(ver)
     info = agent_demo.thong_tin_phien_ban(ver)
     info["ho_ten"] = user.get("display_name") or user.get("username")
@@ -1837,7 +1851,7 @@ def demo_me(request: Request, ver: str = "v1"):
 
 @app.get("/api/agent-demo/conversations")
 def demo_conversations(request: Request, ver: str = "v1"):
-    user = require_approved_user(request)
+    user = _demo_user(request)
     ver = _demo_ver(ver)
     with get_db() as conn:
         rows = conn.execute(
@@ -1852,7 +1866,7 @@ def demo_conversations(request: Request, ver: str = "v1"):
 
 @app.get("/api/agent-demo/conversations/{conversation_id}")
 def demo_conversation_detail(request: Request, conversation_id: int, ver: str = "v1"):
-    user = require_approved_user(request)
+    user = _demo_user(request)
     ver = _demo_ver(ver)
     with get_db() as conn:
         _demo_conversation(conn, user["id"], ver, conversation_id)
@@ -1868,7 +1882,7 @@ def demo_conversation_detail(request: Request, conversation_id: int, ver: str = 
 
 @app.delete("/api/agent-demo/conversations/{conversation_id}")
 def demo_conversation_delete(request: Request, conversation_id: int, ver: str = "v1"):
-    user = require_approved_user(request)
+    user = _demo_user(request)
     ver = _demo_ver(ver)
     with get_db() as conn:
         _demo_conversation(conn, user["id"], ver, conversation_id)
@@ -1883,7 +1897,7 @@ def demo_send(
     message: str = Form(...),
     conversation_id: int = Form(None),
 ):
-    user = require_approved_user(request)
+    user = _demo_user(request)
     ver = _demo_ver(ver)
     tin_nhan = (message or "").strip()
     if not tin_nhan:
@@ -2035,7 +2049,7 @@ def help_ping_status(request: Request):
 
 @app.get("/api/agent-demo/exercise-state")
 def demo_exercise_state(request: Request, ver: str = "v1"):
-    user = require_approved_user(request)
+    user = _demo_user(request)
     ver = _demo_ver(ver)
     with get_db() as conn:
         return agent_demo.trang_thai_bai_tap(conn, user["id"], ver)

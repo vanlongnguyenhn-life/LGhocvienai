@@ -2135,7 +2135,24 @@ function moKhungDemo(ver) {
     ]),
   ]);
   hop.appendChild(thanh);
-  hop.appendChild(el("iframe", { class: "demo-khung", src: `/demo?ver=${ver}` }));
+  const khung = el("iframe", { class: "demo-khung", src: `/demo?ver=${ver}` });
+  // Khung nhúng hỏi xin khoá phiên: trình duyệt nào chặn cookie trong iframe thì widget vẫn vào
+  // được bằng cặp header của chính học viên. Chỉ trả lời đúng khung này và đúng nguồn của mình.
+  const traLoiKhoa = (e) => {
+    if (e.origin !== location.origin || e.source !== khung.contentWindow) return;
+    if (!e.data || e.data.loai !== "ags-demo-xin-khoa") return;
+    khung.contentWindow.postMessage(
+      {
+        loai: "ags-demo-khoa",
+        uid: agentTokenInfo ? agentTokenInfo.uid : null,
+        token: agentTokenInfo ? agentTokenInfo.token : null,
+      },
+      location.origin
+    );
+  };
+  window.addEventListener("message", traLoiKhoa);
+  nen.addEventListener("remove", () => window.removeEventListener("message", traLoiKhoa));
+  hop.appendChild(khung);
   nen.appendChild(hop);
   nen.addEventListener("click", (e) => {
     if (e.target === nen) nen.remove();

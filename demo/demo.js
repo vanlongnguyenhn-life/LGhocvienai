@@ -7,11 +7,41 @@ const MA_CAU = { v1: "11.9", v2: "11.11", v3: "11.15", v4: "11.18" }[VER] || "";
 const $ = (id) => document.getElementById(id);
 let hoiThoaiHienTai = null;
 let dangGui = false;
+// Cặp khoá do TRANG CHA chuyển sang khi widget chạy trong khung nhúng — dùng khi trình duyệt
+// không gửi cookie phiên vào trong khung (nhiều trình duyệt chặn theo mặc định).
+let khoaTuTrangCha = null;
+
+function xinKhoaTuTrangCha() {
+  if (window.parent === window) return Promise.resolve(null); // mở ở tab riêng thì dùng cookie
+  return new Promise((xong) => {
+    let da = false;
+    const nghe = (e) => {
+      if (e.origin !== location.origin) return;
+      const d = e.data || {};
+      if (d.loai !== "ags-demo-khoa") return;
+      da = true;
+      window.removeEventListener("message", nghe);
+      xong(d.uid && d.token ? { uid: String(d.uid), token: String(d.token) } : null);
+    };
+    window.addEventListener("message", nghe);
+    window.parent.postMessage({ loai: "ags-demo-xin-khoa" }, location.origin);
+    setTimeout(() => {
+      if (da) return;
+      window.removeEventListener("message", nghe);
+      xong(null);
+    }, 1500);
+  });
+}
 
 async function goi(duongDan, tuyChon = {}, thuLai = true) {
   let r;
+  const dau = { ...(tuyChon.headers || {}) };
+  if (khoaTuTrangCha) {
+    dau["X-User-Id"] = khoaTuTrangCha.uid;
+    dau["X-Auth-Token"] = khoaTuTrangCha.token;
+  }
   try {
-    r = await fetch(duongDan, { credentials: "same-origin", ...tuyChon });
+    r = await fetch(duongDan, { credentials: "same-origin", ...tuyChon, headers: dau });
   } catch (e) {
     // Máy chủ đang khởi động lại thì thử thêm một lần trước khi kêu lỗi.
     if (!thuLai) throw e;
@@ -253,6 +283,10 @@ function dongMenu() {
 // ---------- Khởi động ----------
 
 async function khoiDong() {
+  khoaTuTrangCha = await xinKhoaTuTrangCha();
+  // Cờ chẩn đoán (chỉ đúng/sai, không lộ khoá): mở console gõ __agsCoKhoa để biết widget đang
+  // xác thực bằng cookie hay bằng khoá do trang cha chuyển sang.
+  window.__agsCoKhoa = !!khoaTuTrangCha;
   let me;
   try {
     me = await goi(`/api/agent-demo/me?ver=${VER}`);
