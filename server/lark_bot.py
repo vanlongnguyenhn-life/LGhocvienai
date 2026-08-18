@@ -767,10 +767,13 @@ async def smart_answer(text: str, open_id: str | None, prog: dict | None, is_tea
 # Đúng một lệnh được khai báo: /help kèm mã cá nhân. Mọi lệnh gạch chéo khác (/giup, /tro-giup...)
 # Bé KHÔNG trả lời — chính là bài học của câu 11.7/11.8: chatbot kiểu kịch bản chỉ hiểu đúng
 # những từ khoá đã cài sẵn. Tin nhắn thường (không mở đầu bằng "/") vẫn đi vào trợ lý AI như cũ.
-_MA_HELP = re.compile(r"^/help\s+(\d+)\s*-\s*([A-Za-z0-9]{6,})\s*$", re.I)
+# Mã cá nhân = <id học viên>-<8 ký tự đầu api_token>. api_token sinh bằng token_urlsafe nên
+# 8 ký tự đó CÓ THỂ chứa "-" và "_" (khoảng 1/5 học viên rơi vào trường hợp này) — bảng chữ
+# cũ chỉ nhận [A-Za-z0-9] khiến những em đó gửi đúng mã vẫn bị báo sai, kẹt vĩnh viễn ở 11.6.
+_MA_HELP = re.compile(r"^/help\s+(\d+)-([A-Za-z0-9_-]{6,})\s*$", re.I)
 
 TRA_LOI_HO_TRO = (
-    "Dạ em là Bé Ailai, trợ lý lớp ALG ạ 🌱\n"
+    "Dạ em là Bé Ailai, trợ lý lớp ALG ạ.\n"
     "Khi gặp khó, anh/chị làm theo thứ tự này giúp em nhé:\n"
     "1. Đọc lại kỹ đề bài trên trang lớp học, làm đúng từng bước một.\n"
     "2. Hỏi chính Coding Agent của mình trước — phần lớn vướng mắc nó gỡ được ngay.\n"

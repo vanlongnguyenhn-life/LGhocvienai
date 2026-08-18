@@ -546,7 +546,7 @@ function buildRemediateMessage(displayName, items) {
     return `- ${it.question_code} — "${title}" (lý do: ${it.reason || "chưa rõ"})`;
   });
   return (
-    `Chào ${displayName}! Em là Bé Ailai 🌱.\n\n` +
+    `Chào ${displayName}! Em là Bé Ailai.\n\n` +
     `Hệ thống chấm bài bằng AI vừa gặp một sự cố kỹ thuật: khi AI chấm bị lỗi kết nối, hệ thống đã tạm thời cho một số câu tự luận/minh chứng qua chỉ dựa theo hình thức, chưa kiểm tra đúng nội dung.\n\n` +
     `Em đã khắc phục xong — từ bây giờ mọi câu đều được AI chấm ngay lúc nộp bài, không còn xảy ra tình trạng này nữa.\n\n` +
     `Sau khi chấm lại, các câu sau của anh/chị chưa đạt yêu cầu:\n` +
