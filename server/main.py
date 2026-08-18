@@ -4752,6 +4752,47 @@ async def admin_diag_ai(request: Request):
     return out
 
 
+@app.get("/api/admin/diag/demo-chat")
+def admin_diag_demo_chat(request: Request, ver: str = "v3", message: str = "em có những công cụ gì?"):
+    """Chạy thử một lượt chat của widget Bài 11 NGAY TRÊN MÁY CHỦ THẬT, để kiểm những thứ chỉ mô
+    hình mới quyết được: nó có chịu gọi công cụ không (câu 11.15), có đọc đúng tên model không
+    (câu 11.13), có tạo được danh thiếp không (câu 11.18).
+
+    Chỉ quản trị gọi được, KHÔNG ghi vào tiến độ của ai — thuần chẩn đoán.
+    """
+    current_admin(request)
+    ver = _demo_ver(ver)
+    ho_so = {"display_name": "Giáo viên (chẩn đoán)", "email": "", "username": "diag"}
+    if ver == "v1":
+        tra_loi, trung = agent_demo.tra_loi_v1(message)
+        return {"ver": ver, "reply": tra_loi, "tu_khoa_trung": [f"{a}|{b}" for a, b in trung]}
+    tra_loi, da_goi, kem = agent_demo.tra_loi_llm(ver, [], message, ho_so)
+    return {
+        "ver": ver,
+        "reply": tra_loi,
+        "tools_da_goi": da_goi,
+        "kem_theo": [k.get("loai") for k in kem],
+        "chu_de_v2": agent_demo.phan_loai_chu_de(message) if ver == "v2" else None,
+    }
+
+
+@app.get("/api/admin/diag/cham-binh-luan")
+def admin_diag_cham_binh_luan(request: Request, question_code: str = "11.17", text: str = ""):
+    """Chạy thử bộ chấm bình luận của câu 11.17/11.26 với một đoạn văn mẫu — xem AI cho đạt hay
+    không và vì sao. Không ghi điểm cho ai."""
+    current_admin(request)
+    entry = REFLECT_MANIFEST.get(question_code)
+    if not entry:
+        raise HTTPException(status_code=400, detail="Câu này không phải câu tự luận.")
+    if len(text.strip()) < (entry.get("minLength") or 20):
+        return {"du_dai": False, "can_it_nhat": entry.get("minLength")}
+    ket = ai_grader.grade_text(entry["prompt"], entry.get("gradingNote") or "", text)
+    if ket is None:  # gọi AI hỏng -> bộ chấm thật cũng đánh trượt, không tự cho qua
+        return {"du_dai": True, "valid": False, "reason": "Không gọi được AI chấm."}
+    valid, reason = ket
+    return {"du_dai": True, "valid": valid, "reason": reason}
+
+
 @app.get("/api/admin/diag/botlog")
 def admin_diag_botlog(request: Request):
     """Nhật ký hoạt động gần nhất của Bé: tin nhận được, câu trả lời, hoặc lỗi."""
