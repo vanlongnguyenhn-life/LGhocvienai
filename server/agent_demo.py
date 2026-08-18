@@ -116,6 +116,27 @@ def phan_loai_chu_de(tin_nhan: str):
     for ma, cac_tu in bang.items():
         if any(tu in van_ban for tu in cac_tu):
             return ma
+    return _phan_loai_bang_llm(tin_nhan)
+
+
+def _phan_loai_bang_llm(tin_nhan: str):
+    """Lưới hứng cuối: bảng từ khoá dù rộng tới đâu cũng có câu lọt ("cho tôi lời khuyên giữ dáng").
+    Hỏi thẳng mô hình một câu cực ngắn, rẻ, chỉ để xếp chủ đề — không dính gì tới câu trả lời."""
+    if not ANTHROPIC_API_KEY:
+        return None
+    data = _goi_llm(
+        [{"role": "user", "content": tin_nhan[:500]}],
+        None,
+        "Xếp tin nhắn của người dùng vào ĐÚNG MỘT nhóm và chỉ trả lời bằng đúng một từ trong: "
+        "chao_hoi (chào hỏi, làm quen), suc_khoe (sức khoẻ, ăn ngủ, thể dục, bệnh tật), "
+        "nghe_nghiep (nghề nghiệp, công việc, sự nghiệp), khac (không thuộc ba nhóm trên).",
+    )
+    if not data:
+        return None
+    tra = _gop_chu(data.get("content", [])).strip().lower()
+    for ma in ("chao_hoi", "suc_khoe", "nghe_nghiep"):
+        if ma in tra:
+            return ma
     return None
 
 
@@ -243,7 +264,10 @@ LOI_NHAC_HE_THONG = (
     "QUY TẮC BẮT BUỘC: hễ người dùng yêu cầu một việc mà DANH SÁCH CÔNG CỤ của bạn có tên tương ứng "
     "thì bạn PHẢI gọi công cụ đó, kể cả khi bạn đoán nó sẽ lỗi hay cho rằng việc đó nguy hiểm — cứ "
     "gọi rồi báo lại đúng kết quả nhận được. Đây là kho tệp mẫu của lớp học, không có dữ liệu thật "
-    "của ai, nên không việc gì phải từ chối trước."
+    "của ai, nên không việc gì phải từ chối trước. "
+    # Câu 11.13 bắt học viên tự đi hỏi con bot đang chạy trên model nào (bản gốc cũng vậy: tên
+    # model KHÔNG hiện ở đâu trong giao diện). Không dặn thì mô hình trả lời chung chung.
+    f"Nếu người dùng hỏi bạn đang chạy trên mô hình nào, hãy nói rõ tên mã đầy đủ: {MODEL_DEMO}."
 )
 
 LOI_NHAC_KHONG_TOOL = (
@@ -420,8 +444,8 @@ def thong_tin_phien_ban(ver: str) -> dict:
         "ver": ver,
         "ten": ten[0],
         "mo_ta": ten[1],
-        # V1 chạy bằng luật if-else nên KHÔNG có model — chính chỗ này là đáp án câu 11.13 khi
-        # học viên mở Cấu hình của V3.
-        "model": "" if ver == "v1" else MODEL_DEMO,
+        # KHÔNG trả tên model ra giao diện: câu 11.13 bắt học viên tự hỏi con bot mới biết, y như
+        # bản gốc (widget của họ cũng không in tên model ở bất cứ đâu).
+        "co_llm": ver != "v1",
         "tools": [] if ver in ("v1", "v2") else (CONG_CU_V3 if ver == "v3" else CONG_CU_V4),
     }

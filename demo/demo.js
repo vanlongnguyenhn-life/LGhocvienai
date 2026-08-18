@@ -298,7 +298,6 @@ async function khoiDong() {
   $("ten-hoc-vien").textContent = me.ho_ten || "";
   $("ch-ver").textContent = me.ten;
   $("ch-mo-ta").textContent = me.mo_ta;
-  $("ch-model").textContent = me.model || "(không dùng mô hình ngôn ngữ)";
   $("ch-tools").textContent = (me.tools || []).join(", ") || "(chưa được trang bị công cụ nào)";
 
   if (!me.san_sang) {

@@ -2345,7 +2345,7 @@ const LESSONS = [
         type: "code",
         prompt:
           "Vậy mô hình ngôn ngữ lớn mà **Chatbot Demo (V3)** sử dụng là gì? Bạn ghi **chính xác tên mã** của nó vào ô dưới nhé.",
-        secretNote: "🔒 Gợi ý: mở lại widget Chatbot Demo (V3) ở câu trước, bấm nút ⚙ cạnh tên chatbot để xem phần Cấu hình.",
+        secretNote: "🔒 Gợi ý: mở widget Chatbot Demo (V3) rồi hỏi thẳng Bé Ailai xem em đang chạy trên mô hình nào.",
         answer: "claude-haiku-4-5-20251001",
         points: 10,
       },
