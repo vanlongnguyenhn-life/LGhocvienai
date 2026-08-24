@@ -3,6 +3,11 @@
 
 * { box-sizing: border-box; }
 
+/* Thuộc tính hidden phải thắng mọi khai báo display. Trình duyệt chỉ đặt [hidden]{display:none}
+   trong bảng style mặc định, nên .chan{display:grid} / .ung-dung{display:flex} ở dưới đè mất —
+   màn chặn "chưa đăng nhập" vì thế cứ phủ kín trang kể cả khi đã đăng nhập. */
+[hidden] { display: none !important; }
+
 :root {
   --nen: #ffffff;
   --nen-phu: #f7f7f5;

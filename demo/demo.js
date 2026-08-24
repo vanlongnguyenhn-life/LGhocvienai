@@ -73,6 +73,13 @@ function hienChan(loi) {
   $("ung-dung").hidden = true;
 }
 
+// Gọi khi đã xác thực xong: một lần 401 thoáng qua lúc máy chủ vừa khởi động lại không được
+// để lại màn chặn phủ kín trang trong khi bên dưới widget đã chạy bình thường.
+function anChan() {
+  $("chan").hidden = true;
+  $("ung-dung").hidden = false;
+}
+
 // ---------- Vẽ tin nhắn ----------
 
 function theTin(vaiTro, noiDung, kemTheo) {
@@ -293,7 +300,7 @@ async function khoiDong() {
   } catch (e) {
     return; // hienChan đã lo phần thông báo
   }
-  $("ung-dung").hidden = false;
+  anChan();
   $("ten-ban").textContent = me.ten;
   $("ten-hoc-vien").textContent = me.ho_ten || "";
   $("ch-ver").textContent = me.ten;
