@@ -1740,7 +1740,10 @@ def _verify_answer_manifest_entry(entry: dict, ad: dict) -> bool:
             if [str(x).strip() for x in texts] != [str(x).strip() for x in entry["orderTexts"]]:
                 return False
             want = entry.get("tagByText") or {}
-            return all(str(tag_map.get(k, "")).strip() == str(v).strip() for k, v in want.items())
+            # Ô học viên chưa bấm lần nào đang hiện nhãn ĐẦU TIÊN trên màn hình, nhưng bản app.js
+            # cũ không gửi khoá đó lên (giá trị undefined bị JSON nuốt mất). Thiếu khoá thì hiểu
+            # đúng như màn hình: nhãn 0. Thứ tự vẫn phải khớp tuyệt đối nên không nới lỏng gì.
+            return all(str(tag_map.get(k, 0)).strip() == str(v).strip() for k, v in want.items())
         orderState = ad.get("orderState")
         tagState = ad.get("tagState")
         count = entry.get("count") or 0

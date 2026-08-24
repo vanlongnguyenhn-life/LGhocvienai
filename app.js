@@ -2697,7 +2697,12 @@ function buildAnswerData(q, a) {
         orderState: a.orderState,
         tagState: a.tagState,
         orderedTexts: (a.orderState || []).map((i) => itemText((q.items || [])[i])).filter((v) => v != null),
-        tagByText: Object.fromEntries((q.items || []).map((it, i) => [itemText(it), (a.tagState || [])[i]])),
+        // Ô chưa bấm lần nào vẫn đang hiện nhãn ĐẦU TIÊN trên màn hình, nhưng tagState chưa có
+        // khoá đó -> giá trị undefined và JSON.stringify nuốt luôn cả khoá. Server thấy thiếu
+        // nhãn nên chấm sai cả câu dù học viên nhìn thấy mình chọn đúng. Gửi thẳng số 0.
+        tagByText: Object.fromEntries(
+          (q.items || []).map((it, i) => [itemText(it), (a.tagState || {})[i] != null ? a.tagState[i] : 0])
+        ),
       };
     case "tag-mark":
       return {
