@@ -4910,20 +4910,36 @@ def admin_lark_chats(request: Request):
 
 
 @app.get("/api/admin/lark/binh-luan-con-thieu")
-async def admin_binh_luan_con_thieu(request: Request, gui: int = 0):
-    """Những bình luận (câu 12.17 / 13.4) đã được chấm đạt nhưng CHƯA lên nhóm Lark.
+async def admin_binh_luan_con_thieu(
+    request: Request, gui: int = 0, tat_ca: int = 0, dang_lai: int = 0, cau: str = ""
+):
+    """Bình luận của câu 12.17 / 13.4 và tình trạng đã lên nhóm Lark hay chưa.
 
-    Mặc định chỉ liệt kê. Gọi kèm ?gui=1 thì đăng luôn những bình luận còn thiếu — gửi thẳng
-    (không qua luồng nền) để thấy ngay từng cái đi được hay hỏng vì sao.
+    - không tham số : liệt kê những bài CHƯA lên nhóm
+    - ?tat_ca=1     : liệt kê tất cả, kèm cột đã đăng lúc nào (để soi bài bị đánh dấu nhầm)
+    - ?gui=1        : đăng những bài chưa lên nhóm
+    - ?dang_lai=<id học viên>[&cau=12.17] : đăng lại cho đúng một người, kể cả khi đã bị đánh
+      dấu "đã đăng" — dùng cho các bài dính lỗi cũ (đánh dấu trước rồi gửi mới hỏng)
+
+    Gửi thẳng chứ không qua luồng nền, để thấy ngay từng cái đi được hay hỏng vì sao.
     """
     current_admin(request)
     ma_cau = tuple(sorted(LARK_CHIA_SE_BINH_LUAN))
     cho_trong = ",".join("?" * len(ma_cau))
+    loc = "" if (tat_ca or dang_lai) else " AND d.user_id IS NULL"
+    tham_so = list(ma_cau)
+    if dang_lai:
+        loc += " AND u.id = ?"
+        tham_so.append(dang_lai)
+        if cau:
+            loc += " AND rg.question_code = ?"
+            tham_so.append(cau)
     with get_db() as conn:
         rows = conn.execute(
             f"""
             SELECT u.id, u.display_name, u.username, u.lark_open_id,
-                   rg.question_code, rg.answer_text, qs.updated_at AS nop_luc
+                   rg.question_code, rg.answer_text, qs.updated_at AS nop_luc,
+                   d.created_at AS da_dang_luc
             FROM reflect_grades rg
             JOIN users u ON u.id = rg.user_id
             JOIN question_status qs
@@ -4931,18 +4947,18 @@ async def admin_binh_luan_con_thieu(request: Request, gui: int = 0):
             LEFT JOIN lark_da_dang_binh_luan d
               ON d.user_id = rg.user_id AND d.question_code = rg.question_code
             WHERE rg.question_code IN ({cho_trong})
-              AND rg.is_valid = 1 AND qs.status IN ('done', 'correct') AND d.user_id IS NULL
+              AND rg.is_valid = 1 AND qs.status IN ('done', 'correct'){loc}
             ORDER BY qs.updated_at
             """,
-            ma_cau,
+            tham_so,
         ).fetchall()
 
     con_thieu = [dict(r) for r in rows]
-    if not gui:
+    if not gui and not dang_lai:
         return {
             "so_luong": len(con_thieu),
             "danh_sach": [
-                {k: r[k] for k in ("id", "display_name", "question_code", "nop_luc")}
+                {k: r[k] for k in ("id", "display_name", "question_code", "nop_luc", "da_dang_luc")}
                 for r in con_thieu
             ],
         }
