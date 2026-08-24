@@ -1999,7 +1999,15 @@ def _chia_se_binh_luan_len_lark(user_id: int, question_code: str, noi_dung: str)
     Dòng "đã đăng" được ghi TRƯỚC để hai lần nộp sát nhau không đăng đôi, nhưng nếu gửi hỏng thì
     phải xoá đi: giữ lại là bình luận của học viên mất luôn, không bao giờ thử lại.
     """
-    if question_code not in LARK_CHIA_SE_BINH_LUAN or not lark_bot.is_configured():
+    if question_code not in LARK_CHIA_SE_BINH_LUAN:
+        return
+    if not lark_bot.is_configured():
+        # Bỏ qua im lặng ở đây là cách chắc chắn nhất để mất bình luận mà không ai biết:
+        # không đăng, không dấu vết, học viên vẫn qua câu. Ghi lại để còn lần ra được.
+        lark_bot.log_activity(
+            "group", None, f"chia sẻ bình luận {question_code} (học viên {user_id})",
+            error="thiếu LARK_APP_ID/LARK_APP_SECRET — bỏ qua, đăng bù trong trang admin",
+        )
         return
     with get_db() as conn:
         moi = conn.execute(
