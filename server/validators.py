@@ -105,11 +105,36 @@ def validate_url(value: str) -> tuple[bool, str]:
     return False, "Cần một URL bắt đầu bằng http(s):// hoặc một đường dẫn cục bộ hợp lệ (ví dụ C:/... hoặc /home/...)."
 
 
+LAP_KY_TU = re.compile(r"(.)\1{15,}", re.S)
+TACH_TU = re.compile(r"[^\W\d_]+", re.UNICODE)
+
+# Số ký tự KHÁC NHAU tối thiểu. Đếm tuyệt đối chứ KHÔNG chia cho độ dài: bảng chữ cái
+# có hạn nên bài càng dài, tỉ lệ "khác nhau / tổng số" càng tụt về 0 dù viết hoàn toàn
+# bình thường. Bộ lọc cũ chia như vậy nên đánh rớt sạch mọi bài dài hơn ~500 ký tự —
+# tức là càng làm bài tử tế càng bị loại.
+TOI_THIEU_KY_TU_KHAC = 10
+# Một từ chiếm quá nửa bài thì đúng là gõ cho có (kiểu "không biết. không biết. ...").
+# Văn xuôi tiếng Việt thật, từ hay gặp nhất ("của", "là") cũng chỉ quanh 5-10%.
+NGUONG_TU_LAP = 0.45
+
+
 def validate_text(value: str, min_length: int = 20) -> tuple[bool, str]:
     value = (value or "").strip()
     if len(value) < min_length:
         return False, f"Cần tối thiểu {min_length} ký tự có nội dung thật."
-    unique_ratio = len(set(value.lower().replace(" ", ""))) / max(len(value.replace(" ", "")), 1)
-    if unique_ratio < 0.15:
+
+    goc = re.sub(r"\s+", "", value.lower())
+    if len(set(goc)) < TOI_THIEU_KY_TU_KHAC:
         return False, "Nội dung có vẻ là ký tự lặp lại, chưa phải câu trả lời thật."
+    if LAP_KY_TU.search(value):
+        return False, "Nội dung có một ký tự bị lặp rất dài, chưa phải câu trả lời thật."
+
+    tu = TACH_TU.findall(value.lower())
+    if len(tu) >= 8:
+        if len(set(tu)) <= 3:
+            return False, "Nội dung chỉ lặp đi lặp lại vài từ, chưa phải câu trả lời thật."
+        hay_gap = max(tu.count(t) for t in set(tu))
+        if hay_gap / len(tu) > NGUONG_TU_LAP:
+            return False, "Nội dung chỉ lặp đi lặp lại một từ, chưa phải câu trả lời thật."
+
     return True, "Nội dung hợp lệ"
