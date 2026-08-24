@@ -2442,6 +2442,17 @@ def _autoheal_progress(user_id: int) -> list:
             )
         done.add(code)
         healed.append(code)
+        # Câu thảo luận (12.17/13.4) qua được ở ĐÂY thì cũng phải đăng lên nhóm như khi nộp
+        # bình thường. Thiếu đoạn này, bài nào được công nhận bằng đường vá tiến độ là bình
+        # luận không bao giờ tới nhóm — im lặng, không dấu vết.
+        if code in LARK_CHIA_SE_BINH_LUAN:
+            with get_db() as conn:
+                bl = conn.execute(
+                    "SELECT answer_text FROM reflect_grades WHERE user_id = ? AND question_code = ?",
+                    (user_id, code),
+                ).fetchone()
+            if bl and bl["answer_text"]:
+                _chia_se_binh_luan_len_lark(user_id, code, bl["answer_text"])
     return healed
 
 
@@ -4947,7 +4958,9 @@ async def admin_binh_luan_con_thieu(
             f"""
             SELECT u.id, u.display_name, u.username, u.lark_open_id,
                    rg.question_code, rg.answer_text, qs.updated_at AS nop_luc,
-                   d.created_at AS da_dang_luc
+                   d.created_at AS da_dang_luc,
+                   CASE WHEN qs.answer_data LIKE '%healedFromServerProof%'
+                        THEN 'máy chủ tự vá tiến độ' ELSE 'học viên bấm nộp' END AS qua_cau_bang
             FROM reflect_grades rg
             JOIN users u ON u.id = rg.user_id
             JOIN question_status qs
@@ -4966,7 +4979,8 @@ async def admin_binh_luan_con_thieu(
         return {
             "so_luong": len(con_thieu),
             "danh_sach": [
-                {k: r[k] for k in ("id", "display_name", "question_code", "nop_luc", "da_dang_luc")}
+                {k: r[k] for k in
+                 ("id", "display_name", "question_code", "nop_luc", "da_dang_luc", "qua_cau_bang")}
                 for r in con_thieu
             ],
         }
