@@ -766,32 +766,49 @@ async def smart_answer(text: str, open_id: str | None, prog: dict | None, is_tea
 
 # ===================== ĐĂNG BÌNH LUẬN CỦA HỌC VIÊN VÀO NHÓM =====================
 
-def gui_nen(coro):
+def gui_nen(coro, khi_hong=None):
     """Chạy một lượt gửi Lark ở luồng nền.
 
     Chỗ gọi (/api/submit-question) là hàm đồng bộ, mà gửi tin thì phải chờ mạng — để học viên
     ngồi đợi Lark trả lời mới thấy điểm là vô lý.
+
+    `khi_hong`: gọi khi gửi thất bại. Không có nó thì mọi lỗi chỉ nằm trong log của Render và
+    chỗ gọi vẫn đinh ninh là đã gửi xong — đúng cái bẫy làm mất bình luận của học viên.
     """
     def chay():
         try:
             asyncio.run(coro)
         except Exception as e:
             print(f"[lark gui_nen] {e!r}")
+            log_activity("group", None, "gui_nen", error=repr(e)[:400])
+            if khi_hong:
+                try:
+                    khi_hong(e)
+                except Exception as e2:
+                    print(f"[lark gui_nen/khi_hong] {e2!r}")
 
     threading.Thread(target=chay, daemon=True).start()
 
 
 async def dang_binh_luan_len_nhom(open_id: str | None, ten: str, tieu_de: str, noi_dung: str):
-    """Đăng nguyên văn bình luận của học viên vào nhóm lớp, có tag đích danh người viết."""
+    """Đăng nguyên văn bình luận của học viên vào nhóm lớp, có tag đích danh người viết.
+
+    NÉM LỖI khi không gửi được — chỗ gọi cần biết để còn thử lại. Trước đây hàm này im lặng
+    trả về khi chưa biết nhóm, và `send_text` cũng không xét mã lỗi Lark trả về, nên một lần
+    hỏng là bình luận của học viên biến mất không dấu vết.
+    """
     chat_id = get_group_chat_id()
     if not chat_id:
-        print("[lark] chưa biết nhóm lớp, bỏ qua việc đăng bình luận")
-        return
+        raise RuntimeError("chưa biết nhóm lớp để đăng bình luận (chọn nhóm trong trang admin)")
     # Chặn học viên nhét thẻ tag vào bài để gọi tên người khác trong nhóm.
     sach = re.sub(r"</?at[^>]*>", "", noi_dung or "").strip()
     ai = f'<at user_id="{open_id}">{ten}</at>' if open_id else ten
     than = "💬 " + ai + " vừa chia sẻ cảm nhận ở " + tieu_de + ":\n\n" + sach
-    await send_text(chat_id, than)
+    ket = await send_text(chat_id, than)
+    # Lark trả HTTP 200 kèm code != 0 khi từ chối (bot không ở trong nhóm, tag sai open_id...).
+    if isinstance(ket, dict) and ket.get("code"):
+        raise RuntimeError(f"Lark từ chối: code={ket.get('code')} msg={ket.get('msg')}")
+    return ket
 
 
 # ===================== LỆNH /help CỦA BÀI 11 =====================

@@ -1994,7 +1994,11 @@ LARK_CHIA_SE_BINH_LUAN = {"12.17", "13.4"}
 
 
 def _chia_se_binh_luan_len_lark(user_id: int, question_code: str, noi_dung: str):
-    """Đăng một lần duy nhất cho mỗi học viên mỗi câu — nộp lại không làm phiền nhóm thêm lần nào."""
+    """Đăng một lần duy nhất cho mỗi học viên mỗi câu — nộp lại không làm phiền nhóm thêm lần nào.
+
+    Dòng "đã đăng" được ghi TRƯỚC để hai lần nộp sát nhau không đăng đôi, nhưng nếu gửi hỏng thì
+    phải xoá đi: giữ lại là bình luận của học viên mất luôn, không bao giờ thử lại.
+    """
     if question_code not in LARK_CHIA_SE_BINH_LUAN or not lark_bot.is_configured():
         return
     with get_db() as conn:
@@ -2009,11 +2013,20 @@ def _chia_se_binh_luan_len_lark(user_id: int, question_code: str, noi_dung: str)
         ).fetchone()
     if not u:
         return
+
+    def _tra_lai_luot(_loi):
+        with get_db() as conn:
+            conn.execute(
+                "DELETE FROM lark_da_dang_binh_luan WHERE user_id = ? AND question_code = ?",
+                (user_id, question_code),
+            )
+
     tieu_de = QUESTION_TITLE_BY_CODE.get(question_code, "Câu " + question_code)
     lark_bot.gui_nen(
         lark_bot.dang_binh_luan_len_nhom(
             u["lark_open_id"], u["display_name"] or u["username"], tieu_de, noi_dung
-        )
+        ),
+        khi_hong=_tra_lai_luot,
     )
 
 
@@ -4894,6 +4907,64 @@ def admin_diag_grading(request: Request):
 def admin_lark_chats(request: Request):
     current_admin(request)
     return lark_bot.list_chats()
+
+
+@app.get("/api/admin/lark/binh-luan-con-thieu")
+async def admin_binh_luan_con_thieu(request: Request, gui: int = 0):
+    """Những bình luận (câu 12.17 / 13.4) đã được chấm đạt nhưng CHƯA lên nhóm Lark.
+
+    Mặc định chỉ liệt kê. Gọi kèm ?gui=1 thì đăng luôn những bình luận còn thiếu — gửi thẳng
+    (không qua luồng nền) để thấy ngay từng cái đi được hay hỏng vì sao.
+    """
+    current_admin(request)
+    ma_cau = tuple(sorted(LARK_CHIA_SE_BINH_LUAN))
+    cho_trong = ",".join("?" * len(ma_cau))
+    with get_db() as conn:
+        rows = conn.execute(
+            f"""
+            SELECT u.id, u.display_name, u.username, u.lark_open_id,
+                   rg.question_code, rg.answer_text, qs.updated_at AS nop_luc
+            FROM reflect_grades rg
+            JOIN users u ON u.id = rg.user_id
+            JOIN question_status qs
+              ON qs.user_id = rg.user_id AND qs.question_code = rg.question_code
+            LEFT JOIN lark_da_dang_binh_luan d
+              ON d.user_id = rg.user_id AND d.question_code = rg.question_code
+            WHERE rg.question_code IN ({cho_trong})
+              AND rg.is_valid = 1 AND qs.status IN ('done', 'correct') AND d.user_id IS NULL
+            ORDER BY qs.updated_at
+            """,
+            ma_cau,
+        ).fetchall()
+
+    con_thieu = [dict(r) for r in rows]
+    if not gui:
+        return {
+            "so_luong": len(con_thieu),
+            "danh_sach": [
+                {k: r[k] for k in ("id", "display_name", "question_code", "nop_luc")}
+                for r in con_thieu
+            ],
+        }
+
+    ket_qua = []
+    for r in con_thieu:
+        tieu_de = QUESTION_TITLE_BY_CODE.get(r["question_code"], "Câu " + r["question_code"])
+        try:
+            await lark_bot.dang_binh_luan_len_nhom(
+                r["lark_open_id"], r["display_name"] or r["username"], tieu_de, r["answer_text"]
+            )
+            with get_db() as conn:
+                conn.execute(
+                    "INSERT OR IGNORE INTO lark_da_dang_binh_luan (user_id, question_code) VALUES (?, ?)",
+                    (r["id"], r["question_code"]),
+                )
+            ket_qua.append({"ten": r["display_name"], "cau": r["question_code"], "ok": True})
+        except Exception as e:
+            ket_qua.append(
+                {"ten": r["display_name"], "cau": r["question_code"], "ok": False, "loi": repr(e)[:300]}
+            )
+    return {"da_gui": sum(1 for k in ket_qua if k["ok"]), "chi_tiet": ket_qua}
 
 
 @app.post("/api/admin/lark/broadcast")

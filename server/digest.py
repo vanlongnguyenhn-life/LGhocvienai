@@ -9,12 +9,17 @@
 
 import asyncio
 import json
+import re
 from datetime import datetime, timezone, timedelta
+from functools import lru_cache
+from pathlib import Path
 
 from .database import get_db
 from . import lark_bot
 
 VN_TZ = timezone(timedelta(hours=7))
+# Mã câu của Bài 1 đến Bài 13 (các câu chặn mang mã "gate..." nên không lọt vào đây).
+MA_BAI_1_13 = re.compile(r"^([1-9]|1[0-3])\.")
 SETTINGS_KEY = "daily_digest"
 DONE_STATUSES = ("done", "correct")
 
@@ -77,22 +82,49 @@ def _cutoff_utc(hours: int) -> str:
     return (datetime.now(timezone.utc) - timedelta(hours=hours)).strftime("%Y-%m-%d %H:%M:%S")
 
 
+@lru_cache(maxsize=1)
+def ma_cau_den_bai_13() -> tuple[str, ...]:
+    """Mã mọi câu THẬT từ Bài 1 đến Bài 13 — mốc "đã học hết phần đang mở".
+
+    Bỏ các câu chặn (gate): chúng được thiết kế để không ai qua được, tính vào thì chẳng học
+    viên nào đạt mốc và ai cũng bị nhắc mãi.
+    """
+    thu_muc = Path(__file__).parent
+    with open(thu_muc / "question_order.json", encoding="utf-8") as f:
+        thu_tu = json.load(f)
+    with open(thu_muc / "answer_manifest.json", encoding="utf-8") as f:
+        bang_cham = json.load(f)
+    return tuple(
+        q["code"] for q in thu_tu
+        if MA_BAI_1_13.match(q["code"]) and (bang_cham.get(q["code"]) or {}).get("type") != "gate"
+    )
+
+
 def get_inactive_students(lookback_hours: int) -> list[dict]:
     """Học viên (đã đăng ký, không phải giáo viên) KHÔNG có thao tác nộp câu nào trong N giờ qua.
-    Lưu ý: câu SAI vẫn được tính là 'có làm' (question_status ghi cả status='wrong')."""
+    Lưu ý: câu SAI vẫn được tính là 'có làm' (question_status ghi cả status='wrong').
+
+    Ai đã làm xong sạch Bài 1→13 thì KHÔNG nhắc nữa: họ hết bài để học (Bài 14 đang xây dựng),
+    nhắc tiếp chỉ là gọi tên oan giữa nhóm lớp.
+    """
     cutoff = _cutoff_utc(lookback_hours)
+    ma_cau = ma_cau_den_bai_13()
+    cho_trong = ",".join("?" * len(ma_cau))
     with get_db() as conn:
         rows = conn.execute(
-            """
-            SELECT u.id, u.display_name, u.lark_open_id, MAX(qs.updated_at) AS last_act
+            f"""
+            SELECT u.id, u.display_name, u.lark_open_id, MAX(qs.updated_at) AS last_act,
+                   COUNT(DISTINCT CASE
+                       WHEN qs.status IN ('done', 'correct') AND qs.question_code IN ({cho_trong})
+                       THEN qs.question_code END) AS xong_den_13
             FROM users u
             LEFT JOIN question_status qs ON qs.user_id = u.id
             WHERE u.approved = 1 AND u.lark_open_id IS NOT NULL
               AND COALESCE(u.is_teacher, 0) = 0 AND u.created_at < ?
             GROUP BY u.id
-            HAVING last_act IS NULL OR last_act < ?
+            HAVING (last_act IS NULL OR last_act < ?) AND xong_den_13 < ?
             """,
-            (cutoff, cutoff),
+            (*ma_cau, cutoff, cutoff, len(ma_cau)),
         ).fetchall()
     return [dict(r) for r in rows]
 
