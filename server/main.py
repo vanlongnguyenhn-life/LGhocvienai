@@ -2239,6 +2239,11 @@ def submit_question(
             ).fetchone()
         real_code = row["pi_lab_friendship_code"] if row else None
         if not real_code or _normalize_secret(submitted_code) != _normalize_secret(real_code):
+            # Nộp sai cũng là một lượt thử thật -> tính vào tiến trình mở gợi ý, đúng như câu 9.23.
+            # Trước đây chỉ lượt Agent gọi API hồ sơ mới được tính, nên học viên loay hoay mấy ngày
+            # vẫn thấy "đã thử 0 lần" và gợi ý không bao giờ mở ra.
+            with get_db() as conn:
+                _log_secret_attempt(conn, user["id"], question_code)
             raise HTTPException(status_code=400, detail="friendship_code chưa đúng — kiểm tra lại trước khi nộp.")
         awarded_points = PI_LAB_CODE_MANIFEST[question_code]["points"]
 

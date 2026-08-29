@@ -2759,6 +2759,19 @@ async function persistQuestionStatusInner(q, a) {
       render(); // mở khoá câu tiếp theo ngay khi vừa lưu xong (xem isQuestionSynced)
       return res; // kèm phán quyết đúng/sai do SERVER tính
     } catch (err) {
+      // 4xx nghĩa là server ĐÃ CHẤM và nói bài chưa đạt ("mã chưa đúng", "chưa đủ minh chứng"...).
+      // Thử lại là vô ích, mà tệ hơn: lý do thật bị nuốt mất rồi báo nhầm thành "mạng chập chờn",
+      // nên học viên ngồi đổi trình duyệt, đổi mạng hàng ngày trong khi thứ cần sửa là bài làm.
+      // 401 (hết phiên), 408/429 (quá tải) thì vẫn đáng thử lại.
+      if (err.status >= 400 && err.status < 500 && ![401, 408, 429].includes(err.status)) {
+        a.status = "wrong";
+        a.awardedPoints = 0;
+        a.saved = true; // đã có phán quyết của server, không còn gì để đẩy bù
+        saveState();
+        showToast(err.message);
+        render();
+        return;
+      }
       if (attempt === 4) {
         console.warn("Lưu tiến độ thất bại sau nhiều lần thử:", q.code, err);
         // KHÔNG mất: giữ cờ saved=false, flushUnsavedProgress() sẽ tự đẩy bù khi server sống lại.
