@@ -4700,13 +4700,28 @@ def admin_diag_ai_health(request: Request):
     """
     current_admin(request)
     with get_db() as conn:
-        recent_fail = conn.execute(
-            "SELECT COUNT(*) c FROM reflect_grades WHERE ai_graded = 0 AND created_at > datetime('now','-1 day')"
-        ).fetchone()["c"]
+        # ai_graded = 0 KHÔNG đồng nghĩa "AI hỏng": cờ này cũng bằng 0 khi bộ lọc nội dung loại
+        # bài trước cả lúc gọi AI (bài quá ngắn, gõ bừa). Đếm gộp thì mỗi bài chưa đạt của học
+        # viên lại kêu "AI hỏng — học viên bị chặn", giáo viên đi kiểm tra API key trong vô ích.
+        chua = conn.execute(
+            "SELECT reason FROM reflect_grades WHERE ai_graded = 0 AND created_at > datetime('now','-1 day')"
+        ).fetchall()
         recent_ok = conn.execute(
             "SELECT COUNT(*) c FROM reflect_grades WHERE ai_graded = 1 AND created_at > datetime('now','-1 day')"
         ).fetchone()["c"]
-    out = {"chua_cham_duoc_24h": recent_fail, "cham_duoc_24h": recent_ok, "key_present": bool(ANTHROPIC_API_KEY)}
+    def _loi_ai(ly_do: str) -> bool:
+        ly_do = ly_do or ""
+        return ly_do.startswith("AI chấm nội dung đang gặp sự cố") or ly_do.startswith("Server chưa cấu hình AI")
+
+    recent_fail = sum(1 for r in chua if _loi_ai(r["reason"]))
+    bai_chua_dat = len(chua) - recent_fail
+    out = {
+        "chua_cham_duoc_24h": recent_fail,
+        "cham_duoc_24h": recent_ok,
+        "bai_chua_dat_24h": bai_chua_dat,
+        "vai_ly_do_gan_nhat": [(r["reason"] or "")[:120] for r in chua[-3:]],
+        "key_present": bool(ANTHROPIC_API_KEY),
+    }
     if not ANTHROPIC_API_KEY:
         out["level"] = "critical"
         out["message"] = "Server chưa có API key chấm AI — mọi câu tự luận đều KHÔNG thể qua."
