@@ -101,13 +101,15 @@ function loadState() {
       if (parsed.answers) {
         Object.values(parsed.answers).forEach((a) => {
           delete a.mediaStatus;
-          if (a.helpStatus === "loading") delete a.helpStatus;
-          if (a.thaoLuanStatus === "loading") delete a.thaoLuanStatus;
-          if (a.hintStatus === "loading") delete a.hintStatus;
-          if (a.letterStatus === "loading") delete a.letterStatus;
-          if (a.gwsStatus === "loading") delete a.gwsStatus;
-          if (a.npcFriend === "loading") delete a.npcFriend;
-          if (a.npcAvatar === "loading") delete a.npcAvatar;
+          // Xoá cả "loading" LẪN bản ghi lỗi. Các ô này chỉ tự gọi lại khi giá trị là
+          // undefined, nên một lần mạng chớp tắt (hoặc máy chủ khởi động lại vài chục giây)
+          // là dòng "Lỗi tải ..." nằm lại trong localStorage và hiện y nguyên ở MỌI lần mở
+          // trang sau — học viên tưởng hệ thống hỏng suốt nhiều ngày, tải lại trang cũng vô ích.
+          const conTam = (v) => v === "loading" || (v && typeof v === "object" && v.error);
+          ["helpStatus", "thaoLuanStatus", "hintStatus", "letterStatus", "gwsStatus",
+           "npcFriend", "npcAvatar"].forEach((o) => {
+            if (conTam(a[o])) delete a[o];
+          });
           // Câu 9.21: XOÁ HẲN chứ không chỉ xoá lúc "loading". Bảng "ai đã chấm cho mình" là
           // ảnh chụp tại một thời điểm, mà nó chỉ tự gọi lại khi giá trị là undefined — giữ bản
           // cũ trong localStorage nghĩa là học viên tải lại trang vẫn thấy số cũ (bạn vừa chấm
@@ -2069,6 +2071,10 @@ function renderAgentSecretCode(q, a) {
       );
     } else if (a.hintStatus.error) {
       wrap.appendChild(el("div", { class: "secret-note" }, "Lỗi tải gợi ý: " + a.hintStatus.error));
+      // Không có nút này thì học viên kẹt luôn với dòng lỗi, không cách nào gọi lại.
+      wrap.appendChild(
+        el("button", { class: "help-link", onclick: () => fetchSecretHintStatus(q, a) }, "🔄 Thử tải lại")
+      );
     } else {
       const hs = a.hintStatus;
       wrap.appendChild(
