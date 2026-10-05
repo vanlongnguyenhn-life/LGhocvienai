@@ -70,6 +70,32 @@ def ten_model_dau() -> str:
     return _models(khoa)[0] if khoa else ""
 
 
+_kiem_khoa_cache = {"luc": 0.0, "ket_qua": (False, "chưa kiểm tra")}
+
+
+def kiem_tra_khoa() -> tuple:
+    """Khoá Gemini có THẬT SỰ còn dùng được không. Trả (sống, mô_tả_lỗi).
+
+    Cùng lý do với ai_grader.kiem_tra_khoa: khoá bị thu hồi vẫn lọt qua is_configured().
+    Gọi ListModels — miễn phí — và giữ kết quả 10 phút vì endpoint sức khoẻ là công khai.
+    """
+    import time
+    khoa = _khoa()
+    if not khoa:
+        return False, "chưa cấu hình khoá"
+    if time.time() - _kiem_khoa_cache["luc"] < 600:
+        return _kiem_khoa_cache["ket_qua"]
+    try:
+        with httpx.Client(timeout=20.0) as client:
+            r = client.get(URL_DS, params={"key": khoa, "pageSize": 1})
+        kq = (True, "") if r.status_code == 200 else (False, "HTTP %s: %s" % (r.status_code, r.text[:160]))
+    except Exception as e:  # noqa: BLE001
+        kq = (False, "lỗi mạng: %s" % str(e)[:120])
+    _kiem_khoa_cache["luc"] = time.time()
+    _kiem_khoa_cache["ket_qua"] = kq
+    return kq
+
+
 def nhan_giong(duong_dan_wav: str) -> tuple:
     """Nghe file WAV, trả (transcript, lỗi). transcript rỗng nếu hụt.
 

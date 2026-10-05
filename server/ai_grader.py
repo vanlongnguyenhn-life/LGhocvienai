@@ -36,6 +36,38 @@ def is_configured() -> bool:
     return bool(ANTHROPIC_API_KEY)
 
 
+_kiem_khoa_cache = {"luc": 0.0, "ket_qua": (False, "chưa kiểm tra")}
+
+
+def kiem_tra_khoa() -> tuple:
+    """Khoá có THẬT SỰ còn dùng được không. Trả (sống, mô_tả_lỗi).
+
+    is_configured() chỉ nói "có khoá trong biến môi trường" — khoá bị thu hồi vẫn qua mặt nó,
+    nên khi khoá chết (401) học viên tắc hàng loạt mà endpoint sức khoẻ vẫn báo xanh (sự cố
+    câu 9.10 ngày 05/10). Ở đây gọi count_tokens: xác thực thật nhưng MIỄN PHÍ, không tốn
+    token nào. Giữ kết quả 10 phút vì endpoint sức khoẻ là công khai.
+    """
+    import time
+    if not ANTHROPIC_API_KEY:
+        return False, "chưa cấu hình khoá"
+    if time.time() - _kiem_khoa_cache["luc"] < 600:
+        return _kiem_khoa_cache["ket_qua"]
+    try:
+        r = httpx.post(
+            "https://api.anthropic.com/v1/messages/count_tokens",
+            headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01",
+                     "content-type": "application/json"},
+            json={"model": GRADER_MODEL, "messages": [{"role": "user", "content": "ping"}]},
+            timeout=20.0,
+        )
+        kq = (True, "") if r.status_code == 200 else (False, "HTTP %s: %s" % (r.status_code, r.text[:160]))
+    except Exception as e:  # noqa: BLE001
+        kq = (False, "lỗi mạng: %s" % str(e)[:120])
+    _kiem_khoa_cache["luc"] = time.time()
+    _kiem_khoa_cache["ket_qua"] = kq
+    return kq
+
+
 def _parse_verdict(data: dict):
     txt = "".join(b.get("text", "") for b in data.get("content", []) if b.get("type") == "text").strip()
     m = re.search(r"\{.*\}", txt, re.S)

@@ -5374,16 +5374,23 @@ def _is_public_asset(rel_path: str) -> bool:
 
 @app.get("/api/health/cham-video")
 def health_cham_video():
-    """Máy chủ có đủ đồ nghề để chấm câu 10.26 không.
+    """Máy chủ có đủ đồ nghề để chấm bằng AI không (10.26 và mọi câu AI chấm).
 
-    Chỉ trả về đúng/sai, không trả về khoá hay đường dẫn. Cần cái này vì ba tiêu chí của 10.26
-    phụ thuộc ffmpeg và hai dịch vụ AI chỉ có trên máy chủ thật — không kiểm được từ máy cá nhân,
-    mà mở bài cho học viên khi thiếu một thứ thì cả lớp tắc ở câu cuối.
+    Chỉ trả về đúng/sai + mô tả lỗi, không trả về khoá hay đường dẫn. Hai trường khoa_*_song là
+    kiểm tra SỐNG (gọi thử dịch vụ bằng endpoint miễn phí, giữ kết quả 10 phút) — khác với
+    doc_chu_khung_hinh/nghe_giong_doc chỉ nói "có khoá trong biến môi trường": ngày 05/10 khoá
+    Claude bị vô hiệu (401), học viên tắc 9.10 hàng loạt mà mục cũ vẫn báo true.
     """
+    claude_song, claude_loi = ai_grader.kiem_tra_khoa()
+    gemini_song, gemini_loi = gemini.kiem_tra_khoa()
     return {
         "ffmpeg": video_check.san_sang(),
         "doc_chu_khung_hinh": ai_grader.is_configured(),
+        "khoa_claude_song": claude_song,
+        "khoa_claude_loi": claude_loi or None,
         "nghe_giong_doc": gemini.is_configured(),
+        "khoa_gemini_song": gemini_song,
+        "khoa_gemini_loi": gemini_loi or None,
         "model_nghe": gemini.ten_model_dau(),
         "nhac_chuan": CAU1026_NHAC_MO.exists() and CAU1026_NHAC_KET.exists(),
     }
